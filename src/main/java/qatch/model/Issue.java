@@ -1,4 +1,4 @@
-package qatch;
+package qatch.model;
 
 /**
  * A class that represents an issue (i.e. a violation of a rule).

@@ -1,7 +1,7 @@
 package qatch.calibration;
 
-import qatch.CKJMResultsImporter;
-import qatch.PMDResultsImporter;
+import qatch.MoveToRunnableProject.CKJMResultsImporter;
+import qatch.MoveToRunnableProject.PMDResultsImporter;
 import qatch.evaluation.Project;
 
 import java.io.File;

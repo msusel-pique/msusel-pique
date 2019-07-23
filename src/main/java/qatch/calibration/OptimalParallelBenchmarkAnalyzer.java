@@ -5,8 +5,8 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Text;
-import qatch.CKJMAnalyzer;
-import qatch.PMDAnalyzer;
+import qatch.MoveToRunnableProject.CKJMAnalyzer;
+import qatch.MoveToRunnableProject.PMDAnalyzer;
 import qatch.model.Property;
 import qatch.model.PropertySet;
 

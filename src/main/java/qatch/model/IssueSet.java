@@ -1,4 +1,4 @@
-package qatch;
+package qatch.model;
 
 import java.util.Iterator;
 import java.util.Vector;

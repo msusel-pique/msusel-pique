@@ -3,8 +3,8 @@ package qatch.calibration;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.text.Text;
-import qatch.CKJMAnalyzer;
-import qatch.PMDAnalyzer;
+import qatch.MoveToRunnableProject.CKJMAnalyzer;
+import qatch.MoveToRunnableProject.PMDAnalyzer;
 import qatch.model.PropertySet;
 
 import java.io.File;

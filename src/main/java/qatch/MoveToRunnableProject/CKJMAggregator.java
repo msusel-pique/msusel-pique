@@ -1,7 +1,9 @@
-package qatch;
+package qatch.MoveToRunnableProject;
 
 import qatch.evaluation.Project;
 import qatch.model.Measure;
+import qatch.model.MetricSet;
+import qatch.model.Metrics;
 import qatch.model.Property;
 
 /**

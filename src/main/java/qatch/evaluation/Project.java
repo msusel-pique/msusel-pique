@@ -9,10 +9,10 @@ import qatch.model.CharacteristicSet;
 import qatch.model.Property;
 import qatch.model.PropertySet;
 import qatch.model.Tqi;
-import qatch.Issue;
-import qatch.IssueSet;
-import qatch.MetricSet;
-import qatch.Metrics;
+import qatch.model.Issue;
+import qatch.model.IssueSet;
+import qatch.model.MetricSet;
+import qatch.model.Metrics;
 
 /**
  * This class represents a project under evaluation.

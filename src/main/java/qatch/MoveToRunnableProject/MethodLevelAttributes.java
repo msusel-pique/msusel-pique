@@ -1,4 +1,4 @@
-package qatch;
+package qatch.MoveToRunnableProject;
 
 /**
  * This class contains attributes that are at method level

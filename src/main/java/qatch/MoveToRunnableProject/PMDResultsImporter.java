@@ -1,9 +1,11 @@
-package qatch;
+package qatch.MoveToRunnableProject;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import qatch.model.Issue;
+import qatch.model.IssueSet;
 import qatch.utility.Filename;
 import org.jdom.*;
 import org.jdom.input.SAXBuilder;

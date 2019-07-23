@@ -1,4 +1,4 @@
-package qatch;
+package qatch.MoveToRunnableProject;
 
 import qatch.model.PropertySet;
 

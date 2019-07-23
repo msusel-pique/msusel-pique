@@ -1,6 +1,7 @@
-package qatch;
+package qatch.MoveToRunnableProject;
 
 import qatch.evaluation.Project;
+import qatch.model.IssueSet;
 import qatch.model.Property;
 
 import java.util.Iterator;

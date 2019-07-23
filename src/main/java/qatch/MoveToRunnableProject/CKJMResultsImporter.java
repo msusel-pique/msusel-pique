@@ -1,4 +1,4 @@
-package qatch;
+package qatch.MoveToRunnableProject;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,6 +9,8 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import qatch.model.MetricSet;
+import qatch.model.Metrics;
 
 /**
  * This class is responsible for importing all the metrics that the ckjm
