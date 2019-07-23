@@ -1,5 +1,6 @@
 package qatch.MoveToRunnableProject;
 
+import qatch.analysis.IAnalyzer;
 import qatch.model.Measure;
 import qatch.model.Property;
 import qatch.model.PropertySet;
@@ -20,7 +21,7 @@ import java.util.Iterator;
  * @author Miltos
  *
  */
-public class PMDAnalyzer extends AbstractAnalyzer{
+public class PMDAnalyzer implements IAnalyzer {
 	
 	public static final String TOOL_NAME = "PMD";
 

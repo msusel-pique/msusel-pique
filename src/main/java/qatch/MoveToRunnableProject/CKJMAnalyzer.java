@@ -1,5 +1,6 @@
 package qatch.MoveToRunnableProject;
 
+import qatch.analysis.IAnalyzer;
 import qatch.model.Measure;
 import qatch.model.Property;
 import qatch.model.PropertySet;
@@ -20,7 +21,7 @@ import java.util.Iterator;
  *
  */
 //TODO: CKJM should be invoked at any case because we need the total LOC of the project for normalization purposes.
-public class CKJMAnalyzer extends AbstractAnalyzer{
+public class CKJMAnalyzer implements IAnalyzer {
 	
 	public static final String TOOL_NAME = "CKJM";
 	
