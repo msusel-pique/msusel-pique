@@ -19,7 +19,13 @@ public interface IAnalyzer {
 	 * on the desired project.
 	 * @param src : The File path representation to the project to be analyzed
 	 * @param dest : The File path representation to the destination folder where the results will be placed.
-	 * 
+	 * @param properties : The set of properties against which the project will be analyzed.
+	 *
+	 * Typically this method does the following:
+	 *
+	 * 		1. Iterates through the PropertySet
+	 * 		2. For each Property object the method calls the analyze() method in order to
+	 * 	       analyze the project against this single property.
 	 */
 	void analyze(File src, File dest, PropertySet properties);
 }
