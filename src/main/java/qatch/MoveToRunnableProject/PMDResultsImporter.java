@@ -100,12 +100,10 @@ public class PMDResultsImporter {
 			
 			tempIssues = issues;
 		
-		} catch (JDOMException e) {
-			System.out.println(e.getMessage());
-		} catch (IOException e) {
+		} catch (JDOMException | IOException e) {
 			System.out.println(e.getMessage());
 		}
-		
+
 		//Return the IssueSet
 		return tempIssues;
 	}

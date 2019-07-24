@@ -24,7 +24,6 @@ public class Measure implements Cloneable {
 		}else{
 			System.out.println("Invalid measure type! A measure can be either METRIC or FINDING!");
 		}
-		
 	}
 	
 	public Measure(int type, String metricName){
@@ -33,7 +32,6 @@ public class Measure implements Cloneable {
 		}else{
 			System.out.println("Invalid measure type! A measure can be either METRIC or FINDING!");
 		}
-		
 		this.metricName = metricName;
 	}
 	
@@ -43,9 +41,19 @@ public class Measure implements Cloneable {
 		}else{
 			System.out.println("Invalid measure type! A measure can be either METRIC or FINDING!");
 		}
-		
 		this.metricName = metricName;
 		this.rulesetPath = rulesetPath;
+	}
+
+	public Measure(int type, String metricName, String rulesetPath, String toolName) {
+		if(type == METRIC || type == FINDING){
+			this.type = type;
+		}else{
+			System.out.println("Invalid measure type! A measure can be either METRIC or FINDING!");
+		}
+		this.metricName = metricName;
+		this.rulesetPath = rulesetPath;
+		this.tool = toolName;
 	}
 	
 	public double getValue() {

@@ -1,10 +1,6 @@
 package qatch.model;
 
 public class Property implements Cloneable {
-
-	//TODO: Remove this constants - Use the Analyzers constants instead!
-	public static final String PMD = "PMD";
-	public static final String CKJM = "CKJM";
 	
 	/* The breakpoint of the Utility Function used for the evaluation of the Property */
 	private static final double BREAKPOINT = 0.5;
@@ -21,8 +17,7 @@ public class Property implements Cloneable {
 	//private String tool;//The tool used for quantifying it (PMD, CKJM etc.)
 	
 	private Measure measure;
-	
-	
+
 	public Property(){
 		// Just create the thresholds array.
 		thresholds = new double[THRESHOLDS_NUM];
@@ -31,6 +26,12 @@ public class Property implements Cloneable {
 	
 	public Property(Measure measure){
 		thresholds = new double[THRESHOLDS_NUM];
+		this.measure = measure;
+	}
+
+	public Property(String name, Measure measure) {
+		thresholds = new double[THRESHOLDS_NUM];
+		this.name = name;
 		this.measure = measure;
 	}
 	
