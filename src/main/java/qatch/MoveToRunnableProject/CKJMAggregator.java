@@ -13,7 +13,7 @@ import qatch.model.Property;
  * 
  * Typically,
  * 	- It calculates the weighted sum of each metric against all
- *    the classes of the project (classe's loc is used as weight)
+ *    the classes of the project (class's loc is used as weight)
  *  - It keeps only the values of the properties that we are 
  *    interested in.
  */

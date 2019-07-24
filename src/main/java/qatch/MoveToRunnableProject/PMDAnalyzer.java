@@ -21,7 +21,7 @@ import java.util.Iterator;
  * @author Miltos
  *
  */
-public class PMDAnalyzer implements IAnalyzer {
+public class PMDAnalyzer  {
 	
 	public static final String TOOL_NAME = "PMD";
 
