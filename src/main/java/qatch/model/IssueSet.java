@@ -27,9 +27,19 @@ public class IssueSet {
 	private String filePath;
 
 	//Constructors 
-	
+
 	public IssueSet(){
-		issues = new Vector<>();
+		this.issues = new Vector<>();
+	}
+
+	public IssueSet(String name) {
+		this.issues = new Vector<>();
+		this.propertyName = name;
+	}
+
+	public IssueSet(String name, Vector<Issue> issues) {
+		this.propertyName = name;
+		this.issues = issues;
 	}
 	
 	
