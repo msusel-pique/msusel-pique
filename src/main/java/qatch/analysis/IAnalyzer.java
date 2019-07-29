@@ -27,5 +27,6 @@ public interface IAnalyzer {
 	 * 		2. For each Property object the method calls the analyze() method in order to
 	 * 	       analyze the project against this single property.
 	 */
+	// TODO: return an AnalysisResults data object instead of relying on the tool's generated hard drive file
 	void analyze(File src, File dest, PropertySet properties);
 }
