@@ -1,5 +1,7 @@
 package qatch.utility;
 
+import com.sun.istack.internal.Nullable;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,11 +15,20 @@ import java.util.Set;
 public final class FileUtility {
     private FileUtility() { }
 
-    // (TODO): this method currently returns all directories containing a file with 'extensions' in it, but languages
-    //         such as C# duplicate .EXEs in both the bin and obj folders, so findings end up duplicated. Consider an
-    //         "industry standard" approach using standized configurations for each language regarding where to look
-    //         for files/directories to allow the tool to scan
-    public static Set<String> findAssemblyDirectories(File rootDirectory, String... extensions) {
+    /**
+     * Recursively find all files under a root directory with specified extension(s) and optionally with name matching
+     * a regex pattern
+     *
+     * @param rootDirectory
+     *      Directory to begin recursive search at
+     * @param name
+     *      File name a found file needs to at least partly match with
+     * @param extensions
+     *      ex. ".exe", ".dll", "class" - The '.' is not necessary but is recommended
+     * @return
+     *
+     */
+    public static Set<String> findAssemblyDirectories(File rootDirectory, @Nullable String name, String... extensions) {
 
         Path root = Paths.get(rootDirectory.toString());
         ArrayList<String> exts = new ArrayList<>(Arrays.asList(extensions));
