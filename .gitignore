@@ -205,3 +205,4 @@ $RECYCLE.BIN/
 
 ### Project Specific ###
 src/test/java/qatch/Scratch.java
+src/test/output
