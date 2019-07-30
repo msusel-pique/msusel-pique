@@ -2,6 +2,8 @@ package qatch.utility;
 
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
+import org.apache.commons.io.FilenameUtils;
+import org.omg.PortableInterceptor.INACTIVE;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +16,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class FileUtility {
-
 
     /**
      * Recursively find all files under a root directory with specified extension(s) and optionally with name matching
@@ -55,5 +56,31 @@ public final class FileUtility {
         }
 
         return assemblyPaths;
+    }
+
+    /**
+     * Collects set of file names that match a given extension
+     *
+     * @param rootDirectory
+     *      Directory to begin recursive search at
+     * @param extension
+     *      ".exe", ".dll", "class" - The '.' is not necessary but is recommended
+     * @return
+     *      Set of file names without the extension and path (e.g. {WpfApp1, Roslyn} if the root directory
+     *      contained files named src/bin/WpfApp1.exe and src/obj/Roslyn.exe
+     */
+    public static Set<String> findFileNamesFromExtension(Path rootDirectory, String extension) {
+
+        Set<String> fileNames = new HashSet<>();
+
+        try {
+            Files.find(rootDirectory, Integer.MAX_VALUE, (path, attr) -> path.toString().endsWith(extension))
+                    .forEach(p -> fileNames.add(FilenameUtils.getBaseName(p.toString())));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return fileNames;
+
     }
 }
