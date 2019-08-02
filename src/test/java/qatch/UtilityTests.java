@@ -1,6 +1,7 @@
 package qatch;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import qatch.utility.FileUtility;
@@ -25,39 +26,20 @@ public class UtilityTests {
         file2.deleteOnExit();
         file3.deleteOnExit();
 
-        Set<Path> ext1 = FileUtility.findAssemblies(new File("./src"), file1.getName().substring(0, 3), ".ext1");
-        Set<Path> ext2 = FileUtility.findAssemblies(new File("./src"), file1.getName().substring(0, 3), ".ext2");
-        Set<Path> extAll = FileUtility.findAssemblies(new File("./src"), file1.getName().substring(0, 3), ".ext2", ".ext1");
-        Set<Path> nullSubstring = FileUtility.findAssemblies(new File("./src"), "",  ".ext1");
-        Set<Path> substring = FileUtility.findAssemblies(new File("./src"), "file1", ".ext1");
-        Set<Path> fullSubstring = FileUtility.findAssemblies(new File("./src"), file2.getName(), ".ext1");
+        Set<Path> f1 = FileUtility.findAssemblies(new File("./src"), FilenameUtils.getBaseName(file1.getName()), ".ext1");
+        Set<Path> f2 = FileUtility.findAssemblies(new File("./src"), FilenameUtils.getBaseName(file2.getName()), ".ext1");
+        Set<Path> f3 = FileUtility.findAssemblies(new File("./src"), FilenameUtils.getBaseName(file3.getName()), ".ext2");
 
-        Assert.assertTrue(ext1.contains(file1.toPath()));
-        Assert.assertTrue(ext1.contains(file2.toPath()));
-        Assert.assertFalse(ext1.contains(file3.toPath()));
+        Assert.assertTrue(f1.contains(file1.toPath()));
+        Assert.assertTrue(f2.contains(file2.toPath()));
+        Assert.assertTrue(f3.contains(file3.toPath()));
 
-        Assert.assertTrue(ext2.contains(file3.toPath()));
-        Assert.assertFalse(ext2.contains(file1.toPath()));
-        Assert.assertFalse(ext2.contains(file2.toPath()));
-
-        Assert.assertTrue(extAll.contains(file1.toPath()));
-        Assert.assertTrue(extAll.contains(file2.toPath()));
-        Assert.assertTrue(extAll.contains(file3.toPath()));
-
-        Assert.assertTrue(nullSubstring.contains(file1.toPath()));
-        Assert.assertTrue(nullSubstring.contains(file2.toPath()));
-        Assert.assertFalse(nullSubstring.contains(file3.toPath()));
-
-        Assert.assertTrue(substring.contains(file1.toPath()));
-        Assert.assertFalse(substring.contains(file2.toPath()));
-        Assert.assertFalse(substring.contains(file3.toPath()));
-
-        Assert.assertTrue(fullSubstring.contains(file2.toPath()));
-        Assert.assertFalse(fullSubstring.contains(file1.toPath()));
-        Assert.assertFalse(fullSubstring.contains(file3.toPath()));
+        Assert.assertFalse(f1.contains(file2.toPath()));
+        Assert.assertFalse(f1.contains(file3.toPath()));
+        Assert.assertFalse(f3.contains(file1.toPath()));
 
         boolean isEmpty = false;
-        try { Set<Path> noFoundExt = FileUtility.findAssemblies(new File("./src"), "", ".falseExt1", "falseExt2"); }
+        try { Set<Path> noFoundExt = FileUtility.findAssemblies(new File("./src"), FilenameUtils.getBaseName(file1.getName()), ".falseExt1", "falseExt2"); }
         catch (IllegalStateException e) { isEmpty = true; }
         finally { Assert.assertTrue(isEmpty); }
 

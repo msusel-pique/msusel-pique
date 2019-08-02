@@ -1,9 +1,6 @@
 package qatch.utility;
 
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
 import org.apache.commons.io.FilenameUtils;
-import org.omg.PortableInterceptor.INACTIVE;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,16 +21,16 @@ public final class FileUtility {
      * @param rootDirectory
      *      Directory to begin recursive search at
      * @param name
-     *      File name a found file needs to at least partly match with. "" matches everything.
+     *      File name a found path must end with. To find src\Logging\bin\Debug\EF.Azure.dll, name should be 'EF.Azure'
      * @param extensions
-     *      ex. ".exe", ".dll", "class" - The '.' is not necessary but is recommended
+     *      ex. ".exe", ".dll", ".class" - The '.' is necessary if a name to filter with is also provided
      * @return
      *      The set of paths containing matched files
      */
-    public static Set<Path> findAssemblies(File rootDirectory, String name, @NotNull String... extensions) throws IllegalStateException {
+    public static Set<Path> findAssemblies(File rootDirectory, String name, String... extensions) throws IllegalStateException {
 
         // bad approach for handling functional null Name string because I need to graduate soon
-        if (name.isEmpty()) { name = ""; }
+        if (name.isEmpty()) { throw new RuntimeException("An an assembly name must be provided"); }
 
         Path root = Paths.get(rootDirectory.toString());
         ArrayList<String> exts = new ArrayList<>(Arrays.asList(extensions));
@@ -43,7 +40,7 @@ public final class FileUtility {
         exts.forEach(ex -> {
             try {
                 Files.find(root, Integer.MAX_VALUE, (path, attr) -> path.toString().endsWith(ex))
-                        .filter(path -> path.toString().contains(finalName))
+                        .filter(path -> path.endsWith(finalName + ex))
                         .forEach(assemblyPaths::add);
             } catch (IOException e) {
                 e.printStackTrace();
