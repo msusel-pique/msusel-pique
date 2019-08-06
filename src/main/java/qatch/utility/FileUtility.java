@@ -36,11 +36,10 @@ public final class FileUtility {
         ArrayList<String> exts = new ArrayList<>(Arrays.asList(extensions));
         Set<Path> assemblyPaths = new HashSet<>();
 
-        String finalName = name;
         exts.forEach(ex -> {
             try {
                 Files.find(root, Integer.MAX_VALUE, (path, attr) -> path.toString().endsWith(ex))
-                        .filter(path -> path.endsWith(finalName + ex))
+                        .filter(path -> path.endsWith(name + ex))
                         .forEach(assemblyPaths::add);
             } catch (IOException e) {
                 e.printStackTrace();

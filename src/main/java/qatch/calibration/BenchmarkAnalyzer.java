@@ -8,6 +8,8 @@ import qatch.MoveToRunnableProject.PMDAnalyzer;
 import qatch.model.PropertySet;
 
 import java.io.File;
+import java.nio.file.Path;
+
 /**
  * This class is responsible for analyzing all the projects that are stored in the
  * desired folder (e.g. Benchmark Repository) against:
@@ -33,7 +35,7 @@ public class BenchmarkAnalyzer {
 	public static String WORKSPACE_RESULT_PATH = new File(BASE_DIR + "/Results/Analysis/WorkspaceResults").getAbsolutePath();
 	public static String SINGLE_PROJ_RESULT_PATH = new File(BASE_DIR + "/Results/Analysis/SingleProjectResults").getAbsolutePath();
 
-	private String benchRepoPath;
+	private Path benchRepoPath;
 	private PropertySet properties;
 	private static String resultsPath = BENCH_RESULT_PATH;
 
@@ -63,14 +65,14 @@ public class BenchmarkAnalyzer {
 	/**
 	 * The second constructor of the class.
      */
-	public BenchmarkAnalyzer(String benchRepoPath){
+	public BenchmarkAnalyzer(Path benchRepoPath){
 		this.benchRepoPath = benchRepoPath;
 	}
 
 	/**
 	 * The third constructor of the class.
      */
-	public BenchmarkAnalyzer(String benchRepoPath, PropertySet properties){
+	public BenchmarkAnalyzer(Path benchRepoPath, PropertySet properties){
 		this.benchRepoPath = benchRepoPath;
 		this.properties = properties;
 	}
@@ -80,11 +82,11 @@ public class BenchmarkAnalyzer {
 	 * Setters and Getters.
 	 */
 
-	public String getBenchRepoPath() {
+	public Path getBenchRepoPath() {
 		return benchRepoPath;
 	}
 	
-	public void setBenchRepoPath(String benchRepoPath) {
+	public void setBenchRepoPath(Path benchRepoPath) {
 		this.benchRepoPath = benchRepoPath;
 	}
 
@@ -118,7 +120,7 @@ public class BenchmarkAnalyzer {
 		CKJMAnalyzer ckjm = new CKJMAnalyzer();
 		
 		//List the projects of the repository
-		File baseDir = new File(benchRepoPath);
+		File baseDir = benchRepoPath.toFile();
 		File[] projects = baseDir.listFiles();
 
 		/* Basic Solution */
@@ -166,7 +168,7 @@ public class BenchmarkAnalyzer {
 	 */
 	public void printBenchmarkRepoContents(){
 		//List all the directories included inside the repository
-		File baseDir = new File(benchRepoPath);
+		File baseDir = benchRepoPath.toFile();
 		System.out.println("Benchmark repository : " + baseDir.getAbsolutePath());
 		File[] projects = baseDir.listFiles();
 		for(int i = 0; i < projects.length; i++){
