@@ -14,6 +14,9 @@ import java.util.Set;
 
 public class UtilityTests {
 
+    private File testOut = new File(".src/test/output");
+
+
     @Test
     public void testFindAssemblies() throws IOException {
 
@@ -42,8 +45,6 @@ public class UtilityTests {
         try { Set<Path> noFoundExt = FileUtility.findAssemblies(new File("./src"), FilenameUtils.getBaseName(file1.getName()), ".falseExt1", "falseExt2"); }
         catch (IllegalStateException e) { isEmpty = true; }
         finally { Assert.assertTrue(isEmpty); }
-
-
     }
 
     @Test
@@ -84,8 +85,60 @@ public class UtilityTests {
         Assert.assertFalse(namesExt1.contains(file5Name.substring(0, file5Name.length()-5)));
         Assert.assertTrue(namesExt2.contains(substring));
         Assert.assertTrue(namesExt3.contains(substring1));
+    }
 
-        System.out.println("waiting...");
+    @Test
+    public void testMultiProjectCollector() throws IOException {
+
+        FileUtils.forceMkdir(testOut);
+        File testDir = new File(testOut, "TMPC");
+        clean(testDir);
+
+        File testDir11 = new File(testDir, "11");
+        File testDir12 = new File(testDir11, "12");
+        File testDir21 = new File(testDir, "21");
+        testDir11.mkdirs();
+        testDir12.mkdirs();
+        testDir21.mkdirs();
+
+        File f11_10 = File.createTempFile("f11-10", ".ext1", testDir11);
+        File f11_20 = File.createTempFile("f11-20", ".ext2", testDir11);
+        File f12_10 = File.createTempFile("f11-10", ".ext1", testDir12);
+        File f12_11 = File.createTempFile("f11-11", ".ext1", testDir12);
+        File f21_20 = File.createTempFile("f11-20", ".ext2", testDir21);
+        File f21_21 = File.createTempFile("f11-21", ".ext2", testDir21);
+        f11_10.deleteOnExit();
+        f11_20.deleteOnExit();
+        f12_10.deleteOnExit();
+        f12_11.deleteOnExit();
+        f21_20.deleteOnExit();
+        f21_21.deleteOnExit();
+
+        Set<Path> ext1Paths = FileUtility.multiProjectCollector(testDir.toPath(), ".ext1");
+        Set<Path> ext2Paths = FileUtility.multiProjectCollector(testDir.toPath(), ".ext2");
+
+        Assert.assertTrue(ext1Paths.contains(f11_10.toPath().toAbsolutePath()));
+        Assert.assertTrue(ext1Paths.contains(f12_10.toPath().toAbsolutePath()));
+        Assert.assertTrue(ext1Paths.contains(f12_11.toPath().toAbsolutePath()));
+
+        Assert.assertTrue(ext2Paths.contains(f11_20.toPath().toAbsolutePath()));
+        Assert.assertTrue(ext2Paths.contains(f21_20.toPath().toAbsolutePath()));
+        Assert.assertTrue(ext2Paths.contains(f21_21.toPath().toAbsolutePath()));
+
+        Assert.assertFalse(ext1Paths.contains(f11_20.toPath().toAbsolutePath()));
+        Assert.assertFalse(ext1Paths.contains(f21_20.toPath().toAbsolutePath()));
+        Assert.assertFalse(ext1Paths.contains(f21_21.toPath().toAbsolutePath()));
+
+        Assert.assertFalse(ext2Paths.contains(f11_10.toPath().toAbsolutePath()));
+        Assert.assertFalse(ext2Paths.contains(f12_10.toPath().toAbsolutePath()));
+        Assert.assertFalse(ext2Paths.contains(f12_11.toPath().toAbsolutePath()));
+    }
+
+    private void clean(File dest) throws IOException {
+        if (dest.exists()) {
+            FileUtils.cleanDirectory(dest);
+        }
+        else dest.mkdirs();
     }
 
 }

@@ -77,6 +77,30 @@ public final class FileUtility {
         }
 
         return fileNames;
+    }
 
+
+    /**
+     * Collect set of directory file paths belonging to individual project or module roots when starting
+     * from a repository directory containing multiple projects or modules
+     * @param root
+     *      the path to the repository directory that holds many individual projects
+     * @param flagSuffix
+     *      a file extension that signifies a single project is contained in the same directory.
+     *      e.g. ".csproj" for C# modules or "pom.xml" for java maven projects
+     * @return
+     *      the set of individual project root paths
+     */
+
+    public static Set<Path> multiProjectCollector(Path root, String flagSuffix) {
+
+        Set<Path> projectPaths = new HashSet<>();
+        try {
+            Files.find(root, Integer.MAX_VALUE, (path, attr) -> path.toString().toLowerCase().endsWith(flagSuffix.toLowerCase()))
+                    .forEach(p -> projectPaths.add(p.toAbsolutePath()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return projectPaths;
     }
 }
