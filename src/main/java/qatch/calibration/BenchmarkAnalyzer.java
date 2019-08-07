@@ -5,11 +5,14 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.text.Text;
 import qatch.MoveToRunnableProject.CKJMAnalyzer;
 import qatch.MoveToRunnableProject.PMDAnalyzer;
+import qatch.analysis.IAnalyzer;
 import qatch.model.PropertySet;
+import qatch.utility.FileUtility;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
 
 /**
  * This class is responsible for analyzing all the projects that are stored in the
@@ -31,7 +34,7 @@ import java.nio.file.Paths;
 public class BenchmarkAnalyzer {
 	
 	// Useful static fields
-	public final Path BASE_DIR = new File(System.getProperty("user.dir")).toPath();
+	private final Path BASE_DIR = new File(System.getProperty("user.dir")).toPath();
 	private Path RESULTS_PATH;
 	private Path BENCH_RESULTS_PATH;
 	private Path WORKSPACE_RESULTS_PATH;
@@ -46,6 +49,11 @@ public class BenchmarkAnalyzer {
 		this.BENCH_RESULTS_PATH = Paths.get(this.RESULTS_PATH.toString(), "benchmark_results");
 		this.WORKSPACE_RESULTS_PATH = Paths.get(this.RESULTS_PATH.toString(), "workspace_results");
 		this.SINGLE_PROJ_RESULTS_PATH = Paths.get(this.RESULTS_PATH.toString(), "singleproject_results");
+
+		this.RESULTS_PATH.toFile().mkdirs();
+		this.BENCH_RESULTS_PATH.toFile().mkdirs();
+		this.WORKSPACE_RESULTS_PATH.toFile().mkdirs();
+		this.SINGLE_PROJ_RESULTS_PATH.toFile().mkdirs();
 	}
 	
 	/**
@@ -60,41 +68,22 @@ public class BenchmarkAnalyzer {
 	public PropertySet getProperties() { return PROPERTY_SET; }
 
 
-	
 	/**
 	 * This method is responsible for analyzing the desired benchmark
 	 * repository according to the user defined properties.
-	 * 
-	 * Its algorithm is pretty straightforward if you read the comments.
 	 */
-	public void analyzeBenchmarkRepo(){
+	public void analyzeBenchmarkRepo(IAnalyzer metricsAnalyzer, IAnalyzer findingsAnalyzer, String projectRootFlag) {
 
+		System.out.println("\nBeginning repository benchmark analysis");
 
+		Set<Path> projectRoots = FileUtility.multiProjectCollector(this.BENCH_REPO_PATH, projectRootFlag);
+		projectRoots.forEach(p -> {
+			metricsAnalyzer.analyze(metricsAnalyzer.targetSrcDirectory(p), BENCH_RESULTS_PATH, PROPERTY_SET);
+			findingsAnalyzer.analyze(findingsAnalyzer.targetSrcDirectory(p), BENCH_RESULTS_PATH, PROPERTY_SET);
+			System.out.println(p.getFileName().toString() + "analyzed.");
+		});
 
-//		//Instantiate the available single project analyzers of the system
-//		PMDAnalyzer pmd = new PMDAnalyzer();
-//		CKJMAnalyzer ckjm = new CKJMAnalyzer();
-//
-//		//List the projects of the repository
-//		File baseDir = benchRepoPath.toFile();
-//		File[] projects = baseDir.listFiles();
-//
-//		/* Basic Solution */
-//		// Analyze all the projects of the benchmark repository
-//		double progress = 0;
-//		prog.setProgress(progress);
-//		progInd.setProgress(progress);
-//
-//		//For each project in the benchmark repo do...
-//		for(File project : projects){
-//
-//			//Call the single project analyzers sequentially
-//			if(project.isDirectory()){
-//				pmd.analyze(project.getAbsolutePath(), resultsPath + "/" +project.getName(), properties);
-//				ckjm.analyze(project.getAbsolutePath(), resultsPath + "/" +project.getName(), properties);
-//			}
-//			progress++;
-//		}
+		System.out.println("Repository benchmark analysis finished\n");
 	}
 	
 	
