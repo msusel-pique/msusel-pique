@@ -21,7 +21,6 @@ public class BenchmarkProjects {
 	/**
 	 * The constructor method of the class.
 	 */
-	
 	public BenchmarkProjects(){
 		projects = new Vector<>();
 	}
@@ -29,11 +28,9 @@ public class BenchmarkProjects {
 	/**
 	 * Setters and getters.
      */
-	
 	public Vector<Project> getProjects() {
 		return projects;
 	}
-
 	public void setProjects(Vector<Project> projects) {
 		this.projects = projects;
 	}

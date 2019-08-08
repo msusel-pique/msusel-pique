@@ -47,8 +47,10 @@ public final class FileUtility {
         });
 
         if (assemblyPaths.isEmpty()) {
-            throw new IllegalStateException("No assemblies with extension(s) " + Arrays.toString(extensions)
-                + " were found for scanning. Has the project been compiled?");
+            // TODO: output warning using logger class
+            System.out.println("[Warning] No assemblies with extension(s) " + Arrays.toString(extensions) +
+                    " in directory\n\t" + rootDirectory.toString() +
+                    "\n\twere found for scanning. Has the project been compiled?");
         }
 
         return assemblyPaths;

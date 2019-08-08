@@ -17,9 +17,7 @@ import qatch.model.Metrics;
 /**
  * This class represents a project under evaluation.
  * 
- * Basically, it contains all the data (metrics,
- * violations, properties etc.) that belong to a certain 
- * project.
+ * Basically, it contains all the data (metrics, violations, properties etc.) that belong to a certain project.
  *
  * @author Miltos
  *

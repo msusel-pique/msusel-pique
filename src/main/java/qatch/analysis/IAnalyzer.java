@@ -29,15 +29,4 @@ public interface IAnalyzer {
 	 */
 	// TODO: return an AnalysisResults data object instead of relying on the tool's generated hard drive file
 	void analyze(Path src, Path dest, PropertySet properties);
-
-	/**
-	 * Very hacky way of dealing with 2 related analysis tools that need their src patch to be in
-	 * different directories. This should be refactored when time
-	 *
-	 * @param src
-	 * 		The original directory intended to run analysis on
-	 * @return
-	 * 		The modified directory (relative to src) to point to
-	 */
-	Path targetSrcDirectory(Path src);
 }

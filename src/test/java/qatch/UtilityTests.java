@@ -40,11 +40,6 @@ public class UtilityTests {
         Assert.assertFalse(f1.contains(file2.toPath()));
         Assert.assertFalse(f1.contains(file3.toPath()));
         Assert.assertFalse(f3.contains(file1.toPath()));
-
-        boolean isEmpty = false;
-        try { Set<Path> noFoundExt = FileUtility.findAssemblies(new File("./src"), FilenameUtils.getBaseName(file1.getName()), ".falseExt1", "falseExt2"); }
-        catch (IllegalStateException e) { isEmpty = true; }
-        finally { Assert.assertTrue(isEmpty); }
     }
 
     @Test
