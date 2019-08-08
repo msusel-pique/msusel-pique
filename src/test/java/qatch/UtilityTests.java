@@ -117,21 +117,13 @@ public class UtilityTests {
         Set<Path> ext1Paths = FileUtility.multiProjectCollector(testDir.toPath(), ".ext1");
         Set<Path> ext2Paths = FileUtility.multiProjectCollector(testDir.toPath(), ".ext2");
 
-        Assert.assertTrue(ext1Paths.contains(f11_10.toPath().toAbsolutePath()));
-        Assert.assertTrue(ext1Paths.contains(f12_10.toPath().toAbsolutePath()));
-        Assert.assertTrue(ext1Paths.contains(f12_11.toPath().toAbsolutePath()));
+        Assert.assertTrue(ext1Paths.contains(f11_10.toPath().getParent().toAbsolutePath()));
+        Assert.assertTrue(ext1Paths.contains(f12_10.toPath().getParent().toAbsolutePath()));
+        Assert.assertTrue(ext1Paths.contains(f12_11.toPath().getParent().toAbsolutePath()));
 
-        Assert.assertTrue(ext2Paths.contains(f11_20.toPath().toAbsolutePath()));
-        Assert.assertTrue(ext2Paths.contains(f21_20.toPath().toAbsolutePath()));
-        Assert.assertTrue(ext2Paths.contains(f21_21.toPath().toAbsolutePath()));
-
-        Assert.assertFalse(ext1Paths.contains(f11_20.toPath().toAbsolutePath()));
-        Assert.assertFalse(ext1Paths.contains(f21_20.toPath().toAbsolutePath()));
-        Assert.assertFalse(ext1Paths.contains(f21_21.toPath().toAbsolutePath()));
-
-        Assert.assertFalse(ext2Paths.contains(f11_10.toPath().toAbsolutePath()));
-        Assert.assertFalse(ext2Paths.contains(f12_10.toPath().toAbsolutePath()));
-        Assert.assertFalse(ext2Paths.contains(f12_11.toPath().toAbsolutePath()));
+        Assert.assertTrue(ext2Paths.contains(f11_20.toPath().getParent().toAbsolutePath()));
+        Assert.assertTrue(ext2Paths.contains(f21_20.toPath().getParent().toAbsolutePath()));
+        Assert.assertTrue(ext2Paths.contains(f21_21.toPath().getParent().toAbsolutePath()));
     }
 
     private void clean(File dest) throws IOException {

@@ -97,7 +97,7 @@ public final class FileUtility {
         Set<Path> projectPaths = new HashSet<>();
         try {
             Files.find(root, Integer.MAX_VALUE, (path, attr) -> path.toString().toLowerCase().endsWith(flagSuffix.toLowerCase()))
-                    .forEach(p -> projectPaths.add(p.toAbsolutePath()));
+                    .forEach(p -> projectPaths.add(p.getParent().toAbsolutePath()));
         } catch (IOException e) {
             e.printStackTrace();
         }
