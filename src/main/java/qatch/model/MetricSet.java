@@ -3,8 +3,8 @@ package qatch.model;
 import java.util.Iterator;
 import java.util.Vector;
 /**
- * This class represents a set of metrics found in a result.xml
- * file of CKJM.
+ * This class represents a set of metrics found from the results
+ * of a IAnalyzer metrics analysis run.
  * 
  * Typically, it is a Vector of Metrics objects. Each object is
  * a bundle of metrics for a specific class of the project.
@@ -15,11 +15,8 @@ import java.util.Vector;
  * @author Miltos
  *
  */
+// TODO: make this class generic (language agnostic)
 public class MetricSet {
-	/*
-	 * There is no need of setting a Name. It is a collection of
-	 * all the metrics available  for each class of a project.
-	 */
 
 	private Vector<Metrics> metricSet;
 
@@ -27,7 +24,6 @@ public class MetricSet {
 	public MetricSet(){
 		metricSet = new Vector<>();
 	}
-
 
 	//Setters and Getters
 	public Vector<Metrics> getMetricSet() {
@@ -41,51 +37,39 @@ public class MetricSet {
 	public void addMetrics(Metrics metrics){
 		metricSet.add(metrics);
 	}
-
 	public void addMetrics(int index, Metrics metrics){
 		metricSet.add(index, metrics);
 	}
-
 	public void clearMetrics(){
 		metricSet.clear();
 	}
-
 	public boolean containsMetrics(Metrics metrics){
 		return metricSet.contains(metrics);
 	}
-
 	public Metrics get(int index){
 		return metricSet.get(index);
 	}
-
 	public boolean isEmpty(){
 		return metricSet.isEmpty();
 	}
-
 	public Iterator<Metrics> iterator(){
 		return metricSet.iterator();
 	}
-
 	public int indexOfMetrics(Metrics metrics){
 		return metricSet.indexOf(metrics);
 	}
-
 	public void removeMetrics(int index){
 		metricSet.remove(index);
 	}
-
 	public void removeMetrics(Metrics metrics){
 		metricSet.remove(metrics);
 	}
-
 	public int size(){
 		return metricSet.size();
 	}
-
 	public Metrics[] toArray(){
 		return (Metrics[]) metricSet.toArray();
 	}
-
 	public String toString(){
 		return metricSet.toString();
 	}

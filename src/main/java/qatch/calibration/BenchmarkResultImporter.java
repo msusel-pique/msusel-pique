@@ -1,13 +1,18 @@
 package qatch.calibration;
 
+import org.xml.sax.SAXException;
 import qatch.MoveToRunnableProject.CKJMResultsImporter;
 import qatch.MoveToRunnableProject.PMDResultsImporter;
 import qatch.analysis.IFindingsResultsImporter;
 import qatch.analysis.IMetricsResultsImporter;
 import qatch.evaluation.Project;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /** 
  * This class is responsible for importing all the results that the
@@ -31,48 +36,44 @@ public class BenchmarkResultImporter {
 										   IMetricsResultsImporter metricsImp,
 										   IFindingsResultsImporter findingsImp) {
 
-		Path benchmarkResults = analyzer.getBENCH_RESULTS_PATH();
-		Path metricsResults = analyzer.getBENCH_METRICS_RESULTS();
-		Path findingsResults = analyzer.getBENCH_FINDINGS_RESULTS();
-
 		//Create an empty BenchmarkProject object
 		BenchmarkProjects projects = new BenchmarkProjects();
-		
-		//Create a file that represents the results directory 
-		System.out.println("Analysis Path : " + benchmarkResults.toString());
-		File resultsDir = benchmarkResults.toFile();
-		
-		//Get a list of the folders that are places inside the result directory
-		File[] projectDirs = resultsDir.listFiles();
 
+		//Import the results
+		try {
+			Files.list(analyzer.getBENCH_RESULTS_PATH())
+					// for each analyzed project...
+					.forEach(p -> {
+						Project project = new Project(p.getFileName().toString());
+						project.setPath(p.toAbsolutePath().toString());
+						// parse and set metrics and issues found by the tools
+						Path metricsFolder = Paths.get(p.toString(), "metrics");
+						Path findingsFolder = Paths.get(p.toString(), "findings");
 
+						try {
+							Files.list(metricsFolder)
+									.filter(Files::isRegularFile)
+									.forEach(f -> {
+										try { project.setMetrics(metricsImp.parse(f)); }
+										catch (IOException e) {	e.printStackTrace(); }
+									});
+						} catch (IOException e) {e.printStackTrace(); }
 
-//		//Import the results
-//		//For each folder found in the results folder do...
-//		for(File projectDir : projectDirs){
-//
-//			//Create a new Project object and set its parent folder path
-//			Project project = new Project(projectDir.getName());
-//			project.setPath(projectDir.getAbsolutePath());
-//
-//			//For each result file placed in the current folder do...
-//			File[] results = projectDir.listFiles();
-//
-//			for(File resultFile : results){
-//				//Check if it is a ckjm result file
-//				if(!resultFile.getName().contains("ckjm")){
-//					//Import the issues found in this file and add them to the Project's IssueSet vector
-//					project.addIssueSet(pmdImporter.parseIssues(resultFile.getAbsolutePath()));
-//				}else{
-//					//Import the metrics found in the ckjm result file and store them in the Project's metrics field
-//					project.setMetrics(ckjmImporter.parseMetrics(resultFile.getAbsolutePath()));
-//				}
-//			}
-//			//Add the project to the BenchmarkProjects object that will be returned
-//			projects.addProject(project);
-//		}
+						try {
+							Files.list(findingsFolder)
+									.filter(Files::isRegularFile)
+									.forEach(f -> {
+										try { project.addIssueSet(findingsImp.parse(f)); }
+										catch (IOException | ParserConfigurationException | SAXException e) {
+											e.printStackTrace();
+										}
+									});
+						} catch (IOException e) { e.printStackTrace(); }
 
-		//Return the projects
+						projects.addProject(project);
+					});
+		} catch (IOException e) { e.printStackTrace(); }
+
 		return projects;
 	}
 }
