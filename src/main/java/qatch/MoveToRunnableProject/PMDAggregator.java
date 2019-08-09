@@ -10,7 +10,7 @@ public class PMDAggregator {
 
     //The weights representing the relative importance of each PMD rule category
     //TODO: Define the values of the weights
-    public static final int[] WEIGHT = {1, 1, 1, 1, 1};
+    private static final int[] WEIGHT = {1, 1, 1, 1, 1};
 
     /**
      * This method is responsible for the aggregation of the

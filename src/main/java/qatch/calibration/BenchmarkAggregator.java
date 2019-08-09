@@ -20,8 +20,8 @@ import java.util.Iterator;
  * Typically, it iterates through the list of projects and for 
  * each project it calls the aggregate() method of the single 
  * project aggregators:
- *    - CKJMAggregator 
- *    - PMDAggregator
+ * 	  - IMetricsAggregator
+ *    - IFindingsAggregator
  * which are responsible for the "aggregation" of a single project.
  *
  */
@@ -38,7 +38,8 @@ public class BenchmarkAggregator {
 	 *  
 	 */
 	
-	public BenchmarkProjects aggregateProjects(BenchmarkProjects projects, PropertySet properties) throws CloneNotSupportedException{
+	public BenchmarkProjects aggregateProjects(BenchmarkProjects projects,
+											   PropertySet properties) throws CloneNotSupportedException{
 		
 		//Clone the properties of the Quality Model on each project
 		cloneProperties(projects, properties);

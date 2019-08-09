@@ -40,6 +40,7 @@ public class BenchmarkResultImporter {
 		BenchmarkProjects projects = new BenchmarkProjects();
 
 		//Import the results
+		// TODO: refactor this disturbing hellscape into private method calls
 		try {
 			Files.list(analyzer.getBENCH_RESULTS_PATH())
 					// for each analyzed project...

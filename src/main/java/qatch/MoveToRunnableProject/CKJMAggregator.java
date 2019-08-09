@@ -26,8 +26,7 @@ public class CKJMAggregator {
     public void aggregate(Project project) {
 
         //Get the MetricSet of the project
-        MetricSet metricSet = new MetricSet();
-        metricSet = project.getMetrics();
+        MetricSet metricSet = project.getMetrics();
 
         //Initialize the appropriate counters
         int totalLoc = 0;
