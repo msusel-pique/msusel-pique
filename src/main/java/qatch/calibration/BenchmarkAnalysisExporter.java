@@ -44,8 +44,8 @@ public class BenchmarkAnalysisExporter {
 
 	
 	//If you want to include a column with the project Name to the xls file just set the values to 1 and true respectively
-	public static final int START = 0;
-	public static boolean INCLUDE_NAME = false;
+	private static final int START = 1;
+	private static boolean INCLUDE_NAME = true;
 	
 	/**
 	 * A method for exporting the normValue fields of each Project's Property objects
@@ -62,8 +62,7 @@ public class BenchmarkAnalysisExporter {
 	 *    - The order of the columns is equivalent to the order of the Properties of
 	 *      the total PropertySet containing the model's properties.
 	 */
-	//TODO: Change the name to : exportToXLS()
-	public void exportToCsv(BenchmarkProjects projects){
+	public void exportToXls(BenchmarkProjects projects){
 		
 		//Set the path where the csv file will be stored and the name of the csv file
 		String filename = RInvoker.R_WORK_DIR +  "/properties.xls";
