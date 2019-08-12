@@ -21,7 +21,6 @@ public class Tqi {
 	public Tqi(){
 		this.weights = new Vector();
 	}
-	
 	public Tqi(Vector<Double> weights){
 		this.weights = weights;
 	}
