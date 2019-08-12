@@ -9,16 +9,15 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
+
 public class PropertiesAndCharacteristicsLoader {
 
-private String xmlPath;				//The exact path where the XML file that contains the QM description is placed
-	
-	
+	private String xmlPath;				//The exact path where the XML file that contains the QM description is placed
+
 	//Constructors
 	public PropertiesAndCharacteristicsLoader(){
 		this.xmlPath = "";
 	}
-	
 	public PropertiesAndCharacteristicsLoader(String xmlPath){
 		this.xmlPath = xmlPath;
 	}
@@ -27,7 +26,6 @@ private String xmlPath;				//The exact path where the XML file that contains the
 	public String getXmlPath() {
 		return xmlPath;
 	}
-
 	public void setXmlPath(String xmlPath) {
 		this.xmlPath = xmlPath;
 	}
@@ -52,6 +50,7 @@ private String xmlPath;				//The exact path where the XML file that contains the
 	 *           of the desired quality model.
 	 */
 	public QualityModel importQualityModel(){
+
 		//Create an empty QualityModel Object
 		QualityModel qualityModel = new QualityModel();
 		
@@ -74,12 +73,10 @@ private String xmlPath;				//The exact path where the XML file that contains the
 			qualityModel.setProperties(loadPropertiesNode(children.get(1)));
 			
 			
-			} catch (JDOMException e) {
-				System.out.println(e.getMessage());
-			} catch (IOException e) {
+			} catch (JDOMException | IOException e) {
 				System.out.println(e.getMessage());
 			}
-		
+
 		//Return the imported Quality Model
 		return qualityModel;
 	}

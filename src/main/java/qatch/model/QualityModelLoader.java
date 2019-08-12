@@ -11,7 +11,7 @@ import org.jdom.input.SAXBuilder;
 
 /**
  * This class is responsible for loading the Quality Model from 
- * the appropriate XML file.
+ * the appropriate quality model description XML file.
  * 
  * @author Miltos
  *
@@ -22,13 +22,11 @@ import org.jdom.input.SAXBuilder;
 public class QualityModelLoader {
 	
 	private String xmlPath;				//The exact path where the XML file that contains the QM description is placed
-	
-	
+
 	//Constructors
 	public QualityModelLoader(){
 		this.xmlPath = "";
 	}
-	
 	public QualityModelLoader(String xmlPath){
 		this.xmlPath = xmlPath;
 	}
@@ -37,7 +35,6 @@ public class QualityModelLoader {
 	public String getXmlPath() {
 		return xmlPath;
 	}
-
 	public void setXmlPath(String xmlPath) {
 		this.xmlPath = xmlPath;
 	}
@@ -78,16 +75,6 @@ public class QualityModelLoader {
 			//Set the name of the QualityModel object
 			qualityModel.setName(root.getAttributeValue("name"));
 			
-			//TODO:Remove this prints
-			// System.out.println("* Quality Model Name    : " +  root.getAttributeValue("name"));
-			// System.out.println("* Number of child nodes : " + children.size());
-			
-			// int i = 0;
-			// for(Element e : children){
-			// 	System.out.println("* Element : " + (i+1) + " name : " + e.getName() );
-			// 	i++;
-			// }
-			
 			//Parse <tqi> node
 			qualityModel.setTqi(loadTqiNode(children.get(0)));
 			
@@ -98,12 +85,10 @@ public class QualityModelLoader {
 			qualityModel.setProperties(loadPropertiesNode(children.get(2)));
 			
 			
-			} catch (JDOMException e) {
-				System.out.println(e.getMessage());
-			} catch (IOException e) {
+			} catch (JDOMException | IOException e) {
 				System.out.println(e.getMessage());
 			}
-		
+
 		//Return the imported Quality Model
 		return qualityModel;
 	}

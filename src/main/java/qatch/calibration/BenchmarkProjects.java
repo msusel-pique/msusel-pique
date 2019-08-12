@@ -21,7 +21,6 @@ public class BenchmarkProjects {
 	/**
 	 * The constructor method of the class.
 	 */
-	
 	public BenchmarkProjects(){
 		projects = new Vector<>();
 	}
@@ -29,11 +28,9 @@ public class BenchmarkProjects {
 	/**
 	 * Setters and getters.
      */
-	
 	public Vector<Project> getProjects() {
 		return projects;
 	}
-
 	public void setProjects(Vector<Project> projects) {
 		this.projects = projects;
 	}
@@ -45,7 +42,6 @@ public class BenchmarkProjects {
 	public void addProject(Project project){
 		this.projects.add(project);
 	}
-	
 	/**
 	 * Returns the Project object placed in the index position
 	 * of project vector.
@@ -53,14 +49,12 @@ public class BenchmarkProjects {
 	public Project getProject(int index){
 		return projects.get(index);
 	}
-	
 	/**
 	 * Clears the vector that contains the Projects of the Benchmark.
 	 */
 	public void clearProjects(){
 		projects.clear();
 	}
-	
 	/**
 	 * Searches for an project and returns the index of
 	 * the first occurrence.
@@ -68,7 +62,6 @@ public class BenchmarkProjects {
 	public boolean containsProject(Project project){
 		return projects.contains(project);	
 	}
-	
 	/**
 	 * Checks if the project vector is empty.
 	 */

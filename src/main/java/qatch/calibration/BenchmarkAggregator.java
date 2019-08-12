@@ -2,6 +2,8 @@ package qatch.calibration;
 
 import qatch.MoveToRunnableProject.CKJMAggregator;
 import qatch.MoveToRunnableProject.PMDAggregator;
+import qatch.analysis.IFindingsAggregator;
+import qatch.analysis.IMetricsAggregator;
 import qatch.evaluation.Project;
 import qatch.model.Property;
 import qatch.model.PropertySet;
@@ -20,8 +22,8 @@ import java.util.Iterator;
  * Typically, it iterates through the list of projects and for 
  * each project it calls the aggregate() method of the single 
  * project aggregators:
- *    - CKJMAggregator 
- *    - PMDAggregator
+ * 	  - IMetricsAggregator
+ *    - IFindingsAggregator
  * which are responsible for the "aggregation" of a single project.
  *
  */
@@ -38,25 +40,20 @@ public class BenchmarkAggregator {
 	 *  
 	 */
 	
-	public BenchmarkProjects aggregateProjects(BenchmarkProjects projects, PropertySet properties) throws CloneNotSupportedException{
+	public BenchmarkProjects aggregateProjects(BenchmarkProjects projects,
+											   PropertySet properties,
+											   IMetricsAggregator metricsAgg,
+											   IFindingsAggregator findingsAgg) throws CloneNotSupportedException{
 		
 		//Clone the properties of the Quality Model on each project
 		cloneProperties(projects, properties);
 		
-		//Create an empty PMDAggregator and CKJMAggregator
-		PMDAggregator pmd = new PMDAggregator();
-		CKJMAggregator ckjm = new CKJMAggregator();
-		
 		//Aggregate all the projects
-		double progress = 0;
-		for(int i = 0; i < projects.size(); i++){
-			System.out.print("* Progress : " + (int) (progress/projects.size() * 100) + " %\r");
-			pmd.aggregate(projects.getProject(i));
-			ckjm.aggregate(projects.getProject(i));
-			progress++;
-		}
-		System.out.print("* Progress : " + (int) (progress/projects.size() * 100) + " %\r");
-		
+		projects.getProjects().forEach(p -> {
+			metricsAgg.aggregate(p);
+			findingsAgg.aggregate(p);
+		});
+
 		//Normalize all the values
 		normalizeProperties(projects);
 		
@@ -69,7 +66,7 @@ public class BenchmarkAggregator {
 	 * all the properties of the Quality Model, into the PropertySet of 
 	 * each project of the BenchmarkProject object. (deep cloning is used)
 	 */
-	public void cloneProperties(BenchmarkProjects projects, PropertySet properties) throws CloneNotSupportedException{
+	private void cloneProperties(BenchmarkProjects projects, PropertySet properties) throws CloneNotSupportedException{
 		
 		//Create an iterator of the available projects
 		Iterator<Project> iterator = projects.iterator();
@@ -94,7 +91,7 @@ public class BenchmarkAggregator {
 	 * This method is responsible for calculating the normalized value (normValue) of
 	 * the properties of each project found inside a set of projects.
 	 */
-	public void normalizeProperties(BenchmarkProjects projects){
+	private void normalizeProperties(BenchmarkProjects projects){
 		
 		//Iterate through all the projects
 		Iterator<Project> iterator = projects.iterator();

@@ -3,11 +3,19 @@ package qatch.calibration;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.text.Text;
+import org.apache.commons.io.FileUtils;
 import qatch.MoveToRunnableProject.CKJMAnalyzer;
 import qatch.MoveToRunnableProject.PMDAnalyzer;
+import qatch.analysis.IAnalyzer;
 import qatch.model.PropertySet;
+import qatch.utility.FileUtility;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Set;
+
 /**
  * This class is responsible for analyzing all the projects that are stored in the
  * desired folder (e.g. Benchmark Repository) against:
@@ -28,154 +36,60 @@ import java.io.File;
 public class BenchmarkAnalyzer {
 	
 	// Useful static fields
-	public static String BASE_DIR = new File(System.getProperty("user.dir")).getAbsolutePath();
-	public static String BENCH_RESULT_PATH = new File(BASE_DIR + "/Results/Analysis/BenchmarkResults").getAbsolutePath();
-	public static String WORKSPACE_RESULT_PATH = new File(BASE_DIR + "/Results/Analysis/WorkspaceResults").getAbsolutePath();
-	public static String SINGLE_PROJ_RESULT_PATH = new File(BASE_DIR + "/Results/Analysis/SingleProjectResults").getAbsolutePath();
+	private final Path BASE_DIR = new File(System.getProperty("user.dir")).toPath();
+	private Path RESULTS_PATH;
+	private Path BENCH_RESULTS_PATH;
+	private Path WORKSPACE_RESULTS_PATH;
+	private Path SINGLE_PROJ_RESULTS_PATH;
+	private Path BENCH_REPO_PATH;
+	private PropertySet PROPERTY_SET;
 
-	private String benchRepoPath;
-	private PropertySet properties;
-	private static String resultsPath = BENCH_RESULT_PATH;
-
-	// Easy fix for gui
-	// TODO : Find another way
-	private ProgressBar prog;
-	private ProgressIndicator progInd;
-
-
-	/**
-	 * This method sets the ProgressBar and ProgressIndicator objects that belong
-	 * to the GUI's main console so that they can be updated by this class.
-     */
-	public void setGUIObjects(ProgressBar prog, ProgressIndicator progInd){
-		this.prog = prog;
-		this.progInd = progInd;
+	public BenchmarkAnalyzer(PropertySet properties, Path benchRepoPath, Path resultsPath){
+		this.PROPERTY_SET = properties;
+		this.BENCH_REPO_PATH = benchRepoPath;
+		this.RESULTS_PATH = resultsPath;
+		this.BENCH_RESULTS_PATH = Paths.get(this.RESULTS_PATH.toString(), "benchmark_results");
+		this.WORKSPACE_RESULTS_PATH = Paths.get(this.RESULTS_PATH.toString(), "workspace_results");
+		this.SINGLE_PROJ_RESULTS_PATH = Paths.get(this.RESULTS_PATH.toString(), "singleproject_results");
+		this.RESULTS_PATH.toFile().mkdirs();
+		this.BENCH_RESULTS_PATH.toFile().mkdirs();
+		this.WORKSPACE_RESULTS_PATH.toFile().mkdirs();
+		this.SINGLE_PROJ_RESULTS_PATH.toFile().mkdirs();
 	}
-
-	/**
-	 * The basic constructors of the class.
-	 */
-	public BenchmarkAnalyzer(){
-		this.benchRepoPath = null;
-		this.properties = null;
-	}
-
-	/**
-	 * The second constructor of the class.
-     */
-	public BenchmarkAnalyzer(String benchRepoPath){
-		this.benchRepoPath = benchRepoPath;
-	}
-
-	/**
-	 * The third constructor of the class.
-     */
-	public BenchmarkAnalyzer(String benchRepoPath, PropertySet properties){
-		this.benchRepoPath = benchRepoPath;
-		this.properties = properties;
-	}
-	
 	
 	/**
 	 * Setters and Getters.
 	 */
+	public Path getBASE_DIR() { return BASE_DIR; }
+	public Path getRESULTS_PATH() { return RESULTS_PATH; }
+	public Path getBENCH_RESULTS_PATH() { return BENCH_RESULTS_PATH; }
+	public Path getWORKSPACE_RESULTS_PATH() { return WORKSPACE_RESULTS_PATH; }
+	public Path getSINGLE_PROJ_RESULTS_PATH() { return SINGLE_PROJ_RESULTS_PATH; }
+	public Path getBenchRepoPath() { return BENCH_REPO_PATH; }
+	public PropertySet getProperties() { return PROPERTY_SET; }
 
-	public String getBenchRepoPath() {
-		return benchRepoPath;
-	}
-	
-	public void setBenchRepoPath(String benchRepoPath) {
-		this.benchRepoPath = benchRepoPath;
-	}
 
-	public PropertySet getProperties() {
-		return properties;
-	}
-
-	public void setProperties(PropertySet properties) {
-		this.properties = properties;
-	}
-
-	public String getResultsPath() {
-		return resultsPath;
-	}
-
-	public void setResultsPath(String resultsPath) {
-		this.resultsPath = resultsPath;
-	}
-
-	
 	/**
 	 * This method is responsible for analyzing the desired benchmark
 	 * repository according to the user defined properties.
-	 * 
-	 * Its algorithm is pretty straightforward if you read the comments.
 	 */
-	public void analyzeBenchmarkRepo(){
-		
-		//Instantiate the available single project analyzers of the system
-		PMDAnalyzer pmd = new PMDAnalyzer();
-		CKJMAnalyzer ckjm = new CKJMAnalyzer();
-		
-		//List the projects of the repository
-		File baseDir = new File(benchRepoPath);
-		File[] projects = baseDir.listFiles();
+	public void analyzeBenchmarkRepo(IAnalyzer metricsAnalyzer, IAnalyzer findingsAnalyzer, String projectRootFlag) {
 
-		/* Basic Solution */
-		// Analyze all the projects of the benchmark repository
-		double progress = 0;
-		prog.setProgress(progress);
-		progInd.setProgress(progress);
+		System.out.println("* Beginning repository benchmark analysis");
 
-		//For each project in the benchmark repo do...
-		for(File project : projects){
-			//Print the progress to the console
-			prog.setProgress((progress/projects.length));
-			progInd.setProgress((progress/projects.length));
+		Set<Path> projectRoots = FileUtility.multiProjectCollector(this.BENCH_REPO_PATH, projectRootFlag);
+		projectRoots.forEach(p -> {
+			File projFolder = new File(BENCH_RESULTS_PATH.toFile(), p.getFileName().toString());
+			File findings = new File(projFolder, "findings");
+			File metrics = new File(projFolder, "metrics");
+			findings.mkdirs();
+			metrics.mkdirs();
 
-			//System.out.print("* Progress : " + Math.ceil(()*) + " %\r" );
-			//Call the single project analyzers sequentially
-			if(project.isDirectory()){
-				pmd.analyze(project.getAbsolutePath(), resultsPath + "/" +project.getName(), properties);
-				ckjm.analyze(project.getAbsolutePath(), resultsPath + "/" +project.getName(), properties);
-			}
-			progress++;	
-		}
+			metricsAnalyzer.analyze(p, metrics.toPath(), PROPERTY_SET);
+			findingsAnalyzer.analyze(p, findings.toPath(), PROPERTY_SET);
+			System.out.println(p.getFileName().toString() + " analyzed");
+		});
 
-		//Print the progress to the console
-		prog.setProgress((progress/projects.length));
-		progInd.setProgress((progress/projects.length));
-
-		
-		System.out.println();
-
-		//TODO: REMOVE!!!!
-		progInd.setRotate(0);
-		Text text = (Text) progInd.lookup(".percentage");
-		text.getStyleClass().add("percentage-null");
-		progInd.setLayoutY(progInd.getLayoutY()+8);
-		progInd.setLayoutX(progInd.getLayoutX()-7);
-	}
-	
-	
-	/**
-	 * This method prints the structure of the benchmark directory to
-	 * the console. 
-	 * 
-	 * It should be used for debugging purposes only.
-	 */
-	public void printBenchmarkRepoContents(){
-		//List all the directories included inside the repository
-		File baseDir = new File(benchRepoPath);
-		System.out.println("Benchmark repository : " + baseDir.getAbsolutePath());
-		File[] projects = baseDir.listFiles();
-		for(int i = 0; i < projects.length; i++){
-			if(projects[i].isDirectory()){
-				System.out.println("Directory : " + projects[i].getName());
-			}else{
-				System.out.println("File : " + projects[i].getName());
-			}
-		}
-		System.out.println("");
+		System.out.println("* Repository benchmark analysis finished");
 	}
 }

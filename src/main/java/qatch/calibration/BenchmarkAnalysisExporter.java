@@ -44,8 +44,8 @@ public class BenchmarkAnalysisExporter {
 
 	
 	//If you want to include a column with the project Name to the xls file just set the values to 1 and true respectively
-	public static final int START = 0;
-	public static boolean INCLUDE_NAME = false;
+	private static final int START = 0;
+	private static boolean INCLUDE_NAME = false;
 	
 	/**
 	 * A method for exporting the normValue fields of each Project's Property objects
@@ -62,15 +62,14 @@ public class BenchmarkAnalysisExporter {
 	 *    - The order of the columns is equivalent to the order of the Properties of
 	 *      the total PropertySet containing the model's properties.
 	 */
-	//TODO: Change the name to : exportToXLS()
-	public void exportToCsv(BenchmarkProjects projects){
+	public void exportToXls(BenchmarkProjects projects){
 		
 		//Set the path where the csv file will be stored and the name of the csv file
 		String filename = RInvoker.R_WORK_DIR +  "/properties.xls";
 		
 		//Create the folder
 		File dir = new File(RInvoker.R_WORK_DIR);
-		dir.mkdir();
+		dir.mkdirs();
 		
 		//Create an empty workbook
 		HSSFWorkbook workbook = new HSSFWorkbook();
@@ -84,10 +83,8 @@ public class BenchmarkAnalysisExporter {
 		
 		//Create the header of the xls file
 		for(int i = START; i < projects.getProject(0).getProperties().size(); i++){
-			
 			//Get the i-th property
 			Property p = projects.getProject(0).getProperties().get(i);
-			
 			//Set the name of the i-th column to the name of this Property
 			rowhead.createCell(i).setCellValue(p.getName());
 		}
@@ -100,32 +97,21 @@ public class BenchmarkAnalysisExporter {
 			
 			//Get the current project
 			Project project = iterator.next();
-			
 			//Create a new row in the csv file 
 			index++;
 			HSSFRow row = sheet.createRow((short) index);
-			
-			
 			//Check if the names of the projects should be included in the XLS file (user defined)
 			if(INCLUDE_NAME){
 				row.createCell(0).setCellValue(project.getName());
 			}
-			
 			//Iterate thorough all the properties of the project and store their values into the csv
 			for(int i = START; i < project.getProperties().size(); i++){
-				
 				//Get the current property
 				Property p = project.getProperties().get(i);
-				
 				//Receive the normalized value of this property
 				double normValue = p.getMeasure().getNormValue();
-
-				//TODO: Remove the following command
-				if(p.getName().equalsIgnoreCase("Volume")) normValue = p.getMeasure().getNormalizer();
-				
 				//Store it in the appropriate column of the csv file
 				row.createCell(i).setCellValue(normValue);
-				
 			}
 		}
 		

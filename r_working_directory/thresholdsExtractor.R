@@ -6,20 +6,14 @@
 #
 #*******************************************************************
 
-
-
 # Set the working directory to the appropriate path
-
 args <- commandArgs(trailingOnly = TRUE)
-
-
 Dir <- args[1]
-
 setwd(Dir)
 
-
 # Load the appropriate libraries
-library("xlsx")
+library(xlsx)
+library(jsonlite)
 
 # Read the data frame
 df <- read.xlsx("properties.xls", sheetIndex = 1, header = TRUE)
@@ -53,7 +47,6 @@ for(i in 1:ncol(df)){
   }else{
     t <- rbind(t, c(t1,t2,t3))
   }
-  
 }
 
 # Create the dataframe with the thresholds
@@ -62,11 +55,7 @@ colnames <- list("t1","t2","t3")
 thresholds <- data.frame(t, row.names = rownames)
 names(thresholds) <- colnames
 
-
-
-library("jsonlite")
+# Export the results in csv and json format
 json <- toJSON(thresholds)
 write(json, "threshold.json")
-
-# Export the results in csv and json format
 # write.xlsx(thresholds,"thresholds.xls")
