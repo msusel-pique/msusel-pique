@@ -45,7 +45,7 @@ public class BenchmarkAnalysisExporter {
 	
 	//If you want to include a column with the project Name to the xls file just set the values to 1 and true respectively
 	private static final int START = 0;
-	private static boolean INCLUDE_NAME = true;
+	private static boolean INCLUDE_NAME = false;
 	
 	/**
 	 * A method for exporting the normValue fields of each Project's Property objects

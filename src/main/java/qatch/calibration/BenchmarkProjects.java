@@ -21,7 +21,7 @@ public class BenchmarkProjects {
 	/**
 	 * The constructor method of the class.
 	 */
-	BenchmarkProjects(){
+	public BenchmarkProjects(){
 		projects = new Vector<>();
 	}
 
@@ -39,7 +39,7 @@ public class BenchmarkProjects {
 	/**
 	 * Adds a Project object in the project vector.
 	 */
-	void addProject(Project project){
+	public void addProject(Project project){
 		this.projects.add(project);
 	}
 	/**
