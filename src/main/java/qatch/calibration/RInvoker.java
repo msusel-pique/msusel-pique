@@ -31,7 +31,8 @@ public class RInvoker {
 	public static final String R_AHP_SCRIPT = new File(R_WORK_DIR + "/ahpWeightElicitation.R").getAbsolutePath();
 	public static final String R_FAHP_SCRIPT = new File(R_WORK_DIR + "/fahpWeightElicitator.R").getAbsolutePath();
 	public static String weightsScript = R_AHP_SCRIPT;
-	public static String R_BIN_PATH = "";
+	// TODO: Source Rscript bin in workspace-independent way
+	public static String R_BIN_PATH = "C:/Program Files/R/R-3.6.1/bin/x64/Rscript.exe";
 	
 	/**
 	 * A method for executing a certain R script...
@@ -44,7 +45,7 @@ public class RInvoker {
 				
 			}
 			
-		Runtime.getRuntime().exec(rPath + "/RScript "  + scriptPath + " " + args);
+		Runtime.getRuntime().exec(rPath + " "  + scriptPath + " " + args);
 			
 	/*		String line;
 			Process p = Runtime.getRuntime().exec(rPath + "/RScript "  + scriptPath + " " + args);

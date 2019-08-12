@@ -69,7 +69,7 @@ public class BenchmarkAnalysisExporter {
 		
 		//Create the folder
 		File dir = new File(RInvoker.R_WORK_DIR);
-		dir.mkdir();
+		dir.mkdirs();
 		
 		//Create an empty workbook
 		HSSFWorkbook workbook = new HSSFWorkbook();
