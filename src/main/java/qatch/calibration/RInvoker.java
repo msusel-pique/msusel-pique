@@ -42,22 +42,11 @@ public class RInvoker {
 			if(System.getProperty("os.name").contains("Windows")){
 				scriptPath = "\"" + scriptPath + "\"";
 				args = "\"" + args + "\"";
-				
 			}
-			
+		// TODO: add phase to maven that ensures necessary R packages are installed before run
 		Runtime.getRuntime().exec(rPath + " "  + scriptPath + " " + args);
-			
-	/*		String line;
-			Process p = Runtime.getRuntime().exec(rPath + "/RScript "  + scriptPath + " " + args);
-			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			  while ((line = input.readLine()) != null) {
-				    System.out.println(line);
-				  }
-			  input.close();
-	*/
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
 		}
+		catch (IOException e) {System.out.println(e.getMessage()); }
 	}
 	
 	/**
