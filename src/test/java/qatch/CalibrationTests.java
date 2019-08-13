@@ -106,11 +106,7 @@ public class CalibrationTests {
         URL rsURL = this.getClass().getResource("/r_working_directory/thresholdsExtractor.R");
         File rScript = new File(rsURL.toURI());
         RInvoker rInvoker = new RInvoker();
-        rInvoker.executeRScript(
-                RInvoker.R_BIN_PATH,
-                rScript.toString(),
-                TestHelper.OUTPUT.toString()
-        );
+        rInvoker.executeRScript(RInvoker.R_BIN_PATH, rScript.toString(), TestHelper.OUTPUT.toString());
 
         JsonParser parser = new JsonParser();
         JsonArray data = (JsonArray) parser.parse(new FileReader(new File(TestHelper.OUTPUT.toString() + "/threshold.json")));
@@ -140,4 +136,19 @@ public class CalibrationTests {
         Assert.assertEquals(0.099, p3t3, 0.000001);
 
     }
+
+    @Test
+    public void testGetRScriptResource() {
+        File aph = RInvoker.getRScriptResource(RInvoker.Script.AHP);
+        File faph = RInvoker.getRScriptResource(RInvoker.Script.FAPH);
+        File threshold = RInvoker.getRScriptResource(RInvoker.Script.THRESHOLD);
+
+        Assert.assertTrue(aph.exists());
+        Assert.assertTrue(aph.isFile());
+        Assert.assertTrue(faph.exists());
+        Assert.assertTrue(faph.isFile());
+        Assert.assertTrue(threshold.exists());
+        Assert.assertTrue(threshold.isFile());
+    }
+
 }

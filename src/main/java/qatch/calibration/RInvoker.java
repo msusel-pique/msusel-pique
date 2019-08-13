@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.WatchService;
@@ -23,6 +25,8 @@ import java.nio.file.*;
  *       modify a file in the desired folder.
  */	
 public class RInvoker {
+
+	public enum Script { AHP, FAPH, THRESHOLD }
 	
 	//Fixed paths
 	public static final String BASE_DIR = System.getProperty("user.dir");
@@ -40,8 +44,8 @@ public class RInvoker {
 		ProcessBuilder pb;
 
 		if(System.getProperty("os.name").contains("Windows")){
-			String rPathTemp = "\"" + R_BIN_PATH + "\"";
-			pb = new ProcessBuilder("cmd.exe", "/c", rPathTemp + " " + scriptPath + " " + args);
+			rPath = "\"" + rPath + "\"";
+			pb = new ProcessBuilder("cmd.exe", "/c", rPath + " " + scriptPath + " " + args);
 		} else {
 			// TODO: add non-Windows functionality
 			throw new RuntimeException("Non-Windows OS functionality not yet implemented for R script execution");
@@ -143,7 +147,30 @@ public class RInvoker {
 			System.out.println(e.getMessage());
 		}
 	}
-		
+
+	public static File getRScriptResource(Script choice) {
+		URL resource;
+		switch (choice) {
+			case AHP:
+				resource = RInvoker.class.getResource("/r_working_directory/ahpWeightElicitation.R");
+				break;
+			case FAPH:
+				resource = RInvoker.class.getResource("/r_working_directory/fahpWeightElicitator.R");
+				break;
+			case THRESHOLD:
+				resource = RInvoker.class.getResource("/r_working_directory/thresholdsExtractor.R");
+				break;
+			default:
+				throw new RuntimeException("Invalid choice enum given: [" + choice.name() + "]");
+		}
+
+		File script = null;
+		try { script = new File(resource.toURI()); }
+		catch (URISyntaxException e) { e.printStackTrace(); }
+
+		return script;
+	}
+
 	/**
 	 * A method that loads the path of the RScript executable
 	 */
@@ -154,23 +181,15 @@ public class RInvoker {
 		try {
 			FileReader fw = new FileReader(new File(R_WORK_DIR + "/RScript_Path.txt").getAbsolutePath());
 			BufferedReader bw = new BufferedReader(fw);
-			
 			rPath = bw.readLine();
-			
 			bw.close();
 			fw.close();
-			
 			if(rPath.contains(" ")){
 				rPath = "\"" + rPath + "\"";
 			}
-			
-		} catch (FileNotFoundException e) {
-			System.out.println(e.getMessage());
-		} catch (IOException e){
+		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
-		
 		return rPath;
 	}
-
 }
