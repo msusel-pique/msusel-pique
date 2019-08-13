@@ -103,10 +103,12 @@ public class CalibrationTests {
         fileOut.close();
 
         // run R Executions
-        URL rsURL = this.getClass().getResource("/r_working_directory/thresholdsExtractor.R");
-        File rScript = new File(rsURL.toURI());
         RInvoker rInvoker = new RInvoker();
-        rInvoker.executeRScript(RInvoker.R_BIN_PATH, rScript.toString(), TestHelper.OUTPUT.toString());
+        rInvoker.executeRScript(
+                RInvoker.R_BIN_PATH,
+                RInvoker.getRScriptResource(RInvoker.Script.THRESHOLD).getCanonicalPath(),
+                TestHelper.OUTPUT.toString()
+        );
 
         JsonParser parser = new JsonParser();
         JsonArray data = (JsonArray) parser.parse(new FileReader(new File(TestHelper.OUTPUT.toString() + "/threshold.json")));

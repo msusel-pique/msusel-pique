@@ -151,15 +151,19 @@ public class RInvoker {
 	public static File getRScriptResource(Script choice) {
 		URL resource;
 		switch (choice) {
+
 			case AHP:
 				resource = RInvoker.class.getResource("/r_working_directory/ahpWeightElicitation.R");
 				break;
+
 			case FAPH:
 				resource = RInvoker.class.getResource("/r_working_directory/fahpWeightElicitator.R");
 				break;
+
 			case THRESHOLD:
 				resource = RInvoker.class.getResource("/r_working_directory/thresholdsExtractor.R");
 				break;
+
 			default:
 				throw new RuntimeException("Invalid choice enum given: [" + choice.name() + "]");
 		}
