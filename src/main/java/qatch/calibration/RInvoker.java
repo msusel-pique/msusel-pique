@@ -33,30 +33,33 @@ public class RInvoker {
 	public static String weightsScript = R_AHP_SCRIPT;
 	// TODO: Source Rscript bin in workspace-independent way
 	public static String R_BIN_PATH = "C:/Program Files/R/R-3.6.1/bin/x64/Rscript.exe";
-	
-	/**
-	 * A method for executing a certain R script...
-	 */
+
+
 	public void executeRScript(String rPath, String scriptPath, String args){
+
+		ProcessBuilder pb;
+
+		if(System.getProperty("os.name").contains("Windows")){
+			String rPathTemp = "\"" + R_BIN_PATH + "\"";
+			pb = new ProcessBuilder("cmd.exe", "/c", rPathTemp + " " + scriptPath + " " + args);
+		} else {
+			// TODO: add non-Windows functionality
+			throw new RuntimeException("Non-Windows OS functionality not yet implemented for R script execution");
+		}
+
+		pb.redirectErrorStream(true);
+		Process p = null;
+		// run the tool
 		try {
-			if(System.getProperty("os.name").contains("Windows")){
-				scriptPath = "\"" + scriptPath + "\"";
-				args = "\"" + args + "\"";
-				
-			}
-			
-		Runtime.getRuntime().exec(rPath + " "  + scriptPath + " " + args);
-			
-	/*		String line;
-			Process p = Runtime.getRuntime().exec(rPath + "/RScript "  + scriptPath + " " + args);
-			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			  while ((line = input.readLine()) != null) {
-				    System.out.println(line);
-				  }
-			  input.close();
-	*/
+			p = pb.start();
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+		try {
+			assert p != null;
+			p.waitFor();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -64,13 +67,7 @@ public class RInvoker {
 	 * A method for executing the R script that calculates the thresholds 
 	 * of the properties.
 	 */
-	public void executeRScriptForThresholds() throws InterruptedException{
-		
-		//TODO: Remove this prints
-		System.out.println("* R_BIN_PATH= "+ R_BIN_PATH);
-		System.out.println("* R_AHP_SCRIPT= "+ R_THRES_SCRIPT);
-		System.out.println("* DIR= "+ BASE_DIR);
-		System.out.println("* ");
+	public void executeRScriptForThresholds(String rPath, String scriptPath, String args) throws InterruptedException{
 		
 		//Invoke the appropriate R script for threshold extraction - Use the fixed paths
 		executeRScript(RInvoker.R_BIN_PATH, RInvoker.R_THRES_SCRIPT, R_WORK_DIR);
@@ -98,10 +95,8 @@ public class RInvoker {
 					System.out.println("* Modified: " + event.context().toString());
 				}
 			}
-
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
 		}
+		catch (IOException e) { System.out.println(e.getMessage()); }
 	}
 	
 	/**

@@ -1,7 +1,6 @@
 package qatch;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -14,6 +13,8 @@ import qatch.calibration.RInvoker;
 import qatch.evaluation.Project;
 
 import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public class CalibrationTests {
 
@@ -22,15 +23,15 @@ public class CalibrationTests {
      */
     @Test
     public void testExportToXls() throws IOException {
-        Project proj1 = TestObjects.makeProject("Project 01");
+        Project proj1 = TestHelper.makeProject("Project 01");
         proj1.getProperties().get(0).getMeasure().setNormValue(0.11);
         proj1.getProperties().get(1).getMeasure().setNormValue(0.12);
 
-        Project proj2 = TestObjects.makeProject("Project 02");
+        Project proj2 = TestHelper.makeProject("Project 02");
         proj2.getProperties().get(0).getMeasure().setNormValue(0.21);
         proj2.getProperties().get(1).getMeasure().setNormValue(0.22);
 
-        Project proj3 = TestObjects.makeProject("Project 03");
+        Project proj3 = TestHelper.makeProject("Project 03");
         proj3.getProperties().get(0).getMeasure().setNormValue(0.31);
         proj3.getProperties().get(1).getMeasure().setNormValue(0.32);
 
@@ -60,12 +61,12 @@ public class CalibrationTests {
      * RInvoker
      */
     @Test
-    public void testExecuteRScriptForThresholds() throws IOException, InterruptedException {
+    public void testExecuteRScriptForThresholds() throws IOException, InterruptedException, URISyntaxException {
 
         // Mock benchmark analysis results
-        String filename = RInvoker.R_WORK_DIR + "/properties.xls";
-        File dir = new File(RInvoker.R_WORK_DIR);
-        dir.mkdirs();
+        TestHelper.OUTPUT.toFile().mkdirs();
+        String filename = TestHelper.OUTPUT + "/properties.xls";
+
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Benchmark Analysis Results");
 
@@ -95,18 +96,24 @@ public class CalibrationTests {
         row5.createCell(1).setCellValue(.059);
         row5.createCell(2).setCellValue(.099);
 
-        //Export the XLS file to the appropriate path (R's working directory)
+        //Export the XLS file to the appropriate path
         FileOutputStream fileOut = null;
         fileOut = new FileOutputStream(filename);
         workbook.write(fileOut);
         fileOut.close();
 
         // run R Executions
+        URL rsURL = this.getClass().getResource("/r_working_directory/thresholdsExtractor.R");
+        File rScript = new File(rsURL.toURI());
         RInvoker rInvoker = new RInvoker();
-        rInvoker.executeRScriptForThresholds();
+        rInvoker.executeRScript(
+                RInvoker.R_BIN_PATH,
+                rScript.toString(),
+                TestHelper.OUTPUT.toString()
+        );
 
         JsonParser parser = new JsonParser();
-        JsonArray data = (JsonArray) parser.parse(new FileReader(new File(RInvoker.R_WORK_DIR + "/threshold.json")));
+        JsonArray data = (JsonArray) parser.parse(new FileReader(new File(TestHelper.OUTPUT.toString() + "/threshold.json")));
 
         float p1t1 = data.get(0).getAsJsonObject().get("t1").getAsFloat();
         float p1t2 = data.get(0).getAsJsonObject().get("t2").getAsFloat();
