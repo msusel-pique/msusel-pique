@@ -45,9 +45,8 @@ public class FileUtility {
                 Files.find(root, Integer.MAX_VALUE, (path, attr) -> path.toString().endsWith(ex))
                         .filter(path -> path.endsWith(name + ex))
                         .forEach(assemblyPaths::add);
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+            catch (IOException e) { e.printStackTrace(); }
         });
 
         if (assemblyPaths.isEmpty()) {

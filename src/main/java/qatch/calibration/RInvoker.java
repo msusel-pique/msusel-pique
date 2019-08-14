@@ -24,12 +24,7 @@ public class RInvoker {
 	public enum Script { AHP, FAPH, THRESHOLD }
 	
 	//Fixed paths
-//	public static final Path BASE_DIR = Paths.get(System.getProperty("user.dir"));
 	public static final Path R_WORK_DIR = Paths.get(System.getProperty("user.dir"), "r_working_directory");
-//	public static final Path R_THRES_SCRIPT = Paths.get(R_WORK_DIR.toString(), "thresholdsExtractor.R");
-//	public static final Path R_AHP_SCRIPT = Paths.get(R_WORK_DIR.toString(), "ahpWeightElicitation.R");
-//	public static final Path R_FAHP_SCRIPT = Paths.get(R_WORK_DIR.toString(), "fahpWeightElicitator.R");
-//	public static final Path weightsScript = R_AHP_SCRIPT;
 	// TODO: Source Rscript bin in workspace-independent way
 	public static Path R_BIN_PATH = Paths.get("C:/Program Files/R/R-3.6.1/bin/x64/Rscript.exe");
 
@@ -38,7 +33,6 @@ public class RInvoker {
 
 		ProcessBuilder pb;
 		if(System.getProperty("os.name").contains("Windows")){
-//			rPath = "\"" + rPath + "\"";
 			pb = new ProcessBuilder(
 			        "cmd.exe",
                     "/c",
@@ -72,16 +66,16 @@ public class RInvoker {
 		
 		//Invoke the appropriate R script for threshold extraction - Use the fixed paths
 		executeRScript(rPath, scriptPath, args);
-		
+
 		//Wait for the RScript.exe to finish the analysis by polling the directory for changes
 		Path resultsPath = Paths.get(args);
-		
+
 		try {
 			//Create a directory watcher that watches for certain events
 			WatchService watcher = resultsPath.getFileSystem().newWatchService();
 			resultsPath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY );
 			WatchKey watchKey = watcher.take();
-			
+
 			//Poll the directory for certain events
 			//Wake up the thread when a directory or a file is created, modified or deleted in the desired directory
 			List<WatchEvent<?>> events = watchKey.pollEvents();

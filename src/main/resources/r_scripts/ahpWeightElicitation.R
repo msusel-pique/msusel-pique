@@ -1,6 +1,7 @@
 
 # Load the appropriate libraries
-library("xlsx")
+library(xlsx)
+library(jsonlite)
 
 # Move to the desired directory where the comparison matrices are placed
 args <- commandArgs(trailingOnly = TRUE)
@@ -85,7 +86,7 @@ for(file in files){
 names(l) <- char.names
 
 # Store the results to a json file
-library("jsonlite")
+
 json <- toJSON(l)
 
 setwd(Dir)
