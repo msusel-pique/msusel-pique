@@ -1,8 +1,11 @@
 package qatch;
 
+import org.apache.commons.io.FileUtils;
 import qatch.evaluation.Project;
 import qatch.model.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -100,5 +103,10 @@ class TestHelper {
         project.setTqi(tqi);
 
         return project;
+    }
+
+    static void clean(File dest) throws IOException {
+        if (dest.exists()) { FileUtils.cleanDirectory(dest); }
+        else dest.mkdirs();
     }
 }

@@ -68,8 +68,7 @@ public class BenchmarkAnalysisExporter {
 		String filename = RInvoker.R_WORK_DIR +  "/properties.xls";
 		
 		//Create the folder
-		File dir = new File(RInvoker.R_WORK_DIR);
-		dir.mkdirs();
+		RInvoker.R_WORK_DIR.toFile().mkdirs();
 		
 		//Create an empty workbook
 		HSSFWorkbook workbook = new HSSFWorkbook();
@@ -121,11 +120,9 @@ public class BenchmarkAnalysisExporter {
 			fileOut = new FileOutputStream(filename);
 			workbook.write(fileOut);
 			fileOut.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e){
-			System.out.println(e.getMessage());
 		}
+		catch (FileNotFoundException e) { e.printStackTrace(); }
+		catch (IOException e){ System.out.println(e.getMessage()); }
 	}
 	
 	/**

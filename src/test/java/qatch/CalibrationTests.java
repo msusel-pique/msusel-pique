@@ -15,6 +15,7 @@ import qatch.evaluation.Project;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 
 public class CalibrationTests {
 
@@ -61,7 +62,9 @@ public class CalibrationTests {
      * RInvoker
      */
     @Test
-    public void testExecuteRScriptForThresholds() throws IOException, InterruptedException, URISyntaxException {
+    public void testExecuteRScriptForThresholds() throws IOException {
+
+        TestHelper.clean(TestHelper.OUTPUT.toFile());
 
         // Mock benchmark analysis results
         TestHelper.OUTPUT.toFile().mkdirs();
@@ -106,7 +109,7 @@ public class CalibrationTests {
         RInvoker rInvoker = new RInvoker();
         rInvoker.executeRScript(
                 RInvoker.R_BIN_PATH,
-                RInvoker.getRScriptResource(RInvoker.Script.THRESHOLD).getCanonicalPath(),
+                new File(RInvoker.getRScriptResource(RInvoker.Script.THRESHOLD).getFile()).toPath(),
                 TestHelper.OUTPUT.toString()
         );
 
@@ -141,16 +144,20 @@ public class CalibrationTests {
 
     @Test
     public void testGetRScriptResource() {
-        File aph = RInvoker.getRScriptResource(RInvoker.Script.AHP);
-        File faph = RInvoker.getRScriptResource(RInvoker.Script.FAPH);
-        File threshold = RInvoker.getRScriptResource(RInvoker.Script.THRESHOLD);
+        URL ahp = RInvoker.getRScriptResource(RInvoker.Script.AHP);
+        URL faph = RInvoker.getRScriptResource(RInvoker.Script.FAPH);
+        URL threshold = RInvoker.getRScriptResource(RInvoker.Script.THRESHOLD);
 
-        Assert.assertTrue(aph.exists());
-        Assert.assertTrue(aph.isFile());
-        Assert.assertTrue(faph.exists());
-        Assert.assertTrue(faph.isFile());
-        Assert.assertTrue(threshold.exists());
-        Assert.assertTrue(threshold.isFile());
+        File ahpFile = new File(ahp.getFile());
+        File faphFile = new File(faph.getFile());
+        File tFile = new File(threshold.getFile());
+
+        Assert.assertTrue(ahpFile.exists());
+        Assert.assertTrue(ahpFile.isFile());
+        Assert.assertTrue(faphFile.exists());
+        Assert.assertTrue(faphFile.isFile());
+        Assert.assertTrue(tFile.exists());
+        Assert.assertTrue(tFile.isFile());
     }
 
 }

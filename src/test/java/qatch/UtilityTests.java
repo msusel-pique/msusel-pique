@@ -8,19 +8,19 @@ import qatch.utility.FileUtility;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
 
 public class UtilityTests {
 
-    private File testOut = new File(".src/test/output");
-
+    private File testOut = new File("./src/test/output");
 
     @Test
     public void testFindAssemblies() throws IOException {
-
-        FileUtils.forceMkdir(new File("./src/test/output"));
+        FileUtils.forceMkdir(testOut);
         File file1 = File.createTempFile("file1", ".ext1", new File("./src/test/output"));
         File file2 = File.createTempFile("file2", ".ext1", new File("./src/test/output"));
         File file3 = File.createTempFile("file3", ".ext2", new File("./src/test/output"));
@@ -44,8 +44,7 @@ public class UtilityTests {
 
     @Test
     public void testFindFileNamesFromExtension() throws IOException {
-
-        FileUtils.forceMkdir(new File("./src/test/output"));
+        FileUtils.forceMkdir(testOut);
         File file1 = File.createTempFile("file1", ".ext1", new File("./src/test/output"));
         File file2 = File.createTempFile("file2", ".ext1", new File("./src/test/output"));
         File file3 = File.createTempFile("file3", ".ext2", new File("./src/test/output"));
@@ -61,8 +60,6 @@ public class UtilityTests {
         Set<String> namesExt1 = FileUtility.findFileNamesFromExtension(Paths.get("./src"), ".ext1");
         Set<String> namesExt2 = FileUtility.findFileNamesFromExtension(Paths.get("./src"), ".ext2");
         Set<String> namesExt3 = FileUtility.findFileNamesFromExtension(Paths.get("./src"), ".ext3");
-
-        System.out.println(file1.getName());
 
         String file1Name = file1.getName();
         String file2Name = file2.getName();
@@ -83,11 +80,24 @@ public class UtilityTests {
     }
 
     @Test
-    public void testMultiProjectCollector() throws IOException {
+    public void testTempFileCopyFromJar() throws MalformedURLException {
+        URL toCopy = this.getClass().getClassLoader().getResource("file1.txt");
+        Path target = testOut.toPath();
 
+        assert toCopy != null;
+        File tempFile = FileUtility.tempFileCopyFromJar(toCopy, target);
+
+        Assert.assertTrue(tempFile.exists());
+        Assert.assertTrue(tempFile.isFile());
+        Assert.assertTrue(tempFile.getName().contains("file1"));
+        Assert.assertTrue(FilenameUtils.getExtension(tempFile.toString()).equalsIgnoreCase("txt"));
+    }
+
+    @Test
+    public void testMultiProjectCollector() throws IOException {
         FileUtils.forceMkdir(testOut);
         File testDir = new File(testOut, "TMPC");
-        clean(testDir);
+        TestHelper.clean(testDir);
 
         File testDir11 = new File(testDir, "11");
         File testDir12 = new File(testDir11, "12");
@@ -119,13 +129,6 @@ public class UtilityTests {
         Assert.assertTrue(ext2Paths.contains(f11_20.toPath().getParent().toAbsolutePath()));
         Assert.assertTrue(ext2Paths.contains(f21_20.toPath().getParent().toAbsolutePath()));
         Assert.assertTrue(ext2Paths.contains(f21_21.toPath().getParent().toAbsolutePath()));
-    }
-
-    private void clean(File dest) throws IOException {
-        if (dest.exists()) {
-            FileUtils.cleanDirectory(dest);
-        }
-        else dest.mkdirs();
     }
 
 }

@@ -2,8 +2,8 @@ package qatch.utility;
 
 import org.apache.commons.io.FilenameUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,7 +12,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class FileUtility {
+/**
+ * A collection of useful static methods for common
+ * file procedures used in Qatch operation
+ */
+public class FileUtility {
 
     /**
      * Recursively find all files under a root directory with specified extension(s) and optionally with name matching
@@ -30,7 +34,7 @@ public final class FileUtility {
     public static Set<Path> findAssemblies(File rootDirectory, String name, String... extensions) throws IllegalStateException {
 
         // bad approach for handling functional null Name string because I need to graduate soon
-        if (name.isEmpty()) { throw new RuntimeException("An an assembly name must be provided"); }
+        if (name.isEmpty()) { throw new RuntimeException("An assembly name must be provided"); }
 
         Path root = Paths.get(rootDirectory.toString());
         ArrayList<String> exts = new ArrayList<>(Arrays.asList(extensions));
@@ -93,7 +97,6 @@ public final class FileUtility {
      * @return
      *      the set of individual project root paths
      */
-
     public static Set<Path> multiProjectCollector(Path root, String flagSuffix) {
 
         Set<Path> projectPaths = new HashSet<>();
@@ -104,5 +107,44 @@ public final class FileUtility {
             e.printStackTrace();
         }
         return projectPaths;
+    }
+
+    /**
+     * Create a temporary disk copy of any file a URL can point to.
+     * This is useful for resources contained in a JAR or ZIP that cannot be utilized
+     * as a stream (such as for use by external tools).
+     *
+     * @param toCopy
+     *      The single file to make a temporary copy of. Must point to a file, not a directory
+     * @param target
+     *      The location to place the temporary file. Must be a directory
+     * @return
+     *      The temporary file
+     */
+    public static File tempFileCopyFromJar(URL toCopy, Path target) {
+
+        File file = null;
+        try {
+            InputStream input = toCopy.openStream();
+            file = File.createTempFile(
+                        FilenameUtils.getBaseName(toCopy.getPath()),
+                        "." + FilenameUtils.getExtension(toCopy.getPath()),
+                        target.toFile()
+                    );
+            OutputStream out = new FileOutputStream(file);
+            int read;
+            byte[] bytes = new byte[1024];
+            while ((read = input.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+            out.close();
+            file.deleteOnExit();
+        }
+        catch (IOException e) { e.printStackTrace(); }
+        if (file != null && !file.exists()) {
+            throw new RuntimeException("Error: File " + file + " not found!");
+        }
+
+        return file;
     }
 }
