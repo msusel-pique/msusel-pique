@@ -39,8 +39,6 @@ public class BenchmarkAnalyzer {
 	private final Path BASE_DIR = new File(System.getProperty("user.dir")).toPath();
 	private Path RESULTS_PATH;
 	private Path BENCH_RESULTS_PATH;
-	private Path WORKSPACE_RESULTS_PATH;
-	private Path SINGLE_PROJ_RESULTS_PATH;
 	private Path BENCH_REPO_PATH;
 	private PropertySet PROPERTY_SET;
 
@@ -49,12 +47,8 @@ public class BenchmarkAnalyzer {
 		this.BENCH_REPO_PATH = benchRepoPath;
 		this.RESULTS_PATH = resultsPath;
 		this.BENCH_RESULTS_PATH = Paths.get(this.RESULTS_PATH.toString(), "benchmark_results");
-		this.WORKSPACE_RESULTS_PATH = Paths.get(this.RESULTS_PATH.toString(), "workspace_results");
-		this.SINGLE_PROJ_RESULTS_PATH = Paths.get(this.RESULTS_PATH.toString(), "singleproject_results");
 		this.RESULTS_PATH.toFile().mkdirs();
 		this.BENCH_RESULTS_PATH.toFile().mkdirs();
-		this.WORKSPACE_RESULTS_PATH.toFile().mkdirs();
-		this.SINGLE_PROJ_RESULTS_PATH.toFile().mkdirs();
 	}
 	
 	/**
@@ -63,8 +57,6 @@ public class BenchmarkAnalyzer {
 	public Path getBASE_DIR() { return BASE_DIR; }
 	public Path getRESULTS_PATH() { return RESULTS_PATH; }
 	public Path getBENCH_RESULTS_PATH() { return BENCH_RESULTS_PATH; }
-	public Path getWORKSPACE_RESULTS_PATH() { return WORKSPACE_RESULTS_PATH; }
-	public Path getSINGLE_PROJ_RESULTS_PATH() { return SINGLE_PROJ_RESULTS_PATH; }
 	public Path getBenchRepoPath() { return BENCH_REPO_PATH; }
 	public PropertySet getProperties() { return PROPERTY_SET; }
 

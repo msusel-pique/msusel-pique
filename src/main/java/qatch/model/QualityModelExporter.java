@@ -1,7 +1,9 @@
 package qatch.model;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import org.jdom.Element;
 import org.jdom.output.Format;
@@ -26,10 +28,20 @@ public class QualityModelExporter {
 	/**
 	 * A method that creates the JDOM representation of the Quality Model and exports
 	 * it in XML format, recognizable by the Evaluator subsystem.
-	 * 
+	 *
+	 * @param qualityModel
+	 * 		The QualityModel object. By this state, the QM object's TQI and Characteristics should have
+	 * 		elicited weight values and the Properties should have elicited threshold values
+	 * @param xmlPath
+	 * 		The path representation of the directory to place the quality_model.xml file in.
+	 * 		The directory structure does not need to fully exist yet.
 	 */
-	public void exportQualityModelToXML(QualityModel qualityModel, String xmlPath){
-		
+	public void exportQualityModelToXML(QualityModel qualityModel, Path xmlPath){
+
+		// build directory structure if needed
+		xmlPath.toFile().mkdirs();
+		File qmOut = new File(xmlPath.toFile(), "qualityModel.xml");
+
 		//Create the individual exporters
 		PropertiesExporter prExp = new PropertiesExporter();
 		CharacteristicsExporter charExp = new CharacteristicsExporter();
@@ -59,31 +71,29 @@ public class QualityModelExporter {
 			outputter.setFormat(format);
 			
 			//Output the XML File to standard output and the desired file
-			FileWriter filew = new FileWriter(xmlPath);
+			FileWriter filew = new FileWriter(qmOut);
 			outputter.output(root, filew);
 			
-		} catch (IOException e){
-			System.out.println(e.getMessage());
 		}
+		catch (IOException e){ System.out.println(e.getMessage()); }
 	}
 
 	/**
 	 * A method that exports the Quality Model in JSON format.
 	 */
-	public void exportQualityModelToJSON(QualityModel qualityModel, String jsonPath){
-				//Create a Gson json parser
-				Gson gson = new Gson();
-				
-				//Parse your tqi into a json String representation
-				String json = gson.toJson(qualityModel);
-				
-				try{
-					FileWriter writer = new FileWriter(jsonPath);
-					writer.write(json);
-					writer.close();
-				}catch(IOException e){
-					System.out.println(e.getMessage());
-				}
+	public void exportQualityModelToJSON(QualityModel qualityModel, Path jsonPath){
+		//Create a Gson json parser
+		Gson gson = new Gson();
+
+		//Parse your tqi into a json String representation
+		String json = gson.toJson(qualityModel);
+
+		try{
+			FileWriter writer = new FileWriter(jsonPath.toFile());
+			writer.write(json);
+			writer.close();
+		}
+		catch(IOException e){ System.out.println(e.getMessage()); }
 	}
 
 }

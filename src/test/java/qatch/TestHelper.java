@@ -1,16 +1,22 @@
 package qatch;
 
+import org.apache.commons.io.FileUtils;
 import qatch.evaluation.Project;
 import qatch.model.*;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Vector;
 
 /**
- * Test utility class for creating commonly used Qatch model objects
+ * Test utility class for creating commonly used Qatch model objects and references
  */
-class TestObjects {
+class TestHelper {
+
+    static final Path OUTPUT = Paths.get("src/test/output");
 
     static Issue makeIssue(String ruleName) {
         Issue i = new Issue();
@@ -97,5 +103,10 @@ class TestObjects {
         project.setTqi(tqi);
 
         return project;
+    }
+
+    static void clean(File dest) throws IOException {
+        if (dest.exists()) { FileUtils.cleanDirectory(dest); }
+        else dest.mkdirs();
     }
 }

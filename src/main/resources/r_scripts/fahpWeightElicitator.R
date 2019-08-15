@@ -18,9 +18,6 @@ first <- TRUE
 # For each comparison matrix do...
 for(file in files){
   
-  # Print some messages
-  # print(file)
-  
   # Load the comparison matrix
   df <- read.xlsx(file, sheetIndex = 1, header = TRUE, stringsAsFactors=FALSE)
   
@@ -31,7 +28,7 @@ for(file in files){
   
   # Check if the matrix is rectangular
   if(nrow(sub.df) != ncol(sub.df)){
-    print("The comparison matrix is not rectangular..!!")
+   # print("The comparison matrix is not rectangular..!!")
   }
   
   # Create the fuzzy comparison matrix
@@ -39,12 +36,14 @@ for(file in files){
   Am <- matrix(, nrow = nrow(sub.df), ncol = ncol(sub.df))
   Au <- matrix(, nrow = nrow(sub.df), ncol = ncol(sub.df))
   
-  for(i in seq(1, nrow(sub.df) -1)){
-    for(j in seq(i+1, ncol(sub.df))){
+  for(i in seq(1, nrow(sub.df))){
+    for(j in seq(1, ncol(sub.df))){
       
       #Print messages for debugging purposes...
       # print(paste("i= ", as.character(i), " j= ", as.character(j), " value= ", sub.df[i,j]))
+    if(sub.df[i,j] != "-"){
       
+    
       # Complete the upper triangular part of the modal comparison matrix appropriatelly
       if(grepl("Very High", sub.df[i,j])){
         Am[i,j] <- 9
@@ -57,9 +56,9 @@ for(file in files){
       }else if(grepl("Low", sub.df[i,j])){
         Am[i,j] <- 3
       }else{
-       # print(paste("Found: ", sub.df[i,j]))
-       # print("This is not a valid choice..!!")
-        #print("Assigning the Moderate fuzzy set")
+       #  print(paste("Found: ", sub.df[i,j]))
+       #  print("This is not a valid choice..!!")
+       #  print("Assigning the Moderate fuzzy set")
         Am[i,j] <- 5
       }
       
@@ -71,12 +70,14 @@ for(file in files){
         Al[i,j] <- Am[i,j] - 0.5
         Au[i,j] <- Am[i,j] + 0.5
       }else if(grepl("U", sub.df[i,j])){
-        Al[i,j] <- Am[i,j] - 0.9
-        Au[i,j] <- Am[i,j] + 0.9
+        Al[i,j] <- Am[i,j] - 2.9
+        Au[i,j] <- Am[i,j] + 2.9
       }else{
         Al[i,j] <- Am[i,j] - 0.5
         Au[i,j] <- Am[i,j] + 0.5
-      }
+       }
+      
+      }  
     }
   }
   
@@ -87,16 +88,17 @@ for(file in files){
     Au[i,i] <- 1;
   }
   
-  # Complete the lower triangle with the reciprosal values of the upper
-  for(i in c(2:nrow(Am))){
-    for(j in seq(1,i-1)){
+  # Complete the dashed columns with their reciprosal values 
+  for(i in c(1:nrow(sub.df))){
+    for(j in seq(1,ncol(sub.df))){
       # print(paste("i= ", as.character(i), " j= ", as.character(j)))
       # print(seq(1,i-1))
       # print(sub.df[[i,j]])
-      
-      Al[i,j] <- 1/Au[j,i]
-      Am[i,j] <- 1/Am[j,i]
-      Au[i,j] <- 1/Al[j,i]
+      if(sub.df[i,j]=="-"){
+        Al[i,j] <- 1/Au[j,i]
+        Am[i,j] <- 1/Am[j,i]
+        Au[i,j] <- 1/Al[j,i]
+      }
     }
   }
   
@@ -182,7 +184,7 @@ for(file in files){
     # Keep the optimal weights
     opt.crisp.weights <- opt$par
   }else{
-    print("lower")
+    # print("lower")
     # Maximization - w1+w2+..+wn = 1
     A <- matrix(0, ncol = length(crisp.weights), nrow = 2 * length(crisp.weights)+1 )
     b <- numeric(2 * length(crisp.weights) + 1)
@@ -213,7 +215,7 @@ for(file in files){
   # If optimization fails to converge ...!!!!
   # Just normalize the weights...!!!
   if(sum(opt.crisp.weights )> 1.01 | sum(opt.crisp.weights )< 0.99){
-    print("Not one!!!")
+    #print("Not one!!!")
     opt.crisp.weights = crisp.weights/sum(crisp.weights)
   }
   
@@ -244,11 +246,9 @@ library("jsonlite")
 json1 <- toJSON(l1)
 json2 <- toJSON(l2)
 json3 <- toJSON(l3)
-#print("exporting the results")
-#print(json2)
+
 setwd(Dir)
 setwd("./r_working_directory")
 # write(json1, "./fuzzy_weights.json")
 write(json2, "./weights.json")
 # write(json3, "./differences")
-#print("results exported")

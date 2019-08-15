@@ -1,10 +1,7 @@
 package qatch.calibration;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.WatchService;
@@ -23,67 +20,62 @@ import java.nio.file.*;
  *       modify a file in the desired folder.
  */	
 public class RInvoker {
+
+	public enum Script { AHP, FAPH, THRESHOLD }
 	
 	//Fixed paths
-	public static final String BASE_DIR = System.getProperty("user.dir");
-	public static final String R_WORK_DIR = new File(BASE_DIR + "/r_working_directory").getAbsolutePath();
-	public static final String R_THRES_SCRIPT = new File(R_WORK_DIR + "/thresholdsExtractor.R").getAbsolutePath();
-	public static final String R_AHP_SCRIPT = new File(R_WORK_DIR + "/ahpWeightElicitation.R").getAbsolutePath();
-	public static final String R_FAHP_SCRIPT = new File(R_WORK_DIR + "/fahpWeightElicitator.R").getAbsolutePath();
-	public static String weightsScript = R_AHP_SCRIPT;
+	public static final Path R_WORK_DIR = Paths.get(System.getProperty("user.dir"), "r_working_directory");
 	// TODO: Source Rscript bin in workspace-independent way
-	public static String R_BIN_PATH = "C:/Program Files/R/R-3.6.1/bin/x64/Rscript.exe";
-	
-	/**
-	 * A method for executing a certain R script...
-	 */
-	public void executeRScript(String rPath, String scriptPath, String args){
-		try {
-			if(System.getProperty("os.name").contains("Windows")){
-				scriptPath = "\"" + scriptPath + "\"";
-				args = "\"" + args + "\"";
-				
-			}
-			
-		Runtime.getRuntime().exec(rPath + " "  + scriptPath + " " + args);
-			
-	/*		String line;
-			Process p = Runtime.getRuntime().exec(rPath + "/RScript "  + scriptPath + " " + args);
-			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			  while ((line = input.readLine()) != null) {
-				    System.out.println(line);
-				  }
-			  input.close();
-	*/
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
+	public static Path R_BIN_PATH = Paths.get("C:/Program Files/R/R-3.6.1/bin/x64/Rscript.exe");
+
+
+	public void executeRScript(Path rPath, Path scriptPath, String args){
+
+		ProcessBuilder pb;
+		if(System.getProperty("os.name").contains("Windows")){
+			pb = new ProcessBuilder(
+			        "cmd.exe",
+                    "/c",
+                    rPath.toString(),
+                    scriptPath.toString(),
+                    args
+            );
+		} else {
+			// TODO: add non-Windows functionality
+			throw new RuntimeException("Non-Windows OS functionality not yet implemented for R script execution");
 		}
+
+		pb.redirectErrorStream(true);
+		Process p = null;
+		// run the tool
+		try { p = pb.start(); }
+		catch (IOException e) { e.printStackTrace(); }
+
+		try {
+		    assert p != null;
+			p.waitFor();
+		}
+		catch (InterruptedException e) {e.printStackTrace(); }
 	}
 	
 	/**
 	 * A method for executing the R script that calculates the thresholds 
 	 * of the properties.
 	 */
-	public void executeRScriptForThresholds() throws InterruptedException{
-		
-		//TODO: Remove this prints
-		System.out.println("* R_BIN_PATH= "+ R_BIN_PATH);
-		System.out.println("* R_AHP_SCRIPT= "+ R_THRES_SCRIPT);
-		System.out.println("* DIR= "+ BASE_DIR);
-		System.out.println("* ");
+	public void executeRScriptForThresholds(Path rPath, Path scriptPath, String args) throws InterruptedException{
 		
 		//Invoke the appropriate R script for threshold extraction - Use the fixed paths
-		executeRScript(RInvoker.R_BIN_PATH, RInvoker.R_THRES_SCRIPT, R_WORK_DIR);
-		
+		executeRScript(rPath, scriptPath, args);
+
 		//Wait for the RScript.exe to finish the analysis by polling the directory for changes
-		Path resultsPath = Paths.get(R_WORK_DIR);
-		
+		Path resultsPath = Paths.get(args);
+
 		try {
 			//Create a directory watcher that watches for certain events
 			WatchService watcher = resultsPath.getFileSystem().newWatchService();
 			resultsPath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY );
 			WatchKey watchKey = watcher.take();
-			
+
 			//Poll the directory for certain events
 			//Wake up the thread when a directory or a file is created, modified or deleted in the desired directory
 			List<WatchEvent<?>> events = watchKey.pollEvents();
@@ -98,29 +90,23 @@ public class RInvoker {
 					System.out.println("* Modified: " + event.context().toString());
 				}
 			}
-
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
 		}
+		catch (IOException e) { System.out.println(e.getMessage()); }
 	}
 	
 	/**
 	 * A method for executing the R script that calculates the weights 
 	 * of the model.
 	 */
-	public void executeRScriptForWeightsElicitation() throws InterruptedException{
+	// TODO: Check if okay to merge this with executeRScriptForThresholds. Looks like same procedure
+	public void executeRScriptForWeightsElicitation(Path rPath, Path scriptPath, String args) throws InterruptedException{
 
 		//Invoke the appropriate R script for threshold extraction - Use the fixed paths
-		//TODO: Remove this prints
-		System.out.println("* R_BIN_PATH= "+ R_BIN_PATH);
-		System.out.println("* R_AHP_SCRIPT= "+ weightsScript);
-		System.out.println("* DIR= "+ BASE_DIR);
-		System.out.println("* ");
 		
-		executeRScript(RInvoker.R_BIN_PATH, RInvoker.weightsScript, BASE_DIR);
+		executeRScript(rPath, scriptPath, args);
 
 		//Wait for the RScript.exe to finish the analysis by polling the directory for changes
-		Path resultsPath = Paths.get(R_WORK_DIR);
+		Path resultsPath = Paths.get(args);
 		
 		try {
 			//Create a directory watcher that watches for certain events
@@ -148,34 +134,22 @@ public class RInvoker {
 			System.out.println(e.getMessage());
 		}
 	}
-		
-	/**
-	 * A method that loads the path of the RScript executable
-	 */
-	public static String loadRScriptExecutablePath(){
-		
-		String rPath = null;
-		
-		try {
-			FileReader fw = new FileReader(new File(R_WORK_DIR + "/RScript_Path.txt").getAbsolutePath());
-			BufferedReader bw = new BufferedReader(fw);
-			
-			rPath = bw.readLine();
-			
-			bw.close();
-			fw.close();
-			
-			if(rPath.contains(" ")){
-				rPath = "\"" + rPath + "\"";
-			}
-			
-		} catch (FileNotFoundException e) {
-			System.out.println(e.getMessage());
-		} catch (IOException e){
-			System.out.println(e.getMessage());
-		}
-		
-		return rPath;
-	}
 
+	public static URL getRScriptResource(Script choice) {
+		URL resource;
+		switch (choice) {
+			case AHP:
+				resource = RInvoker.class.getClassLoader().getResource("r_scripts/ahpWeightElicitation.R");
+				break;
+			case FAPH:
+				resource = RInvoker.class.getClassLoader().getResource("r_scripts/fahpWeightElicitator.R");
+				break;
+			case THRESHOLD:
+				resource = RInvoker.class.getClassLoader().getResource("r_scripts/thresholdsExtractor.R");
+				break;
+			default:
+				throw new RuntimeException("Invalid choice enum given: [" + choice.name() + "]");
+		}
+		return resource;
+	}
 }
