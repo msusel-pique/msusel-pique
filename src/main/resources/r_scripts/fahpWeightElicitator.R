@@ -18,9 +18,6 @@ first <- TRUE
 # For each comparison matrix do...
 for(file in files){
   
-  # Print some messages
-  # print(file)
-  
   # Load the comparison matrix
   df <- read.xlsx(file, sheetIndex = 1, header = TRUE, stringsAsFactors=FALSE)
   
