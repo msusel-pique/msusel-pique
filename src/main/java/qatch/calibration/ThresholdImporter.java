@@ -49,9 +49,6 @@ public class ThresholdImporter {
 			String s = obj.toString();
 			gsonParser(s,properties);
 
-			//Print the Object
-			//System.out.println(obj);
-
 		} catch (FileNotFoundException e) {
 			System.out.println(e.getMessage());
 		}
