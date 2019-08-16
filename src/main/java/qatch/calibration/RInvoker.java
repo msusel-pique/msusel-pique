@@ -4,11 +4,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.WatchService;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.util.List;
-import java.nio.file.*;
 	
 /**
  * This class is responsible for executing R scripts.
@@ -41,7 +36,7 @@ public class RInvoker {
                     args
             );
 		} else {
-			// TODO: add non-Windows functionality
+			// TODO: add non-Windows functionality (very simple)
 			throw new RuntimeException("Non-Windows OS functionality not yet implemented for R script execution");
 		}
 
@@ -53,6 +48,7 @@ public class RInvoker {
 
 		try {
 		    assert p != null;
+		    // TODO: find way to stop waiting for R script if R gets hung up some how (e.g. 0-values in APH matrix)
 			p.waitFor();
 		}
 		catch (InterruptedException e) {e.printStackTrace(); }
