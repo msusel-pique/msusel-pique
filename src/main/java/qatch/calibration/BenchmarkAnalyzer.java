@@ -1,17 +1,10 @@
 package qatch.calibration;
 
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.text.Text;
-import org.apache.commons.io.FileUtils;
-import qatch.MoveToRunnableProject.CKJMAnalyzer;
-import qatch.MoveToRunnableProject.PMDAnalyzer;
 import qatch.analysis.IAnalyzer;
 import qatch.model.PropertySet;
 import qatch.utility.FileUtility;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;

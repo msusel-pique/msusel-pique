@@ -1,7 +1,5 @@
 package qatch.calibration;
 
-import qatch.MoveToRunnableProject.CKJMAggregator;
-import qatch.MoveToRunnableProject.PMDAggregator;
 import qatch.analysis.IFindingsAggregator;
 import qatch.analysis.IMetricsAggregator;
 import qatch.evaluation.Project;

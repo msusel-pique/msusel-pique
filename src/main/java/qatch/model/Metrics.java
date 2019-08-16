@@ -1,7 +1,5 @@
 package qatch.model;
 
-import qatch.MoveToRunnableProject.MethodLevelAttributes;
-
 import java.util.Vector;
 
 /**

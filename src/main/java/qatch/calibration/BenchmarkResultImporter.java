@@ -1,14 +1,11 @@
 package qatch.calibration;
 
 import org.xml.sax.SAXException;
-import qatch.MoveToRunnableProject.CKJMResultsImporter;
-import qatch.MoveToRunnableProject.PMDResultsImporter;
 import qatch.analysis.IFindingsResultsImporter;
 import qatch.analysis.IMetricsResultsImporter;
 import qatch.evaluation.Project;
 
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
