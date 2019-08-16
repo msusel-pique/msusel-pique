@@ -17,6 +17,8 @@ library(jsonlite)
 
 # Read the data frame
 df <- read.xlsx("properties.xls", sheetIndex = 1, header = TRUE)
+# drop the left column (assumes the left column is the project names)
+df <- df[,-1]
 
 #Create an empty vector
 first <- TRUE
