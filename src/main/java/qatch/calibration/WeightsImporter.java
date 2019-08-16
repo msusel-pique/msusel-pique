@@ -89,7 +89,9 @@ public class WeightsImporter {
 			characteristic = characteristics.get(i);
 			
 			//Get the equivalent json array element
-			charArray = jobject.get(characteristic.getName()).getAsJsonArray();
+			// R output replaces spaces in names with a '.' character.
+			String rCharName = characteristic.getName().replace(" ", ".");
+			charArray = jobject.get(rCharName).getAsJsonArray();
 			
 			//Get the weights of the current characteristic
 			for(int j = 0; j < charArray.size(); j++){

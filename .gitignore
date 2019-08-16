@@ -206,6 +206,5 @@ $RECYCLE.BIN/
 ### Project Specific ###
 src/test/java/qatch/Scratch.java
 src/test/output
-r_working_directory/properties.xls
-r_working_directory/threshold.json
+r_working_directory
 

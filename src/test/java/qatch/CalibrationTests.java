@@ -43,7 +43,8 @@ public class CalibrationTests {
 
         new BenchmarkAnalysisExporter().exportToXls(benchProjs);
 
-        File file = new File(RInvoker.R_WORK_DIR + "/properties.xls");
+        // TODO: keep test files in test output folder
+        File file = new File(RInvoker.R_WORK_DIR.toFile(), "properties.xls");
         FileInputStream fis = new FileInputStream(file);
         HSSFWorkbook wb = new HSSFWorkbook(fis);
         HSSFSheet sh = wb.getSheetAt(0);

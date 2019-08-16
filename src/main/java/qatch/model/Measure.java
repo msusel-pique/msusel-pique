@@ -123,10 +123,12 @@ public class Measure implements Cloneable {
 	 * It just divides the value field by the normalizer field.
 	 */
 	public void calculateNormValue(){
-		if(this.normalizer != 0){
+		if (this.normalizer != 0){
 			this.normValue = this.value/this.normalizer;
-		}else{
-			System.out.println("Devision by zero avoided!!");
+		} else {
+			throw new RuntimeException("Division by zero occured on metric " + this.metricName +
+				". This is likely due to the metrics analyzer either \nfailing to get the " +
+				"total lines of code, or failing to assign the TLOC to the property's measure's normalizer.");
 		}
 	}
 }
