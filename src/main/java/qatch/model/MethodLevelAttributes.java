@@ -1,4 +1,4 @@
-package qatch.MoveToRunnableProject;
+package qatch.model;
 
 /**
  * This class contains attributes that are at method level

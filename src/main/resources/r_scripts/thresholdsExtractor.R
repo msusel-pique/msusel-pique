@@ -17,12 +17,15 @@ library(jsonlite)
 
 # Read the data frame
 df <- read.xlsx("properties.xls", sheetIndex = 1, header = TRUE)
+# drop the left column (assumes the left column is the project names)
+df <- df[,-1]
 
 #Create an empty vector
 first <- TRUE
 # Iterate through the properties
 for(i in 1:ncol(df)){
   #Get the current column (i.e property)
+  # TODO: ensure script is robust against unexpected data formats (e.g. '2 1/2' instead of 5/2)
   property <- df[[i]]
   
   #Calculate the middle threshold

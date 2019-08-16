@@ -2,7 +2,7 @@
 #   This script assumes a directory location is passed in as
 #   a command argument. That directory must exist and must contain
 #   a directory "Comparison_Matrices" that contains the .xls files
-#   from ComparisonMatricesCreator.generateCompMatrics().
+#   from ComparisonMatricesGenerator.generateCompMatrics().
 #   These spreadsheets must also have the HAND-ENTERED upper diagonal
 #   values filled in.
 #

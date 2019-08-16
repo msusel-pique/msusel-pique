@@ -1,18 +1,11 @@
 package qatch.evaluation;
 
+import qatch.model.*;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Vector;
-
-import qatch.model.CharacteristicSet;
-import qatch.model.Property;
-import qatch.model.PropertySet;
-import qatch.model.Tqi;
-import qatch.model.Issue;
-import qatch.model.IssueSet;
-import qatch.model.MetricSet;
-import qatch.model.Metrics;
 
 /**
  * This class represents a project under evaluation.
@@ -253,5 +246,18 @@ public class Project{
 	    });
 	}
 
+	/**
+	 * Clone the properties of the quality model to the properties of the certain project
+	 */
+	public void cloneProperties(QualityModel qualityModel) {
+		for(int i = 0; i < qualityModel.getProperties().size(); i++){
+			//Clone the property and add it to the PropertySet of the current project
+			Property p = null;
+			try { p = (Property) qualityModel.getProperties().get(i).clone(); }
+			catch (CloneNotSupportedException e) { e.printStackTrace(); }
+
+			this.addProperty(p);
+		}
+	}
 
 }

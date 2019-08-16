@@ -44,8 +44,8 @@ public class BenchmarkAnalysisExporter {
 
 	
 	//If you want to include a column with the project Name to the xls file just set the values to 1 and true respectively
-	private static final int START = 0;
-	private static boolean INCLUDE_NAME = false;
+//	private static final int START = 1;
+//	private static boolean INCLUDE_NAME = true;
 	
 	/**
 	 * A method for exporting the normValue fields of each Project's Property objects
@@ -76,16 +76,16 @@ public class BenchmarkAnalysisExporter {
 		HSSFRow rowhead = sheet.createRow((short) 0);
 		
 		//Check if the names of the projects should be included in the XLS file (user defined)
-		if(INCLUDE_NAME){
+//		if(INCLUDE_NAME){
 			rowhead.createCell(0).setCellValue("Project_Name");
-		}
+//		}
 		
 		//Create the header of the xls file
-		for(int i = START; i < projects.getProject(0).getProperties().size(); i++){
+		for(int i = 0; i < projects.getProject(0).getProperties().size(); i++){
 			//Get the i-th property
 			Property p = projects.getProject(0).getProperties().get(i);
 			//Set the name of the i-th column to the name of this Property
-			rowhead.createCell(i).setCellValue(p.getName());
+			rowhead.createCell(i+1).setCellValue(p.getName());
 		}
 		
 		//Fill the xls file with the normalized values of each prokect's properties
@@ -100,17 +100,17 @@ public class BenchmarkAnalysisExporter {
 			index++;
 			HSSFRow row = sheet.createRow((short) index);
 			//Check if the names of the projects should be included in the XLS file (user defined)
-			if(INCLUDE_NAME){
+//			if(INCLUDE_NAME){
 				row.createCell(0).setCellValue(project.getName());
-			}
+//			}
 			//Iterate thorough all the properties of the project and store their values into the csv
-			for(int i = START; i < project.getProperties().size(); i++){
+			for(int i = 0; i < project.getProperties().size(); i++){
 				//Get the current property
 				Property p = project.getProperties().get(i);
 				//Receive the normalized value of this property
 				double normValue = p.getMeasure().getNormValue();
 				//Store it in the appropriate column of the csv file
-				row.createCell(i).setCellValue(normValue);
+				row.createCell(i+1).setCellValue(normValue);
 			}
 		}
 		

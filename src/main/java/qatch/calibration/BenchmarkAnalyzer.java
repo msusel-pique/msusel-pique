@@ -1,17 +1,10 @@
 package qatch.calibration;
 
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.text.Text;
-import org.apache.commons.io.FileUtils;
-import qatch.MoveToRunnableProject.CKJMAnalyzer;
-import qatch.MoveToRunnableProject.PMDAnalyzer;
 import qatch.analysis.IAnalyzer;
 import qatch.model.PropertySet;
 import qatch.utility.FileUtility;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
@@ -62,14 +55,24 @@ public class BenchmarkAnalyzer {
 
 
 	/**
-	 * This method is responsible for analyzing the desired benchmark
-	 * repository according to the user defined properties.
+	 * Run the tool-defined analyze() method and place the results in
+	 * the folder defined by BENCH_RESULTS_PATH
+	 *
+	 * @param metricsAnalyzer
+	 * 			Tool-class defined in a language-specific project that extends this framework.
+	 * @param findingsAnalyzer
+	 * 			Tool-class defined in a language-specific project that extends this framework.
+	 * @param projectRootFlag
+	 * 			Flag, usually a file extension, that signals that a project to be analyzed is
+	 * 			within the directory the flag was found in.
 	 */
 	public void analyzeBenchmarkRepo(IAnalyzer metricsAnalyzer, IAnalyzer findingsAnalyzer, String projectRootFlag) {
 
-		System.out.println("* Beginning repository benchmark analysis");
-
 		Set<Path> projectRoots = FileUtility.multiProjectCollector(this.BENCH_REPO_PATH, projectRootFlag);
+
+		System.out.println("* Beginning repository benchmark analysis");
+		System.out.println(projectRoots.size() + " projects to analyze.\n");
+
 		projectRoots.forEach(p -> {
 			File projFolder = new File(BENCH_RESULTS_PATH.toFile(), p.getFileName().toString());
 			File findings = new File(projFolder, "findings");
@@ -79,6 +82,7 @@ public class BenchmarkAnalyzer {
 
 			metricsAnalyzer.analyze(p, metrics.toPath(), PROPERTY_SET);
 			findingsAnalyzer.analyze(p, findings.toPath(), PROPERTY_SET);
+
 			System.out.println(p.getFileName().toString() + " analyzed");
 		});
 

@@ -4,11 +4,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.WatchService;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.util.List;
-import java.nio.file.*;
 	
 /**
  * This class is responsible for executing R scripts.
@@ -41,7 +36,7 @@ public class RInvoker {
                     args
             );
 		} else {
-			// TODO: add non-Windows functionality
+			// TODO: add non-Windows functionality (very simple)
 			throw new RuntimeException("Non-Windows OS functionality not yet implemented for R script execution");
 		}
 
@@ -53,87 +48,12 @@ public class RInvoker {
 
 		try {
 		    assert p != null;
+		    // TODO: find way to stop waiting for R script if R gets hung up some how (e.g. 0-values in APH matrix)
 			p.waitFor();
 		}
 		catch (InterruptedException e) {e.printStackTrace(); }
 	}
-	
-	/**
-	 * A method for executing the R script that calculates the thresholds 
-	 * of the properties.
-	 */
-	public void executeRScriptForThresholds(Path rPath, Path scriptPath, String args) throws InterruptedException{
-		
-		//Invoke the appropriate R script for threshold extraction - Use the fixed paths
-		executeRScript(rPath, scriptPath, args);
 
-		//Wait for the RScript.exe to finish the analysis by polling the directory for changes
-		Path resultsPath = Paths.get(args);
-
-		try {
-			//Create a directory watcher that watches for certain events
-			WatchService watcher = resultsPath.getFileSystem().newWatchService();
-			resultsPath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY );
-			WatchKey watchKey = watcher.take();
-
-			//Poll the directory for certain events
-			//Wake up the thread when a directory or a file is created, modified or deleted in the desired directory
-			List<WatchEvent<?>> events = watchKey.pollEvents();
-			for(WatchEvent event : events){
-				if(event.kind() == StandardWatchEventKinds.ENTRY_CREATE){
-					System.out.println("* Created: " + event.context().toString());
-				}
-				if(event.kind() == StandardWatchEventKinds.ENTRY_DELETE){
-					System.out.println("* Deleted: " + event.context().toString());
-				}
-				if(event.kind() == StandardWatchEventKinds.ENTRY_MODIFY){
-					System.out.println("* Modified: " + event.context().toString());
-				}
-			}
-		}
-		catch (IOException e) { System.out.println(e.getMessage()); }
-	}
-	
-	/**
-	 * A method for executing the R script that calculates the weights 
-	 * of the model.
-	 */
-	// TODO: Check if okay to merge this with executeRScriptForThresholds. Looks like same procedure
-	public void executeRScriptForWeightsElicitation(Path rPath, Path scriptPath, String args) throws InterruptedException{
-
-		//Invoke the appropriate R script for threshold extraction - Use the fixed paths
-		
-		executeRScript(rPath, scriptPath, args);
-
-		//Wait for the RScript.exe to finish the analysis by polling the directory for changes
-		Path resultsPath = Paths.get(args);
-		
-		try {
-			//Create a directory watcher that watches for certain events
-			WatchService watcher = resultsPath.getFileSystem().newWatchService();
-			resultsPath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY );
-			WatchKey watchKey = watcher.take();
-			
-			//Poll the directory for certain events
-			//Wake up the thread when a directory or a file is created, modified or deleted in the desired directory
-			List<WatchEvent<?>> events = watchKey.pollEvents();
-			for(WatchEvent event : events){
-				if(event.kind() == StandardWatchEventKinds.ENTRY_CREATE){
-					System.out.println("* Created: " + event.context().toString());
-				}
-				if(event.kind() == StandardWatchEventKinds.ENTRY_DELETE){
-					System.out.println("* Deleted: " + event.context().toString());
-				}
-				if(event.kind() == StandardWatchEventKinds.ENTRY_MODIFY){
-					System.out.println("* Modified: " + event.context().toString());
-				}
-			}
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			System.out.println(e.getMessage());
-		}
-	}
 
 	public static URL getRScriptResource(Script choice) {
 		URL resource;
