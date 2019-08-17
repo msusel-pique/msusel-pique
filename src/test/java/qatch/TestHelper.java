@@ -16,7 +16,7 @@ import java.util.Vector;
  */
 class TestHelper {
 
-    static final Path OUTPUT = Paths.get("src/test/output");
+    static final Path OUTPUT = new File("src/test/output").toPath().toAbsolutePath();
 
     static Issue makeIssue(String ruleName) {
         Issue i = new Issue();
