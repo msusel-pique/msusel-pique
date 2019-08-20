@@ -114,14 +114,14 @@ public class CalibrationTests {
 
         // run R Executions
         RInvoker rInvoker = new RInvoker();
-        Path script = Paths.get(RInvoker.getRScriptResource(RInvoker.Script.THRESHOLD).getPath());
+        Path script = new File(RInvoker.getRScriptResource(RInvoker.Script.THRESHOLD).getFile()).toPath();
         rInvoker.executeRScript(
                 RInvoker.R_BIN_PATH,
                 script,
                 TestHelper.OUTPUT.toString()
         );
 
-        if (!new File(TestHelper.OUTPUT.toFile(), script.getFileName().toString()).isFile()) {
+        if (!(new File(TestHelper.OUTPUT.toFile(), "threshold.json").isFile())) {
             Assert.fail("R execution did not generate the expected file. "
             + "Have the necessary libraries been downloaded for R?");
         }
