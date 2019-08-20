@@ -21,24 +21,25 @@ public class RInvoker {
 	//Fixed paths
 	public static final Path R_WORK_DIR = Paths.get(System.getProperty("user.dir"), "r_working_directory");
 	// TODO: Source Rscript bin in workspace-independent way
-	public static Path R_BIN_PATH = Paths.get("C:/Program Files/R/R-3.6.1/bin/x64/Rscript.exe");
+	public static Path R_BIN_PATH = findRRunner();
 
 
+	// TODO: assert that expected behavior occurs after running script (e.g. the file was created)
 	public void executeRScript(Path rPath, Path scriptPath, String args){
 
 		ProcessBuilder pb;
-		if(System.getProperty("os.name").contains("Windows")){
-			pb = new ProcessBuilder(
-			        "cmd.exe",
-                    "/c",
-                    rPath.toString(),
-                    scriptPath.toString(),
-                    args
-            );
-		} else {
-			// TODO: add non-Windows functionality (very simple)
-			throw new RuntimeException("Non-Windows OS functionality not yet implemented for R script execution");
-		}
+		String cli;
+
+		if(System.getProperty("os.name").contains("Windows")){ cli = "cmd.exe"; }
+		else { cli = "sh"; }
+
+		pb = new ProcessBuilder(
+				cli,
+				"/c",
+				rPath.toString(),
+				scriptPath.toString(),
+				args
+		);
 
 		pb.redirectErrorStream(true);
 		Process p = null;
@@ -71,5 +72,29 @@ public class RInvoker {
 				throw new RuntimeException("Invalid choice enum given: [" + choice.name() + "]");
 		}
 		return resource;
+	}
+
+
+	/**
+	 * Search the OS file system for the runnable RScript program.
+	 *
+	 * @return
+	 * 		The path to the RScript executable
+	 */
+	private static Path findRRunner() {
+		Path rPath;
+
+		// TODO: progmatically find the path in a workspace independent way rather than fixed strings
+		if (System.getProperty("os.name").contains("Windows")) {
+			rPath = Paths.get("C:/Program Files/R/R-3.6.1/bin/x64/Rscript.exe");
+		}
+		else if (System.getProperty("os.name").contains("Mac")) {
+			rPath = Paths.get("/Library/Frameworks/R.framework/Versions/3.6/Resources/bin/Rscript");
+		}
+		else {
+			throw new RuntimeException("Path to Rscript executable not yet defined for this operating system.");
+		}
+
+		return rPath;
 	}
 }

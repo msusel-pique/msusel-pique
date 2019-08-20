@@ -14,6 +14,8 @@ import qatch.evaluation.Project;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class CalibrationTests {
 
@@ -112,11 +114,17 @@ public class CalibrationTests {
 
         // run R Executions
         RInvoker rInvoker = new RInvoker();
+        Path script = Paths.get(RInvoker.getRScriptResource(RInvoker.Script.THRESHOLD).getPath());
         rInvoker.executeRScript(
                 RInvoker.R_BIN_PATH,
-                new File(RInvoker.getRScriptResource(RInvoker.Script.THRESHOLD).getFile()).toPath(),
+                script,
                 TestHelper.OUTPUT.toString()
         );
+
+        if (!new File(TestHelper.OUTPUT.toFile(), script.getFileName().toString()).isFile()) {
+            Assert.fail("R execution did not generate the expected file. "
+            + "Have the necessary libraries been downloaded for R?");
+        }
 
         JsonParser parser = new JsonParser();
         JsonArray data = (JsonArray) parser.parse(new FileReader(new File(TestHelper.OUTPUT.toString() + "/threshold.json")));
