@@ -30,9 +30,9 @@ public class ComparisonMatricesGenerator {
      *
      * @param args configuration array in the following order:
      *             0: Path to the quality model description .xml file. Can be relative or full path.
-     *                E.g.: "C:\Users\name\desktop\qualityModel_csharp_description.xml"
+     *                E.g.: "C:/Users/name/desktop/qualityModel_csharp_description.xml"
      *             1: Path to directory to place the comparison matrices output.
-     *                E.g.: "C:\Users\name\desktop\results"
+     *                E.g.: "C:/Users/name/desktop/results"
      *             2: [true | false] flag to determine whether to run the fuzzy AHP strategy
      */
     public static void main(String[] args) {
