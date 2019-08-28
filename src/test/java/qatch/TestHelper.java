@@ -14,9 +14,9 @@ import java.util.Vector;
 /**
  * Test utility class for creating commonly used Qatch model objects and references
  */
-class TestHelper {
+public class TestHelper {
 
-    static final Path OUTPUT = new File("src/test/output").toPath().toAbsolutePath();
+    public static final Path OUTPUT = new File("src/test/output").toPath().toAbsolutePath();
 
     static Issue makeIssue(String ruleName) {
         Issue i = new Issue();
@@ -75,7 +75,7 @@ class TestHelper {
         return cs;
     }
 
-    static Project makeProject(String name) {
+    public static Project makeProject(String name) {
         Issue i1 = makeIssue("Rule 01");
         Issue i2 = makeIssue("Rule 02");
         Issue i3 = makeIssue("Rule 03");
@@ -105,7 +105,7 @@ class TestHelper {
         return project;
     }
 
-    static void clean(File dest) throws IOException {
+    public static void clean(File dest) throws IOException {
         if (dest.exists()) { FileUtils.cleanDirectory(dest); }
         else dest.mkdirs();
     }

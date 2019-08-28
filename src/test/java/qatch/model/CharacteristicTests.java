@@ -1,8 +1,8 @@
-package qatch;
+package qatch.model;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ModelTests {
+public class CharacteristicTests {
     // TODO: add tests
 }
