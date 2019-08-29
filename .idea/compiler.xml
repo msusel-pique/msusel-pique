@@ -6,8 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="qatch-min" />
         <module name="msusel-qatch-min" />
+        <module name="qatch-min" />
       </profile>
     </annotationProcessing>
   </component>

@@ -14,68 +14,70 @@ import java.util.Vector;
 /**
  * Test utility class for creating commonly used Qatch model objects and references
  */
-class TestHelper {
+public class TestHelper {
 
-    static final Path OUTPUT = Paths.get("src/test/output");
+    public static final Path OUTPUT = new File("src/test/output").toPath().toAbsolutePath();
 
-    static Issue makeIssue(String ruleName) {
+    public static Issue makeIssue(String ruleName) {
         Issue i = new Issue();
         i.setRuleName(ruleName);
         return i;
     }
 
-    static Metrics makeMetric(String name, int loc) {
+    public static Metrics makeMetric(String name, int loc) {
         Metrics m = new Metrics();
         m.setName(name);
         m.setLoc(loc);
         return m;
     }
 
-    static Measure makeMeasureMetric(String name) {
+    public static Measure makeMeasureMetric(String name) {
         return new Measure(Measure.METRIC, name, "./ruleset/path/" + name + ".xml", name + " Tool");
     }
 
-    static Measure makeMeasureFinding(String name) {
+    public static Measure makeMeasureFinding(String name) {
         return new Measure(Measure.FINDING, name, "./ruleset/path/" + name + ".xml", name + " Tool");
     }
 
-    static Property makeProperty(String name, Measure measure) {
-        return new Property(name, measure);
+    public static Property makeProperty(String name, Measure measure) {
+        Property p = new Property(name, measure);
+        p.setThresholds(new double[] {0.0, 0.5, 1.0});
+        return p;
     }
 
-    static Characteristic makeCharacteristic(String name) {
+    public static Characteristic makeCharacteristic(String name) {
         return new Characteristic(name, name + " standard", name + " description", new Vector<Double>(Arrays.asList(0.3, 0.7)));
     }
 
-    static Tqi makeTqi() {
+    public static Tqi makeTqi() {
         return new Tqi(new Vector<Double>(Arrays.asList(0.3, 0.7)));
     }
 
-    static IssueSet makeIssueSet(String name, Issue... issues) {
+    public static IssueSet makeIssueSet(String name, Issue... issues) {
         IssueSet is = new IssueSet(name);
         Arrays.stream(issues).forEach(is::addIssue);
         return is;
     }
 
-    static MetricSet makeMetricSet(Metrics... metrics) {
+    public static MetricSet makeMetricSet(Metrics... metrics) {
         MetricSet ms = new MetricSet();
         Arrays.stream(metrics).forEach(ms::addMetrics);
         return ms;
     }
 
-    static PropertySet makePropertySet(Property... properties) {
+    public static PropertySet makePropertySet(Property... properties) {
         PropertySet ps = new PropertySet();
         Arrays.stream(properties).forEach(ps::addProperty);
         return ps;
     }
 
-    static CharacteristicSet makeCharacteristicSet(Characteristic... characteristics) {
+    public static CharacteristicSet makeCharacteristicSet(Characteristic... characteristics) {
         CharacteristicSet cs = new CharacteristicSet();
         Arrays.stream(characteristics).forEach(cs::addCharacteristic);
         return cs;
     }
 
-    static Project makeProject(String name) {
+    public static Project makeProject(String name) {
         Issue i1 = makeIssue("Rule 01");
         Issue i2 = makeIssue("Rule 02");
         Issue i3 = makeIssue("Rule 03");
@@ -105,7 +107,7 @@ class TestHelper {
         return project;
     }
 
-    static void clean(File dest) throws IOException {
+    public static void clean(File dest) throws IOException {
         if (dest.exists()) { FileUtils.cleanDirectory(dest); }
         else dest.mkdirs();
     }

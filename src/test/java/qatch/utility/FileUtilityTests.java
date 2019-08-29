@@ -1,9 +1,10 @@
-package qatch;
+package qatch.utility;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Assert;
 import org.junit.Test;
+import qatch.TestHelper;
 import qatch.utility.FileUtility;
 
 import java.io.File;
@@ -14,7 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
 
-public class UtilityTests {
+public class FileUtilityTests {
 
     private File testOut = new File("./src/test/output");
 

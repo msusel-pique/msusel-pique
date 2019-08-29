@@ -1,8 +1,8 @@
-package qatch;
+package qatch.evaluation;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-public class EvaluationTests {
+public class EvaluationResultsExporterTests {
     // TODO: add tests
 }

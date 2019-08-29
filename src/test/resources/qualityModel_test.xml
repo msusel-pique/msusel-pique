@@ -1,0 +1,38 @@
+<quality_model name="Test QM">
+  <tqi>
+    <weights>
+      <weight>0.8</weight>
+      <weight>0.2</weight>
+    </weights>
+  </tqi>
+  <characteristics>
+    <characteristic name="Characteristic 01" standard="ISO/IEC 25010" description="Placeholder description">
+      <weights>
+        <weight>0.6</weight>
+        <weight>0.4</weight>
+      </weights>
+    </characteristic>
+    <characteristic name="Characteristic 02" standard="ISO/IEC 25010" description="Placeholder description">
+      <weights>
+        <weight>0.5</weight>
+        <weight>0.5</weight>
+      </weights>
+    </characteristic>
+  </characteristics>
+  <properties>
+    <property name="Property 01" type="1" description="Property 01 description" positive_impact="false" metricName="" ruleset="DesignRules.dll" tool="FxCop">
+      <thresholds>
+        <threshold>0.0</threshold>
+        <threshold>0.5</threshold>
+        <threshold>1.0</threshold>
+      </thresholds>
+    </property>
+    <property name="Property 02" type="1" description="Property 02 description" positive_impact="false" metricName="" ruleset="DataflowRules.dll" tool="FxCop">
+      <thresholds>
+        <threshold>0.0</threshold>
+        <threshold>0.5</threshold>
+        <threshold>1.0</threshold>
+      </thresholds>
+    </property>
+  </properties>
+</quality_model>

@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Iterator;
 
 import qatch.model.Property;
@@ -50,8 +51,11 @@ public class EvaluationResultsExporter {
 	 * This method is used in order to export the results of the evaluation of a certain
 	 * project to JSON format.
 	 */
-	public static void exportProjectToJson(Project project, String path){
-		
+	public static void exportProjectToJson(Project project, Path path){
+
+		// ensure target path directory exists
+		path.getParent().toFile().mkdirs();
+
 		//Instantiate a Json Parser
 		Gson gson = new Gson();
 		
@@ -60,7 +64,7 @@ public class EvaluationResultsExporter {
 		
 		//Save the results
 		try{
-			FileWriter writer = new FileWriter(path);
+			FileWriter writer = new FileWriter(path.toString());
 			writer.write(json);
 			writer.close();
 		}catch(IOException e){
