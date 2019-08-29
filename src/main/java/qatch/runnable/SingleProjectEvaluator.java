@@ -157,7 +157,7 @@ public class SingleProjectEvaluator {
      */
     Path export(Project project, Path parentDir) {
         String name = project.getName();
-        File evalResults = new File(parentDir.toFile(), name + File.separator + name + "_evalResults.json");
+        File evalResults = new File(parentDir.toFile(), name + "_evalResults.json");
         EvaluationResultsExporter.exportProjectToJson(project, evalResults.toPath());
         return evalResults.toPath();
     }
