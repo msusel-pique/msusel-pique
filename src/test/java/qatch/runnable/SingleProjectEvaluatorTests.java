@@ -1,6 +1,7 @@
 package qatch.runnable;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,10 +23,12 @@ import java.util.Vector;
 public class SingleProjectEvaluatorTests {
 
     private SingleProjectEvaluator spe;
-    private Path projectDir = Paths.get("src/test/resources/TestCsharpProject");
-    private Path resultsDir = Paths.get("src/test/output/SingleProjEval");
-    private Path qmLocation = Paths.get("src/test/resources/qualityModel_test.xml");
-    private Path toolResults = Paths.get("src/test/resources/tool_results");
+    private Path PROJECT_DIR = Paths.get("src/test/resources/TestCsharpProject");
+    private Path RESULTS_DIR = Paths.get("src/test/output/SingleProjEval");
+    private Path QM_LOCATION = Paths.get("src/test/resources/qualityModel_test.xml");
+    private Path TOOL_RESULTS = Paths.get("src/test/resources/tool_results");
+    private Path TEST_OUT = Paths.get("src/test/output");
+
     private IAnalyzer metricsAnalyzer = new IAnalyzer() {
         @Override
         public void analyze(Path src, Path dest, PropertySet properties)  {
@@ -86,12 +89,17 @@ public class SingleProjectEvaluatorTests {
 
     @Before
     public void clean() throws IOException {
-        FileUtils.deleteDirectory(new File("src/test/output/SingleProjEval"));
+        cleanTestOutput();
     }
 
     @Before
     public void initClass() {
         spe = new SingleProjectEvaluator();
+    }
+
+    @After
+    public void afterClean() throws IOException {
+        cleanTestOutput();
     }
 
     @Test
@@ -107,29 +115,49 @@ public class SingleProjectEvaluatorTests {
         p.getCharacteristics().removeCharacteristic(0);
         p.getCharacteristics().removeCharacteristic(0);
 
-        QualityModelLoader qmImporter = new QualityModelLoader(qmLocation.toString());
+        QualityModelLoader qmImporter = new QualityModelLoader(QM_LOCATION.toString());
         QualityModel qm = qmImporter.importQualityModel();
 
         // TODO: add more edge cases
-        p.getProperties().get(0).getMeasure().setNormValue(0.4);
-        p.getProperties().get(1).getMeasure().setNormValue(0.6);
+        p.getProperties().get(0).getMeasure().setNormValue(0.90);
+        p.getProperties().get(1).getMeasure().setNormValue(0.10);
 
         spe.evaluate(p, qm);
+
+        Assert.assertEquals(0.099999, p.getProperties().get(0).getEval(),0.00001);
+        Assert.assertEquals(0.9, p.getProperties().get(1).getEval(),0.00001);
+
+        Assert.assertEquals(0.42, p.getCharacteristics().get(0).getEval(), 0.00001);
+        Assert.assertEquals(0.50, p.getCharacteristics().get(1).getEval(), 0.00001);
+
+        Assert.assertEquals(0.436, p.getTqi().getEval(),0.00001);
 
         System.out.println("...");
     }
 
     @Test
+    public void testExport() {
+        Project proj = TestHelper.makeProject("Test Project");
+        Path parentDir = Paths.get("src/test/output");
+        Path p = spe.export(proj, parentDir);
+
+        Assert.assertTrue(p.toFile().exists());
+        Assert.assertTrue(p.toFile().isFile());
+        Assert.assertEquals("Test Project_evalResults.json",p.getFileName().toString());
+        Assert.assertEquals(1692, p.toFile().length(), 300);
+    }
+
+    @Test
     public void testGetFindingsFromImporter() throws FileNotFoundException {
         String findingFileMatch = findingsAnalyzer.getResultFileName();
-        Vector<IssueSet> findings = spe.getFindingsFromImporter(toolResults, fri, findingFileMatch);
+        Vector<IssueSet> findings = spe.getFindingsFromImporter(TOOL_RESULTS, fri, findingFileMatch);
         Assert.assertEquals("Some Rule 01", findings.firstElement().get(0).getRuleName());
     }
 
     @Test
     public void testGetMetricsFromImporter() throws FileNotFoundException {
         String metricFileMatch = metricsAnalyzer.getResultFileName();
-        MetricSet ms = spe.getMetricsFromImporter(toolResults, mri, metricFileMatch);
+        MetricSet ms = spe.getMetricsFromImporter(TOOL_RESULTS, mri, metricFileMatch);
         Assert.assertNotNull(ms);
     }
 
@@ -137,9 +165,9 @@ public class SingleProjectEvaluatorTests {
     public void testInitialize() {
         try {
             spe.initialize(
-                    projectDir,
-                    resultsDir,
-                    qmLocation,
+                    PROJECT_DIR,
+                    RESULTS_DIR,
+                    QM_LOCATION,
                     metricsAnalyzer,
                     findingsAnalyzer
             );
@@ -158,7 +186,7 @@ public class SingleProjectEvaluatorTests {
 
     @Test
     public void testMakeNewQM() {
-        QualityModel qm = spe.makeNewQM(qmLocation);
+        QualityModel qm = spe.makeNewQM(QM_LOCATION);
         Assert.assertEquals("Test QM", qm.getName());
         Assert.assertNotNull(qm.getProperties());
         Assert.assertNotNull(qm.getCharacteristics());
@@ -166,30 +194,26 @@ public class SingleProjectEvaluatorTests {
 
     @Test
     public void testMakeProject() {
-        Project p = spe.makeProject(projectDir);
+        Project p = spe.makeProject(PROJECT_DIR);
         Assert.assertEquals("TestCsharpProject", p.getName());
-        Assert.assertTrue(p.getPath().contains(projectDir.toString()));
-    }
-
-    //    @Test
-    // TODO: finish test
-    public void testRunEvaluator() {
-        spe.runEvaluator(projectDir, resultsDir, qmLocation,
-                metricsAnalyzer, findingsAnalyzer,
-                mri, fri, metricsAgg, findingsAgg);
+        Assert.assertTrue(p.getPath().contains(PROJECT_DIR.toString()));
     }
 
     @Test
     public void testRunFindingsTools() {
-        QualityModel qm = spe.makeNewQM(qmLocation);
-        Path p = spe.runFindingsTools(projectDir, resultsDir, qm, findingsAnalyzer);
+        QualityModel qm = spe.makeNewQM(QM_LOCATION);
+        Path p = spe.runFindingsTools(PROJECT_DIR, RESULTS_DIR, qm, findingsAnalyzer);
         Assert.assertTrue(p.toFile().exists());
     }
 
     @Test
     public void testRunMetricsTools() {
-        QualityModel qm = spe.makeNewQM(qmLocation);
-        Path p = spe.runMetricsTools(projectDir, resultsDir, qm, metricsAnalyzer);
+        QualityModel qm = spe.makeNewQM(QM_LOCATION);
+        Path p = spe.runMetricsTools(PROJECT_DIR, RESULTS_DIR, qm, metricsAnalyzer);
         Assert.assertTrue(p.toFile().exists());
+    }
+
+    public void cleanTestOutput() throws IOException {
+        FileUtils.deleteDirectory(TEST_OUT.toFile());
     }
 }

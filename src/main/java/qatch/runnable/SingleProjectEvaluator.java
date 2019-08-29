@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 import qatch.analysis.*;
+import qatch.evaluation.EvaluationResultsExporter;
 import qatch.evaluation.Project;
 import qatch.evaluation.ProjectCharacteristicsEvaluator;
 import qatch.evaluation.ProjectEvaluator;
@@ -26,7 +27,38 @@ public class SingleProjectEvaluator {
     private final Logger logger = LoggerFactory.getLogger(SingleProjectEvaluator.class);
 
 
-    public File runEvaluator(Path projectDir, Path resultsDir, Path qmLocation,
+    /**
+     * Entry point for running single project evaluation. The library assumes the used has extended Qatch
+     * by implementing IAnalyzer, IMetricsResultsImporter, IFindingsResultsImporter, IMetricsAggregator,
+     * and IFindingsAggregator with language-specific functionality.
+     *
+     * This method then evaluate the measures, properties, characteristics, and TQI according to the provided
+     * quality model.
+     *
+     * @param projectDir
+     *      Path to root directory of project to be analyzed.
+     * @param resultsDir
+     *      Directory to place the analysis results in. Does not need to exist initially.
+     * @param qmLocation
+     *      Path to a completely derived quality model (likely .xml format).
+     * @param metricsAnalyzer
+     *      Analyzer provided by language-specific instance necessary to find metrics of the project.
+     * @param findingsAnalyzer
+     *      Analyzer provided by language-specific instance necessary to find findings of the project.
+     * @param metricsImporter
+     *      The language-specific importer that knows how to interpret metrics files produced by
+     *      the metrics analyzer.
+     * @param findingsImporter
+     *      The language-specific importer that knows how to interpret findings files produced by
+     *      the findings analyzer.
+     * @param metricsAgg
+     *      The language-specific object that describes how to aggregate metric values into property values.
+     * @param findingsAgg
+     *      The language-specific object that describes how to aggregate finding values into property values.
+     * @return
+     *      The path to the produced quality analysis file on the hard disk.
+     */
+    public Path runEvaluator(Path projectDir, Path resultsDir, Path qmLocation,
                              IAnalyzer metricsAnalyzer, IAnalyzer findingsAnalyzer,
                              IMetricsResultsImporter metricsImporter, IFindingsResultsImporter findingsImporter,
                              IMetricsAggregator metricsAgg, IFindingsAggregator findingsAgg) {
@@ -50,20 +82,20 @@ public class SingleProjectEvaluator {
             throw new IllegalArgumentException(e.getMessage());
         }
 
-        // aggregate static analysis values through QM object
+        // aggregate static analysis values to their measure nodes
         project.cloneProperties(qualityModel);
         aggregateNormalize(project, metricsAgg, findingsAgg);
 
         // evaluate higher QM nodes values with weights and values
+        evaluate(project, qualityModel);
 
-
-
-        return null;
+        // create a hard-disk file of the results and return to its path
+        return export(project, resultsDir);
     }
 
 
     /**
-     * Evaluates the Property node values by aggregating their Measure values according
+     * Handles the Propertys issues and metrics by aggregating their Measure values according
      * to the quality model threshold calculation and finally normalizing.
      *
      * @param project
@@ -73,7 +105,7 @@ public class SingleProjectEvaluator {
      * @param findingsAgg
      *      The language-specific object that describes how to aggregate finding values into property values.
      */
-    private void aggregateNormalize(Project project, IMetricsAggregator metricsAgg, IFindingsAggregator findingsAgg) {
+    void aggregateNormalize(Project project, IMetricsAggregator metricsAgg, IFindingsAggregator findingsAgg) {
         metricsAgg.aggregate(project);
         findingsAgg.aggregate(project);
 
@@ -84,7 +116,14 @@ public class SingleProjectEvaluator {
     }
 
 
-
+    /**
+     * Calculate the values of each node at the properties, characteristics, then TQI layer.
+     *
+     * @param project
+     *      The data structure representation of the project being evaluated.
+     * @param qualityModel
+     *      The data structure representation of the quality model being used for assessment.
+     */
     void evaluate(Project project, QualityModel qualityModel) {
         ProjectEvaluator evaluator = new ProjectEvaluator();
         ProjectCharacteristicsEvaluator charEvaluator = new ProjectCharacteristicsEvaluator();
@@ -106,6 +145,24 @@ public class SingleProjectEvaluator {
             project.calculateTQI();
         }
         catch (CloneNotSupportedException e) { e.printStackTrace(); }
+    }
+
+
+    /**
+     * Export the evaluation results to JSON format on the hard drive
+     *
+     * @param project
+     *      The data structure representation of the project being evaluated.
+     * @param parentDir
+     *      The directory to place the evaluation results file in.
+     * @return
+     *      The path pointing to the generated .json file.
+     */
+    Path export(Project project, Path parentDir) {
+        String name = project.getName();
+        File evalResults = new File(parentDir.toFile(), name + File.separator + name + "_evalResults.json");
+        EvaluationResultsExporter.exportProjectToJson(project, evalResults.toPath());
+        return evalResults.toPath();
     }
 
 
@@ -183,9 +240,9 @@ public class SingleProjectEvaluator {
      * @param qmLocation
      *      Path to the quality model file. Must exist.
      * @param metricsAnalyzer
-     *      Analyzer provided by language-specific instance necessary to find metrics of the project
+     *      Analyzer provided by language-specific instance necessary to find metrics of the project.
      * @param findingsAnalyzer
-     *      Analyzer provided by language-specific instance necessary to find findings of the project
+     *      Analyzer provided by language-specific instance necessary to find findings of the project.
      */
     void initialize(Path projectDir, Path resultsDir, Path qmLocation, IAnalyzer metricsAnalyzer, IAnalyzer findingsAnalyzer) {
         if (!projectDir.toFile().exists() || !projectDir.toFile().isDirectory()) {
@@ -209,7 +266,7 @@ public class SingleProjectEvaluator {
      * Initialize basic QualityModel object with a name and empty characteristics and properties
      *
      * @param qmLocation
-     *          Path to a completely derived quality model in XML format
+     *          Path to a completely derived quality model (likely .xml format).
      * @return
      *          Initialized quality model object
      */
