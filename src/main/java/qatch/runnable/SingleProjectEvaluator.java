@@ -63,9 +63,6 @@ public class SingleProjectEvaluator {
                              IMetricsResultsImporter metricsImporter, IFindingsResultsImporter findingsImporter,
                              IMetricsAggregator metricsAgg, IFindingsAggregator findingsAgg) {
 
-        logger.info("* * * * * BEGINNING SINGLE PROJECT EVALUATION * * * * *");
-        logger.info("Project to analyze: {}", projectDir.toString());
-
         // initialize data structures
         initialize(projectDir, resultsDir, qmLocation, metricsAnalyzer, findingsAnalyzer);
         QualityModel qualityModel = makeNewQM(qmLocation);
@@ -75,8 +72,8 @@ public class SingleProjectEvaluator {
         Path metricsResults = runMetricsTools(projectDir, resultsDir, qualityModel, metricsAnalyzer);
         Path findingsResults = runFindingsTools(projectDir, resultsDir, qualityModel, findingsAnalyzer);
         try {
-            project.setMetrics(getMetricsFromImporter(metricsResults, metricsImporter, metricsAnalyzer.getResultFileName()));
-            project.setIssues(getFindingsFromImporter(findingsResults, findingsImporter, findingsAnalyzer.getResultFileName()));
+            project.setMetrics(getMetricsFromImporter(metricsResults, metricsImporter));
+            project.setIssues(getFindingsFromImporter(findingsResults, findingsImporter));
         } catch (FileNotFoundException e) {
             logger.error(e.getMessage());
             throw new IllegalArgumentException(e.getMessage());
@@ -173,14 +170,12 @@ public class SingleProjectEvaluator {
      *      The directory all finding scan results from the analyzer tool are placed.
      * @param importer
      *      The language-specific importer that knows how to interpret the files in findingsDirectory.
-     * @param fileNameMatch
-     *      Regex pattern to ensure only expected metrics files are being considered. TODO: This can probably be removed.
      * @return
      *      A vector of IssueSet object representations of issues found
      * @throws FileNotFoundException
      *      Throws if none of the expected files can be found in the findings directory.
      */
-    Vector<IssueSet> getFindingsFromImporter(Path findingsDirectory, IFindingsResultsImporter importer, String fileNameMatch) throws FileNotFoundException {
+    Vector<IssueSet> getFindingsFromImporter(Path findingsDirectory, IFindingsResultsImporter importer) throws FileNotFoundException {
         File[] results = findingsDirectory.toFile().listFiles();
         Vector<IssueSet> issues = new Vector<>();
 
@@ -189,10 +184,9 @@ public class SingleProjectEvaluator {
         }
 
         for (File resultFile : results) {
-            if (resultFile.getName().toLowerCase().contains(fileNameMatch.toLowerCase())) {
-                try { issues.add(importer.parse(resultFile.toPath())); }
-                catch (ParserConfigurationException | IOException | SAXException e) { e.printStackTrace(); }
-            }
+            try { issues.add(importer.parse(resultFile.toPath())); }
+            catch (ParserConfigurationException | IOException | SAXException e) { e.printStackTrace(); }
+
         }
 
         return issues;
@@ -206,27 +200,23 @@ public class SingleProjectEvaluator {
      *      The directory all metric scan results from the analyzer tool are placed.
      * @param importer
      *      The language-specific importer that knows how to interpret the files in metricsDirectory.
-     * @param fileNameMatch
-     *      Regex pattern to ensure only expected metrics files are being considered. TODO: This can probably be removed.
      * @return
      *      The metric set object representation of the project's metrics
      * @throws FileNotFoundException
      *      Throws if none of the expected files can be found in the metrics directory.
      */
-    MetricSet getMetricsFromImporter(Path metricsDirectory, IMetricsResultsImporter importer, String fileNameMatch) throws FileNotFoundException {
+    MetricSet getMetricsFromImporter(Path metricsDirectory, IMetricsResultsImporter importer) throws FileNotFoundException {
         File[] results = metricsDirectory.toFile().listFiles();
         if (results == null) {
             throw new FileNotFoundException("Scanner results directory [" + metricsDirectory.toString() + "] has no files from static analysis.");
         }
 
         for (File resultFile : results) {
-            if (resultFile.getName().toLowerCase().contains(fileNameMatch.toLowerCase())) {
-                try { return importer.parse(resultFile.toPath()); }
-                catch (IOException e) { e.printStackTrace(); }
-            }
+            try { return importer.parse(resultFile.toPath()); }
+            catch (IOException e) { e.printStackTrace(); }
         }
 
-        throw new FileNotFoundException("Unable to find file able to match with " + fileNameMatch + " in directory " + metricsDirectory.toFile());
+        throw new FileNotFoundException("Unable to find file to parse metrics from in directory " + metricsDirectory.toFile());
     }
 
 

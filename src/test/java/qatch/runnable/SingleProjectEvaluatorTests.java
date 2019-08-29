@@ -42,11 +42,6 @@ public class SingleProjectEvaluatorTests {
         public Path getToolsDirectory() {
             return Paths.get("src/test/resources/fake_tools/FakeTool1.metrics");
         }
-
-        @Override
-        public String getResultFileName() {
-            return "Metric";
-        }
     };
     private IAnalyzer findingsAnalyzer = new IAnalyzer() {
         @Override
@@ -60,11 +55,6 @@ public class SingleProjectEvaluatorTests {
         @Override
         public Path getToolsDirectory() {
             return Paths.get("src/test/resources/fake_tools/FakeTool2.findings");
-        }
-
-        @Override
-        public String getResultFileName() {
-            return "Finding";
         }
     };
     private IMetricsResultsImporter mri = path -> new MetricSet();
@@ -88,7 +78,7 @@ public class SingleProjectEvaluatorTests {
     };
 
     @Before
-    public void clean() throws IOException {
+    public void cleanBefore() throws IOException {
         cleanTestOutput();
     }
 
@@ -98,7 +88,7 @@ public class SingleProjectEvaluatorTests {
     }
 
     @After
-    public void afterClean() throws IOException {
+    public void cleanAfter() throws IOException {
         cleanTestOutput();
     }
 
@@ -147,15 +137,13 @@ public class SingleProjectEvaluatorTests {
 
     @Test
     public void testGetFindingsFromImporter() throws FileNotFoundException {
-        String findingFileMatch = findingsAnalyzer.getResultFileName();
-        Vector<IssueSet> findings = spe.getFindingsFromImporter(TOOL_RESULTS, fri, findingFileMatch);
+        Vector<IssueSet> findings = spe.getFindingsFromImporter(TOOL_RESULTS, fri);
         Assert.assertEquals("Some Rule 01", findings.firstElement().get(0).getRuleName());
     }
 
     @Test
     public void testGetMetricsFromImporter() throws FileNotFoundException {
-        String metricFileMatch = metricsAnalyzer.getResultFileName();
-        MetricSet ms = spe.getMetricsFromImporter(TOOL_RESULTS, mri, metricFileMatch);
+        MetricSet ms = spe.getMetricsFromImporter(TOOL_RESULTS, mri);
         Assert.assertNotNull(ms);
     }
 
@@ -204,7 +192,7 @@ public class SingleProjectEvaluatorTests {
         Assert.assertTrue(p.toFile().exists());
     }
 
-    public void cleanTestOutput() throws IOException {
+    private void cleanTestOutput() throws IOException {
         FileUtils.deleteDirectory(TEST_OUT.toFile());
     }
 }
