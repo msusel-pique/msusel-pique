@@ -23,7 +23,7 @@ import java.util.Vector;
 public class SingleProjectEvaluatorTests {
 
     private SingleProjectEvaluator spe;
-    private Path PROJECT_DIR = Paths.get("src/test/resources/TestCsharpProject");
+    private Path PROJECT_DIR = Paths.get("src/test/resources/FakeProject_01");
     private Path RESULTS_DIR = Paths.get("src/test/output/SingleProjEval");
     private Path QM_LOCATION = Paths.get("src/test/resources/qualityModel_test.xml");
     private Path TOOL_RESULTS = Paths.get("src/test/resources/tool_results");
@@ -131,8 +131,6 @@ public class SingleProjectEvaluatorTests {
         Assert.assertEquals(0.50, p.getCharacteristics().get(1).getEval(), 0.00001);
 
         Assert.assertEquals(0.436, p.getTqi().getEval(),0.00001);
-
-        System.out.println("...");
     }
 
     @Test
@@ -163,21 +161,14 @@ public class SingleProjectEvaluatorTests {
 
     @Test
     public void testInitialize() {
-        try {
-            spe.initialize(
-                    PROJECT_DIR,
-                    RESULTS_DIR,
-                    QM_LOCATION,
-                    metricsAnalyzer,
-                    findingsAnalyzer
-            );
-        } catch (IllegalArgumentException e) { Assert.fail(e.getMessage()); }
+        try { spe.initialize(PROJECT_DIR, RESULTS_DIR, QM_LOCATION, metricsAnalyzer, findingsAnalyzer ); }
+        catch (IllegalArgumentException e) { Assert.fail(e.getMessage()); }
 
         try {
             spe.initialize(
                     Paths.get("src/test/resources/IDONTEXIST"),
                     Paths.get("src/test/output/SingleProjEval"),
-                    Paths.get("src/test/resources/qualityModel_iso25k_csharp.xml"),
+                    Paths.get("src/test/resources/qualityModel_test.xml"),
                     metricsAnalyzer,
                     findingsAnalyzer
             );
@@ -195,7 +186,7 @@ public class SingleProjectEvaluatorTests {
     @Test
     public void testMakeProject() {
         Project p = spe.makeProject(PROJECT_DIR);
-        Assert.assertEquals("TestCsharpProject", p.getName());
+        Assert.assertEquals("FakeProject_01", p.getName());
         Assert.assertTrue(p.getPath().contains(PROJECT_DIR.toString()));
     }
 

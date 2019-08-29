@@ -84,8 +84,6 @@ public class ComparisonMatricesGenerator {
         else if (fuzzy) { generateFuzzyComparisonMatrix(properties, characteristics, outLocation, "-"); }
         else { throw new RuntimeException("input arg 2 did not match to 'true' or 'false'"); }
 
-        System.out.println("...");
-
     }
 
     private static void generateComparisonMatrix(PropertySet properties, CharacteristicSet characteristics, Path outLocation, String defaultChar) {
