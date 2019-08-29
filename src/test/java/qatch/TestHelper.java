@@ -40,7 +40,9 @@ public class TestHelper {
     }
 
     public static Property makeProperty(String name, Measure measure) {
-        return new Property(name, measure);
+        Property p = new Property(name, measure);
+        p.setThresholds(new double[] {0.0, 0.5, 1.0});
+        return p;
     }
 
     public static Characteristic makeCharacteristic(String name) {

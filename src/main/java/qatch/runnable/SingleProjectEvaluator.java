@@ -3,14 +3,11 @@ package qatch.runnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
-import qatch.analysis.IAnalyzer;
-import qatch.analysis.IFindingsResultsImporter;
-import qatch.analysis.IMetricsResultsImporter;
+import qatch.analysis.*;
 import qatch.evaluation.Project;
-import qatch.model.IssueSet;
-import qatch.model.MetricSet;
-import qatch.model.QualityModel;
-import qatch.model.QualityModelLoader;
+import qatch.evaluation.ProjectCharacteristicsEvaluator;
+import qatch.evaluation.ProjectEvaluator;
+import qatch.model.*;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
@@ -29,19 +26,22 @@ public class SingleProjectEvaluator {
     private final Logger logger = LoggerFactory.getLogger(SingleProjectEvaluator.class);
 
 
-    public File evaluate(Path projectDir, Path resultsDir, Path qmLocation,
-                         IAnalyzer metricsAnalyzer, IAnalyzer findingsAnalyzer,
-                         IMetricsResultsImporter metricsImporter, IFindingsResultsImporter findingsImporter) {
+    public File runEvaluator(Path projectDir, Path resultsDir, Path qmLocation,
+                             IAnalyzer metricsAnalyzer, IAnalyzer findingsAnalyzer,
+                             IMetricsResultsImporter metricsImporter, IFindingsResultsImporter findingsImporter,
+                             IMetricsAggregator metricsAgg, IFindingsAggregator findingsAgg) {
 
         logger.info("* * * * * BEGINNING SINGLE PROJECT EVALUATION * * * * *");
         logger.info("Project to analyze: {}", projectDir.toString());
 
+        // initialize data structures
         initialize(projectDir, resultsDir, qmLocation, metricsAnalyzer, findingsAnalyzer);
         QualityModel qualityModel = makeNewQM(qmLocation);
         Project project = makeProject(projectDir);
+
+        // run the static analysis tools
         Path metricsResults = runMetricsTools(projectDir, resultsDir, qualityModel, metricsAnalyzer);
         Path findingsResults = runFindingsTools(projectDir, resultsDir, qualityModel, findingsAnalyzer);
-
         try {
             project.setMetrics(getMetricsFromImporter(metricsResults, metricsImporter, metricsAnalyzer.getResultFileName()));
             project.setIssues(getFindingsFromImporter(findingsResults, findingsImporter, findingsAnalyzer.getResultFileName()));
@@ -50,9 +50,64 @@ public class SingleProjectEvaluator {
             throw new IllegalArgumentException(e.getMessage());
         }
 
+        // aggregate static analysis values through QM object
+        project.cloneProperties(qualityModel);
+        aggregateNormalize(project, metricsAgg, findingsAgg);
+
+        // evaluate higher QM nodes values with weights and values
+
+
 
         return null;
     }
+
+
+    /**
+     * Evaluates the Property node values by aggregating their Measure values according
+     * to the quality model threshold calculation and finally normalizing.
+     *
+     * @param project
+     *      The data structure representation of the project being evaluated.
+     * @param metricsAgg
+     *      The language-specific object that describes how to aggregate metric values into property values.
+     * @param findingsAgg
+     *      The language-specific object that describes how to aggregate finding values into property values.
+     */
+    private void aggregateNormalize(Project project, IMetricsAggregator metricsAgg, IFindingsAggregator findingsAgg) {
+        metricsAgg.aggregate(project);
+        findingsAgg.aggregate(project);
+
+        for(int i = 0; i < project.getProperties().size(); i++){
+            Property property =  project.getProperties().get(i);
+            property.getMeasure().calculateNormValue();
+        }
+    }
+
+
+
+    void evaluate(Project project, QualityModel qualityModel) {
+        ProjectEvaluator evaluator = new ProjectEvaluator();
+        ProjectCharacteristicsEvaluator charEvaluator = new ProjectCharacteristicsEvaluator();
+
+        // evaluate properties
+        evaluator.evaluateProjectProperties(project);
+
+        try {
+            // evaluate characteristics
+            for (int i = 0; i < qualityModel.getCharacteristics().size(); i++) {
+                //Clone the characteristic and add it to the CharacteristicSet of the current project
+                Characteristic c = (Characteristic) qualityModel.getCharacteristics().get(i).clone();
+                project.getCharacteristics().addCharacteristic(c);
+            }
+            charEvaluator.evaluateProjectCharacteristics(project);
+
+            // evaluate TQI
+            project.setTqi((Tqi) qualityModel.getTqi().clone());
+            project.calculateTQI();
+        }
+        catch (CloneNotSupportedException e) { e.printStackTrace(); }
+    }
+
 
     /**
      * Parse the findings files found in the provded directory to produce an object representation of the findings.
