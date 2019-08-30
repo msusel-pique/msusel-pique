@@ -4,12 +4,11 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>miltos.diploma</groupId>
-  <artifactId>qatch-min</artifactId>
-  <version>1.0</version>
-
-  <name>qatch-min</name>
-  <url>http://83.212.105.167:8080/OnlineProjectEvaluator/</url>
+  <groupId>msu.msusel</groupId>
+  <artifactId>msusel-qatch</artifactId>
+  <version>0.2.0</version>
+  <name>msusel-qatch</name>
+<!--  <url>http://83.212.105.167:8080/OnlineProjectEvaluator/</url>-->
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

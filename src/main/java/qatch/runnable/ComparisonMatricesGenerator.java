@@ -70,7 +70,6 @@ public class ComparisonMatricesGenerator {
         qmLocation = qmFile.toPath();
         outLocation = outFile.toPath();
 
-
         /*
          * generate faux quality model to hold properties and characteristics representation
          */
