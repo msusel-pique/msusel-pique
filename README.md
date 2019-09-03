@@ -36,4 +36,6 @@ msusel-qatch is now available as a dependency to extend in a personal project.
 *(Eventually `mvn deploy` will be used instead.)*
 4. qatch currently has one runnable class, `qatch.runnable.ComparisonMatricesGenerator`. 
 Run the main method to generate comparison matrices primed for hand-entry based off of a quality model description.
-5. For project evaluation, extend the framework in your own language-specific project and call `qatch.runnable.SingleProjectEvaluator.runEvaluator()`.
+
+## Running
+1. For project evaluation, extend the framework in your own language-specific project and call `qatch.runnable.SingleProjectEvaluator.runEvaluator()`. At a minimum, the language-specific project will need to implement `IAnalyzer`, `IFindingsAggregator`, `IMetricsAggregator`, and `IFindingsResultsImporter`.
