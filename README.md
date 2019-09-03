@@ -8,7 +8,7 @@ Legacy build, config, rulesets, and default model files are left in an archive f
 ___
 
 ## Qatch Overview
-[Qatch Research Paper](https://www.researchgate.net/publication/317195033_QATCH_-_An_adaptive_framework_for_software_product_quality_assessment)
+[Qatch Research Paper](https://www.sciencedirect.com/science/article/pii/S0957417417303883)
 
 (todo)
 ___
