@@ -25,7 +25,7 @@ public class SingleProjectEvaluatorTests {
     private SingleProjectEvaluator spe;
     private Path PROJECT_DIR = Paths.get("src/test/resources/FakeProject_01");
     private Path RESULTS_DIR = Paths.get("src/test/output/SingleProjEval");
-    private Path QM_LOCATION = Paths.get("src/test/resources/qualityModel_test.xml");
+    private Path QM_LOCATION = Paths.get("src/test/resources/quality_models/qualityModel_test.xml");
     private Path TOOL_RESULTS = Paths.get("src/test/resources/tool_results");
     private Path TEST_OUT = Paths.get("src/test/output");
 
@@ -156,7 +156,7 @@ public class SingleProjectEvaluatorTests {
             spe.initialize(
                     Paths.get("src/test/resources/IDONTEXIST"),
                     Paths.get("src/test/output/SingleProjEval"),
-                    Paths.get("src/test/resources/qualityModel_test.xml"),
+                    QM_LOCATION,
                     metricsAnalyzer,
                     findingsAnalyzer
             );

@@ -3,6 +3,7 @@ package qatch.calibration;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -13,10 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import qatch.TestHelper;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,9 +31,8 @@ public class RInvokerTests {
     }
 
     @After
-    public void cleanAfter() {
-        try { TestHelper.cleanTestOutput(); }
-        catch (IOException e) { System.out.println(e.getMessage()); }
+    public void cleanAfter() throws IOException {
+        TestHelper.cleanTestOutput();
     }
 
     @Test
@@ -61,14 +58,16 @@ public class RInvokerTests {
                     + "Have the necessary libraries been downloaded for R?");
         }
 
-        JsonParser parser = new JsonParser();
-        JsonObject data = (JsonObject ) parser.parse(new FileReader(new File(TestHelper.OUTPUT.toFile(), "weights.json")));
+        try (JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(weightsOutput)))) {
+            JsonParser parser = new JsonParser();
+            JsonObject data = parser.parse(reader).getAsJsonObject();
 
-        float weight1 = data.getAsJsonArray("TQI").get(0).getAsFloat();
-        float weight2 = data.getAsJsonArray("TQI").get(1).getAsFloat();
+            float weight1 = data.getAsJsonArray("TQI").get(0).getAsFloat();
+            float weight2 = data.getAsJsonArray("TQI").get(1).getAsFloat();
 
-        Assert.assertEquals(0.6667, weight1, 0.00001);
-        Assert.assertEquals(0.3333, weight2, 0.00001);
+            Assert.assertEquals(0.6667, weight1, 0.00001);
+            Assert.assertEquals(0.3333, weight2, 0.00001);
+        }
     }
 
     @Test
@@ -77,6 +76,7 @@ public class RInvokerTests {
         // Mock benchmark analysis results
         TestHelper.OUTPUT.toFile().mkdirs();
         String filename = TestHelper.OUTPUT + "/properties.xls";
+        File thresholdOutput = new File(TestHelper.OUTPUT.toFile(), "threshold.json");
 
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Benchmark Analysis Results");
@@ -128,37 +128,39 @@ public class RInvokerTests {
                 TestHelper.OUTPUT.toString()
         );
 
-        if (!(new File(TestHelper.OUTPUT.toFile(), "threshold.json").isFile())) {
+        if (!thresholdOutput.isFile()) {
             Assert.fail("R execution did not generate the expected file. "
                     + "Have the necessary libraries been downloaded for R?");
         }
 
-        JsonParser parser = new JsonParser();
-        JsonArray data = (JsonArray) parser.parse(new FileReader(new File(TestHelper.OUTPUT.toString() + "/threshold.json")));
+        try (JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(thresholdOutput)))) {
+            JsonParser parser = new JsonParser();
+            JsonArray data = parser.parse(reader).getAsJsonArray();
 
-        float p1t1 = data.get(0).getAsJsonObject().get("t1").getAsFloat();
-        float p1t2 = data.get(0).getAsJsonObject().get("t2").getAsFloat();
-        float p1t3 = data.get(0).getAsJsonObject().get("t3").getAsFloat();
+            float p1t1 = data.get(0).getAsJsonObject().get("t1").getAsFloat();
+            float p1t2 = data.get(0).getAsJsonObject().get("t2").getAsFloat();
+            float p1t3 = data.get(0).getAsJsonObject().get("t3").getAsFloat();
 
-        float p2t1 = data.get(1).getAsJsonObject().get("t1").getAsFloat();
-        float p2t2 = data.get(1).getAsJsonObject().get("t2").getAsFloat();
-        float p2t3 = data.get(1).getAsJsonObject().get("t3").getAsFloat();
+            float p2t1 = data.get(1).getAsJsonObject().get("t1").getAsFloat();
+            float p2t2 = data.get(1).getAsJsonObject().get("t2").getAsFloat();
+            float p2t3 = data.get(1).getAsJsonObject().get("t3").getAsFloat();
 
-        float p3t1 = data.get(2).getAsJsonObject().get("t1").getAsFloat();
-        float p3t2 = data.get(2).getAsJsonObject().get("t2").getAsFloat();
-        float p3t3 = data.get(2).getAsJsonObject().get("t3").getAsFloat();
+            float p3t1 = data.get(2).getAsJsonObject().get("t1").getAsFloat();
+            float p3t2 = data.get(2).getAsJsonObject().get("t2").getAsFloat();
+            float p3t3 = data.get(2).getAsJsonObject().get("t3").getAsFloat();
 
-        Assert.assertEquals(0.010, p1t1, 0.000001);
-        Assert.assertEquals(0.019, p1t2, 0.000001);
-        Assert.assertEquals(0.022, p1t3, 0.000001);
+            Assert.assertEquals(0.010, p1t1, 0.000001);
+            Assert.assertEquals(0.019, p1t2, 0.000001);
+            Assert.assertEquals(0.022, p1t3, 0.000001);
 
-        Assert.assertEquals(0.050, p2t1, 0.000001);
-        Assert.assertEquals(0.068, p2t2, 0.000001);
-        Assert.assertEquals(0.070, p2t3, 0.000001);
+            Assert.assertEquals(0.050, p2t1, 0.000001);
+            Assert.assertEquals(0.068, p2t2, 0.000001);
+            Assert.assertEquals(0.070, p2t3, 0.000001);
 
-        Assert.assertEquals(0.091, p3t1, 0.000001);
-        Assert.assertEquals(0.093, p3t2, 0.000001);
-        Assert.assertEquals(0.099, p3t3, 0.000001);
+            Assert.assertEquals(0.091, p3t1, 0.000001);
+            Assert.assertEquals(0.093, p3t2, 0.000001);
+            Assert.assertEquals(0.099, p3t3, 0.000001);
+        }
     }
 
     @Test
