@@ -34,7 +34,6 @@ public class BenchmarkAnalysisExporterTests {
 
         new BenchmarkAnalysisExporter().exportToXls(benchProjs);
 
-        // TODO: keep test files in test output folder
         File file = new File(RInvoker.R_WORK_DIR.toFile(), "properties.xls");
         FileInputStream fis = new FileInputStream(file);
         HSSFWorkbook wb = new HSSFWorkbook(fis);

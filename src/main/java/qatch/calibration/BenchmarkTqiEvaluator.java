@@ -33,23 +33,10 @@ public class BenchmarkTqiEvaluator {
 		
 		//Iterate through the set of projects
 		Iterator<Project> iterator = projects.iterator();
-		double progress = 0;
 		while(iterator.hasNext()){
-			
-			//TODO: Remove this print...
-			System.out.print("* Progress : " + (int) (progress/projects.size() * 100) + " %\r");
-			
-			//Get the current project
 			Project project = iterator.next();
-			
-			//Calculate the project's TQI
 			project.calculateTQI();
-			
-			//Increment the progress counter by one...
-			progress++;
-			
 		}
-		System.out.print("* Progress : " + (int) (progress/projects.size() * 100) + " %\r");
 	}
 	
 	/**

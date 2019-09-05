@@ -18,7 +18,7 @@ import java.nio.file.Path;
 
 public class RInvokerTests {
 
-//    @Test // TODO: uncomment this test
+    @Test
     public void testExecuteRScriptForThresholds() throws IOException {
 
         TestHelper.clean(TestHelper.OUTPUT.toFile());

@@ -22,7 +22,6 @@ public class IssueSet {
 	private String propertyName;
 	private Vector<Issue> issues = null;		// An IssueSet is just a Vector of Issue objects
 
-	//TODO: Remove these fields - We will not follow the class level approach
 	private String fileName;
 	private String filePath;
 

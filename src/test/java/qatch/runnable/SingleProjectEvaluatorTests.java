@@ -95,6 +95,9 @@ public class SingleProjectEvaluatorTests {
     @Test
     public void testAggregateNormalize() {
         // TODO: test might not be worth writing due to interface call
+
+
+
         Assert.assertTrue(true);
     }
 

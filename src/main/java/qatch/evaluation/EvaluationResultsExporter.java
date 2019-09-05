@@ -77,10 +77,6 @@ public class EvaluationResultsExporter {
 	 * to XLS format.
 	 */
 	public static void exportPropValuesAndTqiToXls(BenchmarkProjects projects, String path, boolean includeName, boolean prop_norm, boolean prop_eval, boolean char_eval, boolean tqi){
-		
-		//Set the path where the xls file will be stored and the name of the xls file
-		//TODO: Use RInvoker.R_WORK_DIR instead
-		String filename = path;
 
 		/*
 		 * Step 1: Create the appropriate spreadsheet.
@@ -244,7 +240,7 @@ public class EvaluationResultsExporter {
 		//Export the XLS file to the desired path
 		FileOutputStream fileOut = null;
 		try {
-			fileOut = new FileOutputStream(filename);
+			fileOut = new FileOutputStream(path);
 			workbook.write(fileOut);
 			fileOut.close();
 		} catch (FileNotFoundException e) {
