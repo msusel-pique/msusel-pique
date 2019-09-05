@@ -79,7 +79,7 @@ public class SingleProjectEvaluatorTests {
 
     @Before
     public void cleanBefore() throws IOException {
-        cleanTestOutput();
+        TestHelper.cleanTestOutput();
     }
 
     @Before
@@ -89,15 +89,12 @@ public class SingleProjectEvaluatorTests {
 
     @After
     public void cleanAfter() throws IOException {
-        cleanTestOutput();
+        TestHelper.cleanTestOutput();
     }
 
     @Test
     public void testAggregateNormalize() {
         // TODO: test might not be worth writing due to interface call
-
-
-
         Assert.assertTrue(true);
     }
 
@@ -193,9 +190,5 @@ public class SingleProjectEvaluatorTests {
         QualityModel qm = spe.makeNewQM(QM_LOCATION);
         Path p = spe.runMetricsTools(PROJECT_DIR, RESULTS_DIR, qm, metricsAnalyzer);
         Assert.assertTrue(p.toFile().exists());
-    }
-
-    private void cleanTestOutput() throws IOException {
-        FileUtils.deleteDirectory(TEST_OUT.toFile());
     }
 }

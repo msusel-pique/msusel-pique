@@ -1,11 +1,15 @@
 package qatch.calibration;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import qatch.TestHelper;
 
@@ -15,13 +19,60 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class RInvokerTests {
 
+    private Path comp_matrix = Paths.get(TestHelper.TEST_RESOURCES.toString(),
+            "comparison_matrices",
+            "TQI.xls");
+
+    @Before
+    public void cleanBefore() throws IOException {
+        TestHelper.cleanTestOutput();
+    }
+
+    @After
+    public void cleanAfter() {
+        try { TestHelper.cleanTestOutput(); }
+        catch (IOException e) { System.out.println(e.getMessage()); }
+    }
+
+    @Test
+    public void textExecuteRScriptForAHPElicitation() throws IOException {
+
+        // set up R environment
+        File matrixDir = new File(TestHelper.OUTPUT.toFile(), "comparison_matrices");
+        matrixDir.mkdirs();
+        FileUtils.copyFileToDirectory(comp_matrix.toFile(), matrixDir);
+        File weightsOutput = new File(TestHelper.OUTPUT.toFile(), "weights.json");
+
+        // run R execution
+        RInvoker ri = new RInvoker();
+        Path script = new File(RInvoker.getRScriptResource(RInvoker.Script.AHP).getFile()).toPath();
+        ri.executeRScript(
+                RInvoker.R_BIN_PATH,
+                script,
+                TestHelper.OUTPUT.toString()
+        );
+
+        if (!weightsOutput.isFile()) {
+            Assert.fail("R execution did not generate the expected file. "
+                    + "Have the necessary libraries been downloaded for R?");
+        }
+
+        JsonParser parser = new JsonParser();
+        JsonObject data = (JsonObject ) parser.parse(new FileReader(new File(TestHelper.OUTPUT.toFile(), "weights.json")));
+
+        float weight1 = data.getAsJsonArray("TQI").get(0).getAsFloat();
+        float weight2 = data.getAsJsonArray("TQI").get(1).getAsFloat();
+
+        Assert.assertEquals(0.6667, weight1, 0.00001);
+        Assert.assertEquals(0.3333, weight2, 0.00001);
+    }
+
     @Test
     public void testExecuteRScriptForThresholds() throws IOException {
-
-        TestHelper.clean(TestHelper.OUTPUT.toFile());
 
         // Mock benchmark analysis results
         TestHelper.OUTPUT.toFile().mkdirs();

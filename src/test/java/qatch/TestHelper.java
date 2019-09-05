@@ -3,6 +3,7 @@ package qatch;
 import org.apache.commons.io.FileUtils;
 import qatch.evaluation.Project;
 import qatch.model.*;
+import qatch.utility.FileUtility;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +17,9 @@ import java.util.Vector;
  */
 public class TestHelper {
 
-    public static final Path OUTPUT = new File("src/test/output").toPath().toAbsolutePath();
+    public static final Path TEST_DIR = new File("src/test").toPath();
+    public static final Path TEST_RESOURCES = Paths.get(TEST_DIR.toString(), "resources").toAbsolutePath();
+    public static final Path OUTPUT = Paths.get(TEST_DIR.toString(), "output").toAbsolutePath();
 
     public static Issue makeIssue(String ruleName) {
         Issue i = new Issue();
@@ -110,5 +113,9 @@ public class TestHelper {
     public static void clean(File dest) throws IOException {
         if (dest.exists()) { FileUtils.cleanDirectory(dest); }
         else dest.mkdirs();
+    }
+
+    public static void cleanTestOutput() throws IOException {
+        FileUtils.deleteDirectory(OUTPUT.toFile());
     }
 }

@@ -73,9 +73,8 @@ public class ComparisonMatricesGenerator {
         /*
          * generate faux quality model to hold properties and characteristics representation
          */
-        QualityModel qualityModel = new QualityModel();
         PropertiesAndCharacteristicsLoader qmLoader = new PropertiesAndCharacteristicsLoader(qmLocation.toString());
-        qualityModel = qmLoader.importQualityModel();
+        QualityModel qualityModel = qmLoader.importQualityModel();
         PropertySet properties = qualityModel.getProperties();
         CharacteristicSet characteristics = qualityModel.getCharacteristics();
 

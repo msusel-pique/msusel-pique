@@ -1,7 +1,7 @@
 # In:
 #   This script assumes a directory location is passed in as
 #   a command argument. That directory must exist and must contain
-#   a directory "Comparison_Matrices" that contains the .xls files
+#   a directory "comparison_matrices" that contains the .xls files
 #   from ComparisonMatricesGenerator.generateCompMatrics().
 #   These spreadsheets must also have the HAND-ENTERED upper diagonal
 #   values filled in.
@@ -21,8 +21,8 @@ Dir <- args[1]
 setwd(Dir)
 
 # List the files found in this directory
-files <- dir("./Comparison_Matrices")
-setwd("./Comparison_Matrices")
+files <- dir("./comparison_matrices")
+setwd("./comparison_matrices")
 
 first <- TRUE
 
