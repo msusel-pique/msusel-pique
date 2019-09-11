@@ -23,7 +23,7 @@ public class RInvokerTests {
 
     private Path comp_matrix = Paths.get(TestHelper.TEST_RESOURCES.toString(),
             "comparison_matrices",
-            "TQI.xls");
+            "TQI.csv");
 
     @Before
     public void cleanBefore() throws IOException {
@@ -65,8 +65,8 @@ public class RInvokerTests {
             float weight1 = data.getAsJsonArray("TQI").get(0).getAsFloat();
             float weight2 = data.getAsJsonArray("TQI").get(1).getAsFloat();
 
-            Assert.assertEquals(0.6667, weight1, 0.00001);
-            Assert.assertEquals(0.3333, weight2, 0.00001);
+            Assert.assertEquals(0.20, weight1, 0.00001);
+            Assert.assertEquals(0.80, weight2, 0.00001);
         }
     }
 

@@ -12,8 +12,7 @@ Dir <- args[1]
 setwd(Dir)
 
 # Load the appropriate libraries
-# TODO: change xlsx to more current library ASAP
-library(xlsx)
+library(xlsx)     # TODO: change xlsx to more current library ASAP
 library(jsonlite)
 
 # Read the data frame
