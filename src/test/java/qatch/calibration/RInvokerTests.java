@@ -75,49 +75,11 @@ public class RInvokerTests {
 
         // Mock benchmark analysis results
         TestHelper.OUTPUT.toFile().mkdirs();
-        String filename = TestHelper.OUTPUT + "/properties.xls";
+        FileUtils.copyFileToDirectory(
+                new File(TestHelper.TEST_RESOURCES.toFile(), "benchmark_results/properties.csv"),
+                TestHelper.OUTPUT.toFile()
+        );
         File thresholdOutput = new File(TestHelper.OUTPUT.toFile(), "threshold.json");
-
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("Benchmark Analysis Results");
-
-        HSSFRow rowhead = sheet.createRow((short) 0);
-        rowhead.createCell(0).setCellValue("Project_Name");
-        rowhead.createCell(1).setCellValue("Property 01");
-        rowhead.createCell(2).setCellValue("Property 02");
-        rowhead.createCell(3).setCellValue("Property 03");
-
-        HSSFRow row1 = sheet.createRow(1);
-        row1.createCell(0).setCellValue("Project 01");
-        row1.createCell(1).setCellValue(.010);
-        row1.createCell(2).setCellValue(.07);
-        row1.createCell(3).setCellValue(.091);
-        HSSFRow row2 = sheet.createRow(2);
-        row2.createCell(0).setCellValue("Project 02");
-        row2.createCell(1).setCellValue(.050);
-        row2.createCell(2).setCellValue(.069);
-        row2.createCell(3).setCellValue(.096);
-        HSSFRow row3 = sheet.createRow(3);
-        row3.createCell(0).setCellValue("Project 03");
-        row3.createCell(1).setCellValue(.013);
-        row3.createCell(2).setCellValue(.050);
-        row3.createCell(3).setCellValue(.001);
-        HSSFRow row4 = sheet.createRow(4);
-        row4.createCell(0).setCellValue("Project 04");
-        row4.createCell(1).setCellValue(.019);
-        row4.createCell(2).setCellValue(.068);
-        row4.createCell(3).setCellValue(.093);
-        HSSFRow row5 = sheet.createRow(5);
-        row5.createCell(0).setCellValue("Project 05");
-        row5.createCell(1).setCellValue(.022);
-        row5.createCell(2).setCellValue(.059);
-        row5.createCell(3).setCellValue(.099);
-
-        //Export the XLS file to the appropriate path
-        FileOutputStream fileOut = null;
-        fileOut = new FileOutputStream(filename);
-        workbook.write(fileOut);
-        fileOut.close();
 
         // run R Executions
         RInvoker rInvoker = new RInvoker();
