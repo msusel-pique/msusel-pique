@@ -8,7 +8,10 @@ import org.junit.Test;
 import qatch.TestHelper;
 import qatch.model.Characteristic;
 import qatch.model.CharacteristicSet;
+import qatch.model.Property;
+import qatch.model.PropertySet;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -71,6 +74,31 @@ public class ComparisonMatricesGeneratorTests {
         Assert.assertTrue(row3[3].equalsIgnoreCase("0"));
 
         reader.close();
+    }
+
+    @Test
+    public void testSubroutineCharacteristics() {
+        Characteristic c1 = TestHelper.makeCharacteristic("Characteristic 01");
+        Characteristic c2 = TestHelper.makeCharacteristic("Characteristic 02");
+        Property p1 = TestHelper.makeProperty("Property 1", null);
+        Property p2 = TestHelper.makeProperty("Property 2", null);
+        Property p3 = TestHelper.makeProperty("Property 3", null);
+        CharacteristicSet cs = TestHelper.makeCharacteristicSet(c1, c2);
+        PropertySet ps = TestHelper.makePropertySet(p1, p2, p3);
+
+        Path output = TestHelper.OUTPUT;
+        output.toFile().mkdirs();
+        String defaultChar = "0";
+
+        ComparisonMatricesGenerator.subroutineCharacteristis(ps, cs, output, defaultChar);
+
+        File char01Csv = new File(output.toFile(), "Characteristic 01.csv");
+        File char02Csv = new File(output.toFile(), "Characteristic 02.csv");
+
+        Assert.assertTrue(char01Csv.exists());
+        Assert.assertTrue(char02Csv.exists());
+        Assert.assertTrue(char01Csv.isFile());
+        Assert.assertTrue(char02Csv.isFile());
     }
 
     @Test
