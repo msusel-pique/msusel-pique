@@ -37,7 +37,17 @@ public class ComparisonMatricesGeneratorTests {
 
         ComparisonMatricesGenerator.main(new String[]{ qmDescription, output, runFuzzy });
 
-        System.out.println("...");
+        File tqiCsv = new File(TestHelper.OUTPUT.toFile(), "tqi.csv");
+        File char01Csv = new File(TestHelper.OUTPUT.toFile(), "Characteristic 01.csv");
+        File char02Csv = new File(TestHelper.OUTPUT.toFile(), "Characteristic 02.csv");
+
+        Assert.assertTrue(tqiCsv.exists());
+        Assert.assertTrue(char01Csv.exists());
+        Assert.assertTrue(char02Csv.exists());
+
+        Assert.assertTrue(tqiCsv.isFile());
+        Assert.assertTrue(char01Csv.isFile());
+        Assert.assertTrue(char02Csv.isFile());
     }
 
     @Test
@@ -120,7 +130,6 @@ public class ComparisonMatricesGeneratorTests {
         String[] row2 = reader.readNext();
 
         Assert.assertEquals(3, (int)reader.getLinesRead());
-        Assert.assertEquals(3, (int)reader.getRecordsRead());
 
         Assert.assertTrue(header[0].equalsIgnoreCase("tqi"));
         Assert.assertTrue(header[1].equalsIgnoreCase("characteristic 01"));

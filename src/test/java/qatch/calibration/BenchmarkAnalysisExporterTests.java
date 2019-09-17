@@ -1,20 +1,19 @@
 package qatch.calibration;
 
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import com.opencsv.CSVReader;
 import org.junit.Assert;
 import org.junit.Test;
 import qatch.TestHelper;
 import qatch.evaluation.Project;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
 
 public class BenchmarkAnalysisExporterTests {
 
     @Test
-    public void testExportToXls() throws IOException {
+    public void testExportToCsv() throws IOException {
         Project proj1 = TestHelper.makeProject("Project 01");
         proj1.getProperties().get(0).getMeasure().setNormValue(0.11);
         proj1.getProperties().get(1).getMeasure().setNormValue(0.12);
@@ -32,20 +31,32 @@ public class BenchmarkAnalysisExporterTests {
         benchProjs.addProject(proj2);
         benchProjs.addProject(proj3);
 
-        new BenchmarkAnalysisExporter().exportToXls(benchProjs);
+        Path csvResults = new BenchmarkAnalysisExporter().exportToCsv(benchProjs);
 
-        File file = new File(RInvoker.R_WORK_DIR.toFile(), "properties.xls");
-        FileInputStream fis = new FileInputStream(file);
-        HSSFWorkbook wb = new HSSFWorkbook(fis);
-        HSSFSheet sh = wb.getSheetAt(0);
+        CSVReader reader = new CSVReader(new FileReader(csvResults.toFile()));
+        String[] header = reader.readNext();
+        String[] proj1Values = reader.readNext();
+        String[] proj2Values = reader.readNext();
+        String[] proj3Values = reader.readNext();
 
-        Assert.assertEquals(0.11, sh.getRow(1).getCell(1).getNumericCellValue(),  0.0);
-        Assert.assertEquals(0.12, sh.getRow(1).getCell(2).getNumericCellValue(),  0.0);
+        Assert.assertEquals(4, (int)reader.getLinesRead());
 
-        Assert.assertEquals(0.21, sh.getRow(2).getCell(1).getNumericCellValue(),  0.0);
-        Assert.assertEquals(0.22, sh.getRow(2).getCell(2).getNumericCellValue(),  0.0);
+        Assert.assertTrue(header[0].equalsIgnoreCase("Project_Name"));
+        Assert.assertTrue(header[1].equalsIgnoreCase("Property 01"));
+        Assert.assertTrue(header[2].equalsIgnoreCase("Property 02"));
 
-        Assert.assertEquals(0.31, sh.getRow(3).getCell(1).getNumericCellValue(),  0.0);
-        Assert.assertEquals(0.32, sh.getRow(3).getCell(2).getNumericCellValue(),  0.0);
+        Assert.assertTrue(proj1Values[0].equalsIgnoreCase("Project 01"));
+        Assert.assertEquals(0.11, Double.parseDouble(proj1Values[1]), 0.0001);
+        Assert.assertEquals(0.12, Double.parseDouble(proj1Values[2]), 0.0001);
+
+        Assert.assertTrue(proj2Values[0].equalsIgnoreCase("Project 02"));
+        Assert.assertEquals(0.21, Double.parseDouble(proj2Values[1]), 0.0001);
+        Assert.assertEquals(0.22, Double.parseDouble(proj2Values[2]), 0.0001);
+
+        Assert.assertTrue(proj3Values[0].equalsIgnoreCase("Project 03"));
+        Assert.assertEquals(0.31, Double.parseDouble(proj3Values[1]), 0.0001);
+        Assert.assertEquals(0.32, Double.parseDouble(proj3Values[2]), 0.0001);
+
+        reader.close();
     }
 }

@@ -173,56 +173,11 @@ public class ComparisonMatricesGenerator {
 
             // run matrix generation
             makeCsvComparisonMatrix(characteristic.getName(), propertyComparitors, defaultChar, outLocation);
-
-//            //Create a new workbook for the matrix
-//            HSSFWorkbook workbook = new HSSFWorkbook();
-//            HSSFSheet sheet = workbook.createSheet( characteristic.getName() + " Comparison Matrix");
-//            HSSFRow rowhead = sheet.createRow((short) 0);
-//
-//            //Set the "characteristic" that this Comparison Matrix refers to
-//            rowhead.createCell(0).setCellValue(characteristic.getName());
-//
-//            //Create the header of the xls file
-//            for(int i = 0; i < properties.size(); i++){
-//                rowhead.createCell(i+1).setCellValue(properties.get(i).getName());
-//            }
-//
-//            Property property = new Property();
-//            for(int i = 0; i < properties.size(); i++){
-//
-//                //Get the current Property
-//                property = properties.get(i);
-//
-//                //Create a new row for this property and set its name
-//                HSSFRow row = sheet.createRow((short) i+1);
-//                row.createCell(0).setCellValue(property.getName());
-//
-//                //Fulfill the unused cells of the matrix with the predefined value
-//                for(int j = 0; j <= i; j++){
-//
-//                    row.createCell(j+1).setCellValue(defaultChar);
-//                }
-//            }
-//
-//            //Set the name of the comparison matrix
-//            String filename = new File(outLocation.toFile(), characteristic.getName() + ".xls").getAbsolutePath();
-//
-//            //Export the XLS file to the desired path
-//            FileOutputStream fileOut = null;
-//            try {
-//                fileOut = new FileOutputStream(filename);
-//                workbook.write(fileOut);
-//                fileOut.close();
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            } catch (IOException e){
-//                System.out.println(e.getMessage());
-//            }
         }
     }
 
     /**
-     * Generation the comparison matrix that is needed for the elicitation of the TQI's weights.
+     * Generate the comparison matrix that is needed for the elicitation of the TQI's weights.
      *
      * @param characteristics
      *          Set of characteristis defined by the quality model description.
