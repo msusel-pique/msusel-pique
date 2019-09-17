@@ -1,10 +1,10 @@
 <quality_model name="Test QM">
   <characteristics>
-    <characteristic name="Characteristic 01" standard="ISO/IEC 25010" description="Characteristic 01 description"></characteristic>
-    <characteristic name="Characteristic 02" standard="ISO/IEC 25010" description="Characteristic 02 description"></characteristic>
+    <characteristic name="Characteristic 01" standard="ISO/IEC 25010" description="Characteristic 01 description"/>
+    <characteristic name="Characteristic 02" standard="ISO/IEC 25010" description="Characteristic 02 description" />
   </characteristics>
   <properties>
-    <property name="Property 01" type="1" description="Property 01 description" positive_impact="false" metricName="" ruleset="DesignRules.dll" tool="FxCop"></property>
-    <property name="Property 02" type="1" description="Property 02 description" positive_impact="false" metricName="" ruleset="DataflowRules.dll" tool="FxCop"></property>
+    <property name="Property 01" type="1" description="Property 01 description" positive_impact="false" metricName="" ruleset="DesignRules.dll" tool="FxCop" />
+    <property name="Property 02" type="1" description="Property 02 description" positive_impact="false" metricName="" ruleset="DataflowRules.dll" tool="FxCop" />
   </properties>
 </quality_model>

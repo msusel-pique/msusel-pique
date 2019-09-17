@@ -1,22 +1,21 @@
 package qatch.runnable;
 
+import com.opencsv.CSVWriter;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import qatch.model.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * Generates template .xls comparison matrices to then be used for human data entry.
+ * Generates template .csv comparison matrices to then be used for human data entry.
  * Use this class to generate the matrices, manually fill in the upper triangle
- * with values from [1/9...1/1...9/1], and place the .xls files in the appropriate
+ * with values from [1/9...1/1...9/1], and place the .csv files in the appropriate
  * directory before attempting quality model derivation.
  *
  * This class acts as its own application and could potentially be moved out of the
@@ -164,50 +163,48 @@ public class ComparisonMatricesGenerator {
      * @param characteristics
      *          Set of characteristis defined by the quality model description.
      *          The rows of the TQI matrix are these characteristics
+     * @return the path to the comparison matrix file
      */
-    private static void subroutineTQI(CharacteristicSet characteristics, Path outLocation, String defaultChar){
+    static Path subroutineTQI(CharacteristicSet characteristics, Path outLocation, String defaultChar) {
 
-        //Create a new workbook for the matrix
-        // TODO: use more current approach for writing out a matrix
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("TQI Comparison Matrix");
-        HSSFRow rowhead = sheet.createRow((short) 0);
-
-        //Set the "characteristic" that this Comparison Matrix refers to
-        rowhead.createCell(0).setCellValue("TQI");
-
-        //Create the header of the xls file
-        for(int i = 0; i < characteristics.size(); i++){
-            rowhead.createCell(i+1).setCellValue(characteristics.get(i).getName());
-        }
-
-        //Fill the columns appropriately
-        Characteristic characteristic = new Characteristic();
-        for(int i = 0; i < characteristics.size(); i++){
-            characteristic = characteristics.get(i);
-            HSSFRow row = sheet.createRow((short) i+1);
-            row.createCell(0).setCellValue(characteristic.getName());
-            for(int j = 0; j <= i; j++){
-                row.createCell(j+1).setCellValue(defaultChar);
-            }
-        }
-
-        //Set the name of the comparison matrix
-        File filename = new File(outLocation.toFile(), "TQI.xls");
-
-        //Export the XLS file to the appropriate path (R's working directory)
-        FileOutputStream fileOut = null;
+        File output = new File(outLocation.toFile(), "TQI.csv");
         try {
-            fileOut = new FileOutputStream(filename);
-            workbook.write(fileOut);
-            fileOut.close();
-        } catch (FileNotFoundException e) {
+            FileWriter fw = new FileWriter(output);
+            CSVWriter writer = new CSVWriter(fw);
+
+            // build rows of string arrays to eventually feed to writer
+            ArrayList<String[]> csvRows = new ArrayList<>();
+
+            // header
+            String[] header = new String[characteristics.size() + 1];
+            header[0] = "tqi";
+            for (int i = 0; i < characteristics.size(); i++) {
+                header[i + 1] = characteristics.get(i).getName();
+            }
+            csvRows.add(header);
+
+            // additional rows, set names and size
+            characteristics.getCharacteristics().forEach(c -> {
+                String[] row = new String[characteristics.size() + 1];
+                row[0] = c.getName();
+                csvRows.add(row);
+            });
+
+            // additional rows, set lower triangle to default character
+            for (int rowNum = 1; rowNum < csvRows.size(); rowNum++) {
+                String[] currentRow = csvRows.get(rowNum);
+                for (int j = 1; j <= rowNum; j++) {
+                    currentRow[j] = defaultChar;
+                }
+            }
+
+            csvRows.forEach(writer::writeNext);
+            writer.close();
+
+        } catch (IOException e) {
             e.printStackTrace();
-        } catch (IOException e){
-            System.out.println(e.getMessage());
         }
 
+        return output.toPath();
     }
-
-
 }

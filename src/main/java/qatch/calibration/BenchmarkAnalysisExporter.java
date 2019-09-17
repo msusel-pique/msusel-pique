@@ -1,19 +1,17 @@
 package qatch.calibration;
 
-import java.io.File;
+import com.google.gson.Gson;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import qatch.evaluation.Project;
+import qatch.model.Property;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
-
-import qatch.evaluation.Project;
-import qatch.model.Property;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
-import com.google.gson.Gson;
 
 /**
  * This class is responsible for exporting the results of the benchmark analysis
@@ -25,10 +23,10 @@ import com.google.gson.Gson;
  * 	1. Receives a set of projects (i.e. BenchmarkProjects object) as an input.
  * 	   (The projects of the project set should have their normValue field for 
  * 	   each Property object of their PropertySet calculated)
- *  2. It creates the appropriate file (e.g. xls, json etc.) inside the working 
+ *  2. It creates the appropriate file (e.g. csv, json etc.) inside the working
  *     directory of R.
  *  3. It iterates through all the properties of each project of the project set
- *     and writes their normValue values inside the appropriate cells of the xls file.
+ *     and writes their normValue values inside the appropriate cells of the file.
  *     
  * ATTENTION:
  *   - The properties should be exported in the appropriate order. The order of the
