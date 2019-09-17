@@ -93,6 +93,62 @@ public class ComparisonMatricesGenerator {
         throw new NotImplementedException();
     }
 
+    /**
+     * Create pairwise comparison matrix in CSV format with lower diagonal filled in with a default value.
+     *
+     * @param name
+     *      Name of matrix -- the value in cell(0,0).
+     * @param comparitors
+     *      One dimensional ordered list of the pairwise comparisons to make. This constitutes the rows and columns.
+     * @param defaultChar
+     *      The value to fill the lower diagonal cells with.
+     * @param outLocation
+     *      Directory to pace the generated matrix in.
+     * @return
+     *      The path to the .csv file.
+     */
+    static Path makeCsvComparisonMatrix(String name, String[] comparitors, String defaultChar, Path outLocation) {
+
+        outLocation.toFile().mkdirs();
+        File output = new File(outLocation.toFile(), name + ".csv");
+        try {
+            FileWriter fw = new FileWriter(output);
+            CSVWriter writer = new CSVWriter(fw);
+
+            // build rows of string arrays to eventually feed to writer
+            ArrayList<String[]> csvRows = new ArrayList<>();
+
+            // header
+            String[] header = new String[comparitors.length + 1];
+            header[0] = name;
+            System.arraycopy(comparitors, 0, header, 1, comparitors.length);
+            csvRows.add(header);
+
+            // additional rows, set names and size
+            for (String comparitor : comparitors) {
+                String[] row = new String[comparitors.length + 1];
+                row[0] = comparitor;
+                csvRows.add(row);
+            }
+
+            // additional rows, set lower triangle to default character
+            for (int rowNum = 1; rowNum < csvRows.size(); rowNum++) {
+                String[] currentRow = csvRows.get(rowNum);
+                for (int j = 1; j <= rowNum; j++) {
+                    currentRow[j] = defaultChar;
+                }
+            }
+
+            csvRows.forEach(writer::writeNext);
+            writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return output.toPath();
+    }
+
 
     /**
      * This method is responsible for the generation of the comparison matrices that
