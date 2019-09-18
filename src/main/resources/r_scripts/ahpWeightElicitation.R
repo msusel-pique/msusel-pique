@@ -1,7 +1,7 @@
 # In:
 #   This script assumes a directory location is passed in as
 #   a command argument. That directory must exist and must contain
-#   a directory "Comparison_Matrices" that contains the .xls files
+#   a directory "comparison_matrices" that contains the .csv files
 #   from ComparisonMatricesGenerator.generateCompMatrics().
 #   These spreadsheets must also have the HAND-ENTERED upper diagonal
 #   values filled in.
@@ -12,7 +12,6 @@
 
 
 # Load the appropriate libraries
-library(xlsx)
 library(jsonlite)
 
 # Move to the desired directory where the comparison matrices are placed
@@ -21,30 +20,29 @@ Dir <- args[1]
 setwd(Dir)
 
 # List the files found in this directory
-files <- dir("./Comparison_Matrices")
-setwd("./Comparison_Matrices")
+files <- dir("./comparison_matrices")
+setwd("./comparison_matrices")
 
 first <- TRUE
 
 # Iterate through each file found in the directory
 for(file in files){
-  print(file)
-  # Read the xls and store its values in a dataframe
-  # Read the data frame
-  df <- read.xlsx(file, sheetIndex = 1, header = TRUE, stringsAsFactors=FALSE)
+  # Read the csv and store its values in a dataframe
+  df <- read.csv(file, fileEncoding="UTF-8-BOM", stringsAsFactors = F, header = T)
 
   # Keep only the values
   sub.df <- df[, -1]
-  sapply(sub.df,as.numeric)
+
+  # Parse "x/y" fraction strings into numeric data
+  sub.df <- apply(sub.df, 2, function(this.col) sapply(this.col, function(x) eval(parse(text = x))))
   
   # Complete the main diagonal with ones
   for(i in seq(1,ncol(sub.df))){
-   # print(sub.df[[i,i]])
     sub.df[[i,i]] <- as.numeric(1)
   }
   
   # Complete the lower triangle with the reciprosal values of the upper
-  for(i in c(2:nrow(df))){
+  for(i in c(2:nrow(sub.df))){
     for(j in seq(1,i-1)){
       if(sub.df[[j,i]] != 0){
         sub.df[[i,j]] = 1 / as.numeric(sub.df[[j,i]])

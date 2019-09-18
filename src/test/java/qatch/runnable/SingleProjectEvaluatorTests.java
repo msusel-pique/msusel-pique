@@ -1,6 +1,5 @@
 package qatch.runnable;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,7 +11,6 @@ import qatch.evaluation.Project;
 import qatch.model.*;
 
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,7 +23,7 @@ public class SingleProjectEvaluatorTests {
     private SingleProjectEvaluator spe;
     private Path PROJECT_DIR = Paths.get("src/test/resources/FakeProject_01");
     private Path RESULTS_DIR = Paths.get("src/test/output/SingleProjEval");
-    private Path QM_LOCATION = Paths.get("src/test/resources/qualityModel_test.xml");
+    private Path QM_LOCATION = Paths.get("src/test/resources/quality_models/qualityModel_test.xml");
     private Path TOOL_RESULTS = Paths.get("src/test/resources/tool_results");
     private Path TEST_OUT = Paths.get("src/test/output");
 
@@ -79,7 +77,7 @@ public class SingleProjectEvaluatorTests {
 
     @Before
     public void cleanBefore() throws IOException {
-        cleanTestOutput();
+        TestHelper.cleanTestOutput();
     }
 
     @Before
@@ -89,7 +87,7 @@ public class SingleProjectEvaluatorTests {
 
     @After
     public void cleanAfter() throws IOException {
-        cleanTestOutput();
+        TestHelper.cleanTestOutput();
     }
 
     @Test
@@ -156,7 +154,7 @@ public class SingleProjectEvaluatorTests {
             spe.initialize(
                     Paths.get("src/test/resources/IDONTEXIST"),
                     Paths.get("src/test/output/SingleProjEval"),
-                    Paths.get("src/test/resources/qualityModel_test.xml"),
+                    QM_LOCATION,
                     metricsAnalyzer,
                     findingsAnalyzer
             );
@@ -190,9 +188,5 @@ public class SingleProjectEvaluatorTests {
         QualityModel qm = spe.makeNewQM(QM_LOCATION);
         Path p = spe.runMetricsTools(PROJECT_DIR, RESULTS_DIR, qm, metricsAnalyzer);
         Assert.assertTrue(p.toFile().exists());
-    }
-
-    private void cleanTestOutput() throws IOException {
-        FileUtils.deleteDirectory(TEST_OUT.toFile());
     }
 }

@@ -28,11 +28,11 @@ public class SingleProjectEvaluator {
 
 
     /**
-     * Entry point for running single project evaluation. The library assumes the used has extended Qatch
+     * Entry point for running single project evaluation. The library assumes the user has extended Qatch
      * by implementing IAnalyzer, IMetricsResultsImporter, IFindingsResultsImporter, IMetricsAggregator,
      * and IFindingsAggregator with language-specific functionality.
      *
-     * This method then evaluate the measures, properties, characteristics, and TQI according to the provided
+     * This method then evaluates the measures, properties, characteristics, and TQI according to the provided
      * quality model.
      *
      * @param projectDir

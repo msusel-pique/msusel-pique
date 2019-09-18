@@ -1,22 +1,20 @@
 package qatch.runnable;
 
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import com.opencsv.CSVWriter;
 import qatch.model.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * Generates template .xls comparison matrices to then be used for human data entry.
+ * Generates template .csv comparison matrices to then be used for human data entry.
  * Use this class to generate the matrices, manually fill in the upper triangle
- * with values from [1/9...1/1...9/1], and place the .xls files in the appropriate
+ * with values from [1/9...1/1...9/1], and place the .csv files in the appropriate
  * directory before attempting quality model derivation.
  *
  * This class acts as its own application and could potentially be moved out of the
@@ -73,9 +71,8 @@ public class ComparisonMatricesGenerator {
         /*
          * generate faux quality model to hold properties and characteristics representation
          */
-        QualityModel qualityModel = new QualityModel();
         PropertiesAndCharacteristicsLoader qmLoader = new PropertiesAndCharacteristicsLoader(qmLocation.toString());
-        qualityModel = qmLoader.importQualityModel();
+        QualityModel qualityModel = qmLoader.importQualityModel();
         PropertySet properties = qualityModel.getProperties();
         CharacteristicSet characteristics = qualityModel.getCharacteristics();
 
@@ -95,6 +92,62 @@ public class ComparisonMatricesGenerator {
         throw new NotImplementedException();
     }
 
+    /**
+     * Create pairwise comparison matrix in CSV format with lower diagonal filled in with a default value.
+     *
+     * @param name
+     *      Name of matrix -- the value in cell(0,0).
+     * @param comparitors
+     *      One dimensional ordered list of the pairwise comparisons to make. This constitutes the rows and columns.
+     * @param defaultChar
+     *      The value to fill the lower diagonal cells with.
+     * @param outLocation
+     *      Directory to pace the generated matrix in.
+     * @return
+     *      The path to the .csv file.
+     */
+    static Path makeCsvComparisonMatrix(String name, String[] comparitors, String defaultChar, Path outLocation) {
+
+        outLocation.toFile().mkdirs();
+        File output = new File(outLocation.toFile(), name + ".csv");
+        try {
+            FileWriter fw = new FileWriter(output);
+            CSVWriter writer = new CSVWriter(fw);
+
+            // build rows of string arrays to eventually feed to writer
+            ArrayList<String[]> csvRows = new ArrayList<>();
+
+            // header
+            String[] header = new String[comparitors.length + 1];
+            header[0] = name;
+            System.arraycopy(comparitors, 0, header, 1, comparitors.length);
+            csvRows.add(header);
+
+            // additional rows, set names and size
+            for (String comparitor : comparitors) {
+                String[] row = new String[comparitors.length + 1];
+                row[0] = comparitor;
+                csvRows.add(row);
+            }
+
+            // additional rows, set lower triangle to default character
+            for (int rowNum = 1; rowNum < csvRows.size(); rowNum++) {
+                String[] currentRow = csvRows.get(rowNum);
+                for (int j = 1; j <= rowNum; j++) {
+                    currentRow[j] = defaultChar;
+                }
+            }
+
+            csvRows.forEach(writer::writeNext);
+            writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return output.toPath();
+    }
+
 
     /**
      * This method is responsible for the generation of the comparison matrices that
@@ -102,7 +155,13 @@ public class ComparisonMatricesGenerator {
      *
      * Typically, we have one comparison matrix for each Quality Model's characteristic.
      */
-    private static void subroutineCharacteristis(PropertySet properties, CharacteristicSet characteristics, Path outLocation, String defaultChar) {
+    static void subroutineCharacteristis(PropertySet properties, CharacteristicSet characteristics, Path outLocation, String defaultChar) {
+
+        // set the properties to compare
+        String[] propertyComparitors = new String[properties.size()];
+        for (int i = 0; i < properties.size(); i++) {
+            propertyComparitors[i] = properties.get(i).getName();
+        }
 
         //For each characteristic do...
         Characteristic characteristic;
@@ -112,103 +171,26 @@ public class ComparisonMatricesGenerator {
             //Get the current characteristic
             characteristic = iterator.next();
 
-            //Create a new workbook for the matrix
-            HSSFWorkbook workbook = new HSSFWorkbook();
-            HSSFSheet sheet = workbook.createSheet( characteristic.getName() + " Comparison Matrix");
-            HSSFRow rowhead = sheet.createRow((short) 0);
-
-            //Set the "characteristic" that this Comparison Matrix refers to
-            rowhead.createCell(0).setCellValue(characteristic.getName());
-
-            //Create the header of the xls file
-            for(int i = 0; i < properties.size(); i++){
-                rowhead.createCell(i+1).setCellValue(properties.get(i).getName());
-            }
-
-            Property property = new Property();
-            for(int i = 0; i < properties.size(); i++){
-
-                //Get the current Property
-                property = properties.get(i);
-
-                //Create a new row for this property and set its name
-                HSSFRow row = sheet.createRow((short) i+1);
-                row.createCell(0).setCellValue(property.getName());
-
-                //Fulfill the unused cells of the matrix with the predefined value
-                for(int j = 0; j <= i; j++){
-
-                    row.createCell(j+1).setCellValue(defaultChar);
-                }
-            }
-
-            //Set the name of the comparison matrix
-            String filename = new File(outLocation.toFile(), characteristic.getName() + ".xls").getAbsolutePath();
-
-            //Export the XLS file to the desired path
-            FileOutputStream fileOut = null;
-            try {
-                fileOut = new FileOutputStream(filename);
-                workbook.write(fileOut);
-                fileOut.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e){
-                System.out.println(e.getMessage());
-            }
+            // run matrix generation
+            makeCsvComparisonMatrix(characteristic.getName(), propertyComparitors, defaultChar, outLocation);
         }
     }
 
     /**
-     * Generation the comparison matrix that is needed for the elicitation of the TQI's weights.
+     * Generate the comparison matrix that is needed for the elicitation of the TQI's weights.
      *
      * @param characteristics
      *          Set of characteristis defined by the quality model description.
      *          The rows of the TQI matrix are these characteristics
+     * @return the path to the comparison matrix file
      */
-    private static void subroutineTQI(CharacteristicSet characteristics, Path outLocation, String defaultChar){
-
-        //Create a new workbook for the matrix
-        // TODO: use more current approach for writing out a matrix
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("TQI Comparison Matrix");
-        HSSFRow rowhead = sheet.createRow((short) 0);
-
-        //Set the "characteristic" that this Comparison Matrix refers to
-        rowhead.createCell(0).setCellValue("TQI");
-
-        //Create the header of the xls file
-        for(int i = 0; i < characteristics.size(); i++){
-            rowhead.createCell(i+1).setCellValue(characteristics.get(i).getName());
+    static Path subroutineTQI(CharacteristicSet characteristics, Path outLocation, String defaultChar) {
+        String name = "tqi";
+        String[] comparitors = new String[characteristics.getCharacteristics().size()];
+        for (int i = 0; i < characteristics.getCharacteristics().size(); i++) {
+            comparitors[i] = characteristics.get(i).getName();
         }
 
-        //Fill the columns appropriately
-        Characteristic characteristic = new Characteristic();
-        for(int i = 0; i < characteristics.size(); i++){
-            characteristic = characteristics.get(i);
-            HSSFRow row = sheet.createRow((short) i+1);
-            row.createCell(0).setCellValue(characteristic.getName());
-            for(int j = 0; j <= i; j++){
-                row.createCell(j+1).setCellValue(defaultChar);
-            }
-        }
-
-        //Set the name of the comparison matrix
-        File filename = new File(outLocation.toFile(), "TQI.xls");
-
-        //Export the XLS file to the appropriate path (R's working directory)
-        FileOutputStream fileOut = null;
-        try {
-            fileOut = new FileOutputStream(filename);
-            workbook.write(fileOut);
-            fileOut.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e){
-            System.out.println(e.getMessage());
-        }
-
+        return makeCsvComparisonMatrix(name, comparitors, defaultChar, outLocation);
     }
-
-
 }
