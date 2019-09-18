@@ -1,18 +1,13 @@
 package qatch.calibration;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
+import com.google.gson.*;
 import qatch.model.Characteristic;
 import qatch.model.CharacteristicSet;
 import qatch.model.Tqi;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 
 
 /**
@@ -73,7 +68,7 @@ public class WeightsImporter {
 		JsonObject jobject = jelement.getAsJsonObject();
 		
 		//Get the TQI weights
-		JsonArray tqiArray = jobject.get("TQI").getAsJsonArray();
+		JsonArray tqiArray = jobject.get("tqi").getAsJsonArray();
 		
 		for(int i = 0; i < tqiArray.size(); i++){
 			//Get the weights of the Tqi object

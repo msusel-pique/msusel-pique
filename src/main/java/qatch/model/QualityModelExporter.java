@@ -1,15 +1,14 @@
 package qatch.model;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Path;
-
+import com.google.gson.Gson;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import com.google.gson.Gson;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * This class is responsible for the exportation of the XML file that
@@ -73,6 +72,7 @@ public class QualityModelExporter {
 			//Output the XML File to standard output and the desired file
 			FileWriter filew = new FileWriter(qmOut);
 			outputter.output(root, filew);
+			filew.close();
 			
 		}
 		catch (IOException e){ System.out.println(e.getMessage()); }
