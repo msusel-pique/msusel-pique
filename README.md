@@ -22,8 +22,6 @@ ___
 ## Dependencies (pre-requisites)
 - Maven
 - R (only needed for model derivation)
-  - with library 'xlsx'
-    - Note: the xlsx is extremely outdated and will be replaced soon
   - with library 'jsonlite'
 - Java 8+
 
