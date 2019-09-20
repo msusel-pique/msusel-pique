@@ -18,9 +18,15 @@ import java.nio.file.Paths;
 
 public class RInvokerTests {
 
-    private Path comp_matrix = Paths.get(TestHelper.TEST_RESOURCES.toString(),
+    private Path comp_matrix_simple = Paths.get(TestHelper.TEST_RESOURCES.toString(),
             "comparison_matrices",
             "TQI.csv");
+    private Path comp_matrix_zeroes = Paths.get(TestHelper.TEST_RESOURCES.toString(),
+            "comparison_matrices",
+            "comp_matrix_with_zeroes.csv");
+    private Path comp_matrix_fractions = Paths.get(TestHelper.TEST_RESOURCES.toString(),
+            "comparison_matrices",
+            "comp_matrix_with_fractions.csv");
 
     @Before
     public void cleanBefore() throws IOException {
@@ -33,12 +39,12 @@ public class RInvokerTests {
     }
 
     @Test
-    public void textExecuteRScriptForAHPElicitation() throws IOException {
+    public void textExecuteRScriptForAHPElicitation_Simple() throws IOException {
 
         // set up R environment
         File matrixDir = new File(TestHelper.OUTPUT.toFile(), "comparison_matrices");
         matrixDir.mkdirs();
-        FileUtils.copyFileToDirectory(comp_matrix.toFile(), matrixDir);
+        FileUtils.copyFileToDirectory(comp_matrix_simple.toFile(), matrixDir);
         File weightsOutput = new File(TestHelper.OUTPUT.toFile(), "weights.json");
 
         // run R execution
@@ -64,6 +70,84 @@ public class RInvokerTests {
 
             Assert.assertEquals(0.20, weight1, 0.00001);
             Assert.assertEquals(0.80, weight2, 0.00001);
+        }
+    }
+
+    @Test
+    public void textExecuteRScriptForAHPElicitation_ZeroredCells() throws IOException {
+
+        // set up R environment
+        File matrixDir = new File(TestHelper.OUTPUT.toFile(), "comparison_matrices");
+        matrixDir.mkdirs();
+        FileUtils.copyFileToDirectory(comp_matrix_zeroes.toFile(), matrixDir);
+        File weightsOutput = new File(TestHelper.OUTPUT.toFile(), "weights.json");
+
+        // run R execution
+        RInvoker ri = new RInvoker();
+        Path script = new File(RInvoker.getRScriptResource(RInvoker.Script.AHP).getFile()).toPath();
+        ri.executeRScript(
+                RInvoker.R_BIN_PATH,
+                script,
+                TestHelper.OUTPUT.toString()
+        );
+
+        if (!weightsOutput.isFile()) {
+            Assert.fail("R execution did not generate the expected file. "
+                    + "Have the necessary libraries been downloaded for R?");
+        }
+
+        try (JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(weightsOutput)))) {
+            JsonParser parser = new JsonParser();
+            JsonObject data = parser.parse(reader).getAsJsonObject();
+
+            float weight1 = data.getAsJsonArray("Security").get(0).getAsFloat();
+            float weight2 = data.getAsJsonArray("Security").get(1).getAsFloat();
+            float weight3 = data.getAsJsonArray("Security").get(2).getAsFloat();
+            float weight4 = data.getAsJsonArray("Security").get(3).getAsFloat();
+
+            Assert.assertEquals(0.0057, weight1, 0.00001);
+            Assert.assertEquals(0.0057, weight2, 0.00001);
+            Assert.assertEquals(0.0057, weight3, 0.00001);
+            Assert.assertEquals(0.983, weight4, 0.00001);
+        }
+    }
+
+    @Test
+    public void textExecuteRScriptForAHPElicitation_Fractions() throws IOException {
+
+        // set up R environment
+        File matrixDir = new File(TestHelper.OUTPUT.toFile(), "comparison_matrices");
+        matrixDir.mkdirs();
+        FileUtils.copyFileToDirectory(comp_matrix_fractions.toFile(), matrixDir);
+        File weightsOutput = new File(TestHelper.OUTPUT.toFile(), "weights.json");
+
+        // run R execution
+        RInvoker ri = new RInvoker();
+        Path script = new File(RInvoker.getRScriptResource(RInvoker.Script.AHP).getFile()).toPath();
+        ri.executeRScript(
+                RInvoker.R_BIN_PATH,
+                script,
+                TestHelper.OUTPUT.toString()
+        );
+
+        if (!weightsOutput.isFile()) {
+            Assert.fail("R execution did not generate the expected file. "
+                    + "Have the necessary libraries been downloaded for R?");
+        }
+
+        try (JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(weightsOutput)))) {
+            JsonParser parser = new JsonParser();
+            JsonObject data = parser.parse(reader).getAsJsonObject();
+
+            float weight1 = data.getAsJsonArray("Security").get(0).getAsFloat();
+            float weight2 = data.getAsJsonArray("Security").get(1).getAsFloat();
+            float weight3 = data.getAsJsonArray("Security").get(2).getAsFloat();
+            float weight4 = data.getAsJsonArray("Security").get(3).getAsFloat();
+
+            Assert.assertEquals(0.0057, weight1, 0.00001);
+            Assert.assertEquals(0.0057, weight2, 0.00001);
+            Assert.assertEquals(0.0057, weight3, 0.00001);
+            Assert.assertEquals(0.983, weight4, 0.00001);
         }
     }
 

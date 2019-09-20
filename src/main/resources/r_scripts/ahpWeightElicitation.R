@@ -4,7 +4,9 @@
 #   a directory "comparison_matrices" that contains the .csv files
 #   from ComparisonMatricesGenerator.generateCompMatrics().
 #   These spreadsheets must also have the HAND-ENTERED upper diagonal
-#   values filled in.
+#   values filled in.  Note: the hand-entered values can be in decimal
+#   or fraction form, but if in fraction form they must be represented
+#   as an improper fraction.
 #
 # Out:
 #   Generates a 'weights.json' file in the same directory passed in
