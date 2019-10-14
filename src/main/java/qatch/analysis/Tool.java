@@ -48,8 +48,9 @@ public abstract class Tool implements  ITool {
      *          - of
      *          - relevant
      *          - diagnostic names
-     *      Security:
+     *      Injection:
      *        Tool: Roslynator
+     *        Measure: Injection Findings
      *        Diagnostics:
      *          - SCS0001
      *          - SCS0002
