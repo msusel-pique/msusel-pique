@@ -1,6 +1,6 @@
 Injection:
   Tool: Roslynator
-  Measure: Injection Findings
+  Diagnostics: Injection Findings
   Rules:
     - SCS0001
     - SCS0002
@@ -8,7 +8,7 @@ Injection:
     - SCS0007
 Cryptography: 
   Tool: Roslynator
-  Measure: Cryptography Findings
+  Diagnostics: Cryptography Findings
   Rules:
     - SCS0004
     - SCS0005
