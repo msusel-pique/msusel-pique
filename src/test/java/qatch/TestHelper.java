@@ -1,9 +1,9 @@
 package qatch;
 
 import org.apache.commons.io.FileUtils;
+import qatch.analysis.Measure;
 import qatch.evaluation.Project;
 import qatch.model.*;
-import qatch.utility.FileUtility;
 
 import java.io.File;
 import java.io.IOException;

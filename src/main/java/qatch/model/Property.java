@@ -1,5 +1,7 @@
 package qatch.model;
 
+import qatch.analysis.Measure;
+
 public class Property implements Cloneable {
 	
 	/* The breakpoint of the Utility Function used for the evaluation of the Property */

@@ -12,7 +12,7 @@ public abstract class Tool implements  ITool {
 
     // instance vars
     private String name;
-    private Map<String, Set<Diagnostic>> measureMappings;
+    private Map<String, Measure> measureMappings;
 
     // constructor
 
@@ -34,32 +34,31 @@ public abstract class Tool implements  ITool {
 
     // getters and setters
     public String getName() { return name; }
-    public Map<String, Set<Diagnostic>> getMeasureMappings() { return measureMappings; }
+    public Map<String, Measure> getMeasureMappings() { return measureMappings; }
 
 
     // methods
     @Override
-    public Map<String, Set<Diagnostic>> mapMeasures(Path toolConfig) {
+//    @SuppressWarnings("unchecked")  // TODO: deal with unchecked call warning when more type to think about it
+    public Map<String, Measure> mapMeasures(Path toolConfig) {
 
-        Map<String, Set<Diagnostic>> mappings = new HashMap<>();
+        Map<String, Measure> mappings = new HashMap<>();
         Yaml yaml = new Yaml();
         try {
             Reader yamlFile = new FileReader(toolConfig.toFile());
             Map<String, Object> yamlMaps = yaml.load(yamlFile);
+            Set<String> keys = yamlMaps.keySet();
 
-            yamlMaps.forEach((k, v) -> {
-
-                Set<Diagnostic> diagnostics = new HashSet<>();
-                LinkedHashMap yamlDiagnostics = (LinkedHashMap) yamlMaps.get(k);
-                ArrayList<String> yamlList = (ArrayList) yamlDiagnostics.get("Diagnostics");
+            keys.forEach(k -> {
+                Set<Measure> measures = new HashSet<>();
+                LinkedHashMap yamlNestedData = (LinkedHashMap) yamlMaps.get(k);
+                ArrayList yamlList = (ArrayList) yamlNestedData.get("Diagnostics");
                 yamlList.forEach(e -> {
                     Diagnostic diagnostic = new Diagnostic(this.name, e.toString());
-                    diagnostics.add(diagnostic);
+//                    diagnostics.add(diagnostic);
                 });
-                mappings.put(k, diagnostics);
+//                mappings.put(k, diagnostics);
             });
-
-            System.out.println("...");
         }
         catch (FileNotFoundException e) { e.printStackTrace(); }
 

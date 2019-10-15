@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 public class ToolTests {
 
@@ -14,13 +15,17 @@ public class ToolTests {
         public Path analyze(Path projectLocation) { return null; }
 
         @Override
-        public AnalylsisResult parse(Path toolResults) { return null; }
+        public List<Measure> parse(Path toolResults) { return null; }
     }
 
     @Test
     public void testMapMeasure() {
 
         ITool t = new ToolInstance("Test Tool", Paths.get("src/test/resources/config/roslynatormeasures.yaml"));
+//        Map<String, Set<Measure>> mappings = t.getMeasureMappings();
+
+
+//        Assert.assertEquals(mappings.get("Injection"));
 
         System.out.println("...");
     }

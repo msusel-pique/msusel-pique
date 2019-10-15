@@ -1,23 +1,38 @@
-package qatch.model;
+package qatch.analysis;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.util.List;
 
 public class Measure implements Cloneable {
 	
-	//TODO: Turn type field into String
+	//TODO: delete these depreciated fields
 	public static final int METRIC = 0;
 	public static final int FINDING = 1;
 
-	private double value;//The value of it's metric (metric or number of violations/findings)
-	private double normValue;//The normalized value of it's measure (metric or findings)
 	private int type;//The type of the property(METRIC or FINDING)
 	private String metricName;
 	private String rulesetPath;
 	private String tool;
 	private int normalizer;
+	private double normValue;//The normalized value of it's measure (metric or findings)
+
+	private String name;
+	private String toolName;
+	private List<Diagnostic> diagnostics;
+	private double value;
+	private double normalizedValue;
+
 	
 	public Measure(){
 		//Empty constructor in order to avoid null pointer exception during quality model import...
 	}
 
+	// constructor
+	public Measure(String name, String toolName) {
+		this.name = name;
+		this.toolName = toolName;
+	}
 	public Measure(int type){
 		if(type == METRIC || type == FINDING){
 			this.type = type;
@@ -25,7 +40,6 @@ public class Measure implements Cloneable {
 			System.out.println("Invalid measure type! A measure can be either METRIC or FINDING!");
 		}
 	}
-	
 	public Measure(int type, String metricName){
 		if(type == METRIC || type == FINDING){
 			this.type = type;
@@ -34,7 +48,6 @@ public class Measure implements Cloneable {
 		}
 		this.metricName = metricName;
 	}
-	
 	public Measure(int type, String metricName, String rulesetPath){
 		if(type == METRIC || type == FINDING){
 			this.type = type;
@@ -44,7 +57,6 @@ public class Measure implements Cloneable {
 		this.metricName = metricName;
 		this.rulesetPath = rulesetPath;
 	}
-
 	public Measure(int type, String metricName, String rulesetPath, String toolName) {
 		if(type == METRIC || type == FINDING){
 			this.type = type;
@@ -55,58 +67,72 @@ public class Measure implements Cloneable {
 		this.rulesetPath = rulesetPath;
 		this.tool = toolName;
 	}
-	
+
+
+	// getters and setters
+	public String getName() { return name; }
+	public void setName(String name) { this.name = name; }
+	public String getToolName() { return toolName; }
+	public void setToolName(String toolName) { this.toolName = toolName; }
+	public List<Diagnostic> getDiagnostics() { return diagnostics; }
+	public void setDiagnostics(List<Diagnostic> diagnostics) { this.diagnostics = diagnostics; }
+	public double getNormalizedValue() { return normalizedValue; }
+	public void setNormalizedValue(double normalizedValue) { this.normalizedValue = normalizedValue; }
+
+
+	// methods
+	/**
+	 * Evaluate the collection of diagnostics and their associated findings
+	 *
+	 * @return
+	 * 		The measure value after applying its evaluation function to its findings
+	 */
+	public double evalute() {
+		throw new NotImplementedException();
+	}
+
+
+	// TODO: delete these depreciated methods
 	public double getValue() {
 		return value;
 	}
-	
 	public void setValue(double value) {
 		this.value = value;
 	}
-	
 	public double getNormValue() {
 		return normValue;
 	}
-	
 	public void setNormValue(double normValue) {
 		this.normValue = normValue;
 	}
-	
 	public String getTool() {
 		return tool;
 	}
-
 	public Measure setTool(String tool) {
 		this.tool = tool;
 		return this;
 	}
-
 	public int getType() {
 		return type;
 	}
-	
 	public void setType(int type) {
 		this.type = type;
 	}
-
 	public String getMetricName() {
 		return metricName;
 	}
-	
 	public void setMetricName(String metricName) {
 		this.metricName = metricName;
 	}
-
 	public String getRulesetPath() {
 		return rulesetPath;
 	}
-	
 	public void setRulesetPath(String rulesetPath) {
 		this.rulesetPath = rulesetPath;
 	}
 	
 	@Override
-	protected Object clone() throws CloneNotSupportedException {
+	public Object clone() throws CloneNotSupportedException {
 	    return super.clone();
 	}
 
