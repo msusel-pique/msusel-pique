@@ -39,7 +39,7 @@ public abstract class Tool implements  ITool {
 
     // methods
     @Override
-//    @SuppressWarnings("unchecked")  // TODO: deal with unchecked call warning when more type to think about it
+    @SuppressWarnings("unchecked")  // TODO: deal with unchecked call warning when more type to think about it
     public Map<String, Measure> mapMeasures(Path toolConfig) {
 
         Map<String, Measure> mappings = new HashMap<>();
@@ -50,14 +50,15 @@ public abstract class Tool implements  ITool {
             Set<String> keys = yamlMaps.keySet();
 
             keys.forEach(k -> {
-                Set<Measure> measures = new HashSet<>();
+                List<Diagnostic> diagnostics = new ArrayList<>();
                 LinkedHashMap yamlNestedData = (LinkedHashMap) yamlMaps.get(k);
-                ArrayList yamlList = (ArrayList) yamlNestedData.get("Diagnostics");
-                yamlList.forEach(e -> {
+                ArrayList yamlDiagnostics = (ArrayList) yamlNestedData.get("Diagnostics");
+                yamlDiagnostics.forEach(e -> {
                     Diagnostic diagnostic = new Diagnostic(this.name, e.toString());
-//                    diagnostics.add(diagnostic);
+                    diagnostics.add(diagnostic);
                 });
-//                mappings.put(k, diagnostics);
+                Measure measure = new Measure((String) yamlNestedData.get("Measure"), this.name, diagnostics);
+                mappings.put(k, measure);
             });
         }
         catch (FileNotFoundException e) { e.printStackTrace(); }

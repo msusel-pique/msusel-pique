@@ -5,13 +5,21 @@ import java.util.Set;
 
 public class Diagnostic {
 
-    String tool;
-    String id;
-    Set<Finding> findings = new HashSet<>();
+    // instance variables
+    private String tool;
+    private String id;
+    private Set<Finding> findings = new HashSet<>();
 
+
+    // constructor
     public Diagnostic(String tool, String id) {
         this.tool = tool;
         this.id = id;
     }
 
+
+    // getters and setters
+    public String getTool() { return tool;  }
+    public String getId() { return id; }
+    public Set<Finding> getFindings() { return findings; }
 }

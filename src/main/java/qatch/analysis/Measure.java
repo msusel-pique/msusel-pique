@@ -29,9 +29,10 @@ public class Measure implements Cloneable {
 	}
 
 	// constructor
-	public Measure(String name, String toolName) {
+	public Measure(String name, String toolName, List<Diagnostic> diagnostics) {
 		this.name = name;
 		this.toolName = toolName;
+		this.diagnostics = diagnostics;
 	}
 	public Measure(int type){
 		if(type == METRIC || type == FINDING){
