@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 public class ToolTests {
 
     public class ToolInstance extends Tool {
-        public ToolInstance() { super("", Paths.get("")); }
+        ToolInstance(String name, Path toolConfig) { super(name, toolConfig); }
 
         @Override
         public Path analyze(Path projectLocation) { return null; }
@@ -19,6 +19,8 @@ public class ToolTests {
 
     @Test
     public void testMapMeasure() {
+
+        ITool t = new ToolInstance("Test Tool", Paths.get("src/test/resources/config/roslynatormeasures.yaml"));
 
         System.out.println("...");
     }
