@@ -39,7 +39,7 @@ public class RInvokerTests {
     }
 
     @Test
-    public void textExecuteRScriptForAHPElicitation_Simple() throws IOException {
+    public void testExecuteRScriptForAHPElicitation_Simple() throws IOException {
 
         // set up R environment
         File matrixDir = new File(TestHelper.OUTPUT.toFile(), "comparison_matrices");

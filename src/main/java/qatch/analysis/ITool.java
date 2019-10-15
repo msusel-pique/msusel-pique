@@ -1,6 +1,11 @@
 package qatch.analysis;
 
+import qatch.model.Measure;
+
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Interface definition for static analysis tools.
@@ -38,4 +43,31 @@ public interface ITool {
      *      a mapping of property names to numeric measure values
      */
     public AnalylsisResult parse(Path toolResults);
+
+    /**
+     * Read a .yaml config file that relates properties to their associated tool, measure, and diagnostics.
+     * The .yaml file should have the form:
+     *      Property01Name:
+     *        Tool: Tool_Name
+     *        Measure: Measure_Name
+     *        Diagnostics:
+     *          - list
+     *          - of
+     *          - relevant
+     *          - diagnostic names
+     *      Injection:
+     *        Tool: Roslynator
+     *        Measure: Injection Findings
+     *        Diagnostics:
+     *          - SCS0001
+     *          - SCS0002
+     *
+     * @param toolConfig
+     *      Path location of the .yaml configuration
+     * @return
+     *      The object set represetnation of mapping of this tool's associated measures
+     *      and the diagnostics used to evaluate the measure
+     */
+    // TODO: if enforcing YAML syntax, maybe sould use XML and schema definition? Cons and pros to either approach
+    public Set<HashMap<Measure, HashSet<Diagnostic>>> mapMeasures(Path toolConfig);
 }

@@ -1,17 +1,22 @@
 package qatch.analysis;
 
+import org.yaml.snakeyaml.Yaml;
 import qatch.model.Measure;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public abstract class Tool implements  ITool {
 
     // instance vars
     private String name;
-    private Set<HashMap<Measure, HashSet<Diagnostic>>> measureMappings = new HashSet<>();
+    private Set<HashMap<Measure, HashSet<Diagnostic>>> measureMappings;
 
     // constructor
 
@@ -37,33 +42,19 @@ public abstract class Tool implements  ITool {
 
 
     // methods
-    /**
-     * Read a .yaml config file that relates properties to their associated tool, measure, and diagnostics.
-     * The .yaml file should have the form
-     *      Property01Name:
-     *        Tool: Tool_Name
-     *        Measure: Measure_Name
-     *        Diagnostics:
-     *          - list
-     *          - of
-     *          - relevant
-     *          - diagnostic names
-     *      Injection:
-     *        Tool: Roslynator
-     *        Measure: Injection Findings
-     *        Diagnostics:
-     *          - SCS0001
-     *          - SCS0002
-     *
-     * @param toolConfig
-     *      Path location of the .yaml configuration
-     * @return
-     *      The object set represetnation of mapping of this tool's associated measures
-     *      and the diagnostics used to evaluate the measure
-     */
-    private Set<HashMap<Measure, HashSet<Diagnostic>>> mapMeasures(Path toolConfig) {
+    @Override
+    public Set<HashMap<Measure, HashSet<Diagnostic>>> mapMeasures(Path toolConfig) {
 
+        Set<HashMap<Measure, HashSet<Diagnostic>>> mappings = new HashSet<>();
+        Yaml yaml = new Yaml();
+        try {
+            Reader yamlFile = new FileReader(toolConfig.toFile());
+            Map<String, Object> yamlMaps = yaml.load(yamlFile);
 
+            System.out.println("...");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
         return null;
     }
