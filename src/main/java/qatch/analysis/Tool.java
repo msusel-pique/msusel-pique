@@ -1,22 +1,18 @@
 package qatch.analysis;
 
 import org.yaml.snakeyaml.Yaml;
-import qatch.model.Measure;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public abstract class Tool implements  ITool {
 
     // instance vars
     private String name;
-    private Set<HashMap<Measure, HashSet<Diagnostic>>> measureMappings;
+    private Map<String, Set<Diagnostic>> measureMappings;
 
     // constructor
 
@@ -38,24 +34,35 @@ public abstract class Tool implements  ITool {
 
     // getters and setters
     public String getName() { return name; }
-    public Set<HashMap<Measure, HashSet<Diagnostic>>> getMeasureMappings() { return measureMappings; }
+    public Map<String, Set<Diagnostic>> getMeasureMappings() { return measureMappings; }
 
 
     // methods
     @Override
-    public Set<HashMap<Measure, HashSet<Diagnostic>>> mapMeasures(Path toolConfig) {
+    public Map<String, Set<Diagnostic>> mapMeasures(Path toolConfig) {
 
-        Set<HashMap<Measure, HashSet<Diagnostic>>> mappings = new HashSet<>();
+        Map<String, Set<Diagnostic>> mappings = new HashMap<>();
         Yaml yaml = new Yaml();
         try {
             Reader yamlFile = new FileReader(toolConfig.toFile());
             Map<String, Object> yamlMaps = yaml.load(yamlFile);
 
-            System.out.println("...");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+            yamlMaps.forEach((k, v) -> {
 
-        return null;
+                Set<Diagnostic> diagnostics = new HashSet<>();
+                LinkedHashMap yamlDiagnostics = (LinkedHashMap) yamlMaps.get(k);
+                ArrayList<String> yamlList = (ArrayList) yamlDiagnostics.get("Diagnostics");
+                yamlList.forEach(e -> {
+                    Diagnostic diagnostic = new Diagnostic(this.name, e.toString());
+                    diagnostics.add(diagnostic);
+                });
+                mappings.put(k, diagnostics);
+            });
+
+            System.out.println("...");
+        }
+        catch (FileNotFoundException e) { e.printStackTrace(); }
+
+        return mappings;
     }
 }

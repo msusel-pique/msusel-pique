@@ -9,4 +9,9 @@ public class Diagnostic {
     String id;
     Set<Finding> findings = new HashSet<>();
 
+    public Diagnostic(String tool, String id) {
+        this.tool = tool;
+        this.id = id;
+    }
+
 }

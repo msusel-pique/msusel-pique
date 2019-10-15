@@ -1,10 +1,7 @@
 package qatch.analysis;
 
-import qatch.model.Measure;
-
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -65,9 +62,9 @@ public interface ITool {
      * @param toolConfig
      *      Path location of the .yaml configuration
      * @return
-     *      The object set represetnation of mapping of this tool's associated measures
-     *      and the diagnostics used to evaluate the measure
+     *      The object set represetnation of mapping of this tool's associated measure names
+     *      and the diagnostics used to evaluate the measure name
      */
     // TODO: if enforcing YAML syntax, maybe sould use XML and schema definition? Cons and pros to either approach
-    public Set<HashMap<Measure, HashSet<Diagnostic>>> mapMeasures(Path toolConfig);
+    public Map<String, Set<Diagnostic>> mapMeasures(Path toolConfig);
 }
