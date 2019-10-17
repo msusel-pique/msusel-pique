@@ -49,7 +49,7 @@ for(file in files){
       if(sub.df[[j,i]] != 0){
         sub.df[[i,j]] = 1 / as.numeric(sub.df[[j,i]])
       }else{
-        print("Devision by zero avoided")
+        print("Division by zero avoided. This is okay if there are zeroed values in the AHP file.")
       }
     }
   }
