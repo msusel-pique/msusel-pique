@@ -39,7 +39,7 @@ public abstract class Tool implements  ITool {
 
     // methods
     @Override
-    @SuppressWarnings("unchecked")  // TODO: deal with unchecked call warning when more type to think about it
+    @SuppressWarnings("unchecked")  // TODO: deal with unchecked call warning when more time to think about it
     public Map<String, Measure> mapMeasures(Path toolConfig) {
 
         Map<String, Measure> mappings = new HashMap<>();
