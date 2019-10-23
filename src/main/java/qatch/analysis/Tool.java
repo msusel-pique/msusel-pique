@@ -12,6 +12,7 @@ public abstract class Tool implements  ITool {
 
     // instance vars
     private String name;
+    private Map<String, Diagnostic> diagnostics = new HashMap<>();
     private Map<String, Measure> measureMappings;
 
     // constructor
@@ -34,6 +35,7 @@ public abstract class Tool implements  ITool {
 
     // getters and setters
     public String getName() { return name; }
+    public void addDiagnostic(Diagnostic diagnostic) { diagnostics.put(diagnostic.getId(), diagnostic); }
     public Map<String, Measure> getMeasureMappings() { return measureMappings; }
 
 

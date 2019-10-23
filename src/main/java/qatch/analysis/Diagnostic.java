@@ -22,4 +22,5 @@ public class Diagnostic {
     public String getTool() { return tool;  }
     public String getId() { return id; }
     public Set<Finding> getFindings() { return findings; }
+    public void addFinding(Finding finding) { findings.add(finding); }
 }
