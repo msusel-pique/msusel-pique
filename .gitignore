@@ -204,7 +204,8 @@ $RECYCLE.BIN/
 # End of https://www.gitignore.io/api/git,java,maven,macos,linux,windows,intellij
 
 ### Project Specific ###
+/.idea
+r_working_directory
 src/test/java/qatch/Scratch.java
 src/test/output
-r_working_directory
 
