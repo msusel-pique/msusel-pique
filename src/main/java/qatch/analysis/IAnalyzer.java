@@ -11,7 +11,7 @@ import java.nio.file.Path;
  *
  * e.g. PMDAnalyzer, CKJMAnalyzer etc.
  */
-
+@Deprecated
 public interface IAnalyzer {
 	
 	/**

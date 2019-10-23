@@ -6,6 +6,7 @@ import qatch.evaluation.Project;
  * Implementing classes define how to aggregate the issues (findings) produced by the
  * static analysis tool(s) on a single project
  */
+@Deprecated
 public interface IFindingsAggregator {
 
     /**

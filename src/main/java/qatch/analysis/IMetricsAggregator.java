@@ -9,6 +9,7 @@ import qatch.evaluation.Project;
  * At a minimum, this should be used to calculated the weighted sum of each metric
  * against all the classes of the project using LOC as the weight.
  */
+@Deprecated
 public interface IMetricsAggregator {
 
     /**
