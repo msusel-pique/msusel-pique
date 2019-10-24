@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Map;
 
 public class ToolTests {
@@ -17,7 +16,7 @@ public class ToolTests {
         public Path analyze(Path projectLocation) { return null; }
 
         @Override
-        public List<Measure> parse(Path toolResults) { return null; }
+        public Map<String, Diagnostic> parse(Path toolResults) { return null; }
     }
 
     @Test
