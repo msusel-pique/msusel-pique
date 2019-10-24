@@ -3,15 +3,23 @@ package qatch.analysis;
 public class Finding {
 
     // instance variables
-    private String location;
+    private String filePath;
+    private int lineNumber;
+    private int characterNumber;
 
 
-    // constructor
-    public Finding(String location) {
-        this.location = location;
+    // constructors
+    public Finding() { }
+    public Finding(String filePath, int lineNumber, int characterNumber) {
+        this.filePath = filePath;
+        this.lineNumber = lineNumber;
+        this.characterNumber = characterNumber;
     }
 
 
     // getters and setters
-    public String getLocation() { return location; }
+    public void setFilePath(String filePath) { this.filePath = filePath; }
+    public void setLineNumber(int lineNumber) { this.lineNumber = lineNumber; }
+    public void setCharacterNumber(int characterNumber) {  this.characterNumber = characterNumber; }
+    public String getLocation() { return filePath + "," + lineNumber + "," + characterNumber; }
 }
