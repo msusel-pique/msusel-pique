@@ -36,10 +36,28 @@ public abstract class Tool implements  ITool {
     // getters and setters
     public String getName() { return name; }
     public void addDiagnostic(Diagnostic diagnostic) { diagnostics.put(diagnostic.getId(), diagnostic); }
+    public void setDiagnostics(Map<String, Diagnostic> diagnostics) { this.diagnostics = diagnostics; }
     public Map<String, Measure> getMeasureMappings() { return measureMappings; }
 
 
     // methods
+    @Override
+    public Map<String, Measure> buildMeasures() {
+
+        // update measure -> diagnostic -> measure values in mapping with any existing findings
+        this.measureMappings.values().forEach(measure -> {
+            List<Diagnostic> diagnostics = measure.getDiagnostics();
+            diagnostics.forEach(diagnostic -> {
+                if (this.diagnostics.get(diagnostic.getId()) != null) {
+                    diagnostic.setFindings(this.diagnostics.get(diagnostic.getId()).getFindings());
+                }
+            });
+        });
+
+        return this.measureMappings;
+    }
+
+
     @Override
     @SuppressWarnings("unchecked")  // TODO: deal with unchecked call warning when more time to think about it
     public Map<String, Measure> mapMeasures(Path toolConfig) {

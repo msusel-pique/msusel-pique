@@ -24,6 +24,19 @@ public interface ITool {
      */
     Path analyze(Path projectLocation);
 
+
+    /**
+     * Instantiate measure objects using the tool's diagnostic objects and measure mapping.
+     * This method assumes the Tool object already has a measure mapping and collection of diagnostics
+     * instance variables.
+     *
+     * @return
+     *      A mapping of (Key: measure name, Value: measure object) with each measure containing its intended
+     *      diagnostic objects
+     */
+    Map<String, Measure> buildMeasures();
+
+
     /**
      * Read a .yaml config file that relates properties to their associated measure, tool, and diagnostics.
      * The .yaml file should have the form:
