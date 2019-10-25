@@ -247,7 +247,7 @@ public class SingleProjectEvaluator {
      *      Path to the quality model file. Must exist.
      */
     void initialize(Path projectDir, Path resultsDir, Path qmLocation) {
-        if (!projectDir.toFile().exists() || !projectDir.toFile().isDirectory()) {
+        if (!projectDir.toFile().exists()) {
             throw new IllegalArgumentException("Invalid projectDir path given.");
         }
         if (!qmLocation.toFile().exists() || !qmLocation.toFile().isFile()) {

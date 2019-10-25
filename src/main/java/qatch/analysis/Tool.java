@@ -8,7 +8,7 @@ import java.io.Reader;
 import java.nio.file.Path;
 import java.util.*;
 
-public abstract class Tool implements  ITool {
+public abstract class Tool implements ITool {
 
     // instance vars
     private String name;
