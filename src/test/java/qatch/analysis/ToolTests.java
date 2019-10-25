@@ -13,19 +13,21 @@ import java.util.Map;
 public class ToolTests {
 
     public class ToolInstance extends Tool implements ITool {
-        ToolInstance(String name) { super(name); }
+        ToolInstance(String name, Path config) { super(name, config); }
 
         @Override
         public Path analyze(Path projectLocation) { return null; }
 
         @Override
         public Map<String, Diagnostic> parseAnalysis(Path toolResults) { return null; }
+
+        public Path getConfig() { return null; }
     }
 
 
     @Test
     public void testApplyFindings() {
-        Tool t = new ToolInstance("Test Tool");
+        Tool t = new ToolInstance("Test Tool", null);
         Map<String, Measure> measures = new HashMap<>();
         Map<String, Diagnostic> diagnosticFindings = new HashMap<>();
 
@@ -88,11 +90,10 @@ public class ToolTests {
         Assert.assertTrue(m.get("Cryptography").getDiagnostics().get(1).getFindings().contains(f51));
     }
 
-
     @Test
     public void testMapMeasure() {
 
-        ITool t = new ToolInstance("Test Tool");
+        ITool t = new ToolInstance("Test Tool", null);
         Map<String, Measure> mappings = t.parseConfig(Paths.get("src/test/resources/config/test_tool_measures.yaml"));
 
         Assert.assertEquals("Test Tool", mappings.get("Injection").getToolName());

@@ -77,6 +77,15 @@ public interface ITool {
     Map<String, Diagnostic> parseAnalysis(Path toolResults);
 
     /**
+     * Each tool should have an associated config file (likely .yaml or .xml) describing the properties, measures,
+     * and diagnostics associations.
+     *
+     * @return
+     *      The path to the config file resource on the file system
+     */
+    Path getConfig();
+
+    /**
      * @return
      *      The name of the tool
      */

@@ -12,20 +12,23 @@ public abstract class Tool implements  ITool {
 
     // instance vars
     private String name;
+    private Path config;
 
     // constructor
     /**
      * @param name
      *      The tool name
      */
-    public Tool(String name) {
+    public Tool(String name, Path config) {
         this.name = name;
+        this.config = config;
     }
 
 
     // getters and setters
     public String getName() { return name; }
-
+    @Override
+    public Path getConfig() { return config; }
 
     // methods
     @Override

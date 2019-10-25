@@ -37,8 +37,7 @@ public class SingleProjectEvaluator {
         Project project = makeProject(projectDir);
 
         // run the static analysis tool process
-
-
+        Map<String, Measure> measureResults = runTool(projectDir, tool);
 
 
         throw new NotImplementedException();
@@ -291,8 +290,9 @@ public class SingleProjectEvaluator {
     /**
      * Run static analysis tool evaluation process:
      *   (1) run static analysis tool
-     *   (2) prase output: make collection of diagnostic objects
-     *   (3) link findings and diagnostics to Measure objects using .yaml config
+     *   (2) parse config: get object representation of the .yaml measure->diagnostics configuration
+     *   (3) prase output: make collection of diagnostic objects
+     *   (4) link findings and diagnostics to Measure objects
      *
      * A successful analysis results in the tool having a measureMappings instance variable
      * with similar structure to the input .yaml config but with Measure objects, and those Measure
@@ -300,28 +300,28 @@ public class SingleProjectEvaluator {
      *
      * @param projectDir
      *      Path to root directory of project to be analyzed.
-     * @param resultsDir
-     *      Directory to place the analysis results in. Does not need to exist initially.
-     *      A subdirectory 'findings' is placed in this directory.
-     * @param qualityModel
-     *      The quality model object representation of the quality model being used.
      * @param tool
      *      Analyzer provided by language-specific instance necessary to find findings of the project.
      * @return
      *      A mapping of (Key: property name, Value: measure object) where the measure objects contain the
      *      static analysis findings for that measure.
      */
-    Map<String, Measure> runTool(Path projectDir, Path resultsDir, QualityModel qualityModel, ITool tool) {
-
+    private Map<String, Measure> runTool(Path projectDir, ITool tool) {
 
         // (1) run static analysis tool
         // TODO: turn this into a temp file that always deletes on/before program exit
         Path analysisOutput = tool.analyze(projectDir);
 
-        // (2) prase output: make collection of diagnostic objects
+        // (2) parse config: get object representation of the .yaml measure->diagnostics configuration
+        Map<String, Measure> propertyMeasureMap = tool.parseConfig(tool.getConfig());
 
+        // (3) prase output: make collection of diagnostic objects
+        Map<String, Diagnostic> analysisResults = tool.parseAnalysis(analysisOutput);
 
-        throw new NotImplementedException();
+        // (4) link findings and diagnostics to Measure objects
+        propertyMeasureMap = tool.applyFindings(propertyMeasureMap, analysisResults);
+
+        return propertyMeasureMap;
     }
 
     /**
