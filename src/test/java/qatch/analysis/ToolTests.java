@@ -37,17 +37,17 @@ public class ToolTests {
         Finding f42 = new Finding("home/filepath42", 41, 411);
         Finding f51 = new Finding("home/filepath51", 5, 51);
 
-        Diagnostic scs0001 = new Diagnostic("Test Tool", "SCS0001");
-        Diagnostic scs0002 = new Diagnostic("Test Tool", "SCS0002");
-        Diagnostic scs0004 = new Diagnostic("Test Tool", "SCS0004");
-        Diagnostic scs0005 = new Diagnostic("Test Tool", "SCS0005");
+        Diagnostic scs0001 = new Diagnostic("SCS0001");
+        Diagnostic scs0002 = new Diagnostic("SCS0002");
+        Diagnostic scs0004 = new Diagnostic("SCS0004");
+        Diagnostic scs0005 = new Diagnostic("SCS0005");
 
-        Diagnostic injDiag01 = new Diagnostic("Test Tool", "SCS0001");
-        Diagnostic injDiag02 = new Diagnostic("Test Tool", "SCS0002");
-        Diagnostic injDiag03 = new Diagnostic("Test Tool", "Example no finding 1");
-        Diagnostic injDiag04 = new Diagnostic("Test Tool", "Example no finding 2");
-        Diagnostic cryptoDiag04 = new Diagnostic("Test Tool", "SCS0004");
-        Diagnostic cryptoDiag05 = new Diagnostic("Test Tool", "SCS0005");
+        Diagnostic injDiag01 = new Diagnostic("SCS0001");
+        Diagnostic injDiag02 = new Diagnostic("SCS0002");
+        Diagnostic injDiag03 = new Diagnostic("Example no finding 1");
+        Diagnostic injDiag04 = new Diagnostic("Example no finding 2");
+        Diagnostic cryptoDiag04 = new Diagnostic( "SCS0004");
+        Diagnostic cryptoDiag05 = new Diagnostic( "SCS0005");
 
         List<Diagnostic> injectionDiagnostics = Arrays.asList(injDiag01, injDiag02, injDiag03, injDiag04);
         List<Diagnostic> cryptoDiagnostics = Arrays.asList(cryptoDiag04, cryptoDiag05);
@@ -58,11 +58,11 @@ public class ToolTests {
         injection.setDiagnostics(injectionDiagnostics);
         crypto.setDiagnostics(cryptoDiagnostics);
 
-        scs0001.addFinding(f11);
-        scs0002.addFinding(f21);
-        scs0004.addFinding(f41);
-        scs0004.addFinding(f42);
-        scs0005.addFinding(f51);
+        scs0001.setFinding(f11);
+        scs0002.setFinding(f21);
+        scs0004.setFinding(f41);
+        scs0004.setFinding(f42);
+        scs0005.setFinding(f51);
 
         measures.put("Injection", injection);
         measures.put("Cryptography", crypto);

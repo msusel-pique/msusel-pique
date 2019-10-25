@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import qatch.analysis.Measure;
 import qatch.evaluation.Project;
 import qatch.model.*;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,7 +54,8 @@ public class TestHelper {
     }
 
     public static Tqi makeTqi() {
-        return new Tqi(new Vector<Double>(Arrays.asList(0.3, 0.7)));
+//        return new Tqi(new Vector<Double>(Arrays.asList(0.3, 0.7)));
+        throw new NotImplementedException();
     }
 
     public static IssueSet makeIssueSet(String name, Issue... issues) {

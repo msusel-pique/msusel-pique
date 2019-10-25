@@ -267,7 +267,7 @@ public class SingleProjectEvaluator {
      *          Initialized quality model object
      */
     QualityModel makeNewQM(Path qmLocation) {
-        QualityModelLoader qmImporter = new QualityModelLoader(qmLocation.toString());
+        QualityModelLoader qmImporter = new QualityModelLoader(qmLocation);
         return qmImporter.importQualityModel();
     }
 

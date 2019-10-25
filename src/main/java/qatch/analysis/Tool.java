@@ -61,7 +61,7 @@ public abstract class Tool implements ITool {
                 LinkedHashMap yamlNestedData = (LinkedHashMap) yamlMaps.get(k);
                 ArrayList yamlDiagnostics = (ArrayList) yamlNestedData.get("Diagnostics");
                 yamlDiagnostics.forEach(e -> {
-                    Diagnostic diagnostic = new Diagnostic(this.name, e.toString());
+                    Diagnostic diagnostic = new Diagnostic(e.toString());
                     diagnostics.add(diagnostic);
                 });
                 Measure measure = new Measure((String) yamlNestedData.get("Measure"), this.name, diagnostics);

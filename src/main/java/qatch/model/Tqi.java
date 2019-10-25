@@ -16,27 +16,40 @@ import java.util.Vector;
 public class Tqi {
 	
 	//The basic fields of the class
+	private double eval;  //The total quality index (total quality score) of a project
+	private String name;
+	private Map<String, Double> weights = new HashMap<>();  // mapping of characteristic names and their weights
 	@Deprecated
-	private Vector<Double> weights_depreciated;		//The weights used for the calculation of the TQI from the evals of the QM's characteristics
-	private double eval;								   //The total quality index (total quality score) of a project
-	private Map<String, Double> weights = new HashMap<>(); // mapping of characteristic names and their weights
+	private Vector<Double> weights_depreciated;	 //The weights used for the calculation of the TQI from the evals of the QM's characteristics
 
 
 	//Setters and Getters
 	public double getEval() {
 		return eval;
 	}
-
 	public void setEval(double eval) {
 		this.eval = eval;
 	}
 
-	public Vector<Double> getWeights_depreciated() {
-		return weights_depreciated;
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public void setWeights_depreciated(Vector<Double> weights_depreciated) {
-		this.weights_depreciated = weights_depreciated;
+	public Map<String, Double> getWeights() {
+		return weights;
+	}
+	public void setWeights(Map<String, Double> weights) {
+		this.weights = weights;
+	}
+	public void setWeight(String characteristicName, double value) {
+		this.weights.put(characteristicName, value);
+	}
+
+	public Vector<Double> getWeights_depreciated() {
+		return weights_depreciated;
 	}
 	
 
@@ -71,19 +84,6 @@ public class Tqi {
 		weights_depreciated.add(weight);
 	}
 	
-	public void addWeight(int index, Double weight){
-		weights_depreciated.add(index, weight);
-	}
-	
-	public void clearProperties(){
-		weights_depreciated.clear();
-	}
-	
-	// Returns the index of the first occurrence
-	public boolean containsWeight(Double weight){
-		return weights_depreciated.contains(weight);
-	}
-	
 	public Double get(int index){
 		return weights_depreciated.get(index);
 	}
@@ -96,31 +96,12 @@ public class Tqi {
 		return weights_depreciated.iterator();
 	}
 	
-	public int indexOfWeight(Double weight){
-		return weights_depreciated.indexOf(weight);
-	}
-	
-	public void removeWeight(int index){
-		weights_depreciated.remove(index);
-	}
-	
 	// Removes the first occurrence
-	public void removeWeight(Double weight){
-		weights_depreciated.remove(weight);
-	}
 	
 	public int size(){
 		return weights_depreciated.size();
 	}
-	
-	public Double[] toArray(){
-		return (Double[]) weights_depreciated.toArray();
-	}
-	
-	public String toString(){
-		return weights_depreciated.toString();
-	}
-	
+
 	//TODO: Deep Cloning - Check PropertySet class (and Property, Measure)
 	@Override
 	public Object clone() throws CloneNotSupportedException {

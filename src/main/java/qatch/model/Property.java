@@ -4,21 +4,17 @@ import qatch.analysis.Measure;
 
 public class Property implements Cloneable {
 	
-	/* The breakpoint of the Utility Function used for the evaluation of the Property */
-	private static final double BREAKPOINT = 0.5;
-	
 	/* Static constants that belong to this class */
 	public static final int THRESHOLDS_NUM = 3;
-	
-	private String name;//The name of the property
+
 	private String description;//A brief description of the property (optional)
-	private double[] thresholds;//The three thresholds of the property metric, needed for the evaluation
 	private double eval;//The quality score of the property
-	private double profile[];//The profile of this Property (SIG Model for metrics - just violation counter per severity category for PMD)
-	private boolean positive;//If this field is true then the metric has a positive impact on the property
-	//private String tool;//The tool used for quantifying it (PMD, CKJM etc.)
-	
 	private Measure measure;
+	private String name;//The name of the property
+	private boolean positive;//If this field is true then the metric has a positive impact on the property
+	private double profile[];//The profile of this Property (SIG Model for metrics - just violation counter per severity category for PMD)
+	private double[] thresholds;//The three thresholds of the property metric, needed for the evaluation
+
 
 	public Property(){
 		// Just create the thresholds array.
@@ -34,6 +30,14 @@ public class Property implements Cloneable {
 	public Property(String name, Measure measure) {
 		thresholds = new double[THRESHOLDS_NUM];
 		this.name = name;
+		this.measure = measure;
+	}
+
+	public Property(String name, String description, boolean impact, double[] thresholds, Measure measure) {
+		this.name = name;
+		this.description = description;
+		this.positive = impact;
+		this.thresholds = thresholds;
 		this.measure = measure;
 	}
 	

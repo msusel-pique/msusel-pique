@@ -53,13 +53,13 @@ public class CharacteristicsExporter {
 
 			//Create a node (element) containing the weights of the characteristic
 			Element weights = new Element("weights");
-			for(int i = 0; i < characteristic.getWeights().size(); i++){
+			for(int i = 0; i < characteristic.getWeights_depreicated().size(); i++){
 				
 				//Create a weight Element
 				Element t = new Element("weight");
 				
 				//Set the appropriate value of the weight
-				t.setText(String.valueOf(characteristic.getWeights().get(i)));
+				t.setText(String.valueOf(characteristic.getWeights_depreicated().get(i)));
 				
 				//Attach the current weight element to the element named "weights"
 				weights.addContent(t);

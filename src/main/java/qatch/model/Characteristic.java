@@ -1,6 +1,8 @@
 package qatch.model;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -12,14 +14,16 @@ import java.util.Vector;
  *
  */
 public class Characteristic {
-	
-	private String name;				//The name of the characteristic
-	private String standard;			//The standard from which this characteristic derives 
-	private String description;			//A brief description of the characteristic
-	private Vector<Double> weights;	    //The vector holding the weights for the evaluation of the characteristic.
 
-	private double eval;				//The quality score of this characteristic (derives from the weighted average of the eval fields of the QM's properties)
-	
+	private String description;	 //A brief description of the characteristic
+	private double eval;  //The quality score of this characteristic (derives from the weighted average of the eval fields of the QM's properties)
+	private String name;  //The name of the characteristic
+	private Map<String, Characteristic> properties = new HashMap<>();
+	private String standard;  //The standard from which this characteristic derives
+	private Map<String, Double> weights = new HashMap<>();  // mapping of property names and their weights
+	private Vector<Double> weights_depreicated;	 //The vector holding the weights for the evaluation of the characteristic.
+
+
 
 	/*
 	 * Constructors...
@@ -28,62 +32,67 @@ public class Characteristic {
 		this.name = "";
 		this.description = "";
 		this.standard = "";
-		this.weights = new Vector<>();
 	}
 	
 	public Characteristic(String name, String standard, String description){
 		this.name = name;
 		this.description = standard;
 		this.standard = description;
-		this.weights = new Vector<>();
 	}
 	
 	public Characteristic(String name, String standard, String description, Vector<Double> weights){
 		this.name = name;
 		this.description = standard;
 		this.standard = description;
-		this.weights = weights;
+		this.weights_depreicated = weights;
 	}
 	
 	/*
 	 * Setters and Getters...
 	 */
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String desription) {
+		this.description = desription;
+	}
+
 	public String getName() {
 		return name;
 	}
-
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Map<String, Characteristic> getProperties() {
+		return properties;
+	}
+
+	public void setProperties(Map<String, Characteristic> properties) {
+		this.properties = properties;
 	}
 
 	public String getStandard() {
 		return standard;
 	}
-
 	public void setStandard(String standard) {
 		this.standard = standard;
 	}
 
-	public String getDescription() {
-		return description;
+	public void setWeight(String propertyName, double value) {
+		this.weights.put(propertyName, value);
 	}
 
-	public void setDescription(String desription) {
-		this.description = desription;
+	public Vector<Double> getWeights_depreicated() {
+		return weights_depreicated;
 	}
-
-	public Vector<Double> getWeights() {
-		return weights;
-	}
-
-	public void setWeights(Vector<Double> weights) {
-		this.weights = weights;
+	public void setWeights_depreicated(Vector<Double> weights_depreicated) {
+		this.weights_depreicated = weights_depreicated;
 	}
 	
 	public double getEval() {
 		return eval;
 	}
-
 	public void setEval(double eval) {
 		this.eval = eval;
 	}
@@ -92,56 +101,25 @@ public class Characteristic {
 	 * Overridden Vector's basic methods
 	 */
 
+	@Deprecated
 	public void addWeight(Double weight){
-		weights.add(weight);
+		weights_depreicated.add(weight);
 	}
-	
-	public void addWeight(int index, Double weight){
-		weights.add(index, weight);
-	}
-	
-	public void clearProperties(){
-		weights.clear();
-	}
-	
-	public boolean containsWeight(Double weight){
-		return weights.contains(weight);	
-	}
-	
+	@Deprecated
 	public Double get(int index){
-		return weights.get(index);
+		return weights_depreicated.get(index);
 	}
-	
+	@Deprecated
 	public boolean isEmpty(){
-		return weights.isEmpty();
+		return weights_depreicated.isEmpty();
 	}
-	
+	@Deprecated
 	public Iterator<Double> iterator(){
-		return weights.iterator();
+		return weights_depreicated.iterator();
 	}
-	
-	public int indexOfWeight(Double weight){
-		return weights.indexOf(weight);
-	}
-	
-	public void removeWeight(int index){
-		weights.remove(index);
-	}
-	
-	public void removeWeight(Double weight){
-		weights.remove(weight);
-	}
-	
+	@Deprecated
 	public int size(){
-		return weights.size();
-	}
-	
-	public Double[] toArray(){
-		return (Double[]) weights.toArray();
-	}
-	
-	public String toString(){
-		return weights.toString();
+		return weights_depreicated.size();
 	}
 
 	/**
@@ -160,8 +138,8 @@ public class Characteristic {
 	 */
 	public void evaluate(PropertySet properties){
 		double sum = 0;
-		for(int i = 0; i < weights.size(); i++){
-			sum += properties.get(i).getEval() * weights.get(i).doubleValue();
+		for(int i = 0; i < weights_depreicated.size(); i++){
+			sum += properties.get(i).getEval() * weights_depreicated.get(i).doubleValue();
 		}
 		this.eval = sum;
 	}
@@ -173,8 +151,8 @@ public class Characteristic {
 	    cloned.setDescription(this.description);
 	    cloned.setName(this.name);
 	    cloned.setStandard(this.standard);
-	    for(int i = 0; i < this.weights.size(); i++){
-	    	cloned.weights.add((Double) this.getWeights().get(i));
+	    for(int i = 0; i < this.weights_depreicated.size(); i++){
+	    	cloned.weights_depreicated.add((Double) this.getWeights_depreicated().get(i));
 	    }
 		return cloned;
 	}

@@ -19,31 +19,45 @@ public class QualityModel {
 
 	//A representation of quality model inside JVM
 	private String name;  //The name of the QM found in the XML file
-	private Tqi tqi;	  // root node, the total quality evaluation, contains characteristic objects as children
+	private Tqi tqi = new Tqi();	  // root node, the total quality evaluation, contains characteristic objects as children
 	private Map<String, Characteristic> characteristics = new HashMap<>();
-	private Map<String, Property> properties = new HashMap<>();  // each property node has 1 associated Measure node
+	private Map<String, Property> properties = new HashMap<>();  // each property has one Measure associated with it
 	private CharacteristicSet characteristics_deprecated;  //The CharacteristicSet containing all the characteristics_deprecated of the Quality Model
-	private PropertySet properties_deprecated;				//The PropertySet containing all the properties of the Quality Model
+	private PropertySet properties_deprecated;			   //The PropertySet containing all the properties of the Quality Model
 
 
-	// constructor
-	QualityModel() {
-		this.tqi = new Tqi();
-	}
-	
 	//Setters and Getters
+	public Map<String, Characteristic> getCharacteristics() {
+		return characteristics;
+	}
+	public void setCharacteristic(String characteristicName, Characteristic characteristic) {
+		this.characteristics.put(characteristicName, characteristic);
+	}
+
 	public String getName() {
 		return name;
 	}
-
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Map<String, Property> getProperties() {
+		return properties;
+	}
+	public void setProperty(String propertyName, Property property) {
+		this.properties.put(propertyName, property);
+	}
+
+	public Tqi getTqi() {
+		return tqi;
+	}
+	public void setTqi(Tqi tqi) {
+		this.tqi = tqi;
 	}
 
 	public PropertySet getProperties_deprecated() {
 		return properties_deprecated;
 	}
-
 	public void setProperties_deprecated(PropertySet properties_deprecated) {
 		this.properties_deprecated = properties_deprecated;
 	}
@@ -51,19 +65,7 @@ public class QualityModel {
 	public CharacteristicSet getCharacteristics_deprecated() {
 		return characteristics_deprecated;
 	}
-
 	public void setCharacteristics_deprecated(CharacteristicSet characteristics_deprecated) {
 		this.characteristics_deprecated = characteristics_deprecated;
 	}
-	
-	public Tqi getTqi() {
-		return tqi;
-	}
-
-	public void setTqi(Tqi tqi) {
-		this.tqi = tqi;
-	}
-	
-	//TODO: Add extra methods for avoiding train expressions...
-	
 }

@@ -103,7 +103,7 @@ public class SingleProjectEvaluatorTests {
         p.getCharacteristics().removeCharacteristic(0);
         p.getCharacteristics().removeCharacteristic(0);
 
-        QualityModelLoader qmImporter = new QualityModelLoader(QM_LOCATION.toString());
+        QualityModelLoader qmImporter = new QualityModelLoader(QM_LOCATION);
         QualityModel qm = qmImporter.importQualityModel();
 
         // TODO: add more edge cases
