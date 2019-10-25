@@ -147,16 +147,14 @@ public class SingleProjectEvaluatorTests {
 
     @Test
     public void testInitialize() {
-        try { spe.initialize(PROJECT_DIR, RESULTS_DIR, QM_LOCATION, metricsAnalyzer, findingsAnalyzer ); }
+        try { spe.initialize(PROJECT_DIR, RESULTS_DIR, QM_LOCATION); }
         catch (IllegalArgumentException e) { Assert.fail(e.getMessage()); }
 
         try {
             spe.initialize(
                     Paths.get("src/test/resources/IDONTEXIST"),
                     Paths.get("src/test/output/SingleProjEval"),
-                    QM_LOCATION,
-                    metricsAnalyzer,
-                    findingsAnalyzer
+                    QM_LOCATION
             );
         } catch (IllegalArgumentException ignored) {  }
     }

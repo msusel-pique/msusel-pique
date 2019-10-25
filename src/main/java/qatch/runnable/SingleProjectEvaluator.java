@@ -9,12 +9,14 @@ import qatch.evaluation.Project;
 import qatch.evaluation.ProjectCharacteristicsEvaluator;
 import qatch.evaluation.ProjectEvaluator;
 import qatch.model.*;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -26,6 +28,21 @@ public class SingleProjectEvaluator {
 
     private final Logger logger = LoggerFactory.getLogger(SingleProjectEvaluator.class);
 
+
+    public Path runEvaluator(Path projectDir, Path resultsDir, Path qmLocation, ITool tool) {
+
+        // initialize data structures
+        initialize(projectDir, resultsDir, qmLocation);
+        QualityModel qualityModel = makeNewQM(qmLocation);
+        Project project = makeProject(projectDir);
+
+        // run the static analysis tool process
+
+
+
+
+        throw new NotImplementedException();
+    }
 
     /**
      * Entry point for running single project evaluation. The library assumes the user has extended Qatch
@@ -58,37 +75,37 @@ public class SingleProjectEvaluator {
      * @return
      *      The path to the produced quality analysis file on the hard disk.
      */
-    public Path runEvaluator(Path projectDir, Path resultsDir, Path qmLocation,
-                             IAnalyzer metricsAnalyzer, IAnalyzer findingsAnalyzer,
-                             IMetricsResultsImporter metricsImporter, IFindingsResultsImporter findingsImporter,
-                             IMetricsAggregator metricsAgg, IFindingsAggregator findingsAgg) {
-
-        // initialize data structures
-        initialize(projectDir, resultsDir, qmLocation, metricsAnalyzer, findingsAnalyzer);
-        QualityModel qualityModel = makeNewQM(qmLocation);
-        Project project = makeProject(projectDir);
-
-        // run the static analysis tools
-        Path metricsResults = runMetricsTools(projectDir, resultsDir, qualityModel, metricsAnalyzer);
-        Path findingsResults = runFindingsTools(projectDir, resultsDir, qualityModel, findingsAnalyzer);
-        try {
-            project.setMetrics(getMetricsFromImporter(metricsResults, metricsImporter));
-            project.setIssues(getFindingsFromImporter(findingsResults, findingsImporter));
-        } catch (FileNotFoundException e) {
-            logger.error(e.getMessage());
-            throw new IllegalArgumentException(e.getMessage());
-        }
-
-        // aggregate static analysis values to their measure nodes
-        project.cloneProperties(qualityModel);
-        aggregateNormalize(project, metricsAgg, findingsAgg);
-
-        // evaluate higher QM nodes values with weights and values
-        evaluate(project, qualityModel);
-
-        // create a hard-disk file of the results and return to its path
-        return export(project, resultsDir);
-    }
+//    public Path runEvaluator(Path projectDir, Path resultsDir, Path qmLocation,
+//                             IAnalyzer metricsAnalyzer, IAnalyzer findingsAnalyzer,
+//                             IMetricsResultsImporter metricsImporter, IFindingsResultsImporter findingsImporter,
+//                             IMetricsAggregator metricsAgg, IFindingsAggregator findingsAgg) {
+//
+//        // initialize data structures
+//        initialize(projectDir, resultsDir, qmLocation, metricsAnalyzer, findingsAnalyzer);
+//        QualityModel qualityModel = makeNewQM(qmLocation);
+//        Project project = makeProject(projectDir);
+//
+//        // run the static analysis tools
+//        Path metricsResults = runMetricsTools(projectDir, resultsDir, qualityModel, metricsAnalyzer);
+//        Path findingsResults = runFindingsTools(projectDir, resultsDir, qualityModel, findingsAnalyzer);
+//        try {
+//            project.setMetrics(getMetricsFromImporter(metricsResults, metricsImporter));
+//            project.setIssues(getFindingsFromImporter(findingsResults, findingsImporter));
+//        } catch (FileNotFoundException e) {
+//            logger.error(e.getMessage());
+//            throw new IllegalArgumentException(e.getMessage());
+//        }
+//
+//        // aggregate static analysis values to their measure nodes
+//        project.cloneProperties(qualityModel);
+//        aggregateNormalize(project, metricsAgg, findingsAgg);
+//
+//        // evaluate higher QM nodes values with weights and values
+//        evaluate(project, qualityModel);
+//
+//        // create a hard-disk file of the results and return to its path
+//        return export(project, resultsDir);
+//    }
 
 
     /**
@@ -229,23 +246,13 @@ public class SingleProjectEvaluator {
      *      Directory to place the analysis results in. Does not need to exist initially.
      * @param qmLocation
      *      Path to the quality model file. Must exist.
-     * @param metricsAnalyzer
-     *      Analyzer provided by language-specific instance necessary to find metrics of the project.
-     * @param findingsAnalyzer
-     *      Analyzer provided by language-specific instance necessary to find findings of the project.
      */
-    void initialize(Path projectDir, Path resultsDir, Path qmLocation, IAnalyzer metricsAnalyzer, IAnalyzer findingsAnalyzer) {
+    void initialize(Path projectDir, Path resultsDir, Path qmLocation) {
         if (!projectDir.toFile().exists() || !projectDir.toFile().isDirectory()) {
             throw new IllegalArgumentException("Invalid projectDir path given.");
         }
         if (!qmLocation.toFile().exists() || !qmLocation.toFile().isFile()) {
             throw new IllegalArgumentException("Invalid qmLocation path given.");
-        }
-        if (!metricsAnalyzer.getToolsDirectory().toFile().exists()) {
-            throw new IllegalArgumentException("Invalid metrics tools directory given.");
-        }
-        if (!findingsAnalyzer.getToolsDirectory().toFile().exists()) {
-            throw new IllegalArgumentException("Invalid findings tools directory given.");
         }
 
         resultsDir.toFile().mkdirs();
@@ -281,6 +288,41 @@ public class SingleProjectEvaluator {
         return project;
     }
 
+    /**
+     * Run static analysis tool evaluation process:
+     *   (1) run static analysis tool
+     *   (2) prase output: make collection of diagnostic objects
+     *   (3) link findings and diagnostics to Measure objects using .yaml config
+     *
+     * A successful analysis results in the tool having a measureMappings instance variable
+     * with similar structure to the input .yaml config but with Measure objects, and those Measure
+     * objects have the actual findings from the analysis run included as Finding objects.
+     *
+     * @param projectDir
+     *      Path to root directory of project to be analyzed.
+     * @param resultsDir
+     *      Directory to place the analysis results in. Does not need to exist initially.
+     *      A subdirectory 'findings' is placed in this directory.
+     * @param qualityModel
+     *      The quality model object representation of the quality model being used.
+     * @param tool
+     *      Analyzer provided by language-specific instance necessary to find findings of the project.
+     * @return
+     *      A mapping of (Key: property name, Value: measure object) where the measure objects contain the
+     *      static analysis findings for that measure.
+     */
+    Map<String, Measure> runTool(Path projectDir, Path resultsDir, QualityModel qualityModel, ITool tool) {
+
+
+        // (1) run static analysis tool
+        // TODO: turn this into a temp file that always deletes on/before program exit
+        Path analysisOutput = tool.analyze(projectDir);
+
+        // (2) prase output: make collection of diagnostic objects
+
+
+        throw new NotImplementedException();
+    }
 
     /**
      * Creates a 'findings' folder in the resultsDir directory and places the results of
