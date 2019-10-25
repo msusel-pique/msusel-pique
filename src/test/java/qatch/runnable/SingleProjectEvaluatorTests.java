@@ -163,8 +163,8 @@ public class SingleProjectEvaluatorTests {
     public void testMakeNewQM() {
         QualityModel qm = spe.makeNewQM(QM_LOCATION);
         Assert.assertEquals("Test QM", qm.getName());
-        Assert.assertNotNull(qm.getProperties());
-        Assert.assertNotNull(qm.getCharacteristics());
+        Assert.assertNotNull(qm.getProperties_deprecated());
+        Assert.assertNotNull(qm.getCharacteristics_deprecated());
     }
 
     @Test

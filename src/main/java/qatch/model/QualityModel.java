@@ -1,5 +1,8 @@
 package qatch.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * This class encapsulates all the appropriate information that describe a 
  * Quality Model that can be used for the evaluation of a single project or 
@@ -15,31 +18,17 @@ package qatch.model;
 public class QualityModel {
 
 	//A representation of quality model inside JVM
-	private String name;						//The name of the QM found in the XML file
-	private PropertySet properties;				//The PropertySet containing all the properties of the Quality Model
-	private CharacteristicSet characteristics;  //The CharacteristicSet containing all the characteristics of the Quality Model
-	private Tqi tqi;							//The configuration for the calculation of the TQI of a project
-	
-	//Constructors
-	public QualityModel(){
-		this.name = "";
-		this.properties = new PropertySet();
-		this.characteristics = new CharacteristicSet();
+	private String name;  //The name of the QM found in the XML file
+	private Tqi tqi;	  // root node, the total quality evaluation, contains characteristic objects as children
+	private Map<String, Characteristic> characteristics = new HashMap<>();
+	private Map<String, Property> properties = new HashMap<>();  // each property node has 1 associated Measure node
+	private CharacteristicSet characteristics_deprecated;  //The CharacteristicSet containing all the characteristics_deprecated of the Quality Model
+	private PropertySet properties_deprecated;				//The PropertySet containing all the properties of the Quality Model
+
+
+	// constructor
+	QualityModel() {
 		this.tqi = new Tqi();
-	}
-	
-	public QualityModel(String name){
-		this.name = name;
-		this.properties = new PropertySet();
-		this.characteristics = new CharacteristicSet();
-		this.tqi = new Tqi();
-	}
-	
-	public QualityModel(String name, PropertySet properties, CharacteristicSet characteristics, Tqi tqi){
-		this.name = name;
-		this.properties = properties;
-		this.characteristics = characteristics;
-		this.tqi = tqi;
 	}
 	
 	//Setters and Getters
@@ -51,20 +40,20 @@ public class QualityModel {
 		this.name = name;
 	}
 
-	public PropertySet getProperties() {
-		return properties;
+	public PropertySet getProperties_deprecated() {
+		return properties_deprecated;
 	}
 
-	public void setProperties(PropertySet properties) {
-		this.properties = properties;
+	public void setProperties_deprecated(PropertySet properties_deprecated) {
+		this.properties_deprecated = properties_deprecated;
 	}
 
-	public CharacteristicSet getCharacteristics() {
-		return characteristics;
+	public CharacteristicSet getCharacteristics_deprecated() {
+		return characteristics_deprecated;
 	}
 
-	public void setCharacteristics(CharacteristicSet characteristics) {
-		this.characteristics = characteristics;
+	public void setCharacteristics_deprecated(CharacteristicSet characteristics_deprecated) {
+		this.characteristics_deprecated = characteristics_deprecated;
 	}
 	
 	public Tqi getTqi() {

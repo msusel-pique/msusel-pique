@@ -48,8 +48,8 @@ public class QualityModelExporter {
 		
 		//Retrieve the JDOM Representation of each Quality Model's node
 		Element tqiRoot = tqiExp.createJDOMRepresentation(qualityModel.getTqi());
-		Element charRoot = charExp.createJDOMRepresentation(qualityModel.getCharacteristics());
-		Element propRoot = prExp.createJDOMRepresentation(qualityModel.getProperties());
+		Element charRoot = charExp.createJDOMRepresentation(qualityModel.getCharacteristics_deprecated());
+		Element propRoot = prExp.createJDOMRepresentation(qualityModel.getProperties_deprecated());
 		
 		//Create the root of the Quality Model XML file
 		Element root = new Element("quality_model");

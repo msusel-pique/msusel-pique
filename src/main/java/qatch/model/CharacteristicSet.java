@@ -14,6 +14,7 @@ import java.util.Vector;
  * @author Miltos
  *
  */
+@Deprecated
 public class CharacteristicSet {
 	
 	private Vector<Characteristic> characteristics;		//The set of the quality model's characteristics

@@ -1,13 +1,11 @@
 package qatch.model;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-import org.jdom.Document;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
+
+import java.nio.file.Path;
+import java.util.List;
 
 /**
  * This class is responsible for loading the Quality Model from 
@@ -21,23 +19,19 @@ import org.jdom.input.SAXBuilder;
  */
 public class QualityModelLoader {
 	
-	private String xmlPath;				//The exact path where the XML file that contains the QM description is placed
+	private Path qmFilePath;  //The exact path where the file that contains the QM description is placed
 
 	//Constructors
-	public QualityModelLoader(){
-		this.xmlPath = "";
+	public QualityModelLoader(Path qmFilePath){
+		this.qmFilePath = qmFilePath;
 	}
-	public QualityModelLoader(String xmlPath){
-		this.xmlPath = xmlPath;
-	}
-	
+
+
 	//Setters and Getters
-	public String getXmlPath() {
-		return xmlPath;
+	public Path getQmFilePath() {
+		return qmFilePath;
 	}
-	public void setXmlPath(String xmlPath) {
-		this.xmlPath = xmlPath;
-	}
+
 
 	//Other Methods
 	/**
@@ -60,37 +54,42 @@ public class QualityModelLoader {
 	 */
 	public QualityModel importQualityModel(){
 		//Create an empty QualityModel Object
-		QualityModel qualityModel = new QualityModel();
+		QualityModel qm = new QualityModel();
+
+		// parse json data and update quality model object
+		JsonObject jsonObject = new JsonParser().parse(qmFilePath.toString()).getAsJsonObject();
+		qm.setName(jsonObject.getAsJsonObject("name").getAsString());
+
 		
-		try {
-			
-			// Import the XML file that contains the description of the Quality Model
-			SAXBuilder builder = new SAXBuilder();
-			Document doc = builder.build(new File(xmlPath));
-			Element root = (Element) doc.getRootElement();
-			
-			// Create a list of the three nodes contained into the xml file
-			List<Element> children = root.getChildren();
-			
-			//Set the name of the QualityModel object
-			qualityModel.setName(root.getAttributeValue("name"));
-			
-			//Parse <tqi> node
-			qualityModel.setTqi(loadTqiNode(children.get(0)));
-			
-			//Parse <characteristics> node
-			qualityModel.setCharacteristics(loadCharacteristicsNode(children.get(1)));
-			
-			//Parse <properties> node
-			qualityModel.setProperties(loadPropertiesNode(children.get(2)));
-			
-			
-			} catch (JDOMException | IOException e) {
-				System.out.println(e.getMessage());
-			}
+//		try {
+//
+//			// Import the XML file that contains the description of the Quality Model
+//			SAXBuilder builder = new SAXBuilder();
+//			Document doc = builder.build(new File(qmFilePath));
+//			Element root = (Element) doc.getRootElement();
+//
+//			// Create a list of the three nodes contained into the xml file
+//			List<Element> children = root.getChildren();
+//
+//			//Set the name of the QualityModel object
+//			qualityModel.setName(root.getAttributeValue("name"));
+//
+//			//Parse <tqi> node
+//			qualityModel.setTqi(loadTqiNode(children.get(0)));
+//
+//			//Parse <characteristics> node
+//			qualityModel.setCharacteristics_deprecated(loadCharacteristicsNode(children.get(1)));
+//
+//			//Parse <properties> node
+//			qualityModel.setProperties_deprecated(loadPropertiesNode(children.get(2)));
+//
+//
+//			} catch (JDOMException | IOException e) {
+//				System.out.println(e.getMessage());
+//			}
 
 		//Return the imported Quality Model
-		return qualityModel;
+		return qm;
 	}
 	
 	/**

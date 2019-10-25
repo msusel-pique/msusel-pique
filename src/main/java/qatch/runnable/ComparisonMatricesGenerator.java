@@ -73,8 +73,8 @@ public class ComparisonMatricesGenerator {
          */
         PropertiesAndCharacteristicsLoader qmLoader = new PropertiesAndCharacteristicsLoader(qmLocation.toString());
         QualityModel qualityModel = qmLoader.importQualityModel();
-        PropertySet properties = qualityModel.getProperties();
-        CharacteristicSet characteristics = qualityModel.getCharacteristics();
+        PropertySet properties = qualityModel.getProperties_deprecated();
+        CharacteristicSet characteristics = qualityModel.getCharacteristics_deprecated();
 
         if (!fuzzy) { generateComparisonMatrix(properties, characteristics, outLocation, "0"); }
         else if (fuzzy) { generateFuzzyComparisonMatrix(properties, characteristics, outLocation, "-"); }

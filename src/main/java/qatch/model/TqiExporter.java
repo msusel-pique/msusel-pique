@@ -31,13 +31,13 @@ public class TqiExporter {
 		
 		//Create a node (element) containing the weights of the tqi object
 		Element weights = new Element("weights");
-		for(int i = 0; i < tqi.getWeights().size(); i++){
+		for(int i = 0; i < tqi.getWeights_depreciated().size(); i++){
 
 			//Create a weight Element
 			Element t = new Element("weight");
 			
 			//Set the appropriate value of the weight
-			t.setText(String.valueOf(tqi.getWeights().get(i)));
+			t.setText(String.valueOf(tqi.getWeights_depreciated().get(i)));
 			
 			//Attach the current weight element to the element named "weights"
 			weights.addContent(t);

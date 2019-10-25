@@ -3,6 +3,7 @@ package qatch.model;
 import java.util.Vector;
 import java.util.Iterator;
 
+@Deprecated
 public class PropertySet implements Cloneable{
 	
 	/**

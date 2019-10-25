@@ -250,10 +250,10 @@ public class Project{
 	 * Clone the properties of the quality model to the properties of the certain project
 	 */
 	public void cloneProperties(QualityModel qualityModel) {
-		for(int i = 0; i < qualityModel.getProperties().size(); i++){
+		for(int i = 0; i < qualityModel.getProperties_deprecated().size(); i++){
 			//Clone the property and add it to the PropertySet of the current project
 			Property p = null;
-			try { p = (Property) qualityModel.getProperties().get(i).clone(); }
+			try { p = (Property) qualityModel.getProperties_deprecated().get(i).clone(); }
 			catch (CloneNotSupportedException e) { e.printStackTrace(); }
 
 			this.addProperty(p);

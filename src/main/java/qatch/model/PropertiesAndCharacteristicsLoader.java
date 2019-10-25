@@ -67,10 +67,10 @@ public class PropertiesAndCharacteristicsLoader {
 			qualityModel.setName(root.getAttributeValue("name"));
 					
 			//Parse <characteristics> node
-			qualityModel.setCharacteristics(loadCharacteristicsNode(children.get(0)));
+			qualityModel.setCharacteristics_deprecated(loadCharacteristicsNode(children.get(0)));
 			
 			//Parse <properties> node
-			qualityModel.setProperties(loadPropertiesNode(children.get(1)));
+			qualityModel.setProperties_deprecated(loadPropertiesNode(children.get(1)));
 			
 			
 			} catch (JDOMException | IOException e) {

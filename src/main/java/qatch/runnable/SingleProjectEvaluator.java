@@ -146,9 +146,9 @@ public class SingleProjectEvaluator {
 
         try {
             // evaluate characteristics
-            for (int i = 0; i < qualityModel.getCharacteristics().size(); i++) {
+            for (int i = 0; i < qualityModel.getCharacteristics_deprecated().size(); i++) {
                 //Clone the characteristic and add it to the CharacteristicSet of the current project
-                Characteristic c = (Characteristic) qualityModel.getCharacteristics().get(i).clone();
+                Characteristic c = (Characteristic) qualityModel.getCharacteristics_deprecated().get(i).clone();
                 project.getCharacteristics().addCharacteristic(c);
             }
             charEvaluator.evaluateProjectCharacteristics(project);
@@ -344,7 +344,7 @@ public class SingleProjectEvaluator {
         File findingsResults = new File(resultsDir.toFile(), "findings");
         findingsResults.mkdirs();
         // TODO: add functionality for use of multiple analyzers
-        findingsAnalyzer.analyze(projectDir, findingsResults.toPath(), qualityModel.getProperties());
+        findingsAnalyzer.analyze(projectDir, findingsResults.toPath(), qualityModel.getProperties_deprecated());
 
         return findingsResults.toPath();
     }
@@ -370,7 +370,7 @@ public class SingleProjectEvaluator {
         File metricsResults = new File(resultsDir.toFile(), "metrics");
         metricsResults.mkdirs();
         // TODO: add functionality for use of multiple analyzers
-        metricsAnalyzer.analyze(projectDir, metricsResults.toPath(), qualityModel.getProperties());
+        metricsAnalyzer.analyze(projectDir, metricsResults.toPath(), qualityModel.getProperties_deprecated());
 
         return metricsResults.toPath();
     }
