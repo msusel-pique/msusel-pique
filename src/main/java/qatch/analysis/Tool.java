@@ -38,10 +38,11 @@ public abstract class Tool implements  ITool {
     public void addDiagnostic(Diagnostic diagnostic) { diagnostics.put(diagnostic.getId(), diagnostic); }
     public void setDiagnostics(Map<String, Diagnostic> diagnostics) { this.diagnostics = diagnostics; }
     public Map<String, Measure> getMeasureMappings() { return measureMappings; }
-
+    public void setMeasureMappings(Map<String, Measure> measureMappings) { this.measureMappings = measureMappings; }
 
     // methods
     @Override
+    // TODO: probably make private, return void, change name (updateMeasures? linkMeasuresToFindings?). Maybe change mapMeasures approach instead.
     public Map<String, Measure> buildMeasures() {
 
         // update measure -> diagnostic -> measure values in mapping with any existing findings
