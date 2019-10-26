@@ -9,7 +9,6 @@ import java.util.Vector;
 
 /**
  * This class represents a project under evaluation.
- * 
  * Basically, it contains all the data (metrics, violations, properties etc.) that belong to a certain project.
  *
  * @author Miltos

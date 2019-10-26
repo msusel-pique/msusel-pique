@@ -12,7 +12,7 @@ import java.nio.file.Path;
 
 public class BenchmarkAnalysisExporterTests {
 
-    @Test
+//    @Test
     public void testExportToCsv() throws IOException {
         Project proj1 = TestHelper.makeProject("Project 01");
         proj1.getProperties().get(0).getMeasure().setNormValue(0.11);
