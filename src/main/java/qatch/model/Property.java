@@ -2,7 +2,7 @@ package qatch.model;
 
 import qatch.analysis.Measure;
 
-public class Property implements Cloneable {
+public class Property {
 	
 	/* Static constants that belong to this class */
 	public static final int THRESHOLDS_NUM = 3;
@@ -88,13 +88,6 @@ public class Property implements Cloneable {
 	
 	public Measure getMeasure(){
 		return measure;
-	}
-	
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-	    Property cloned = (Property)super.clone();
-	    cloned.setMeasure((Measure)cloned.getMeasure().clone());
-	    return cloned;
 	}
 
 	

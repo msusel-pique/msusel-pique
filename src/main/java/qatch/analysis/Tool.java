@@ -30,6 +30,7 @@ public abstract class Tool implements ITool {
     @Override
     public Path getConfig() { return config; }
 
+
     // methods
     @Override
     public Map<String, Measure> applyFindings(Map<String, Measure> measures, Map<String, Diagnostic> diagnosticFindings) {

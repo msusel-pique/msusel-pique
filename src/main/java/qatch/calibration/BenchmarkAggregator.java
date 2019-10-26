@@ -26,6 +26,7 @@ import java.util.Iterator;
  *
  */
 //TODO: Check for parallel alternative - if it is needed and only if it is possible
+@Deprecated
 public class BenchmarkAggregator {
 	
 	/**
@@ -64,6 +65,7 @@ public class BenchmarkAggregator {
 	 * all the properties of the Quality Model, into the PropertySet of 
 	 * each project of the BenchmarkProject object. (deep cloning is used)
 	 */
+	@Deprecated
 	private void cloneProperties(BenchmarkProjects projects, PropertySet properties) throws CloneNotSupportedException{
 		
 		//Create an iterator of the available projects
@@ -78,7 +80,8 @@ public class BenchmarkAggregator {
 			for(int i = 0; i < properties.size(); i++){
 				
 				//Clone the property and add it to the PropertySet of the current project
-				Property p = (Property)properties.get(i).clone();
+//				Property p = (Property)properties.get(i).clone();
+				Property p = (Property)properties.get(i);
 				project.addProperty(p);
 			}
 		}

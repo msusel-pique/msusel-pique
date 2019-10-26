@@ -44,6 +44,9 @@ public class SingleProjectEvaluator {
         project.setMeasures(measureResults);
         project.setLinesOfCode(projectLoc);
 
+        // evaluate measure nodes (normalize using lines of code)
+
+        // aggregate properties -> characteristics -> tqi values using quality model (thresholds for properties and weights for characteristics and tqi)
 
         System.out.println("...");
         throw new NotImplementedException();

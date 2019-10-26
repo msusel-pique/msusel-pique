@@ -4,11 +4,11 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 
-public class Measure implements Cloneable {
+public class Measure {
 
 	// instance variables
 	private int normalizer;
-	private double normValue;//The normalized value of it's measure
+	private double normValue;  //The normalized value of it's measure
 
 	private String name;
 	private String toolName;
@@ -34,11 +34,12 @@ public class Measure implements Cloneable {
 	public void setToolName(String toolName) { this.toolName = toolName; }
 
 	public Diagnostic getDiagnostic(String id) {
-		return this.diagnostics.stream()
-							   .filter(d -> d.getId().equals(id))
-							   .map(d -> new Diagnostic(d.getId()))
-							   .findAny()
-				               .orElse(null);
+		return this.diagnostics
+			.stream()
+		    .filter(d -> d.getId().equals(id))
+		    .map(d -> new Diagnostic(d.getId()))
+		    .findAny()
+		    .orElse(null);
 	}
 	public List<Diagnostic> getDiagnostics() { return diagnostics; }
 	public void setDiagnostics(List<Diagnostic> diagnostics) { this.diagnostics = diagnostics; }
@@ -71,11 +72,6 @@ public class Measure implements Cloneable {
 	}
 	public void setNormValue(double normValue) {
 		this.normValue = normValue;
-	}
-	
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-	    return super.clone();
 	}
 
 	public int getNormalizer() {
