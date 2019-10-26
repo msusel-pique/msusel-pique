@@ -92,8 +92,6 @@ public class TestHelper {
         Tqi tqi = makeTqi();
 
         Project project = new Project(name);
-        project.addIssueSet(is1);
-        project.addIssueSet(is2);
         project.addMetrics(met1);
         project.addMetrics(met2);
         project.addProperty(p1);

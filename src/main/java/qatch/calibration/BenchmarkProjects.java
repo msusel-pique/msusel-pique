@@ -117,19 +117,6 @@ public class BenchmarkProjects {
 	public String toString(){
 		return projects.toString();
 	}
-	
-	/**
-	 * Method for freeing memory.
-	 * Deletes all the analysis results that were imported previously in the system
-	 * for aggregation and evaluation.
-	 */
-	public void clearIssuesAndMetrics(){
-		//For each project of the Benchmark Repository do ...
-		for(int i = 0; i < projects.size(); i++){
-			//Clear the issues and the metrics of the current project
-			projects.get(i).clearIssuesAndMetrics();
-		}
-	}
 
 	/**
 	 * This method is responsible for sorting the projects of the projects vector

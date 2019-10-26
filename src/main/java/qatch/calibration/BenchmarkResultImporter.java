@@ -24,6 +24,7 @@ import java.nio.file.Paths;
  *     objects containing the imported project results.
  */
 
+@Deprecated
 public class BenchmarkResultImporter {
 	
 	/**
@@ -57,16 +58,16 @@ public class BenchmarkResultImporter {
 									});
 						} catch (IOException e) {e.printStackTrace(); }
 
-						try {
-							Files.list(findingsFolder)
-									.filter(Files::isRegularFile)
-									.forEach(f -> {
-										try { project.addIssueSet(findingsImp.parse(f)); }
-										catch (IOException | ParserConfigurationException | SAXException e) {
-											e.printStackTrace();
-										}
-									});
-						} catch (IOException e) { e.printStackTrace(); }
+//						try {
+//							Files.list(findingsFolder)
+//									.filter(Files::isRegularFile)
+//									.forEach(f -> {
+//										try { project.addIssueSet(findingsImp.parse(f)); }
+//										catch (IOException | ParserConfigurationException | SAXException e) {
+//											e.printStackTrace();
+//										}
+//									});
+//						} catch (IOException e) { e.printStackTrace(); }
 
 						projects.addProject(project);
 					});
