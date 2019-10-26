@@ -27,6 +27,9 @@ public class QualityModel {
 
 
 	//Setters and Getters
+	public Characteristic getCharacteristic(String name) {
+		return this.characteristics.get(name);
+	}
 	public Map<String, Characteristic> getCharacteristics() {
 		return characteristics;
 	}
@@ -41,6 +44,9 @@ public class QualityModel {
 		this.name = name;
 	}
 
+	public Property getProperty(String name) {
+		return this.properties.get(name);
+	}
 	public Map<String, Property> getProperties() {
 		return properties;
 	}

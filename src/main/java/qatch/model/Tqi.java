@@ -38,6 +38,9 @@ public class Tqi {
 		this.name = name;
 	}
 
+	public double getWeight(String characteristicName) {
+		return weights.get(characteristicName);
+	}
 	public Map<String, Double> getWeights() {
 		return weights;
 	}

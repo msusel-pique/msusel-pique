@@ -73,10 +73,20 @@ public class Measure implements Cloneable {
 	// getters and setters
 	public String getName() { return name; }
 	public void setName(String name) { this.name = name; }
+
 	public String getToolName() { return toolName; }
 	public void setToolName(String toolName) { this.toolName = toolName; }
+
+	public Diagnostic getDiagnostic(String id) {
+		return this.diagnostics.stream()
+							   .filter(d -> d.getId().equals(id))
+							   .map(d -> new Diagnostic(d.getId()))
+							   .findAny()
+				               .orElse(null);
+	}
 	public List<Diagnostic> getDiagnostics() { return diagnostics; }
 	public void setDiagnostics(List<Diagnostic> diagnostics) { this.diagnostics = diagnostics; }
+
 	public double getNormalizedValue() { return normalizedValue; }
 	public void setNormalizedValue(double normalizedValue) { this.normalizedValue = normalizedValue; }
 

@@ -79,6 +79,9 @@ public class Characteristic {
 		this.standard = standard;
 	}
 
+	public double getWeight(String propertyName) {
+		return this.weights.get(propertyName);
+	}
 	public void setWeight(String propertyName, double value) {
 		this.weights.put(propertyName, value);
 	}
