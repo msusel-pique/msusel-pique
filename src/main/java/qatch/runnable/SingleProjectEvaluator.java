@@ -33,11 +33,13 @@ public class SingleProjectEvaluator {
 
         // initialize data structures
         initialize(projectDir, resultsDir, qmLocation);
-        QualityModel qualityModel = makeNewQM(qmLocation);
         Project project = makeProject(projectDir);
+        QualityModel qualityModel = makeNewQM(qmLocation);
 
         // run the static analysis tool process
         Map<String, Measure> measureResults = runTool(projectDir, tool);
+
+        // aggregate static analysis values to their measure nodes
 
 
         throw new NotImplementedException();

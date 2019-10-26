@@ -57,7 +57,6 @@ public class Project{
 	public String getName() {
 		return name;
 	}
-	
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -65,7 +64,6 @@ public class Project{
 	public PropertySet getProperties() {
 		return properties;
 	}
-
 	public void setProperties(PropertySet properties) {
 		this.properties = properties;
 	}
@@ -73,7 +71,6 @@ public class Project{
 	public String getPath() {
 		return path;
 	}
-
 	public void setPath(String path) {
 		this.path = path;
 	}
@@ -81,7 +78,6 @@ public class Project{
 	public Vector<IssueSet> getIssues() {
 		return issues;
 	}
-	
 	public void setIssues(Vector<IssueSet> issues) {
 		this.issues = issues;
 	}
@@ -89,7 +85,6 @@ public class Project{
 	public MetricSet getMetrics() {
 		return metrics;
 	}
-	
 	public void setMetrics(MetricSet metrics) {
 		this.metrics = metrics;
 	}
@@ -97,7 +92,6 @@ public class Project{
 	public CharacteristicSet getCharacteristics() {
 		return characteristics;
 	}
-
 	public void setCharacteristics(CharacteristicSet characteristics) {
 		this.characteristics = characteristics;
 	}
@@ -105,7 +99,6 @@ public class Project{
 	public Tqi getTqi() {
 		return tqi;
 	}
-
 	public void setTqi(Tqi tqi) {
 		this.tqi = tqi;
 	}
