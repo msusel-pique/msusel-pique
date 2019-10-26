@@ -57,12 +57,12 @@ public class Diagnostic {
     // helper methods
     /**
      * Define the default evaluation function to simply be a count of findings
-     * @param numFindings
+     * @param findings
      *      The set of findings found by this diagnostic
      * @return
      *      The count of findings
      */
-    private double defaultEvalFunction(Set<Finding> numFindings) {
-        return numFindings.size();
+    private double defaultEvalFunction(Set<Finding> findings) {
+        return findings.size();
     }
 }

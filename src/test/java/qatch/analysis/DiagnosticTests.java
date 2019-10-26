@@ -1,6 +1,7 @@
 package qatch.analysis;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Set;
@@ -8,9 +9,15 @@ import java.util.function.Function;
 
 public class DiagnosticTests {
 
-    private Finding finding01 = new Finding("A", 1, 1, 1);
-    private Finding finding02 = new Finding("B", 2, 2, 2);
-    private Finding finding03 = new Finding("C", 3, 3, 3);
+    private Finding finding01, finding02, finding03;
+
+    @Before
+    public void initialize() {
+        finding01 = new Finding("A", 1, 1, 1);
+        finding02 = new Finding("B", 2, 2, 2);
+        finding03 = new Finding("C", 3, 3, 3);
+    }
+
 
     @Test
     public void testEvaluate_defaultFunction() {
