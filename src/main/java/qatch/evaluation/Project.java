@@ -16,8 +16,6 @@ public class Project{
 	private String name;
 	private String path; //The original path where the sources of the project are stored (with or without the name)
 	private Map<String, Measure> measures = new HashMap<>();
-	@Deprecated
-	private Vector<IssueSet> issues;
 	private MetricSet metrics;
 	private PropertySet properties_depreicated;
 	private CharacteristicSet characteristics_depreicated;
@@ -28,7 +26,6 @@ public class Project{
 	 * The constructor methods of this class.
 	 */
 	public Project(){
-		this.issues = new Vector<>();
 		this.metrics = new MetricSet();
 		this.properties_depreicated = new PropertySet();
 		this.characteristics_depreicated = new CharacteristicSet();
@@ -37,7 +34,6 @@ public class Project{
 	
 	public Project(String name){
 		this.name = name;
-		this.issues = new Vector<>();
 		this.metrics = new MetricSet();
 		this.properties_depreicated = new PropertySet();
 		this.characteristics_depreicated = new CharacteristicSet();
@@ -78,15 +74,6 @@ public class Project{
 	public void setProperties_depreicated(PropertySet properties_depreicated) {
 		this.properties_depreicated = properties_depreicated;
 	}
-
-
-	
-	public Vector<IssueSet> getIssues() {
-		return issues;
-	}
-	public void setIssues(Vector<IssueSet> issues) {
-		this.issues = issues;
-	}
 	
 	public MetricSet getMetrics() {
 		return metrics;
@@ -110,22 +97,6 @@ public class Project{
 	}
 
 	//Other
-	
-	/**
-	 * Adds an IssueSet in the issues vector.
-	 */
-	public void addIssueSet(IssueSet issueSet){
-		this.issues.add(issueSet);
-	}
-	
-	/**
-	 * Returns the IssueSet placed in the index position
-	 * of issues vector.
-	 */
-	public IssueSet getIssueSet(int index){
-		return issues.get(index);
-	}
-	
 	/**
 	 * Adds a Metrics object in the metrics vector.
 	 */
@@ -139,63 +110,6 @@ public class Project{
 	 */
 	public Metrics getMetrics(int index){
 		return this.metrics.get(index);
-	}
-	
-	
-	//Secondary methods
-	
-	/**
-	 * Clears the vector that contains the IssueSets of the Project.
-	 */
-	public void clearIssues(){
-		issues.clear();
-	}
-	
-	/**
-	 * Searches for an issueSet and returns the index of
-	 * the first occurrence.
-	 */
-	public boolean containsIssueSet(IssueSet issueSet){
-		return issues.contains(issueSet);	
-	}
-	
-	/**
-	 * Checks if the issues vector is empty.
-	 */
-	public boolean isEmpty(){
-		return issues.isEmpty();
-	}
-	
-	/**
-	 * Creates an iterator for the issuesSet.
-	 */
-	public Iterator<IssueSet> issueSetIterator(){
-		return issues.iterator();
-	}
-	
-	public int indexOfIssueSet(IssueSet issueSet){
-		return issues.indexOf(issueSet);
-	}
-	
-	public void removeIssueSet(int index){
-		issues.remove(index);
-	}
-	
-	// Removes the first occurrence
-	public void removeIssueSet(Issue issueSet){
-		issues.remove(issueSet);
-	}
-	
-	public int size(){
-		return issues.size();
-	}
-	
-	public IssueSet[] toArray(){
-		return (IssueSet[]) issues.toArray();
-	}
-	
-	public String toString(){
-		return issues.toString();
 	}
 	
 	public void addProperty(Property property){
@@ -213,16 +127,6 @@ public class Project{
 		 * characteristics
 		 */
 		this.tqi.calculateTQI(this.characteristics_depreicated);
-	}
-	
-	/**
-	 * Method for freeing memory. Typically, it deletes the contents of the metrics 
-	 * and issues objects of this project. I.e. it deletes the results of the 
-	 * static analysis concerning this project.
-	 */
-	public void clearIssuesAndMetrics(){
-		metrics = null;
-	   	issues = null;
 	}
 
 	/**
