@@ -45,6 +45,7 @@ public class SingleProjectEvaluator {
         project.setLinesOfCode(projectLoc);
 
         // evaluate measure nodes (normalize using lines of code)
+        project.normalizeMeasures();
 
         // aggregate properties -> characteristics -> tqi values using quality model (thresholds for properties and weights for characteristics and tqi)
 
@@ -127,13 +128,14 @@ public class SingleProjectEvaluator {
      * @param findingsAgg
      *      The language-specific object that describes how to aggregate finding values into property values.
      */
+    @Deprecated
     void aggregateNormalize(Project project, IMetricsAggregator metricsAgg, IFindingsAggregator findingsAgg) {
         metricsAgg.aggregate(project);
         findingsAgg.aggregate(project);
 
         for(int i = 0; i < project.getProperties_depreicated().size(); i++){
             Property property =  project.getProperties_depreicated().get(i);
-            property.getMeasure().calculateNormValue();
+//            property.getMeasure().calculateNormValue();
         }
     }
 
@@ -146,7 +148,8 @@ public class SingleProjectEvaluator {
      * @param qualityModel
      *      The data structure representation of the quality model being used for assessment.
      */
-    void evaluate(Project project, QualityModel qualityModel) {
+    @Deprecated
+    void evaluate_deprecated(Project project, QualityModel qualityModel) {
         ProjectEvaluator evaluator = new ProjectEvaluator();
         ProjectCharacteristicsEvaluator charEvaluator = new ProjectCharacteristicsEvaluator();
 

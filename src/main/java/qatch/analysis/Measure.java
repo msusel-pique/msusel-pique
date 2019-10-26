@@ -10,14 +10,11 @@ public class Measure {
 
 	// instance variables
 	private Function<List<Diagnostic>, Double> evalFunction;
-	private int normalizer;
-	private double normValue;  //The normalized value of it's measure
-
 	private String name;
+	private double normalizedValue;
 	private String toolName;
 	private List<Diagnostic> diagnostics;
 	private double value;
-	private double normalizedValue;
 
 
 	// constructors
@@ -83,28 +80,13 @@ public class Measure {
 	}
 
 
-	// TODO: delete these depreciated methods
-	public double getNormValue() {
-		return normValue;
-	}
-	public void setNormValue(double normValue) {
-		this.normValue = normValue;
-	}
-
-	public int getNormalizer() {
-		return normalizer;
-	}
-	public void setNormalizer(int normalizer) {
-		this.normalizer = normalizer;
-	}
-	
 	/**
 	 * This method calculates the normalized value of this measure.
 	 * It just divides the value field by the normalizer field.
 	 */
-	public void calculateNormValue(){
-		if (this.normalizer != 0){
-			this.normValue = this.value/this.normalizer;
+	public double calculateNormValue(int loc){
+		if (loc != 0) {
+			return this.value/loc;
 		} else {
 			throw new RuntimeException("Division by zero occured on metric " + this.name +
 				". This is likely due to the metrics analyzer either \nfailing to get the " +

@@ -107,10 +107,10 @@ public class SingleProjectEvaluatorTests {
         QualityModel qm = qmImporter.importQualityModel();
 
         // TODO: add more edge cases
-        p.getProperties_depreicated().get(0).getMeasure().setNormValue(0.90);
-        p.getProperties_depreicated().get(1).getMeasure().setNormValue(0.10);
+        p.getProperties_depreicated().get(0).getMeasure().setNormalizedValue(0.90);
+        p.getProperties_depreicated().get(1).getMeasure().setNormalizedValue(0.10);
 
-        spe.evaluate(p, qm);
+        spe.evaluate_deprecated(p, qm);
 
         Assert.assertEquals(0.099999, p.getProperties_depreicated().get(0).getEval(),0.00001);
         Assert.assertEquals(0.9, p.getProperties_depreicated().get(1).getEval(),0.00001);

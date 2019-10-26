@@ -16,16 +16,18 @@ public class Project{
 	private String name;
 	private String path; //The original path where the sources of the project are stored (with or without the name)
 	private Map<String, Measure> measures = new HashMap<>();
+	private Map<String, Characteristic> characteristics = new HashMap<>();
+	private Map<String, Property> properties = new HashMap<>();  // each property has one Measure associated with it
+	private Tqi tqi;
 	private MetricSet metrics;
 	private PropertySet properties_depreicated;
 	private CharacteristicSet characteristics_depreicated;
-	private Tqi tqi;
 
 	
 	/*
 	 * The constructor methods of this class.
 	 */
-	public Project(){
+	public Project() {
 		this.metrics = new MetricSet();
 		this.properties_depreicated = new PropertySet();
 		this.characteristics_depreicated = new CharacteristicSet();
@@ -96,22 +98,29 @@ public class Project{
 		this.tqi = tqi;
 	}
 
-	//Other
+
+	// methods
+	public void normalizeMeasures() {
+
+		if (this.linesOfCode < 1) {
+			throw new RuntimeException("Normalization of measures failed" +
+					". This is likely due to the LoC analyzer either \nfailing to get the " +
+					"total lines of code, or failing to assign the TLOC to the project.");
+		}
+		this.getMeasures().values().forEach(m -> {
+			m.setNormalizedValue(m.getValue() / (double) this.linesOfCode);
+		});
+	}
+
 	/**
 	 * Adds a Metrics object in the metrics vector.
 	 */
+	@Deprecated
 	public void addMetrics(Metrics m){
 		this.metrics.addMetrics(m);
 	}
-	
-	/**
-	 * Return the Metrics Object placed in the index 
-	 * position of the MetricSet.
-	 */
-	public Metrics getMetrics(int index){
-		return this.metrics.get(index);
-	}
-	
+
+	@Deprecated
 	public void addProperty(Property property){
 		this.properties_depreicated.getPropertyVector().add(property);
 	}
@@ -134,6 +143,7 @@ public class Project{
 	 * field in a descending order. Typically, it is used in order to sort the projects
 	 * under evaluation according to their TQI.
      */
+	@Deprecated
 	public static void sort(final String field, Vector<Project> projects) {
 	    Collections.sort(projects, new Comparator<Project>() {
 	        @Override

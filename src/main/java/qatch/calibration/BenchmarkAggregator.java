@@ -92,6 +92,7 @@ public class BenchmarkAggregator {
 	 * This method is responsible for calculating the normalized value (normValue) of
 	 * the properties of each project found inside a set of projects.
 	 */
+	@Deprecated
 	private void normalizeProperties(BenchmarkProjects projects){
 		
 		//Iterate through all the projects
@@ -106,7 +107,7 @@ public class BenchmarkAggregator {
 			for(int i = 0; i < project.getProperties_depreicated().size(); i++){
 				
 				Property property =  project.getProperties_depreicated().get(i);
-				property.getMeasure().calculateNormValue();
+				property.getMeasure().calculateNormValue(project.getLinesOfCode());
 				
 			}
 		}

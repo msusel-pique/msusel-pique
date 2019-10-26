@@ -104,7 +104,7 @@ public class Property {
 	 * Typically, it simulates the Utility Function that is used
 	 * for the evaluation of the properties.
 	 */
-	public void evaluate(){
+	public void evaluate() {
 		/*
 		 * Check the sign of the impact that this property has on the total quality
 		 * and choose  the monotony of the utility function.
@@ -112,30 +112,30 @@ public class Property {
 		
 		if(positive){
 			//If the metric has a positive impact on quality -> Ascending utility function
-			if(this.measure.getNormValue() <= this.thresholds[0]){
+			if(this.measure.getNormalizedValue() <= this.thresholds[0]){
 				//Lower Group
 				this.eval = 0;
-			}else if(this.measure.getNormValue() <= this.thresholds[1]){
+			}else if(this.measure.getNormalizedValue() <= this.thresholds[1]){
 				//Middle Group
-				this.eval = (0.5/(thresholds[1]-thresholds[0]))*(this.getMeasure().getNormValue() - thresholds[0]);
-			}else if(this.measure.getNormValue() <= this.thresholds[2]){
+				this.eval = (0.5/(thresholds[1]-thresholds[0]))*(this.getMeasure().getNormalizedValue() - thresholds[0]);
+			}else if(this.measure.getNormalizedValue() <= this.thresholds[2]){
 				//Upper Group
-				this.eval = 1 - (0.5/(thresholds[2]-thresholds[1]))*(thresholds[2] - this.getMeasure().getNormValue());
+				this.eval = 1 - (0.5/(thresholds[2]-thresholds[1]))*(thresholds[2] - this.getMeasure().getNormalizedValue());
 			}else{
 				//Saturation
 				this.eval = 1;
 			}
 		}else{
 			//If the metric has a negative impact on quality -> Descending utility function
-			if(roundDown4(this.measure.getNormValue()) <= this.thresholds[0]){
+			if(roundDown4(this.measure.getNormalizedValue()) <= this.thresholds[0]){
 				//Lower Group
 				this.eval = 1;
-			}else if(roundDown4(this.measure.getNormValue()) <= this.thresholds[1]){
+			}else if(roundDown4(this.measure.getNormalizedValue()) <= this.thresholds[1]){
 				//Middle Group
-				this.eval = 1 - (0.5/(thresholds[1]-thresholds[0]))*(this.getMeasure().getNormValue() - thresholds[0]);
-			}else if(roundDown4(this.measure.getNormValue()) <= this.thresholds[2]){
+				this.eval = 1 - (0.5/(thresholds[1]-thresholds[0]))*(this.getMeasure().getNormalizedValue() - thresholds[0]);
+			}else if(roundDown4(this.measure.getNormalizedValue()) <= this.thresholds[2]){
 				//Upper Group
-				this.eval = (0.5/(thresholds[2]-thresholds[1]))*(thresholds[2] - roundDown4(this.getMeasure().getNormValue()));
+				this.eval = (0.5/(thresholds[2]-thresholds[1]))*(thresholds[2] - roundDown4(this.getMeasure().getNormalizedValue()));
 			}else{
 				//Saturation
 				this.eval = 0;

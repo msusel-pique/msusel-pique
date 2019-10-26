@@ -53,6 +53,7 @@ public class BenchmarkAnalysisExporter {
 	 *    - The order of the columns is equivalent to the order of the Properties of
 	 *      the total PropertySet containing the model's properties.
 	 */
+	@Deprecated
 	public Path exportToCsv(BenchmarkProjects projects){
 		
 		//Set the path where the csv file will be stored and the name of the csv file
@@ -87,7 +88,8 @@ public class BenchmarkAnalysisExporter {
 				// TODO: another situation of proper order of properties being needed. Eventually refactor to hash lookup
 				for (int i = 0; i < p.getProperties_depreicated().size(); i++) {
 					Property property = p.getProperties_depreicated().get(i);
-					currentRow[i+1] = String.valueOf(property.getMeasure().getNormValue());
+//					currentRow[i+1] = String.valueOf(property.getMeasure().getNormValue());
+					currentRow[i+1] = String.valueOf(property.getMeasure().getValue());
 				}
 				csvRows.add(currentRow);
 			});
