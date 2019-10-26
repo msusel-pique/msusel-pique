@@ -65,16 +65,16 @@ public class BenchmarkAnalysisExporter {
 		try {
 			FileWriter fw = new FileWriter(outFile);
 			CSVWriter writer = new CSVWriter(fw);
-			int numCols = projects.getProject(0).getProperties().size() + 1;
+			int numCols = projects.getProject(0).getProperties_depreicated().size() + 1;
 			// build rows of string arrays to eventually feed to writer
 			ArrayList<String[]> csvRows = new ArrayList<>();
 
 			// header
 			String[] header = new String[numCols];
 			header[0] = "Project_Name";
-			for(int i = 0; i < projects.getProject(0).getProperties().size(); i++){
+			for(int i = 0; i < projects.getProject(0).getProperties_depreicated().size(); i++){
 				//Get the i-th property
-				Property p = projects.getProject(0).getProperties().get(i);
+				Property p = projects.getProject(0).getProperties_depreicated().get(i);
 				//Set the name of the i-th column to the name of this Property
 				header[i+1] = p.getName();
 			}
@@ -85,8 +85,8 @@ public class BenchmarkAnalysisExporter {
 				String[] currentRow = new String[numCols];
 				currentRow[0] = p.getName();
 				// TODO: another situation of proper order of properties being needed. Eventually refactor to hash lookup
-				for (int i = 0; i < p.getProperties().size(); i++) {
-					Property property = p.getProperties().get(i);
+				for (int i = 0; i < p.getProperties_depreicated().size(); i++) {
+					Property property = p.getProperties_depreicated().get(i);
 					currentRow[i+1] = String.valueOf(property.getMeasure().getNormValue());
 				}
 				csvRows.add(currentRow);
@@ -125,7 +125,7 @@ public class BenchmarkAnalysisExporter {
 		for(int i = 0; i < projects.size(); i++){
 			
 			Project project = projects.getProject(i);
-			String json = gson.toJson(project.getProperties());
+			String json = gson.toJson(project.getProperties_depreicated());
 			totalJson += json + ",";
 		}
 		

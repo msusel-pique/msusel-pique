@@ -18,5 +18,5 @@ public interface IToolLOC {
      * @return
      *      The number of lines of code of the project under analysis
      */
-    int analyze(Path projectLocation);
+    Integer analyze(Path projectLocation);
 }

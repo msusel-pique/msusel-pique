@@ -22,7 +22,7 @@ public class ProjectEvaluator {
 	
 	public void evaluateProjectProperties(Project project){
 		//Iterate through the properties of this project
-		Iterator<Property> iterator = project.getProperties().iterator();
+		Iterator<Property> iterator = project.getProperties_depreicated().iterator();
 		while(iterator.hasNext()){
 			//Get the current property of the project
 			Property property = iterator.next();

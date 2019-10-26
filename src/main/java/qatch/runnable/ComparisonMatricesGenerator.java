@@ -71,14 +71,15 @@ public class ComparisonMatricesGenerator {
         /*
          * generate faux quality model to hold properties and characteristics representation
          */
+        // TODO: update this
         PropertiesAndCharacteristicsLoader qmLoader = new PropertiesAndCharacteristicsLoader(qmLocation.toString());
-        QualityModel qualityModel = qmLoader.importQualityModel();
-        PropertySet properties = qualityModel.getProperties_deprecated();
-        CharacteristicSet characteristics = qualityModel.getCharacteristics_deprecated();
-
-        if (!fuzzy) { generateComparisonMatrix(properties, characteristics, outLocation, "0"); }
-        else if (fuzzy) { generateFuzzyComparisonMatrix(properties, characteristics, outLocation, "-"); }
-        else { throw new RuntimeException("input arg 2 did not match to 'true' or 'false'"); }
+//        QualityModel qualityModel = qmLoader.importQualityModel();
+//        PropertySet properties = qualityModel.getProperties_deprecated();
+//        CharacteristicSet characteristics = qualityModel.getCharacteristics_deprecated();
+//
+//        if (!fuzzy) { generateComparisonMatrix(properties, characteristics, outLocation, "0"); }
+//        else if (fuzzy) { generateFuzzyComparisonMatrix(properties, characteristics, outLocation, "-"); }
+//        else { throw new RuntimeException("input arg 2 did not match to 'true' or 'false'"); }
 
     }
 

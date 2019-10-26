@@ -100,23 +100,23 @@ public class SingleProjectEvaluatorTests {
     public void testEvaluate() {
         Project p = TestHelper.makeProject("Test Project");
         // temp fix to avoid QM clone problem
-        p.getCharacteristics().removeCharacteristic(0);
-        p.getCharacteristics().removeCharacteristic(0);
+        p.getCharacteristics_depreicated().removeCharacteristic(0);
+        p.getCharacteristics_depreicated().removeCharacteristic(0);
 
         QualityModelLoader qmImporter = new QualityModelLoader(QM_LOCATION);
         QualityModel qm = qmImporter.importQualityModel();
 
         // TODO: add more edge cases
-        p.getProperties().get(0).getMeasure().setNormValue(0.90);
-        p.getProperties().get(1).getMeasure().setNormValue(0.10);
+        p.getProperties_depreicated().get(0).getMeasure().setNormValue(0.90);
+        p.getProperties_depreicated().get(1).getMeasure().setNormValue(0.10);
 
         spe.evaluate(p, qm);
 
-        Assert.assertEquals(0.099999, p.getProperties().get(0).getEval(),0.00001);
-        Assert.assertEquals(0.9, p.getProperties().get(1).getEval(),0.00001);
+        Assert.assertEquals(0.099999, p.getProperties_depreicated().get(0).getEval(),0.00001);
+        Assert.assertEquals(0.9, p.getProperties_depreicated().get(1).getEval(),0.00001);
 
-        Assert.assertEquals(0.42, p.getCharacteristics().get(0).getEval(), 0.00001);
-        Assert.assertEquals(0.50, p.getCharacteristics().get(1).getEval(), 0.00001);
+        Assert.assertEquals(0.42, p.getCharacteristics_depreicated().get(0).getEval(), 0.00001);
+        Assert.assertEquals(0.50, p.getCharacteristics_depreicated().get(1).getEval(), 0.00001);
 
         Assert.assertEquals(0.436, p.getTqi().getEval(),0.00001);
     }

@@ -24,12 +24,12 @@ public class ProjectCharacteristicsEvaluator {
 	 */
 	public void evaluateProjectCharacteristics(Project project){
 		//Iterate through the characteristics of this project
-		Iterator<Characteristic> iterator = project.getCharacteristics().iterator();
+		Iterator<Characteristic> iterator = project.getCharacteristics_depreicated().iterator();
 		while(iterator.hasNext()){
 			//Get the current characteristic of the project
 			Characteristic characteristic = iterator.next();
 			//Evaluate this property (i.e. calculate its eval field)
-			characteristic.evaluate(project.getProperties());
+			characteristic.evaluate(project.getProperties_depreicated());
 		}
 	}
 

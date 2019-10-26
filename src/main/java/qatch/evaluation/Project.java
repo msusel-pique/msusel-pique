@@ -1,43 +1,37 @@
 package qatch.evaluation;
 
+import qatch.analysis.Measure;
 import qatch.model.*;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * This class represents a project under evaluation.
- * Basically, it contains all the data (metrics, violations, properties etc.) that belong to a certain project.
- *
  * @author Miltos
- *
  */
 public class Project{
 	
-	//Basic Fields
+	// instance variables
+	private int linesOfCode;
 	private String name;
 	private String path; //The original path where the sources of the project are stored (with or without the name)
-	
+	private Map<String, Measure> measures = new HashMap<>();
+	@Deprecated
 	private Vector<IssueSet> issues;
 	private MetricSet metrics;
-
-	//Fields for the higher level evaluation of the project
-	private PropertySet properties;
-	private CharacteristicSet characteristics;
+	private PropertySet properties_depreicated;
+	private CharacteristicSet characteristics_depreicated;
 	private Tqi tqi;
 
 	
 	/*
 	 * The constructor methods of this class.
 	 */
-	
 	public Project(){
 		this.issues = new Vector<>();
 		this.metrics = new MetricSet();
-		this.properties = new PropertySet();
-		this.characteristics = new CharacteristicSet();
+		this.properties_depreicated = new PropertySet();
+		this.characteristics_depreicated = new CharacteristicSet();
 		this.tqi = new Tqi();
 	}
 	
@@ -45,8 +39,8 @@ public class Project{
 		this.name = name;
 		this.issues = new Vector<>();
 		this.metrics = new MetricSet();
-		this.properties = new PropertySet();
-		this.characteristics = new CharacteristicSet();
+		this.properties_depreicated = new PropertySet();
+		this.characteristics_depreicated = new CharacteristicSet();
 		this.tqi = new Tqi();
 	}
 	
@@ -54,18 +48,14 @@ public class Project{
 	/*
 	 * Getters and setters.
 	 */
+	public int getLinesOfCode() { return linesOfCode; }
+	public void setLinesOfCode(int linesOfCode) { this.linesOfCode = linesOfCode; }
+
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
-	}
-	
-	public PropertySet getProperties() {
-		return properties;
-	}
-	public void setProperties(PropertySet properties) {
-		this.properties = properties;
 	}
 
 	public String getPath() {
@@ -74,6 +64,22 @@ public class Project{
 	public void setPath(String path) {
 		this.path = path;
 	}
+
+	public Map<String, Measure> getMeasures() {
+		return measures;
+	}
+	public void setMeasures(Map<String, Measure> measures) {
+		this.measures = measures;
+	}
+
+	public PropertySet getProperties_depreicated() {
+		return properties_depreicated;
+	}
+	public void setProperties_depreicated(PropertySet properties_depreicated) {
+		this.properties_depreicated = properties_depreicated;
+	}
+
+
 	
 	public Vector<IssueSet> getIssues() {
 		return issues;
@@ -89,11 +95,11 @@ public class Project{
 		this.metrics = metrics;
 	}
 	
-	public CharacteristicSet getCharacteristics() {
-		return characteristics;
+	public CharacteristicSet getCharacteristics_depreicated() {
+		return characteristics_depreicated;
 	}
-	public void setCharacteristics(CharacteristicSet characteristics) {
-		this.characteristics = characteristics;
+	public void setCharacteristics_depreicated(CharacteristicSet characteristics_depreicated) {
+		this.characteristics_depreicated = characteristics_depreicated;
 	}
 
 	public Tqi getTqi() {
@@ -193,7 +199,7 @@ public class Project{
 	}
 	
 	public void addProperty(Property property){
-		this.properties.getPropertyVector().add(property); 
+		this.properties_depreicated.getPropertyVector().add(property);
 	}
 	
 	/**
@@ -206,7 +212,7 @@ public class Project{
 		 * calculate the value of the TQI from the eval field of the model's
 		 * characteristics
 		 */
-		this.tqi.calculateTQI(this.characteristics);
+		this.tqi.calculateTQI(this.characteristics_depreicated);
 	}
 	
 	/**

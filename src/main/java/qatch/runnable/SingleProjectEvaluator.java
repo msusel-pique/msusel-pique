@@ -29,17 +29,20 @@ public class SingleProjectEvaluator {
     private final Logger logger = LoggerFactory.getLogger(SingleProjectEvaluator.class);
 
 
-    public Path runEvaluator(Path projectDir, Path resultsDir, Path qmLocation, ITool tool) {
+    public Path runEvaluator(Path projectDir, Path resultsDir, Path qmLocation, ITool tool, IToolLOC locTool) {
 
         // initialize data structures
         initialize(projectDir, resultsDir, qmLocation);
         Project project = makeProject(projectDir);
         QualityModel qualityModel = makeNewQM(qmLocation);
 
-        // run the static analysis tool process
+        // run the static analysis tools process
         Map<String, Measure> measureResults = runTool(projectDir, tool);
+        int projectLoc = locTool.analyze(projectDir);
 
-        // aggregate static analysis values to their measure nodes
+        // apply tool results to Project object
+        project.setMeasures(measureResults);
+        project.setLinesOfCode(projectLoc);
 
 
         throw new NotImplementedException();
@@ -124,8 +127,8 @@ public class SingleProjectEvaluator {
         metricsAgg.aggregate(project);
         findingsAgg.aggregate(project);
 
-        for(int i = 0; i < project.getProperties().size(); i++){
-            Property property =  project.getProperties().get(i);
+        for(int i = 0; i < project.getProperties_depreicated().size(); i++){
+            Property property =  project.getProperties_depreicated().get(i);
             property.getMeasure().calculateNormValue();
         }
     }
@@ -151,7 +154,7 @@ public class SingleProjectEvaluator {
             for (int i = 0; i < qualityModel.getCharacteristics_deprecated().size(); i++) {
                 //Clone the characteristic and add it to the CharacteristicSet of the current project
                 Characteristic c = (Characteristic) qualityModel.getCharacteristics_deprecated().get(i).clone();
-                project.getCharacteristics().addCharacteristic(c);
+                project.getCharacteristics_depreicated().addCharacteristic(c);
             }
             charEvaluator.evaluateProjectCharacteristics(project);
 

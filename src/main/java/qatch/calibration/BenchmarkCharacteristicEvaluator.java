@@ -75,7 +75,7 @@ public class BenchmarkCharacteristicEvaluator {
 				
 				//Clone the characteristic and add it to the CharacteristicSet of the current project
 				Characteristic c = (Characteristic) characteristics.get(i).clone();
-				project.getCharacteristics().addCharacteristic(c);
+				project.getCharacteristics_depreicated().addCharacteristic(c);
 			}
 		}
 		

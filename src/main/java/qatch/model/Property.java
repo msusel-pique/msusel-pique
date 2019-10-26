@@ -82,23 +82,6 @@ public class Property implements Cloneable {
 		this.eval = eval;
 	}
 	
-	public double[] getProfile() {
-		return profile;
-	}
-
-	public void setProfile(double[] profile) {
-		this.profile = profile;
-	}
-
-	public boolean isMetric(){
-		return measure.getType() == Measure.METRIC;
-	}
-	
-	//TODO: Remove - Redundant
-	public boolean isFinding(){
-		return measure.getType() == Measure.FINDING;
-	}
-	
 	public void setMeasure(Measure measure){
 		this.measure = measure;
 	}

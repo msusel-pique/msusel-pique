@@ -35,14 +35,6 @@ public class TestHelper {
         return m;
     }
 
-    public static Measure makeMeasureMetric(String name) {
-        return new Measure(Measure.METRIC, name, "./ruleset/path/" + name + ".xml", name + " Tool");
-    }
-
-    public static Measure makeMeasureFinding(String name) {
-        return new Measure(Measure.FINDING, name, "./ruleset/path/" + name + ".xml", name + " Tool");
-    }
-
     public static Property makeProperty(String name, Measure measure) {
         Property p = new Property(name, measure);
         p.setThresholds(new double[] {0.0, 0.5, 1.0});
@@ -90,8 +82,8 @@ public class TestHelper {
         IssueSet is2 = makeIssueSet("Issue Set 02", i3);
         Metrics met1 = makeMetric("Metric 01", 111);
         Metrics met2 = makeMetric("Metric 02", 222);
-        Measure meas1 = makeMeasureFinding("Measure Finding 01");
-        Measure meas2 = makeMeasureMetric("Measure Metric 01");
+        Measure meas1 = new Measure();
+        Measure meas2 = new Measure();
         Property p1 = makeProperty("Property 01", meas1);
         Property p2 = makeProperty("Property 02", meas2);
         Characteristic c1 = makeCharacteristic("Characteristic 01");
@@ -106,7 +98,7 @@ public class TestHelper {
         project.addMetrics(met2);
         project.addProperty(p1);
         project.addProperty(p2);
-        project.setCharacteristics(cset1);
+        project.setCharacteristics_depreicated(cset1);
         project.setTqi(tqi);
 
         return project;

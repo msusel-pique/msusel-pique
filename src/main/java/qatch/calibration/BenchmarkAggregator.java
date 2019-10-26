@@ -100,9 +100,9 @@ public class BenchmarkAggregator {
 			Project project = iterator.next();
 			
 			//For each property do...
-			for(int i = 0; i < project.getProperties().size(); i++){
+			for(int i = 0; i < project.getProperties_depreicated().size(); i++){
 				
-				Property property =  project.getProperties().get(i);
+				Property property =  project.getProperties_depreicated().get(i);
 				property.getMeasure().calculateNormValue();
 				
 			}
