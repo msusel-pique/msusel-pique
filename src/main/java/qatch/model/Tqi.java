@@ -76,7 +76,7 @@ public class Tqi {
 		for(int i = 0; i < characteristics.size(); i++){
 			//The number of weights is equal to the number of the model's characteristics
 			//The sequence of the characteristics matters!!!!!!
-			sum += characteristics.get(i).getEval() * this.weights_depreciated.get(i).doubleValue();
+			sum += characteristics.get(i).getValue() * this.weights_depreciated.get(i).doubleValue();
 		}
 		this.eval = sum;
 	}

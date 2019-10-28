@@ -9,6 +9,7 @@ import java.util.Map;
  * All tools must define how they run, how to parse the results file,
  * and how to transform the parsed data, if needed.
  */
+// TODO: need to rethink .yaml interaction. Once a QM is made via a yaml config, should only the QM xml be used?
 public interface ITool {
 
     /**

@@ -33,8 +33,8 @@ public class SingleProjectEvaluator {
 
         // initialize data structures
         initialize(projectDir, resultsDir, qmLocation);
-        Project project = makeProject(projectDir);
         QualityModel qualityModel = makeNewQM(qmLocation);
+        Project project = new Project(projectDir.getFileName().toString(), projectDir, qualityModel);
 
         // run the static analysis tools process
         Map<String, Measure> measureResults = runTool(projectDir, tool);
@@ -45,9 +45,14 @@ public class SingleProjectEvaluator {
         project.setLinesOfCode(projectLoc);
 
         // evaluate measure nodes (normalize using lines of code)
-        project.normalizeMeasures();
+        project.evaluateMeasures();
+
+        // now that there are measures with normalized values, update Property nodes
+        project.applyMeasures();
 
         // aggregate properties -> characteristics -> tqi values using quality model (thresholds for properties and weights for characteristics and tqi)
+        project.evaluateProperties();
+        project.evaluateCharacteristics();
 
         System.out.println("...");
         throw new NotImplementedException();
@@ -281,22 +286,6 @@ public class SingleProjectEvaluator {
     QualityModel makeNewQM(Path qmLocation) {
         QualityModelLoader qmImporter = new QualityModelLoader(qmLocation);
         return qmImporter.importQualityModel();
-    }
-
-
-    /**
-     * Initialize basic Project object
-     *
-     * @param projectDir
-     *      Path to root directory of project to be analyzed
-     * @return
-     *      Basic object representation of the project
-     */
-    Project makeProject(Path projectDir) {
-        Project project = new Project();
-        project.setPath(projectDir.toAbsolutePath().toString());
-        project.setName(projectDir.getFileName().toString());
-        return project;
     }
 
     /**

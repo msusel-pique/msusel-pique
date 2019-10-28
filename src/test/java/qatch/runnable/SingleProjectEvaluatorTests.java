@@ -112,11 +112,11 @@ public class SingleProjectEvaluatorTests {
 
         spe.evaluate_deprecated(p, qm);
 
-        Assert.assertEquals(0.099999, p.getProperties_depreicated().get(0).getEval(),0.00001);
-        Assert.assertEquals(0.9, p.getProperties_depreicated().get(1).getEval(),0.00001);
+        Assert.assertEquals(0.099999, p.getProperties_depreicated().get(0).getValue(),0.00001);
+        Assert.assertEquals(0.9, p.getProperties_depreicated().get(1).getValue(),0.00001);
 
-        Assert.assertEquals(0.42, p.getCharacteristics_depreicated().get(0).getEval(), 0.00001);
-        Assert.assertEquals(0.50, p.getCharacteristics_depreicated().get(1).getEval(), 0.00001);
+        Assert.assertEquals(0.42, p.getCharacteristics_depreicated().get(0).getValue(), 0.00001);
+        Assert.assertEquals(0.50, p.getCharacteristics_depreicated().get(1).getValue(), 0.00001);
 
         Assert.assertEquals(0.436, p.getTqi().getEval(),0.00001);
     }
@@ -165,13 +165,6 @@ public class SingleProjectEvaluatorTests {
         Assert.assertEquals("Test QM", qm.getName());
         Assert.assertNotNull(qm.getProperties_deprecated());
         Assert.assertNotNull(qm.getCharacteristics_deprecated());
-    }
-
-    @Test
-    public void testMakeProject() {
-        Project p = spe.makeProject(PROJECT_DIR);
-        Assert.assertEquals("FakeProject_01", p.getName());
-        Assert.assertTrue(p.getPath().contains(PROJECT_DIR.toString()));
     }
 
 //    @Test

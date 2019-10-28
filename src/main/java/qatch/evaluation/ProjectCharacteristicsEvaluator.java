@@ -29,7 +29,7 @@ public class ProjectCharacteristicsEvaluator {
 			//Get the current characteristic of the project
 			Characteristic characteristic = iterator.next();
 			//Evaluate this property (i.e. calculate its eval field)
-			characteristic.evaluate(project.getProperties_depreicated());
+			characteristic.evaluate_deprecated(project.getProperties_depreicated());
 		}
 	}
 

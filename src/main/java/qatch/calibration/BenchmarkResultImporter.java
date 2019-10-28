@@ -44,7 +44,7 @@ public class BenchmarkResultImporter {
 					// for each analyzed project...
 					.forEach(p -> {
 						Project project = new Project(p.getFileName().toString());
-						project.setPath(p.toAbsolutePath().toString());
+						project.setPath(p.toAbsolutePath());
 						// parse and set metrics and issues found by the tools
 						Path metricsFolder = Paths.get(p.toString(), "metrics");
 						Path findingsFolder = Paths.get(p.toString(), "findings");

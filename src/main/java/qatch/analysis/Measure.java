@@ -76,6 +76,7 @@ public class Measure {
 	 */
 	public double evaluate() {
 		assert this.evalFunction != null;
+		this.getDiagnostics().forEach(Diagnostic::getValue);
 		return this.evalFunction.apply(this.diagnostics);
 	}
 
