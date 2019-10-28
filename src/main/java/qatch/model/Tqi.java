@@ -15,20 +15,20 @@ import java.util.Vector;
  */
 public class Tqi {
 	
-	//The basic fields of the class
-	private double eval;  //The total quality index (total quality score) of a project
+	// fields
+	private double value;  //The total quality index (total quality score) of a project
 	private String name;
 	private Map<String, Double> weights = new HashMap<>();  // mapping of characteristic names and their weights
 	@Deprecated
 	private Vector<Double> weights_depreciated;	 //The weights used for the calculation of the TQI from the evals of the QM's characteristics
 
 
-	//Setters and Getters
-	public double getEval() {
-		return eval;
+	// getters and setters
+	public double getValue() {
+		return value;
 	}
-	public void setEval(double eval) {
-		this.eval = eval;
+	public void setValue(double value) {
+		this.value = value;
 	}
 
 	public String getName() {
@@ -54,7 +54,36 @@ public class Tqi {
 	public Vector<Double> getWeights_depreciated() {
 		return weights_depreciated;
 	}
-	
+
+
+	// constructor
+	public Tqi() { }
+
+	public Tqi(String name, Map<String, Double> weights) {
+		this.name = name;
+		this.weights = weights;
+	}
+
+
+	// methods
+	public void evaluate(Map<String, Characteristic> characteristics) {
+
+		// assert a weight mapping exists for each provided characteristic
+		this.getWeights().keySet().forEach(k -> {
+			if (!characteristics.containsKey(k)) {
+				throw new RuntimeException("No weight-measure mapping in root node " + this.getName() +
+						"exists for Characteristic " + k);
+			}
+		});
+
+		// evaluate: standard weighted sum of characteristic values
+		double sum = 0.0;
+		for (Map.Entry<String, Double> weightMap : this.getWeights().entrySet()) {
+			sum += characteristics.get(weightMap.getKey()).getValue() * weightMap.getValue();
+		}
+
+		this.setValue(sum);
+	}
 
 	/**
 	 * This method calculates the Total Quality Index (TQI), i.e. the total eval (quality score),
@@ -71,48 +100,39 @@ public class Tqi {
 	 * @param characteristics : The CharacteristicSet object with the eval fields calculated received 
 	 *                          from the Project object.
 	 */
-	public void calculateTQI(CharacteristicSet characteristics){
+	@Deprecated
+	public void calculateTQI_deprecated(CharacteristicSet characteristics){
 		double sum = 0;
 		for(int i = 0; i < characteristics.size(); i++){
 			//The number of weights is equal to the number of the model's characteristics
 			//The sequence of the characteristics matters!!!!!!
 			sum += characteristics.get(i).getValue() * this.weights_depreciated.get(i).doubleValue();
 		}
-		this.eval = sum;
+		this.value = sum;
 	}
 	
 	
 	//Vector methods
+	@Deprecated
 	public void addWeight(Double weight){
 		weights_depreciated.add(weight);
 	}
-	
+	@Deprecated
 	public Double get(int index){
 		return weights_depreciated.get(index);
 	}
-	
+	@Deprecated
 	public boolean isEmpty(){
 		return weights_depreciated.isEmpty();
 	}
-	
+	@Deprecated
 	public Iterator<Double> iterator(){
 		return weights_depreciated.iterator();
 	}
-	
 	// Removes the first occurrence
-	
+	@Deprecated
 	public int size(){
 		return weights_depreciated.size();
-	}
-
-	//TODO: Deep Cloning - Check PropertySet class (and Property, Measure)
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-	    Tqi cloned = new Tqi();
-	    for(int i = 0; i < this.weights_depreciated.size(); i++){
-	    	cloned.weights_depreciated.add((Double) this.getWeights_depreciated().get(i));
-	    }
-		return cloned;
 	}
 
 }

@@ -34,6 +34,7 @@ public class Project{
 		this.path = path;
 		initializeProperties(qm);
 		initializeCharacteristics(qm);
+		this.tqi = initializeTqi(qm);
 	}
 
 	@Deprecated
@@ -41,7 +42,7 @@ public class Project{
 		this.metrics = new MetricSet();
 		this.properties_depreicated = new PropertySet();
 		this.characteristics_depreicated = new CharacteristicSet();
-		this.tqi = new Tqi();
+		this.tqi = new Tqi(null, null);
 	}
 
 	@Deprecated
@@ -50,7 +51,7 @@ public class Project{
 		this.metrics = new MetricSet();
 		this.properties_depreicated = new PropertySet();
 		this.characteristics_depreicated = new CharacteristicSet();
-		this.tqi = new Tqi();
+		this.tqi = new Tqi(null, null);
 	}
 	
 	
@@ -84,7 +85,7 @@ public class Project{
 	}
 	public Map<String, Property> getProperties() { return properties; }
 
-	public Map<String, Characteristic> getCharacteristics() { return characteristics; }
+	public Map<String, Characteristic> getCharacteristics() { return this.characteristics; }
 	public void setCharacteristic(String name, Characteristic characteristic) { this.characteristics.put(name, characteristic); }
 
 	public Tqi getTqi() {
@@ -173,6 +174,10 @@ public class Project{
 		this.getProperties().values().forEach(Property::evaluate);
 	}
 
+	public void evaluateTqi() {
+		this.getTqi().evaluate(this.getCharacteristics());
+	}
+
 	/**
 	 * Initialize characteristics layer of the project using the quality model description
 	 *
@@ -211,6 +216,18 @@ public class Project{
 		}
 	}
 
+	/**
+	 * Initialize Tqi object of the project using weights from the quality model
+	 *
+	 * @param qm
+	 * 		The language-specific quality model
+	 */
+	private Tqi initializeTqi(QualityModel qm) {
+		String name = qm.getTqi().getName();
+		Map<String, Double> weights = qm.getTqi().getWeights();
+		return new Tqi(name, weights);
+	}
+
 
 
 	/**
@@ -236,7 +253,7 @@ public class Project{
 		 * calculate the value of the TQI from the eval field of the model's
 		 * characteristics
 		 */
-		this.tqi.calculateTQI(this.characteristics_depreicated);
+		this.tqi.calculateTQI_deprecated(this.characteristics_depreicated);
 	}
 
 	/**
@@ -250,7 +267,7 @@ public class Project{
 	        @Override
 	        public int compare(Project p1, Project p2) {
 	            if(field.equals("eval")) {
-	                return Double.compare(p1.getTqi().getEval(), p2.getTqi().getEval());
+	                return Double.compare(p1.getTqi().getValue(), p2.getTqi().getValue());
 	            }else{
 	            	return 1;
 	            }

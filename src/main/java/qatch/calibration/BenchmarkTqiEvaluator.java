@@ -47,6 +47,7 @@ public class BenchmarkTqiEvaluator {
 	 * @param tqi      : The TQI Object of the imported Quality Model.
 	 * @throws CloneNotSupportedException
 	 */
+	@Deprecated
 	public void cloneTqi(BenchmarkProjects projects, Tqi tqi) throws CloneNotSupportedException{
 		
 		//Create an iterator of the available projects
@@ -59,7 +60,7 @@ public class BenchmarkTqiEvaluator {
 			Project project = iterator.next();
 			
 			//Copy the TQI object of the QM to the tqi field of this project
-			project.setTqi((Tqi)tqi.clone());
+//			project.setTqi((Tqi)tqi.clone());
 		}
 		
 	}

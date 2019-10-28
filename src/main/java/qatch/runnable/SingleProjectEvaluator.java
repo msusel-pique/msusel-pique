@@ -53,6 +53,7 @@ public class SingleProjectEvaluator {
         // aggregate properties -> characteristics -> tqi values using quality model (thresholds for properties and weights for characteristics and tqi)
         project.evaluateProperties();
         project.evaluateCharacteristics();
+        project.evaluateTqi();
 
         System.out.println("...");
         throw new NotImplementedException();
@@ -171,7 +172,7 @@ public class SingleProjectEvaluator {
             charEvaluator.evaluateProjectCharacteristics(project);
 
             // evaluate TQI
-            project.setTqi((Tqi) qualityModel.getTqi().clone());
+            project.setTqi(qualityModel.getTqi());
             project.calculateTQI();
         }
         catch (CloneNotSupportedException e) { e.printStackTrace(); }

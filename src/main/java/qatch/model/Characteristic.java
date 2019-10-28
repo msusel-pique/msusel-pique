@@ -133,7 +133,7 @@ public class Characteristic {
 	 */
 	public void evaluate(Map<String, Property> properties) {
 
-		// assert a weight mapping exists for each provided measure
+		// assert a weight mapping exists for each provided property
 		this.getWeights().keySet().forEach(k -> {
 			if (!properties.containsKey(k)) {
 				throw new RuntimeException("No weight-measure mapping in Characteristic " + this.getName() +
