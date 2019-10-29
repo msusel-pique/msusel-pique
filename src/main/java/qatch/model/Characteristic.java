@@ -1,5 +1,7 @@
 package qatch.model;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,9 +17,11 @@ public class Characteristic {
 
 	// instance variables
 	private String description;	 //A brief description of the characteristic
+	@Expose
 	private double value;  //The quality score of this characteristic (derives from the weighted average of the eval fields of the QM's properties)
 	private String name;  //The name of the characteristic
 	private String standard;  //The standard from which this characteristic derives
+	@Expose
 	private Map<String, Double> weights = new HashMap<>();  // mapping of property names and their weights
 
 

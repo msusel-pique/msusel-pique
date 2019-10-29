@@ -1,19 +1,23 @@
 package qatch.analysis;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import com.google.gson.annotations.Expose;
 
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 
 public class Measure {
 
 	// instance variables
 	private Function<List<Diagnostic>, Double> evalFunction;
+	@Expose
 	private String name;
+	@Expose
 	private double normalizedValue;
+	@Expose
 	private String toolName;
+	@Expose
 	private List<Diagnostic> diagnostics;
+	@Expose
 	private double value;
 
 

@@ -1,5 +1,6 @@
 package qatch.runnable;
 
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import qatch.analysis.Diagnostic;
@@ -48,7 +49,7 @@ public class SingleProjectEvaluator {
         // initialize data structures
         initialize(projectDir, resultsDir, qmLocation);
         QualityModel qualityModel = new QualityModelLoader(qmLocation).importQualityModel();
-        Project project = new Project(projectDir.getFileName().toString(), projectDir, qualityModel);
+        Project project = new Project(FilenameUtils.getBaseName(projectDir.getFileName().toString()), projectDir, qualityModel);
 
         // run the static analysis tools process
         Map<String, Measure> measureResults = runTool(projectDir, tool);

@@ -1,5 +1,7 @@
 package qatch.analysis;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
@@ -8,8 +10,11 @@ public class Diagnostic {
 
     // instance variables
     private Function<Set<Finding>, Double> evalFunction;
+    @Expose
     private Set<Finding> findings = new HashSet<>();
+    @Expose
     private String id;
+    @Expose
     private double value;
 
 

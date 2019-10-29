@@ -1,5 +1,6 @@
 package qatch.model;
 
+import com.google.gson.annotations.Expose;
 import qatch.analysis.Measure;
 
 public class Property {
@@ -9,10 +10,13 @@ public class Property {
 
 	private String description;//A brief description of the property (optional)
 	private double value;//The quality score of the property
+	@Expose
 	private Measure measure;
+	@Expose
 	private String name;//The name of the property
+	@Expose
 	private boolean positive;//If this field is true then the metric has a positive impact on the property
-	private double profile[];//The profile of this Property (SIG Model for metrics - just violation counter per severity category for PMD)
+	@Expose
 	private double[] thresholds;//The three thresholds of the property metric, needed for the evaluation
 
 

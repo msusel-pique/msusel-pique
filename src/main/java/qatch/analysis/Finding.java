@@ -1,11 +1,17 @@
 package qatch.analysis;
 
+import com.google.gson.annotations.Expose;
+
 public class Finding {
 
     // instance variables
+    @Expose
     private int characterNumber;
+    @Expose
     private String filePath;
+    @Expose
     private int lineNumber;
+    @Expose
     private int severity;  // TODO: think about enum or better extensible approaches for finding custom information
 
 
