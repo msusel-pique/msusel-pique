@@ -2,8 +2,8 @@ package qatch.calibration;
 
 import qatch.evaluation.Project;
 import qatch.evaluation.ProjectCharacteristicsEvaluator;
-import qatch.model.Characteristic;
 import qatch.model.CharacteristicSet;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Iterator;
 
@@ -62,24 +62,25 @@ public class BenchmarkCharacteristicEvaluator {
 	 */
 	@Deprecated
 	public void cloneCharacteristics(BenchmarkProjects projects, CharacteristicSet characteristics) throws CloneNotSupportedException{
-		
-		//Create an iterator of the available projects
-		Iterator<Project> iterator = projects.iterator();
-		
-		while(iterator.hasNext()){
-			
-			//Get the current project
-			Project project = iterator.next();
-			
-			//For each characteristic do...
-			for(int i = 0; i < characteristics.size(); i++){
-				
-				//Clone the characteristic and add it to the CharacteristicSet of the current project
-				Characteristic c = (Characteristic) characteristics.get(i).clone();
+		throw new NotImplementedException();
+
+//		//Create an iterator of the available projects
+//		Iterator<Project> iterator = projects.iterator();
+//
+//		while(iterator.hasNext()){
+//
+//			//Get the current project
+//			Project project = iterator.next();
+//
+//			//For each characteristic do...
+//			for(int i = 0; i < characteristics.size(); i++){
+//
+//				//Clone the characteristic and add it to the CharacteristicSet of the current project
+//				Characteristic c = (Characteristic) characteristics.get(i).clone();
 //				project.getCharacteristics_depreicated().addCharacteristic(c);
-			}
-		}
-		
+//			}
+//		}
+//
 	}
 
 }

@@ -1,9 +1,9 @@
 package qatch.model;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Vector;
 
 /**
  * This class represents the total quality index of a project.
@@ -16,12 +16,12 @@ import java.util.Vector;
 public class Tqi {
 	
 	// fields
+	@Expose
 	private double value;  //The total quality index (total quality score) of a project
+	@Expose
 	private String name;
+	@Expose
 	private Map<String, Double> weights = new HashMap<>();  // mapping of characteristic names and their weights
-	@Deprecated
-	private Vector<Double> weights_depreciated;	 //The weights used for the calculation of the TQI from the evals of the QM's characteristics
-
 
 	// getters and setters
 	public double getValue() {
@@ -49,10 +49,6 @@ public class Tqi {
 	}
 	public void setWeight(String characteristicName, double value) {
 		this.weights.put(characteristicName, value);
-	}
-
-	public Vector<Double> getWeights_depreciated() {
-		return weights_depreciated;
 	}
 
 
@@ -84,55 +80,4 @@ public class Tqi {
 
 		this.setValue(sum);
 	}
-
-	/**
-	 * This method calculates the Total Quality Index (TQI), i.e. the total eval (quality score),
-	 * of the project based on:
-	 * 	- The values of "eval" fields of the characteristics of the model
-	 *  - The values of the weights that the model assigns to each characteristic
-	 *  
-	 *  ATTENTION:
-	 *   - The order of the Characteristic objects that are placed in the CharacteristicSet of the
-	 *     quality model matters, because the weights are placed in the weights Vector depending on 
-	 *     this order!
-	 *   - Do not change the auto-generated order neither in the Quality Model xml file nor elsewhere 
-	 *     inside the program.
-	 * @param characteristics : The CharacteristicSet object with the eval fields calculated received 
-	 *                          from the Project object.
-	 */
-	@Deprecated
-	public void calculateTQI_deprecated(CharacteristicSet characteristics){
-		double sum = 0;
-		for(int i = 0; i < characteristics.size(); i++){
-			//The number of weights is equal to the number of the model's characteristics
-			//The sequence of the characteristics matters!!!!!!
-			sum += characteristics.get(i).getValue() * this.weights_depreciated.get(i).doubleValue();
-		}
-		this.value = sum;
-	}
-	
-	
-	//Vector methods
-	@Deprecated
-	public void addWeight(Double weight){
-		weights_depreciated.add(weight);
-	}
-	@Deprecated
-	public Double get(int index){
-		return weights_depreciated.get(index);
-	}
-	@Deprecated
-	public boolean isEmpty(){
-		return weights_depreciated.isEmpty();
-	}
-	@Deprecated
-	public Iterator<Double> iterator(){
-		return weights_depreciated.iterator();
-	}
-	// Removes the first occurrence
-	@Deprecated
-	public int size(){
-		return weights_depreciated.size();
-	}
-
 }

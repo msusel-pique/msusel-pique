@@ -27,14 +27,14 @@ public class ProjectTests {
 
         int loc = jsonResults.getAsJsonPrimitive("linesOfCode").getAsInt();
         String name = jsonResults.getAsJsonPrimitive("name").getAsString();
-        int numCharacteristics = jsonResults.getAsJsonObject("characteristics").size();
-        int numProperties = jsonResults.getAsJsonObject("properties").size();
+//        int numCharacteristics = jsonResults.getAsJsonObject("characteristics").size();
+//        int numProperties = jsonResults.getAsJsonObject("properties").size();
         double tqiValue = jsonResults.getAsJsonObject("tqi").getAsJsonPrimitive("value").getAsDouble();
 
         Assert.assertEquals(555, loc);
         Assert.assertEquals("TestProject", name);
-        Assert.assertEquals(2, numCharacteristics);
-        Assert.assertEquals(2, numProperties);
+//        Assert.assertEquals(2, numCharacteristics);
+//        Assert.assertEquals(2, numProperties);
         Assert.assertEquals(0.92, tqiValue, 0);
 
         FileUtils.forceDelete(exportLocation.toFile());

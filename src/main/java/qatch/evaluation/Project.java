@@ -1,14 +1,20 @@
 package qatch.evaluation;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 import qatch.analysis.Measure;
-import qatch.model.*;
+import qatch.model.Characteristic;
+import qatch.model.Property;
+import qatch.model.QualityModel;
+import qatch.model.Tqi;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class represents a project under evaluation.
@@ -18,12 +24,15 @@ import java.util.*;
 public class Project{
 
 	// instance variables
+	@Expose
 	private int linesOfCode;
+	@Expose
 	private String name;
 	private Path path; //The original path where the sources of the project are stored (with or without the name)
 	private Map<String, Measure> measures = new HashMap<>();
 	private Map<String, Characteristic> characteristics = new HashMap<>();
 	private Map<String, Property> properties = new HashMap<>();  // each property has one Measure associated with it
+	@Expose
 	private Tqi tqi;
 
 	
@@ -159,7 +168,7 @@ public class Project{
 		File evalResults = new File(resultsDir.toFile(), this.getName() + "_evalResults.json");
 
 		//Instantiate a Json Parser
-		Gson gson = new Gson();
+		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
 		//Create the Json String of the projects
 		String json = gson.toJson(this);

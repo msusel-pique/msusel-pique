@@ -1,14 +1,15 @@
 package qatch.model;
 
-import java.io.FileWriter;
-import java.io.IOException;
-
+import com.google.gson.Gson;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import com.google.gson.Gson;
+import java.io.FileWriter;
+import java.io.IOException;
 
+@Deprecated
 public class TqiExporter {
 	
 	/**
@@ -23,31 +24,34 @@ public class TqiExporter {
 	 * @return    : An Element object that correspond to the DOM Tree 
 	 * 			    representation of the TQI object.
 	 */
+	@Deprecated
 	public Element createJDOMRepresentation(Tqi tqi){
-		
-		//Create an empty "root" element
-		Element root = new Element("tqi");
-		root.setName("tqi");
-		
-		//Create a node (element) containing the weights of the tqi object
-		Element weights = new Element("weights");
-		for(int i = 0; i < tqi.getWeights_depreciated().size(); i++){
 
-			//Create a weight Element
-			Element t = new Element("weight");
-			
-			//Set the appropriate value of the weight
-			t.setText(String.valueOf(tqi.getWeights_depreciated().get(i)));
-			
-			//Attach the current weight element to the element named "weights"
-			weights.addContent(t);
-		}
-
-		//Attach the "weights" element to the "tqi" parent element
-		root.addContent(weights);
-		
-		//Return the "root" element 
-		return root;	
+		throw new NotImplementedException();
+//
+//		//Create an empty "root" element
+//		Element root = new Element("tqi");
+//		root.setName("tqi");
+//
+//		//Create a node (element) containing the weights of the tqi object
+//		Element weights = new Element("weights");
+//		for(int i = 0; i < tqi.getWeights_depreciated().size(); i++){
+//
+//			//Create a weight Element
+//			Element t = new Element("weight");
+//
+//			//Set the appropriate value of the weight
+//			t.setText(String.valueOf(tqi.getWeights_depreciated().get(i)));
+//
+//			//Attach the current weight element to the element named "weights"
+//			weights.addContent(t);
+//		}
+//
+//		//Attach the "weights" element to the "tqi" parent element
+//		root.addContent(weights);
+//
+//		//Return the "root" element
+//		return root;
 	}
 
 	/**

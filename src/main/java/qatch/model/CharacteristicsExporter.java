@@ -1,16 +1,16 @@
 package qatch.model;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Iterator;
-
+import com.google.gson.Gson;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import com.google.gson.Gson;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
+@Deprecated
 public class CharacteristicsExporter {
 	
 	public static String BASE_DIR = new File(System.getProperty("user.dir")).getAbsolutePath();
@@ -30,50 +30,51 @@ public class CharacteristicsExporter {
 	 * 				       
 	 */
 	public Element createJDOMRepresentation(CharacteristicSet characteristics){
-		
-		//Create an empty "root" element
-		Element root = new Element("characteristics");
-		root.setName("characteristics");
-		
-		//Iterate through the characteristics of this CharacteristicSet
-		Iterator<Characteristic> iterator = characteristics.iterator();
-		while(iterator.hasNext()){
-			
-			//Get the current Characteristic object
-			Characteristic characteristic = iterator.next();
-			
-			//Create a new Element representing this characteristic
-			Element charNode = new Element("characteristic");
-			
-			//Add the appropriate attributes
-			charNode.setAttribute("name", characteristic.getName());
-			charNode.setAttribute("standard", characteristic.getStandard());
-			charNode.setAttribute("description", characteristic.getDescription());
-		
+		throw new NotImplementedException();
 
-			//Create a node (element) containing the weights of the characteristic
-			Element weights = new Element("weights");
-			for(int i = 0; i < characteristic.getWeights_depreicated().size(); i++){
-				
-				//Create a weight Element
-				Element t = new Element("weight");
-				
-				//Set the appropriate value of the weight
-				t.setText(String.valueOf(characteristic.getWeights_depreicated().get(i)));
-				
-				//Attach the current weight element to the element named "weights"
-				weights.addContent(t);
-			}
-			
-			//Attach the "weights" sub element to the "characteristic" element
-			charNode.addContent(weights);
-			
-			//Attach the "characteristic" element to the "characteristics" parent element
-			root.addContent(charNode);
-		}
-		
-		//Return the "root" element of the characteristics
-		return root;	
+//		//Create an empty "root" element
+//		Element root = new Element("characteristics");
+//		root.setName("characteristics");
+//
+//		//Iterate through the characteristics of this CharacteristicSet
+//		Iterator<Characteristic> iterator = characteristics.iterator();
+//		while(iterator.hasNext()){
+//
+//			//Get the current Characteristic object
+//			Characteristic characteristic = iterator.next();
+//
+//			//Create a new Element representing this characteristic
+//			Element charNode = new Element("characteristic");
+//
+//			//Add the appropriate attributes
+//			charNode.setAttribute("name", characteristic.getName());
+//			charNode.setAttribute("standard", characteristic.getStandard());
+//			charNode.setAttribute("description", characteristic.getDescription());
+//
+//
+//			//Create a node (element) containing the weights of the characteristic
+//			Element weights = new Element("weights");
+//			for(int i = 0; i < characteristic.getWeights_depreicated().size(); i++){
+//
+//				//Create a weight Element
+//				Element t = new Element("weight");
+//
+//				//Set the appropriate value of the weight
+//				t.setText(String.valueOf(characteristic.getWeights_depreicated().get(i)));
+//
+//				//Attach the current weight element to the element named "weights"
+//				weights.addContent(t);
+//			}
+//
+//			//Attach the "weights" sub element to the "characteristic" element
+//			charNode.addContent(weights);
+//
+//			//Attach the "characteristic" element to the "characteristics" parent element
+//			root.addContent(charNode);
+//		}
+//
+//		//Return the "root" element of the characteristics
+//		return root;
 	}
 	
 	/**
