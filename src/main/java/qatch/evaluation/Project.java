@@ -30,7 +30,9 @@ public class Project{
 	private String name;
 	private Path path; //The original path where the sources of the project are stored (with or without the name)
 	private Map<String, Measure> measures = new HashMap<>();
+	@Expose
 	private Map<String, Characteristic> characteristics = new HashMap<>();
+	@Expose
 	private Map<String, Property> properties = new HashMap<>();  // each property has one Measure associated with it
 	@Expose
 	private Tqi tqi;
