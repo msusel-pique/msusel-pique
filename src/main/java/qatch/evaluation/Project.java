@@ -1,8 +1,11 @@
 package qatch.evaluation;
 
+import com.google.gson.Gson;
 import qatch.analysis.Measure;
 import qatch.model.*;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -29,29 +32,17 @@ public class Project{
 	/*
 	 * constructors
 	 */
+	public Project(String name){
+		this.name = name;
+		this.tqi = new Tqi(null, null);
+	}
+
 	public Project(String name, Path path, QualityModel qm) {
 		this.name = name;
 		this.path = path;
 		initializeProperties(qm);
 		initializeCharacteristics(qm);
 		this.tqi = initializeTqi(qm);
-	}
-
-	@Deprecated
-	public Project() {
-		this.metrics = new MetricSet();
-		this.properties_depreicated = new PropertySet();
-		this.characteristics_depreicated = new CharacteristicSet();
-		this.tqi = new Tqi(null, null);
-	}
-
-	@Deprecated
-	public Project(String name){
-		this.name = name;
-		this.metrics = new MetricSet();
-		this.properties_depreicated = new PropertySet();
-		this.characteristics_depreicated = new CharacteristicSet();
-		this.tqi = new Tqi(null, null);
 	}
 	
 	
@@ -179,6 +170,35 @@ public class Project{
 	}
 
 	/**
+	 * Create a hard-drive file representation of the project evaluation results
+	 * @return
+	 * 		The path to the hard-drive evaluation file
+	 *
+	 */
+	public Path exportEvaluation(Path resultsDir) {
+
+		// ensure target path directory exists
+		path.getParent().toFile().mkdirs();
+
+		//Instantiate a Json Parser
+		Gson gson = new Gson();
+
+		//Create the Json String of the projects
+		String json = gson.toJson(this);
+
+		//Save the results
+		try {
+			FileWriter writer = new FileWriter(path.toString());
+			writer.write(json);
+			writer.close();
+		} catch(IOException e){
+			System.out.println(e.getMessage());
+		}
+
+		return null;
+	}
+
+	/**
 	 * Initialize characteristics layer of the project using the quality model description
 	 *
 	 * @param qm
@@ -274,4 +294,6 @@ public class Project{
 	        }           
 	    });
 	}
+
+
 }

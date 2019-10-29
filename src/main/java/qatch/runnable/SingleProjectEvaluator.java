@@ -9,7 +9,6 @@ import qatch.evaluation.Project;
 import qatch.evaluation.ProjectCharacteristicsEvaluator;
 import qatch.evaluation.ProjectEvaluator;
 import qatch.model.*;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
@@ -55,8 +54,8 @@ public class SingleProjectEvaluator {
         project.evaluateCharacteristics();
         project.evaluateTqi();
 
-        System.out.println("...");
-        throw new NotImplementedException();
+        // create a file of the results and return to its path
+        return project.exportEvaluation(resultsDir);
     }
 
     /**
