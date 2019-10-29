@@ -1,8 +1,6 @@
 package qatch.evaluation;
 
-import qatch.model.Property;
-
-import java.util.Iterator;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * This class is responsible for the evaluation of all the 
@@ -19,16 +17,18 @@ import java.util.Iterator;
  *
  */
 public class ProjectEvaluator {
-	
+
+	@Deprecated
 	public void evaluateProjectProperties(Project project){
-		//Iterate through the properties of this project
-		Iterator<Property> iterator = project.getProperties_depreicated().iterator();
-		while(iterator.hasNext()){
-			//Get the current property of the project
-			Property property = iterator.next();
-			//Evaluate this property (i.e. calculate its eval field)
-			property.evaluate();
-		}
+		throw new NotImplementedException();
+//		//Iterate through the properties of this project
+//		Iterator<Property> iterator = project.getProperties_depreicated().iterator();
+//		while(iterator.hasNext()){
+//			//Get the current property of the project
+//			Property property = iterator.next();
+//			//Evaluate this property (i.e. calculate its eval field)
+//			property.evaluate();
+//		}
 	}
 
 }

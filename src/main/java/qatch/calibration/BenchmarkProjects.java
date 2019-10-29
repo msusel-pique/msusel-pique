@@ -117,13 +117,5 @@ public class BenchmarkProjects {
 	public String toString(){
 		return projects.toString();
 	}
-
-	/**
-	 * This method is responsible for sorting the projects of the projects vector
-	 * in a descending order based on their "eval" field.
-	 */
-	public void sortProjects(){
-		Project.sort("eval", projects);
-	}
 	
 }

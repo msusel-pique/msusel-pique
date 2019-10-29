@@ -1,9 +1,9 @@
 package qatch.calibration;
 
-import java.util.Iterator;
-
 import qatch.evaluation.Project;
 import qatch.model.Tqi;
+
+import java.util.Iterator;
 
 /**
  * This class is responsible for calculating the TQI of a set of projects.
@@ -19,32 +19,15 @@ import qatch.model.Tqi;
  * TODO: Remove the clone method - Add a Cloner class instead!!
  *
  */
+@Deprecated
 public class BenchmarkTqiEvaluator {
-	
-	/**
-	 * This method implements the whole functionality of this class.
-	 * Its algorithm is pretty straightforward if you read the inline 
-	 * comments.
-	 */
-	public void evaluateProjects(BenchmarkProjects projects, Tqi tqi) throws CloneNotSupportedException{
-		
-		//Clone the quality model's tqi object to each project of the BenchmarkProjects
-		cloneTqi(projects, tqi);
-		
-		//Iterate through the set of projects
-		Iterator<Project> iterator = projects.iterator();
-		while(iterator.hasNext()){
-			Project project = iterator.next();
-			project.calculateTQI();
-		}
-	}
 	
 	/**
 	 * A method for cloning the TQI object of the Quality Model to each Project object
 	 * of the desired BencjhmarkProjects.
 	 * 
 	 * @param projects : The set of projects under evaluation
-	 * @param tqi      : The TQI Object of the imported Quality Model.
+	 * @param tqi      : The TQI Object of the imported Quality Model
 	 * @throws CloneNotSupportedException
 	 */
 	@Deprecated

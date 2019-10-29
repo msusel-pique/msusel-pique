@@ -14,16 +14,16 @@ public class BenchmarkAnalysisExporterTests {
 //    @Test
     public void testExportToCsv() throws IOException {
         Project proj1 = TestHelper.makeProject("Project 01");
-        proj1.getProperties_depreicated().get(0).getMeasure().setNormalizedValue(0.11);
-        proj1.getProperties_depreicated().get(1).getMeasure().setNormalizedValue(0.12);
+//        proj1.getProperties_depreicated().get(0).getMeasure().setNormalizedValue(0.11);
+//        proj1.getProperties_depreicated().get(1).getMeasure().setNormalizedValue(0.12);
 
         Project proj2 = TestHelper.makeProject("Project 02");
-        proj2.getProperties_depreicated().get(0).getMeasure().setNormalizedValue(0.21);
-        proj2.getProperties_depreicated().get(1).getMeasure().setNormalizedValue(0.22);
+//        proj2.getProperties_depreicated().get(0).getMeasure().setNormalizedValue(0.21);
+//        proj2.getProperties_depreicated().get(1).getMeasure().setNormalizedValue(0.22);
 
         Project proj3 = TestHelper.makeProject("Project 03");
-        proj3.getProperties_depreicated().get(0).getMeasure().setNormalizedValue(0.31);
-        proj3.getProperties_depreicated().get(1).getMeasure().setNormalizedValue(0.32);
+//        proj3.getProperties_depreicated().get(0).getMeasure().setNormalizedValue(0.31);
+//        proj3.getProperties_depreicated().get(1).getMeasure().setNormalizedValue(0.32);
 
         BenchmarkProjects benchProjs = new BenchmarkProjects();
         benchProjs.addProject(proj1);

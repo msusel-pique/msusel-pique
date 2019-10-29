@@ -2,11 +2,8 @@ package qatch.calibration;
 
 import qatch.analysis.IFindingsAggregator;
 import qatch.analysis.IMetricsAggregator;
-import qatch.evaluation.Project;
-import qatch.model.Property;
 import qatch.model.PropertySet;
-
-import java.util.Iterator;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * This class is responsible for calculating the fields: normalizer,
@@ -67,24 +64,24 @@ public class BenchmarkAggregator {
 	 */
 	@Deprecated
 	private void cloneProperties(BenchmarkProjects projects, PropertySet properties) throws CloneNotSupportedException{
-		
-		//Create an iterator of the available projects
-		Iterator<Project> iterator = projects.iterator();
-		
-		while(iterator.hasNext()){
-			
-			//Get the current project
-			Project project = iterator.next();
-			
-			//For each property do...
-			for(int i = 0; i < properties.size(); i++){
-				
-				//Clone the property and add it to the PropertySet of the current project
-//				Property p = (Property)properties.get(i).clone();
-				Property p = (Property)properties.get(i);
-				project.addProperty(p);
-			}
-		}
+		throw new NotImplementedException();
+//		//Create an iterator of the available projects
+//		Iterator<Project> iterator = projects.iterator();
+//
+//		while(iterator.hasNext()){
+//
+//			//Get the current project
+//			Project project = iterator.next();
+//
+//			//For each property do...
+//			for(int i = 0; i < properties.size(); i++){
+//
+//				//Clone the property and add it to the PropertySet of the current project
+////				Property p = (Property)properties.get(i).clone();
+//				Property p = (Property)properties.get(i);
+//				project.addProperty(p);
+//			}
+//		}
 		
 	}
 	
@@ -94,22 +91,23 @@ public class BenchmarkAggregator {
 	 */
 	@Deprecated
 	private void normalizeProperties(BenchmarkProjects projects){
+		throw new NotImplementedException();
 		
-		//Iterate through all the projects
-		Iterator<Project> iterator = projects.iterator();
-		
-		while(iterator.hasNext()){
-			
-			//Get the current project
-			Project project = iterator.next();
-			
-			//For each property do...
-			for(int i = 0; i < project.getProperties_depreicated().size(); i++){
-				
-				Property property =  project.getProperties_depreicated().get(i);
-				property.getMeasure().calculateNormValue(project.getLinesOfCode());
-				
-			}
-		}
+//		//Iterate through all the projects
+//		Iterator<Project> iterator = projects.iterator();
+//
+//		while(iterator.hasNext()){
+//
+//			//Get the current project
+//			Project project = iterator.next();
+//
+//			//For each property do...
+//			for(int i = 0; i < project.getProperties_depreicated().size(); i++){
+//
+//				Property property =  project.getProperties_depreicated().get(i);
+//				property.getMeasure().calculateNormValue(project.getLinesOfCode());
+//
+//			}
+//		}
 	}
 }
