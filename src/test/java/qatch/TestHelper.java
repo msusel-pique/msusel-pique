@@ -44,13 +44,13 @@ public class TestHelper {
     }
 
     public static Finding makeFinding(String filePath, int lineNumber, int severity) {
-        return new Finding(filePath, lineNumber, severity);
+        return new Finding(filePath, lineNumber, 11, severity);
     }
 
     public static Measure makeMeasure(String name) {
         Diagnostic d1 = makeDiagnostic(name + " diagnostic01");
         Diagnostic d2 = makeDiagnostic(name + " diagnostic02");
-        return new Measure(name, name + "tool name", Arrays.asList(d1, d2));
+        return new Measure(name, name + " tool name", Arrays.asList(d1, d2));
     }
 
     public static Property makeProperty(String name) {
@@ -76,7 +76,9 @@ public class TestHelper {
         Tqi tqi = makeTqi("TQI");
 
         Project project = new Project(name);
+        project.setLinesOfCode(555);
         project.setTqi(tqi);
+        project.getTqi().setValue(0.92);
         project.setCharacteristic(c1.getName(), c1);
         project.setCharacteristic(c2.getName(), c2);
         project.setProperty(p1.getName(), p1);

@@ -156,6 +156,7 @@ public class ComparisonMatricesGenerator {
      *
      * Typically, we have one comparison matrix for each Quality Model's characteristic.
      */
+    @Deprecated
     static void subroutineCharacteristis(PropertySet properties, CharacteristicSet characteristics, Path outLocation, String defaultChar) {
 
         // set the properties to compare
@@ -185,6 +186,7 @@ public class ComparisonMatricesGenerator {
      *          The rows of the TQI matrix are these characteristics
      * @return the path to the comparison matrix file
      */
+    @Deprecated
     static Path subroutineTQI(CharacteristicSet characteristics, Path outLocation, String defaultChar) {
         String name = "tqi";
         String[] comparitors = new String[characteristics.getCharacteristics().size()];

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import qatch.analysis.Measure;
 import qatch.model.*;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -178,7 +179,10 @@ public class Project{
 	public Path exportEvaluation(Path resultsDir) {
 
 		// ensure target path directory exists
-		path.getParent().toFile().mkdirs();
+		resultsDir.toFile().mkdirs();
+
+		// instantiate results file reference
+		File evalResults = new File(resultsDir.toFile(), this.getName() + "_evalResults.json");
 
 		//Instantiate a Json Parser
 		Gson gson = new Gson();
@@ -188,14 +192,14 @@ public class Project{
 
 		//Save the results
 		try {
-			FileWriter writer = new FileWriter(path.toString());
+			FileWriter writer = new FileWriter(evalResults.toString());
 			writer.write(json);
 			writer.close();
 		} catch(IOException e){
 			System.out.println(e.getMessage());
 		}
 
-		return null;
+		return evalResults.toPath();
 	}
 
 	/**
