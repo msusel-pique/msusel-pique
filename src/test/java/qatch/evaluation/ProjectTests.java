@@ -156,6 +156,16 @@ public class ProjectTests {
     }
 
     @Test
+    public void testEvaluateTqi() {
+        p.getCharacteristic("Characteristic 01").setValue(0.1);
+        p.getCharacteristic("Characteristic 02").setValue(0.9);
+        p.evaluateTqi();
+
+        Assert.assertEquals(0.34, p.getTqi().getValue(), 0.001);
+
+    }
+
+    @Test
     public void testExportEvaluation() throws IOException {
         Path exportLocation = Paths.get("src/test/output/TestExportEval");
 
@@ -170,7 +180,7 @@ public class ProjectTests {
         int numProperties = jsonResults.getAsJsonObject("properties").size();
         double tqiValue = jsonResults.getAsJsonObject("tqi").getAsJsonPrimitive("value").getAsDouble();
 
-        Assert.assertEquals(555, loc);
+        Assert.assertEquals(100, loc);
         Assert.assertEquals("TestProject", name);
         Assert.assertEquals(2, numCharacteristics);
         Assert.assertEquals(2, numProperties);
