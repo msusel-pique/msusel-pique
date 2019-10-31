@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 
 public class ProjectTests {
 
-    Project p;
+    private Project p;
 
     @Before
     public void setUp()  {
@@ -26,20 +26,65 @@ public class ProjectTests {
 
 
     @Test
-    public void testEvaluateMeasures() {
-        Measure m1 = p.getMeasure("Property 01");
-        Measure m2 = p.getMeasure("Property 02");
+    public void testEvaluateProperties_negative_lowerGroup() {
+        Property p1 = p.getProperty("Property 01");
+        Property p2 = p.getProperty("Property 02");
 
-        p.evaluateMeasures();
+        p1.getMeasure().setNormalizedValue(0.01);
+        p2.getMeasure().setNormalizedValue(0.09);
 
-        Assert.assertEquals(0.04, m1.getNormalizedValue(), 0);
-        Assert.assertEquals(0.04, m2.getNormalizedValue(), 0);
+        p.evaluateProperties();
+
+        Assert.assertEquals(1.0, p1.getValue(), 0);
+        Assert.assertEquals(1.0, p2.getValue(), 0);
+    }
+
+    @Test
+    public void testEvaluateProperties_negative_middleGroup() {
+        Property p1 = p.getProperty("Property 01");
+        Property p2 = p.getProperty("Property 02");
+
+        p1.getMeasure().setNormalizedValue(0.11);
+        p2.getMeasure().setNormalizedValue(0.19);
+
+        p.evaluateProperties();
+
+        Assert.assertEquals(0.95, p1.getValue(), .01);
+        Assert.assertEquals(0.55, p2.getValue(), .01);
+    }
+
+    @Test
+    public void testEvaluateProperties_negative_saturation() {
+        Property p1 = p.getProperty("Property 01");
+        Property p2 = p.getProperty("Property 02");
+
+        p1.getMeasure().setNormalizedValue(0.51);
+        p2.getMeasure().setNormalizedValue(0.99);
+
+        p.evaluateProperties();
+
+        Assert.assertEquals(0.0, p1.getValue(), 0);
+        Assert.assertEquals(0.0, p2.getValue(), 0);
+    }
+
+    @Test
+    public void testEvaluateProperties_negative_upperGroup() {
+        Property p1 = p.getProperty("Property 01");
+        Property p2 = p.getProperty("Property 02");
+
+        p1.getMeasure().setNormalizedValue(0.21);
+        p2.getMeasure().setNormalizedValue(0.49);
+
+        p.evaluateProperties();
+
+        Assert.assertEquals(0.483, p1.getValue(), .01);
+        Assert.assertEquals(0.016, p2.getValue(), .01);
     }
 
     @Test
     public void testEvaluateProperties_positive_lowerGroup() {
         Property p1 = p.getProperty("Property 01");
-        Property p2 = p.getProperty("Property 01");
+        Property p2 = p.getProperty("Property 02");
 
         p1.setPositive(true);
         p2.setPositive(true);
@@ -55,7 +100,7 @@ public class ProjectTests {
     @Test
     public void testEvaluateProperties_positive_middleGroup() {
         Property p1 = p.getProperty("Property 01");
-        Property p2 = p.getProperty("Property 01");
+        Property p2 = p.getProperty("Property 02");
 
         p1.setPositive(true);
         p2.setPositive(true);
@@ -64,8 +109,40 @@ public class ProjectTests {
 
         p.evaluateProperties();
 
-        Assert.assertEquals(0.05, p1.getValue(), 0);
-        Assert.assertEquals(0.45, p2.getValue(), 0);
+        Assert.assertEquals(0.05, p1.getValue(), .01);
+        Assert.assertEquals(0.45, p2.getValue(), .01);
+    }
+
+    @Test
+    public void testEvaluateProperties_positive_saturation() {
+        Property p1 = p.getProperty("Property 01");
+        Property p2 = p.getProperty("Property 02");
+
+        p1.setPositive(true);
+        p2.setPositive(true);
+        p1.getMeasure().setNormalizedValue(0.51);
+        p2.getMeasure().setNormalizedValue(0.99);
+
+        p.evaluateProperties();
+
+        Assert.assertEquals(1.0, p1.getValue(), 0);
+        Assert.assertEquals(1.0, p2.getValue(), 0);
+    }
+
+    @Test
+    public void testEvaluateProperties_positive_upperGroup() {
+        Property p1 = p.getProperty("Property 01");
+        Property p2 = p.getProperty("Property 02");
+
+        p1.setPositive(true);
+        p2.setPositive(true);
+        p1.getMeasure().setNormalizedValue(0.21);
+        p2.getMeasure().setNormalizedValue(0.49);
+
+        p.evaluateProperties();
+
+        Assert.assertEquals(0.516, p1.getValue(), .01);
+        Assert.assertEquals(0.983, p2.getValue(), .01);
     }
 
     @Test
