@@ -93,6 +93,7 @@ public class Project{
 		this.properties.put(name, property);
 	}
 
+	public Characteristic getCharacteristic(String name) { return this.characteristics.get(name); }
 	public Map<String, Characteristic> getCharacteristics() { return this.characteristics; }
 	public void setCharacteristic(String name, Characteristic characteristic) { this.characteristics.put(name, characteristic); }
 

@@ -26,6 +26,16 @@ public class ProjectTests {
 
 
     @Test
+    public void testEvaluateCharacteristics() {
+        p.getProperty("Property 01").setValue(0.1);
+        p.getProperty("Property 02").setValue(0.9);
+        p.evaluateCharacteristics();
+
+        Assert.assertEquals(0.42, p.getCharacteristic("Characteristic 01").getValue(), 0.001);
+        Assert.assertEquals(0.42, p.getCharacteristic("Characteristic 02").getValue(), 0.001);
+    }
+
+    @Test
     public void testEvaluateProperties_negative_lowerGroup() {
         Property p1 = p.getProperty("Property 01");
         Property p2 = p.getProperty("Property 02");

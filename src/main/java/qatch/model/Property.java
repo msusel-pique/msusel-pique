@@ -156,7 +156,7 @@ public class Property {
 	 * from R Analysis.
 	 */
 	//TODO: Find a better way of fixing this issue (i.e. increase the precision in R)
-	public static double roundDown4(double d) {
+	private static double roundDown4(double d) {
 	    return (long) (d * 1e4) / 1e4;
 	}
 
