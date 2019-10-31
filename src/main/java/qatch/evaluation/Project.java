@@ -1,263 +1,227 @@
 package qatch.evaluation;
 
-import qatch.model.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
+import qatch.analysis.Measure;
+import qatch.model.Characteristic;
+import qatch.model.Property;
+import qatch.model.QualityModel;
+import qatch.model.Tqi;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Vector;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class represents a project under evaluation.
- * 
- * Basically, it contains all the data (metrics, violations, properties etc.) that belong to a certain project.
- *
- * @author Miltos
- *
+ * @author Miltos, Rice
  */
-public class Project{
-	
-	//Basic Fields
-	private String name;
-	private String path; //The original path where the sources of the project are stored (with or without the name)
-	
-	private Vector<IssueSet> issues;
-	private MetricSet metrics;
 
-	//Fields for the higher level evaluation of the project
-	private PropertySet properties;
-	private CharacteristicSet characteristics;
+public class Project{
+
+	// instance variables
+	@Expose
+	private int linesOfCode;
+	@Expose
+	private String name;
+	private Path path; //The original path where the sources of the project are stored (with or without the name)
+	@Expose
+	private Map<String, Characteristic> characteristics = new HashMap<>();
+	@Expose
+	private Map<String, Property> properties = new HashMap<>();  // each property has one Measure associated with it
+	@Expose
 	private Tqi tqi;
 
 	
-	/*
-	 * The constructor methods of this class.
-	 */
-	
-	public Project(){
-		this.issues = new Vector<>();
-		this.metrics = new MetricSet();
-		this.properties = new PropertySet();
-		this.characteristics = new CharacteristicSet();
-		this.tqi = new Tqi();
-	}
-	
+	// Constructors
 	public Project(String name){
 		this.name = name;
-		this.issues = new Vector<>();
-		this.metrics = new MetricSet();
-		this.properties = new PropertySet();
-		this.characteristics = new CharacteristicSet();
-		this.tqi = new Tqi();
+		this.tqi = new Tqi(null, null);
+	}
+
+	public Project(String name, Path path, QualityModel qm) {
+		this.name = name;
+		this.path = path;
+		initializeProperties(qm);
+		initializeCharacteristics(qm);
+		this.tqi = initializeTqi(qm);
 	}
 	
 	
-	/*
-	 * Getters and setters.
-	 */
+	// Getters and setters.
+	public int getLinesOfCode() { return linesOfCode; }
+	public void setLinesOfCode(int linesOfCode) { this.linesOfCode = linesOfCode; }
+
 	public String getName() {
 		return name;
 	}
-	
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	public PropertySet getProperties() {
-		return properties;
+
+	public Path getPath() { return path; }
+	public void setPath(Path path) { this.path = path; }
+
+	public Measure getMeasure(String propertyName) {
+		return this.properties.get(propertyName).getMeasure();
+	}
+	public List<Measure> getMeasures() {
+		ArrayList<Measure> measures = new ArrayList<>();
+		this.getProperties().values().forEach(p -> { measures.add(p.getMeasure()); });
+		return measures;
+	}
+	public void setMeasure(String propertyName, Measure measure) {
+		this.getProperty(propertyName).setMeasure(measure);
+	}
+	public void setMeasures(Map<String, Measure> measures) {
+		for (Map.Entry<String, Measure> propertyAndMeasures : measures.entrySet()) {
+			String propertyName = propertyAndMeasures.getKey();
+			Measure measure = propertyAndMeasures.getValue();
+			this.setMeasure(propertyName, measure);
+		}
 	}
 
-	public void setProperties(PropertySet properties) {
-		this.properties = properties;
+	public Property getProperty(String name) { return this.properties.get(name); }
+	public Map<String, Property> getProperties() { return this.properties; }
+	public void setProperty(String name, Property property) {
+		this.properties.put(name, property);
 	}
 
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-	
-	public Vector<IssueSet> getIssues() {
-		return issues;
-	}
-	
-	public void setIssues(Vector<IssueSet> issues) {
-		this.issues = issues;
-	}
-	
-	public MetricSet getMetrics() {
-		return metrics;
-	}
-	
-	public void setMetrics(MetricSet metrics) {
-		this.metrics = metrics;
-	}
-	
-	public CharacteristicSet getCharacteristics() {
-		return characteristics;
-	}
-
-	public void setCharacteristics(CharacteristicSet characteristics) {
-		this.characteristics = characteristics;
-	}
+	public Characteristic getCharacteristic(String name) { return this.characteristics.get(name); }
+	public Map<String, Characteristic> getCharacteristics() { return this.characteristics; }
+	public void setCharacteristic(String name, Characteristic characteristic) { this.characteristics.put(name, characteristic); }
 
 	public Tqi getTqi() {
 		return tqi;
 	}
-
 	public void setTqi(Tqi tqi) {
 		this.tqi = tqi;
 	}
 
-	//Other
-	
+
+	// Methods
 	/**
-	 * Adds an IssueSet in the issues vector.
+	 * Evaluate and set the this project's Measures.normalizedValue values according using the lines
+	 * of code value in the project
 	 */
-	public void addIssueSet(IssueSet issueSet){
-		this.issues.add(issueSet);
-	}
-	
-	/**
-	 * Returns the IssueSet placed in the index position
-	 * of issues vector.
-	 */
-	public IssueSet getIssueSet(int index){
-		return issues.get(index);
-	}
-	
-	/**
-	 * Adds a Metrics object in the metrics vector.
-	 */
-	public void addMetrics(Metrics m){
-		this.metrics.addMetrics(m);
-	}
-	
-	/**
-	 * Return the Metrics Object placed in the index 
-	 * position of the MetricSet.
-	 */
-	public Metrics getMetrics(int index){
-		return this.metrics.get(index);
-	}
-	
-	
-	//Secondary methods
-	
-	/**
-	 * Clears the vector that contains the IssueSets of the Project.
-	 */
-	public void clearIssues(){
-		issues.clear();
-	}
-	
-	/**
-	 * Searches for an issueSet and returns the index of
-	 * the first occurrence.
-	 */
-	public boolean containsIssueSet(IssueSet issueSet){
-		return issues.contains(issueSet);	
-	}
-	
-	/**
-	 * Checks if the issues vector is empty.
-	 */
-	public boolean isEmpty(){
-		return issues.isEmpty();
-	}
-	
-	/**
-	 * Creates an iterator for the issuesSet.
-	 */
-	public Iterator<IssueSet> issueSetIterator(){
-		return issues.iterator();
-	}
-	
-	public int indexOfIssueSet(IssueSet issueSet){
-		return issues.indexOf(issueSet);
-	}
-	
-	public void removeIssueSet(int index){
-		issues.remove(index);
-	}
-	
-	// Removes the first occurrence
-	public void removeIssueSet(Issue issueSet){
-		issues.remove(issueSet);
-	}
-	
-	public int size(){
-		return issues.size();
-	}
-	
-	public IssueSet[] toArray(){
-		return (IssueSet[]) issues.toArray();
-	}
-	
-	public String toString(){
-		return issues.toString();
-	}
-	
-	public void addProperty(Property property){
-		this.properties.getPropertyVector().add(property); 
-	}
-	
-	/**
-	 * A method that calculates the total evaluation (TQI) of 
-	 * this Project.
-	 */
-	public void calculateTQI(){
-		/*
-		 * Just call the calculateTQI() method of the Tqi object in order to
-		 * calculate the value of the TQI from the eval field of the model's
-		 * characteristics
-		 */
-		this.tqi.calculateTQI(this.characteristics);
-	}
-	
-	/**
-	 * Method for freeing memory. Typically, it deletes the contents of the metrics 
-	 * and issues objects of this project. I.e. it deletes the results of the 
-	 * static analysis concerning this project.
-	 */
-	public void clearIssuesAndMetrics(){
-		metrics = null;
-	   	issues = null;
+	public void evaluateMeasures() {
+
+		if (this.linesOfCode < 1) {
+			throw new RuntimeException("Normalization of measures failed" +
+					". This is likely due to the LoC analyzer either \nfailing to get the " +
+					"total lines of code, or failing to assign the TLOC to the project.");
+		}
+
+		this.getMeasures().forEach(m -> {
+			m.setNormalizedValue(m.getValue() / (double) this.getLinesOfCode());
+		});
 	}
 
 	/**
-	 * This method is responsible for sorting a group of projects according to a desired
-	 * field in a descending order. Typically, it is used in order to sort the projects
-	 * under evaluation according to their TQI.
-     */
-	public static void sort(final String field, Vector<Project> projects) {
-		
-	    Collections.sort(projects, new Comparator<Project>() {
-	        @Override
-	        public int compare(Project p1, Project p2) {
-	            if(field.equals("eval")) {
-	                return Double.compare(p1.getTqi().getEval(), p2.getTqi().getEval());
-	            }else{
-	            	return 1;
-	            }
-	        }           
-	    });
+	 * Evaluate and set this project's characteristics using the weights
+	 * provided by the quality model and the values contained in the project's Property nodes.
+	 */
+	public void evaluateCharacteristics() {
+		this.getCharacteristics().values().forEach(c -> { c.evaluate(this.getProperties()); });
 	}
 
 	/**
-	 * Clone the properties of the quality model to the properties of the certain project
+	 * Evaluate and set this project's properties using the thresholds
+	 * provided by the quality model and the findings contained in the Measure nodes.
 	 */
-	public void cloneProperties(QualityModel qualityModel) {
-		for(int i = 0; i < qualityModel.getProperties().size(); i++){
-			//Clone the property and add it to the PropertySet of the current project
-			Property p = null;
-			try { p = (Property) qualityModel.getProperties().get(i).clone(); }
-			catch (CloneNotSupportedException e) { e.printStackTrace(); }
+	public void evaluateProperties() {
+		this.getProperties().values().forEach(Property::evaluate);
+	}
 
-			this.addProperty(p);
+	public void evaluateTqi() {
+		this.getTqi().evaluate(this.getCharacteristics());
+	}
+
+	/**
+	 * Create a hard-drive file representation of the project evaluation results
+	 * @return
+	 * 		The path to the hard-drive evaluation file
+	 *
+	 */
+	public Path exportEvaluation(Path resultsDir) {
+
+		// ensure target path directory exists
+		resultsDir.toFile().mkdirs();
+
+		// instantiate results file reference
+		File evalResults = new File(resultsDir.toFile(), this.getName() + "_evalResults.json");
+
+		//Instantiate a Json Parser
+		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+
+		//Create the Json String of the projects
+		String json = gson.toJson(this);
+
+		//Save the results
+		try {
+			FileWriter writer = new FileWriter(evalResults.toString());
+			writer.write(json);
+			writer.close();
+		} catch(IOException e){
+			System.out.println(e.getMessage());
+		}
+
+		return evalResults.toPath();
+	}
+
+	/**
+	 * Initialize characteristics layer of the project using the quality model description
+	 *
+	 * @param qm
+	 * 		The language-specific quality model
+	 */
+	private void initializeCharacteristics(QualityModel qm) {
+		for (String characteristicName : qm.getCharacteristics().keySet()) {
+
+			// create new project characteristic entry using weights information from quality model
+			Characteristic reference = qm.getCharacteristic(characteristicName);
+			Characteristic projectCharacteristic = new Characteristic(
+					characteristicName, reference.getStandard(),
+					reference.getDescription(), reference.getWeights()
+			);
+			this.setCharacteristic(characteristicName, projectCharacteristic);
 		}
 	}
 
+	/**
+	 * Initialize properties layer of the project using the quality model description
+	 *
+	 * @param qm
+	 * 		The language-specific quality model
+	 */
+	private void initializeProperties(QualityModel qm) {
+		for (String propertyName : qm.getProperties().keySet()) {
+
+			// create new project property entry using thresholds and impact from quality model
+			Property referenceProperty = qm.getProperty(propertyName);
+			Property projectProperty = new Property(
+					propertyName, referenceProperty.getDescription(), referenceProperty.isPositive(),
+					referenceProperty.getThresholds(), null
+			);
+			this.setProperty(propertyName, projectProperty);
+		}
+	}
+
+	/**
+	 * Initialize Tqi object of the project using weights from the quality model
+	 *
+	 * @param qm
+	 * 		The language-specific quality model
+	 */
+	private Tqi initializeTqi(QualityModel qm) {
+		String name = qm.getTqi().getName();
+		Map<String, Double> weights = qm.getTqi().getWeights();
+		return new Tqi(name, weights);
+	}
 }

@@ -1,9 +1,5 @@
 package qatch.evaluation;
 
-import java.util.Iterator;
-
-import qatch.model.Characteristic;
-
 /**
  * This class is responsible for the evaluation of the characteristics
  * of a single project, based on the eval fields of its properties and
@@ -15,6 +11,7 @@ import qatch.model.Characteristic;
  * @author Miltos
  *
  */
+@Deprecated
 public class ProjectCharacteristicsEvaluator {
 	
 	/**
@@ -23,14 +20,14 @@ public class ProjectCharacteristicsEvaluator {
 	 * project and calls the method evaluate() of each characteristic.
 	 */
 	public void evaluateProjectCharacteristics(Project project){
-		//Iterate through the characteristics of this project
-		Iterator<Characteristic> iterator = project.getCharacteristics().iterator();
-		while(iterator.hasNext()){
-			//Get the current characteristic of the project
-			Characteristic characteristic = iterator.next();
-			//Evaluate this property (i.e. calculate its eval field)
-			characteristic.evaluate(project.getProperties());
-		}
+//		//Iterate through the characteristics of this project
+//		Iterator<Characteristic> iterator = project.getCharacteristics_depreicated().iterator();
+//		while(iterator.hasNext()){
+//			//Get the current characteristic of the project
+//			Characteristic characteristic = iterator.next();
+//			//Evaluate this property (i.e. calculate its eval field)
+//			characteristic.evaluate_deprecated(project.getProperties_depreicated());
+//		}
 	}
 
 }

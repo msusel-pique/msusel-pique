@@ -1,24 +1,24 @@
 package qatch.model;
 
+import com.google.gson.annotations.Expose;
 import qatch.analysis.Measure;
 
-public class Property implements Cloneable {
-	
-	/* The breakpoint of the Utility Function used for the evaluation of the Property */
-	private static final double BREAKPOINT = 0.5;
+public class Property {
 	
 	/* Static constants that belong to this class */
 	public static final int THRESHOLDS_NUM = 3;
-	
-	private String name;//The name of the property
+
 	private String description;//A brief description of the property (optional)
-	private double[] thresholds;//The three thresholds of the property metric, needed for the evaluation
-	private double eval;//The quality score of the property
-	private double profile[];//The profile of this Property (SIG Model for metrics - just violation counter per severity category for PMD)
-	private boolean positive;//If this field is true then the metric has a positive impact on the property
-	//private String tool;//The tool used for quantifying it (PMD, CKJM etc.)
-	
+	private double value;//The quality score of the property
+	@Expose
 	private Measure measure;
+	@Expose
+	private String name;//The name of the property
+	@Expose
+	private boolean positive;//If this field is true then the metric has a positive impact on the property
+	@Expose
+	private double[] thresholds;//The three thresholds of the property metric, needed for the evaluation
+
 
 	public Property(){
 		// Just create the thresholds array.
@@ -34,6 +34,14 @@ public class Property implements Cloneable {
 	public Property(String name, Measure measure) {
 		thresholds = new double[THRESHOLDS_NUM];
 		this.name = name;
+		this.measure = measure;
+	}
+
+	public Property(String name, String description, boolean impact, double[] thresholds, Measure measure) {
+		this.name = name;
+		this.description = description;
+		this.positive = impact;
+		this.thresholds = thresholds;
 		this.measure = measure;
 	}
 	
@@ -70,29 +78,12 @@ public class Property implements Cloneable {
 		this.thresholds = thresholds;
 	}
 	
-	public double getEval() {
-		return eval;
+	public double getValue() {
+		return value;
 	}
 	
-	public void setEval(double eval) {
-		this.eval = eval;
-	}
-	
-	public double[] getProfile() {
-		return profile;
-	}
-
-	public void setProfile(double[] profile) {
-		this.profile = profile;
-	}
-
-	public boolean isMetric(){
-		return measure.getType() == Measure.METRIC;
-	}
-	
-	//TODO: Remove - Redundant
-	public boolean isFinding(){
-		return measure.getType() == Measure.FINDING;
+	public void setValue(double value) {
+		this.value = value;
 	}
 	
 	public void setMeasure(Measure measure){
@@ -101,13 +92,6 @@ public class Property implements Cloneable {
 	
 	public Measure getMeasure(){
 		return measure;
-	}
-	
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-	    Property cloned = (Property)super.clone();
-	    cloned.setMeasure((Measure)cloned.getMeasure().clone());
-	    return cloned;
 	}
 
 	
@@ -124,7 +108,7 @@ public class Property implements Cloneable {
 	 * Typically, it simulates the Utility Function that is used
 	 * for the evaluation of the properties.
 	 */
-	public void evaluate(){
+	public void evaluate() {
 		/*
 		 * Check the sign of the impact that this property has on the total quality
 		 * and choose  the monotony of the utility function.
@@ -132,33 +116,33 @@ public class Property implements Cloneable {
 		
 		if(positive){
 			//If the metric has a positive impact on quality -> Ascending utility function
-			if(this.measure.getNormValue() <= this.thresholds[0]){
+			if(this.measure.getNormalizedValue() <= this.thresholds[0]){
 				//Lower Group
-				this.eval = 0;
-			}else if(this.measure.getNormValue() <= this.thresholds[1]){
+				this.value = 0;
+			}else if(this.measure.getNormalizedValue() <= this.thresholds[1]){
 				//Middle Group
-				this.eval = (0.5/(thresholds[1]-thresholds[0]))*(this.getMeasure().getNormValue() - thresholds[0]);
-			}else if(this.measure.getNormValue() <= this.thresholds[2]){
+				this.value = (0.5/(thresholds[1]-thresholds[0]))*(this.getMeasure().getNormalizedValue() - thresholds[0]);
+			}else if(this.measure.getNormalizedValue() <= this.thresholds[2]){
 				//Upper Group
-				this.eval = 1 - (0.5/(thresholds[2]-thresholds[1]))*(thresholds[2] - this.getMeasure().getNormValue());
+				this.value = 1 - (0.5/(thresholds[2]-thresholds[1]))*(thresholds[2] - this.getMeasure().getNormalizedValue());
 			}else{
 				//Saturation
-				this.eval = 1;
+				this.value = 1;
 			}
 		}else{
 			//If the metric has a negative impact on quality -> Descending utility function
-			if(roundDown4(this.measure.getNormValue()) <= this.thresholds[0]){
+			if(roundDown4(this.measure.getNormalizedValue()) <= this.thresholds[0]){
 				//Lower Group
-				this.eval = 1;
-			}else if(roundDown4(this.measure.getNormValue()) <= this.thresholds[1]){
+				this.value = 1;
+			}else if(roundDown4(this.measure.getNormalizedValue()) <= this.thresholds[1]){
 				//Middle Group
-				this.eval = 1 - (0.5/(thresholds[1]-thresholds[0]))*(this.getMeasure().getNormValue() - thresholds[0]);
-			}else if(roundDown4(this.measure.getNormValue()) <= this.thresholds[2]){
+				this.value = 1 - (0.5/(thresholds[1]-thresholds[0]))*(this.getMeasure().getNormalizedValue() - thresholds[0]);
+			}else if(roundDown4(this.measure.getNormalizedValue()) <= this.thresholds[2]){
 				//Upper Group
-				this.eval = (0.5/(thresholds[2]-thresholds[1]))*(thresholds[2] - roundDown4(this.getMeasure().getNormValue()));
+				this.value = (0.5/(thresholds[2]-thresholds[1]))*(thresholds[2] - roundDown4(this.getMeasure().getNormalizedValue()));
 			}else{
 				//Saturation
-				this.eval = 0;
+				this.value = 0;
 			}
 		}
 	}
@@ -172,7 +156,7 @@ public class Property implements Cloneable {
 	 * from R Analysis.
 	 */
 	//TODO: Find a better way of fixing this issue (i.e. increase the precision in R)
-	public static double roundDown4(double d) {
+	private static double roundDown4(double d) {
 	    return (long) (d * 1e4) / 1e4;
 	}
 

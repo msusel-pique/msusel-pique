@@ -18,7 +18,7 @@ public class ProjectRanker {
 	 */
 	 static final Comparator<Project> TQI_ORDER = new Comparator<Project>() {
 		 public int compare(Project p1, Project p2) {
-			 return Double.compare(p2.getTqi().getEval(), p1.getTqi().getEval());
+			 return Double.compare(p2.getTqi().getValue(), p1.getTqi().getValue());
 		 }
 	 };
 	 

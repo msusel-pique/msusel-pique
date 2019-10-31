@@ -1,15 +1,7 @@
 package qatch.calibration;
 
-import com.google.gson.Gson;
-import com.opencsv.CSVWriter;
-import qatch.evaluation.Project;
-import qatch.model.Property;
-
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 
 /**
  * This class is responsible for exporting the results of the benchmark analysis
@@ -35,7 +27,7 @@ import java.util.ArrayList;
  * @author Miltos
  *
  */
-
+@Deprecated
 public class BenchmarkAnalysisExporter {
 
 	/**
@@ -53,6 +45,7 @@ public class BenchmarkAnalysisExporter {
 	 *    - The order of the columns is equivalent to the order of the Properties of
 	 *      the total PropertySet containing the model's properties.
 	 */
+	@Deprecated
 	public Path exportToCsv(BenchmarkProjects projects){
 		
 		//Set the path where the csv file will be stored and the name of the csv file
@@ -61,84 +54,6 @@ public class BenchmarkAnalysisExporter {
 		//Create the folder
 		RInvoker.R_WORK_DIR.toFile().mkdirs();
 
-		// create the csv file
-		try {
-			FileWriter fw = new FileWriter(outFile);
-			CSVWriter writer = new CSVWriter(fw);
-			int numCols = projects.getProject(0).getProperties().size() + 1;
-			// build rows of string arrays to eventually feed to writer
-			ArrayList<String[]> csvRows = new ArrayList<>();
-
-			// header
-			String[] header = new String[numCols];
-			header[0] = "Project_Name";
-			for(int i = 0; i < projects.getProject(0).getProperties().size(); i++){
-				//Get the i-th property
-				Property p = projects.getProject(0).getProperties().get(i);
-				//Set the name of the i-th column to the name of this Property
-				header[i+1] = p.getName();
-			}
-			csvRows.add(header);
-
-			// body: each project's normalized propertys' values
-			projects.getProjects().forEach(p -> {
-				String[] currentRow = new String[numCols];
-				currentRow[0] = p.getName();
-				// TODO: another situation of proper order of properties being needed. Eventually refactor to hash lookup
-				for (int i = 0; i < p.getProperties().size(); i++) {
-					Property property = p.getProperties().get(i);
-					currentRow[i+1] = String.valueOf(property.getMeasure().getNormValue());
-				}
-				csvRows.add(currentRow);
-			});
-
-			csvRows.forEach(writer::writeNext);
-			writer.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 		return outFile.toPath();
-	}
-	
-	/**
-	 * A method for exporting only the properties of the projects of a set of
-	 * projects in a json format. Typically, it exports only the PropertySet
-	 * object of each Project found in a property set (object of class BenchmarkProjects).
-	 * 
-	 * USAGES:
-	 *   - It can be used for debugging purposes. Use it instead of exporting 
-	 *     everything found in a BenchmarkProject object. (more lightweight)
-	 *   - As an example (tutorial), on how to create your own json file.
-	 */
-
-	public void exportToJSON(BenchmarkProjects projects, String path){
-
-		//Create the json parser
-		Gson gson = new Gson();
-		
-		//Create the string containing the total json file
-		String totalJson = "{\"projects\":[";
-		
-		//Iterate through the projects
-		for(int i = 0; i < projects.size(); i++){
-			
-			Project project = projects.getProject(i);
-			String json = gson.toJson(project.getProperties());
-			totalJson += json + ",";
-		}
-		
-		//Close the json file appropriately 
-		totalJson += "]}";
-
-		//Save the json file inside R Working Directory for Manipulation
-		try{
-			FileWriter writer = new FileWriter(path);
-			writer.write(totalJson);
-			writer.close();
-		}catch(IOException e){
-			System.out.println(e.getMessage());
-		}
 	}
 }

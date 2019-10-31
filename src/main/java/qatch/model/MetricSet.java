@@ -16,6 +16,7 @@ import java.util.Vector;
  *
  */
 // TODO: make this class generic (language agnostic)
+@Deprecated
 public class MetricSet {
 
 	private Vector<Metrics> metricSet;
