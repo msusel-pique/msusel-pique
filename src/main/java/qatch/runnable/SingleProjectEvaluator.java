@@ -62,9 +62,6 @@ public class SingleProjectEvaluator {
         // evaluate measure nodes (normalize using lines of code)
         project.evaluateMeasures();
 
-        // now that there are measures with normalized values, update Property nodes
-        project.applyMeasures();
-
         // aggregate properties -> characteristics -> tqi values using quality model (thresholds for properties and weights for characteristics and tqi)
         project.evaluateProperties();
         project.evaluateCharacteristics();

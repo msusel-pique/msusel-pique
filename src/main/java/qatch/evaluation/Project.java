@@ -13,7 +13,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,7 +31,6 @@ public class Project{
 	@Expose
 	private String name;
 	private Path path; //The original path where the sources of the project are stored (with or without the name)
-	private Map<String, Measure> measures = new HashMap<>();
 	@Expose
 	private Map<String, Characteristic> characteristics = new HashMap<>();
 	@Expose
@@ -38,9 +39,7 @@ public class Project{
 	private Tqi tqi;
 
 	
-	/*
-	 * constructors
-	 */
+	// Constructors
 	public Project(String name){
 		this.name = name;
 		this.tqi = new Tqi(null, null);
@@ -55,9 +54,7 @@ public class Project{
 	}
 	
 	
-	/*
-	 * Getters and setters.
-	 */
+	// Getters and setters.
 	public int getLinesOfCode() { return linesOfCode; }
 	public void setLinesOfCode(int linesOfCode) { this.linesOfCode = linesOfCode; }
 
@@ -71,19 +68,30 @@ public class Project{
 	public Path getPath() { return path; }
 	public void setPath(Path path) { this.path = path; }
 
-	public Measure getMeasure(String propertyName) { return this.measures.get(propertyName); }
-	public Map<String, Measure> getMeasures() {
+	public Measure getMeasure(String propertyName) {
+		return this.properties.get(propertyName).getMeasure();
+	}
+	public List<Measure> getMeasures() {
+		ArrayList<Measure> measures = new ArrayList<>();
+		this.getProperties().values().forEach(p -> { measures.add(p.getMeasure()); });
 		return measures;
 	}
+	public void setMeasure(String propertyName, Measure measure) {
+		this.getProperty(propertyName).setMeasure(measure);
+	}
 	public void setMeasures(Map<String, Measure> measures) {
-		this.measures = measures;
+		for (Map.Entry<String, Measure> propertyAndMeasures : measures.entrySet()) {
+			String propertyName = propertyAndMeasures.getKey();
+			Measure measure = propertyAndMeasures.getValue();
+			this.setMeasure(propertyName, measure);
+		}
 	}
 
 	public Property getProperty(String name) { return this.properties.get(name); }
+	public Map<String, Property> getProperties() { return this.properties; }
 	public void setProperty(String name, Property property) {
 		this.properties.put(name, property);
 	}
-	public Map<String, Property> getProperties() { return properties; }
 
 	public Map<String, Characteristic> getCharacteristics() { return this.characteristics; }
 	public void setCharacteristic(String name, Characteristic characteristic) { this.characteristics.put(name, characteristic); }
@@ -96,29 +104,7 @@ public class Project{
 	}
 
 
-	// methods
-	/**
-	 * Attach measures to this project's Properties layers.
-	 * This function provides many checks for pre and post conditions of the
-	 * model's expected state as it relates to the quality model and tool evaluation
-	 */
-	public void applyMeasures() {
-
-		// assert project measures (from tool analysis) have been created
-		if (this.getMeasures().isEmpty()) {
-			throw new RuntimeException("Measure objects from Tool analysis run must exist before apply measures");
-		}
-
-		for (String propertyName : this.getProperties().keySet()) {
-			// assert a measure mapping exists for each property
-			if (!this.getMeasures().containsKey(propertyName)) {
-				throw new RuntimeException("No measure mapping was found for property: " + propertyName);
-			}
-			// add measure to Property object
-			this.getProperty(propertyName).setMeasure(this.getMeasure(propertyName));
-		}
-	}
-
+	// Methods
 	/**
 	 * Evaluate and set the this project's Measures.normalizedValue values according using the lines
 	 * of code value in the project
@@ -130,8 +116,9 @@ public class Project{
 					". This is likely due to the LoC analyzer either \nfailing to get the " +
 					"total lines of code, or failing to assign the TLOC to the project.");
 		}
-		this.getMeasures().values().forEach(m -> {
-			m.setNormalizedValue(m.getValue() / (double) this.linesOfCode);
+
+		this.getMeasures().forEach(m -> {
+			m.setNormalizedValue(m.getValue() / (double) this.getLinesOfCode());
 		});
 	}
 

@@ -7,6 +7,7 @@ import qatch.analysis.Measure;
 import qatch.evaluation.Project;
 import qatch.model.Characteristic;
 import qatch.model.Property;
+import qatch.model.QualityModel;
 import qatch.model.Tqi;
 
 import java.io.File;
@@ -56,8 +57,21 @@ public class TestHelper {
     public static Property makeProperty(String name) {
         Measure m = makeMeasure(name + " measure");
         Property p = new Property(name, m);
-        p.setThresholds(new double[] {0.0, 0.5, 1.0});
+        p.setThresholds(new double[] {0.1, 0.2, 0.5});
         return p;
+    }
+
+    public static QualityModel makeQualityModel() {
+        QualityModel qm = new QualityModel();
+
+        qm.setName("Test Quality Model");
+        qm.setTqi(TestHelper.makeTqi("Test TQI"));
+        qm.setCharacteristic("Characteristic 01", makeCharacteristic("Characteristic 01"));
+        qm.setCharacteristic("Characteristic 02", makeCharacteristic("Characteristic 02"));
+        qm.setProperty("Property 01", makeProperty("Property 01"));
+        qm.setProperty("Property 02", makeProperty("Property 02"));
+
+        return qm;
     }
 
     public static Tqi makeTqi(String name) {
@@ -76,7 +90,7 @@ public class TestHelper {
         Tqi tqi = makeTqi("TQI");
 
         Project project = new Project(name);
-        project.setLinesOfCode(555);
+        project.setLinesOfCode(100);
         project.setTqi(tqi);
         project.getTqi().setValue(0.92);
         project.setCharacteristic(c1.getName(), c1);
