@@ -7,6 +7,7 @@ import qatch.evaluation.Project;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ public class Benchmarker {
 
     // Fields
     private Path analysisResults;  // location of hard-disk file of analysis results (disk file necessary for R script)
+    private Path tempRDirectory = Paths.get("out");
     private final Path benchmarkRepository;  // location of root foldering containing language-specific projects for benchmarking
     private final Path qmDescription;  // location of quality model description file
     private IToolLOC locTool;  // loc-specific purpose tool, necessary for normalization
@@ -45,12 +47,42 @@ public class Benchmarker {
     }
 
 
+    // Getters and setters
+    public Path getAnalysisResults() {
+        return analysisResults;
+    }
+    public void setAnalysisResults(Path analysisResults) {
+        this.analysisResults = analysisResults;
+    }
+
     // Methods
     public Path analyze(Path repository) {
         throw new NotImplementedException();
     }
 
-    public Map<String, Double[]> generateThresholds(Path findings) {
+    /**
+     * Execute the R script for theshold derivation to create thesholds for each property in the
+     * quality model description according to the benchmark repository analysis findings.
+     *
+     * This method assumes the analysisResults fields points to an existing, generated file path
+     * as a precondition.
+     *
+     * @return
+     *      A mapping of property names to the associated thresholds of that property
+     */
+    public Map<String, Double[]> generateThresholds() {
+
+        // Precondition check
+        if (!this.analysisResults.toFile().isFile()) {
+            throw new RuntimeException("Benchmark analysisResults field must point to an existing file");
+        }
+
+        // Prepare temp file for R Script results
+        this.tempRDirectory.toFile().mkdirs();
+
+        // Run R Script
+
+
         throw new NotImplementedException();
     }
 }
