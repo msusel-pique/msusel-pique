@@ -7,7 +7,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import qatch.TestHelper;
-import qatch.analysis.Measure;
 import qatch.model.Property;
 
 import java.io.FileReader;
@@ -59,8 +58,8 @@ public class ProjectTests {
 
         p.evaluateProperties();
 
-        Assert.assertEquals(0.95, p1.getValue(), .01);
-        Assert.assertEquals(0.55, p2.getValue(), .01);
+        Assert.assertEquals(0.95, p1.getValue(), .001);
+        Assert.assertEquals(0.55, p2.getValue(), .001);
     }
 
     @Test
@@ -87,8 +86,8 @@ public class ProjectTests {
 
         p.evaluateProperties();
 
-        Assert.assertEquals(0.483, p1.getValue(), .01);
-        Assert.assertEquals(0.016, p2.getValue(), .01);
+        Assert.assertEquals(0.483, p1.getValue(), .001);
+        Assert.assertEquals(0.016, p2.getValue(), .001);
     }
 
     @Test
@@ -119,8 +118,8 @@ public class ProjectTests {
 
         p.evaluateProperties();
 
-        Assert.assertEquals(0.05, p1.getValue(), .01);
-        Assert.assertEquals(0.45, p2.getValue(), .01);
+        Assert.assertEquals(0.05, p1.getValue(), .001);
+        Assert.assertEquals(0.45, p2.getValue(), .001);
     }
 
     @Test
@@ -151,8 +150,8 @@ public class ProjectTests {
 
         p.evaluateProperties();
 
-        Assert.assertEquals(0.516, p1.getValue(), .01);
-        Assert.assertEquals(0.983, p2.getValue(), .01);
+        Assert.assertEquals(0.516, p1.getValue(), .001);
+        Assert.assertEquals(0.983, p2.getValue(), .001);
     }
 
     @Test

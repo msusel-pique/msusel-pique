@@ -25,7 +25,7 @@ import java.util.Map;
 
 public class Project{
 
-	// instance variables
+	// Fields
 	@Expose
 	private int linesOfCode;
 	@Expose
