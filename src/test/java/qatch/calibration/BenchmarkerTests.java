@@ -1,6 +1,7 @@
 package qatch.calibration;
 
 import org.junit.Test;
+import qatch.TestHelper;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,6 +15,6 @@ public class BenchmarkerTests {
     @Test
     public void testGenerateThresholds() {
         benchmarker.setAnalysisResults(this.analysisResults);
-        Map<String, Double[]> thresholds = benchmarker.generateThresholds();
+        Map<String, Double[]> thresholds = this.benchmarker.generateThresholds(TestHelper.OUTPUT);
     }
 }

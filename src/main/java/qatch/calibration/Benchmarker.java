@@ -7,7 +7,6 @@ import qatch.evaluation.Project;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +24,6 @@ public class Benchmarker {
 
     // Fields
     private Path analysisResults;  // location of hard-disk file of analysis results (disk file necessary for R script)
-    private Path tempRDirectory = Paths.get("out");
     private final Path benchmarkRepository;  // location of root foldering containing language-specific projects for benchmarking
     private final Path qmDescription;  // location of quality model description file
     private IToolLOC locTool;  // loc-specific purpose tool, necessary for normalization
@@ -70,7 +68,7 @@ public class Benchmarker {
      * @return
      *      A mapping of property names to the associated thresholds of that property
      */
-    public Map<String, Double[]> generateThresholds() {
+    public Map<String, Double[]> generateThresholds(Path output) {
 
         // Precondition check
         if (!this.analysisResults.toFile().isFile()) {
@@ -78,11 +76,12 @@ public class Benchmarker {
         }
 
         // Prepare temp file for R Script results
-        this.tempRDirectory.toFile().mkdirs();
+        output.toFile().mkdirs();
 
         // Run R Script
+        RInvoker.executeRScript(RInvoker.Script.THRESHOLD, this.analysisResults.toString(), output.toString());
 
-
+        System.out.println("...");
         throw new NotImplementedException();
     }
 }

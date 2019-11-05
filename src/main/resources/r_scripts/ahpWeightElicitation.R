@@ -9,8 +9,8 @@
 #   as an improper fraction.
 #
 # Out:
-#   Generates a 'weights.json' file in the same directory passed in
-#   as args[1].
+#   Generates a 'weights.json' file in the directory passed in
+#   as args[2].
 
 
 # Load the appropriate libraries
@@ -18,12 +18,14 @@ library(jsonlite)
 
 # Move to the desired directory where the comparison matrices are placed
 args <- commandArgs(trailingOnly = TRUE)
-Dir <- args[1]
-setwd(Dir)
+input <- args[1]
+output <- args[2]
+setwd(input)
 
 # List the files found in this directory
-files <- dir("./comparison_matrices")
-setwd("./comparison_matrices")
+files <- dir(input)
+# files <- dir("./comparison_matrices")
+# setwd("./comparison_matrices")
 
 first <- TRUE
 
@@ -80,5 +82,5 @@ names(l) <- char.names
 # Store the results to a json file
 json <- toJSON(l)
 
-setwd(Dir)
+setwd(output)
 write(json, "./weights.json")

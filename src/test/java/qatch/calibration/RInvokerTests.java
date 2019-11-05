@@ -19,14 +19,11 @@ import java.nio.file.Paths;
 public class RInvokerTests {
 
     private Path comp_matrix_simple = Paths.get(TestHelper.TEST_RESOURCES.toString(),
-            "comparison_matrices",
-            "TQI.csv");
+            "comparison_matrices", "simple");
     private Path comp_matrix_zeroes = Paths.get(TestHelper.TEST_RESOURCES.toString(),
-            "comparison_matrices",
-            "comp_matrix_with_zeroes.csv");
+            "comparison_matrices", "zeroes");
     private Path comp_matrix_fractions = Paths.get(TestHelper.TEST_RESOURCES.toString(),
-            "comparison_matrices",
-            "comp_matrix_with_fractions.csv");
+            "comparison_matrices", "fractions");
 
     @Before
     public void cleanBefore() throws IOException {
@@ -41,20 +38,15 @@ public class RInvokerTests {
     @Test
     public void testExecuteRScriptForAHPElicitation_Simple() throws IOException {
 
-        // set up R environment
-        File matrixDir = new File(TestHelper.OUTPUT.toFile(), "comparison_matrices");
-        matrixDir.mkdirs();
-        FileUtils.copyFileToDirectory(comp_matrix_simple.toFile(), matrixDir);
+//        // set up R environment
+//        File matrixDir = new File(TestHelper.OUTPUT.toFile(), "comparison_matrices");
+//        matrixDir.mkdirs();
+//        FileUtils.copyFileToDirectory(comp_matrix_simple.toFile(), matrixDir);
         File weightsOutput = new File(TestHelper.OUTPUT.toFile(), "weights.json");
-
-        // run R execution
-        RInvoker ri = new RInvoker();
-        Path script = new File(RInvoker.getRScriptResource(RInvoker.Script.AHP).getFile()).toPath();
-        ri.executeRScript(
-                RInvoker.R_BIN_PATH,
-                script,
-                TestHelper.OUTPUT.toString()
-        );
+//
+//        // run R execution
+//        RInvoker.executeRScript(RInvoker.Script.AHP, TestHelper.OUTPUT.toString());
+        RInvoker.executeRScript(RInvoker.Script.AHP, comp_matrix_simple.toString(), TestHelper.OUTPUT.toString());
 
         if (!weightsOutput.isFile()) {
             Assert.fail("R execution did not generate the expected file. "
@@ -83,13 +75,7 @@ public class RInvokerTests {
         File weightsOutput = new File(TestHelper.OUTPUT.toFile(), "weights.json");
 
         // run R execution
-        RInvoker ri = new RInvoker();
-        Path script = new File(RInvoker.getRScriptResource(RInvoker.Script.AHP).getFile()).toPath();
-        ri.executeRScript(
-                RInvoker.R_BIN_PATH,
-                script,
-                TestHelper.OUTPUT.toString()
-        );
+//        RInvoker.executeRScript(RInvoker.Script.AHP, TestHelper.OUTPUT.toString());
 
         if (!weightsOutput.isFile()) {
             Assert.fail("R execution did not generate the expected file. "
@@ -122,13 +108,7 @@ public class RInvokerTests {
         File weightsOutput = new File(TestHelper.OUTPUT.toFile(), "weights.json");
 
         // run R execution
-        RInvoker ri = new RInvoker();
-        Path script = new File(RInvoker.getRScriptResource(RInvoker.Script.AHP).getFile()).toPath();
-        ri.executeRScript(
-                RInvoker.R_BIN_PATH,
-                script,
-                TestHelper.OUTPUT.toString()
-        );
+//        RInvoker.executeRScript(RInvoker.Script.AHP,TestHelper.OUTPUT.toString());
 
         if (!weightsOutput.isFile()) {
             Assert.fail("R execution did not generate the expected file. "
@@ -163,13 +143,7 @@ public class RInvokerTests {
         File thresholdOutput = new File(TestHelper.OUTPUT.toFile(), "threshold.json");
 
         // run R Executions
-        RInvoker rInvoker = new RInvoker();
-        Path script = new File(RInvoker.getRScriptResource(RInvoker.Script.THRESHOLD).getFile()).toPath();
-        rInvoker.executeRScript(
-                RInvoker.R_BIN_PATH,
-                script,
-                TestHelper.OUTPUT.toString()
-        );
+//        RInvoker.executeRScript(RInvoker.Script.THRESHOLD, TestHelper.OUTPUT.toString());
 
         if (!thresholdOutput.isFile()) {
             Assert.fail("R execution did not generate the expected file. "

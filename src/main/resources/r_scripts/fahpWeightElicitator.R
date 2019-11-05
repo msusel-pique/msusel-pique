@@ -4,8 +4,9 @@ library("xlsx")
 
 # Set the working directory to the appropriate path
 args <- commandArgs(trailingOnly = TRUE)
-Dir <- args[1]
-setwd(Dir)
+input <- args[1]
+output <- args[2]
+setwd(input)
 
 # List the files found in this directory
 files <- dir("./comparison_matrices")
@@ -247,8 +248,8 @@ json1 <- toJSON(l1)
 json2 <- toJSON(l2)
 json3 <- toJSON(l3)
 
-setwd(Dir)
-setwd("./r_working_directory")
+setwd(output)
+# setwd("./r_working_directory")
 # write(json1, "./fuzzy_weights.json")
 write(json2, "./weights.json")
 # write(json3, "./differences")
