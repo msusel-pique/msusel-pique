@@ -10,15 +10,24 @@ import qatch.analysis.Measure;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
+import java.util.*;
 
 public class BenchmarkerTests {
 
     private Path analysisResults = Paths.get("src/test/resources/benchmark_results/properties.csv");
+    private Path benchmarkRepo = Paths.get("src/test/resources/benchmark_repository");
+    private Path qmDescription = Paths.get("src/test/resources/quality_models/qualityModel_test_description.json");
 
     @Test
     public void testAnalyze() {
 
+        // Initialize mock tools
+        IToolLOC fakeLocTool = new IToolLOC() {
+            @Override
+            public Integer analyze(Path projectLocation) {
+                return 1000;
+            }
+        };
         ITool fakeTool = new ITool() {
             @Override
             public Path analyze(Path projectLocation) {
@@ -47,22 +56,20 @@ public class BenchmarkerTests {
 
             @Override
             public String getName() {
-                return null;
+                return "Fake Tool";
             }
         };
-        IToolLOC fakeLocTool = new IToolLOC() {
-            @Override
-            public Integer analyze(Path projectLocation) {
-                return 1000;
-            }
-        };
+        Set<ITool> tools = new HashSet<>(Collections.singletonList(fakeTool));
 
+        // Create benchmarker and run process
+        Benchmarker benchmarker = new Benchmarker(benchmarkRepo, qmDescription, fakeLocTool, tools);
+        benchmarker.analyze(".txt");
 
     }
 
     @Test
     public void testGenerateThresholds() {
-        Benchmarker benchmarker = new Benchmarker(null, null);
+        Benchmarker benchmarker = new Benchmarker(null, null, null, null);
 
         benchmarker.setAnalysisResults(this.analysisResults);
         Map<String, Double[]> thresholds = benchmarker.generateThresholds(TestHelper.OUTPUT);

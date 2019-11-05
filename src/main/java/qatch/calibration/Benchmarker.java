@@ -50,9 +50,11 @@ public class Benchmarker {
      * @param qmDescription
      *      Location of quality model description file
      */
-    Benchmarker(Path benchmarkRepository, Path qmDescription) {
+    Benchmarker(Path benchmarkRepository, Path qmDescription, IToolLOC locTool, Set<ITool> tools) {
         this.benchmarkRepository = benchmarkRepository;
-//        this.qmDescription = qmDescription;
+        this.qmDescription = new QualityModel(qmDescription);
+        this.locTool = locTool;
+        tools.forEach(t -> this.tools.put(t.getName(), t));
     }
 
 
@@ -88,12 +90,15 @@ public class Benchmarker {
         for (Path projectPath : projectRoots) {
 
             // Instantiate new project object
-//            Project project = new Project(projectPath.getFileName().toString(), projectPath, );
+            Project project = new Project(projectPath.getFileName().toString(), projectPath, this.qmDescription);
 
             // Run tool to set lines of code
-//            project.setLinesOfCode(locTool.analyze(projectPath));
+            project.setLinesOfCode(locTool.analyze(projectPath));
 
             // Run tool to find occurances of each diagnostic for each property
+            throw new NotImplementedException();
+
+
         }
 
         throw new NotImplementedException();

@@ -207,7 +207,7 @@ public class Project{
 			Property referenceProperty = qm.getProperty(propertyName);
 			Property projectProperty = new Property(
 					propertyName, referenceProperty.getDescription(), referenceProperty.isPositive(),
-					referenceProperty.getThresholds(), null
+					referenceProperty.getThresholds(), referenceProperty.getMeasure()
 			);
 			this.setProperty(propertyName, projectProperty);
 		}

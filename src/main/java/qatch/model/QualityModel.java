@@ -100,6 +100,7 @@ public class QualityModel {
 	private void importQualityModel(Path qmFilePath) {
 		// parse json data and update quality model object
 		try {
+			// TODO: break this large method into smaller method calls
 			FileReader fr = new FileReader(qmFilePath.toString());
 			JsonObject jsonQm = new JsonParser().parse(fr).getAsJsonObject();
 			fr.close();
@@ -111,9 +112,11 @@ public class QualityModel {
 			JsonObject jsonTqi = jsonQm.getAsJsonObject("tqi");
 			Tqi qmTqi = getTqi();
 			qmTqi.setName(jsonTqi.getAsJsonPrimitive("name").getAsString());
-			jsonTqi.getAsJsonObject("weights").keySet().forEach(weight -> {
-				qmTqi.setWeight(weight, jsonTqi.getAsJsonObject("weights").getAsJsonPrimitive(weight).getAsDouble());
-			});
+			if (jsonTqi.getAsJsonObject("weights") != null) {
+				jsonTqi.getAsJsonObject("weights").keySet().forEach(weight -> {
+					qmTqi.setWeight(weight, jsonTqi.getAsJsonObject("weights").getAsJsonPrimitive(weight).getAsDouble());
+				});
+			}
 
 			// characteristics nodes
 			JsonArray jsonCharacteristics = jsonQm.getAsJsonArray("characteristics");
@@ -124,10 +127,11 @@ public class QualityModel {
 				String standard = jsonCharacteristic.getAsJsonPrimitive("standard").getAsString();
 				String description = jsonCharacteristic.getAsJsonPrimitive("description").getAsString();
 				Characteristic qmCharacteristic = new Characteristic(name, standard, description);
-
-				jsonCharacteristic.getAsJsonObject("weights").keySet().forEach(weight -> {
-					qmCharacteristic.setWeight(weight, jsonCharacteristic.getAsJsonObject("weights").getAsJsonPrimitive(weight).getAsDouble());
-				});
+				if (jsonCharacteristic.getAsJsonObject("weights") != null) {
+					jsonCharacteristic.getAsJsonObject("weights").keySet().forEach(weight -> {
+						qmCharacteristic.setWeight(weight, jsonCharacteristic.getAsJsonObject("weights").getAsJsonPrimitive(weight).getAsDouble());
+					});
+				}
 
 				setCharacteristic(qmCharacteristic.getName(), qmCharacteristic);
 			});
@@ -137,14 +141,16 @@ public class QualityModel {
 
 			jsonProperties.forEach(p -> {
 				JsonObject jsonProperty = p.getAsJsonObject();
-				JsonArray jsonThresholds = jsonProperty.getAsJsonArray("thresholds");
-
 				String name = jsonProperty.getAsJsonPrimitive("name").getAsString();
 				String description = jsonProperty.getAsJsonPrimitive("description").getAsString();
 				boolean impact = jsonProperty.getAsJsonPrimitive("positive_impact").getAsBoolean();
-				double[] thresholds = new double[jsonThresholds.size()];
-				for (int i = 0; i < jsonThresholds.size(); i++) {
-					thresholds[i] = jsonThresholds.get(i).getAsDouble();
+				double[] thresholds = new double[3];
+
+				if (jsonProperty.getAsJsonArray("thresholds") != null) {
+					JsonArray jsonThresholds = jsonProperty.getAsJsonArray("thresholds");
+					for (int i = 0; i < jsonThresholds.size(); i++) {
+						thresholds[i] = jsonThresholds.get(i).getAsDouble();
+					}
 				}
 
 				JsonObject jsonMeasure = jsonProperty.getAsJsonObject("measure");
