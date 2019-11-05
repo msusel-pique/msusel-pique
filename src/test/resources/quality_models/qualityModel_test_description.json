@@ -1,0 +1,48 @@
+{
+	"name": "Test QM",
+	"tqi": {
+		"name": "Total Quality",
+		"description": "Sample tqi description"
+	},
+	"characteristics": [
+		{
+			"name": "Characteristic 01",
+			"standard": "ISO/IEC 25010",
+			"description": "Placeholder description"
+		},
+		{
+			"name": "Characteristic 02",
+			"standard": "ISO/IEC 25010",
+			"description": "Placeholder description"
+		}
+	],
+	"properties": [
+		{
+			"name": "Property 01",
+			"description": "Property 01 description",
+			"positive_impact": "false",
+			"measure": {
+				"name": "Measure 01",
+				"tool": "Test tool",
+				"diagnostics": [
+					"TST0001",
+					"TST0002"
+				]
+			}
+		},
+		{
+			"name": "Property 02",
+			"description": "Property 02 description",
+			"positive_impact": "false",
+			"measure": {
+				"name": "Measure 02",
+				"tool": "Test tool",
+				"diagnostics": [
+					"TST0003",
+					"TST0004",
+					"TST0005"
+				]
+			}
+		}
+	]
+}

@@ -9,7 +9,6 @@ import qatch.analysis.IToolLOC;
 import qatch.analysis.Measure;
 import qatch.evaluation.Project;
 import qatch.model.QualityModel;
-import qatch.model.QualityModelLoader;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -48,7 +47,7 @@ public class SingleProjectEvaluator {
 
         // initialize data structures
         initialize(projectDir, resultsDir, qmLocation);
-        QualityModel qualityModel = new QualityModelLoader(qmLocation).importQualityModel();
+        QualityModel qualityModel = new QualityModel(qmLocation);
         Project project = new Project(FilenameUtils.getBaseName(projectDir.getFileName().toString()), projectDir, qualityModel);
 
         // run the static analysis tools process

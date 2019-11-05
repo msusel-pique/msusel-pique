@@ -9,6 +9,8 @@ import org.apache.commons.io.FileUtils;
 import qatch.analysis.ITool;
 import qatch.analysis.IToolLOC;
 import qatch.evaluation.Project;
+import qatch.model.QualityModel;
+import qatch.utility.FileUtility;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This class is responsible for analyzing all the projects that are stored in a
@@ -33,7 +36,7 @@ public class Benchmarker {
     // Fields
     private Path analysisResults;  // location of hard-disk file of analysis results (disk file necessary for R script)
     private final Path benchmarkRepository;  // location of root foldering containing language-specific projects for benchmarking
-    private final Path qmDescription;  // location of quality model description file
+    private QualityModel qmDescription;  // location of quality model description file
     private IToolLOC locTool;  // loc-specific purpose tool, necessary for normalization
     private Map<String, Project> projects = new HashMap<>();  // { key: project name, value: project object }
     private Map<String, ITool> tools = new HashMap<>();  // tools intended for static analysis of diagnostic findings
@@ -47,9 +50,9 @@ public class Benchmarker {
      * @param qmDescription
      *      Location of quality model description file
      */
-    public Benchmarker(Path benchmarkRepository, Path qmDescription) {
+    Benchmarker(Path benchmarkRepository, Path qmDescription) {
         this.benchmarkRepository = benchmarkRepository;
-        this.qmDescription = qmDescription;
+//        this.qmDescription = qmDescription;
     }
 
 
@@ -57,12 +60,42 @@ public class Benchmarker {
     public Path getAnalysisResults() {
         return analysisResults;
     }
-    public void setAnalysisResults(Path analysisResults) {
+    void setAnalysisResults(Path analysisResults) {
         this.analysisResults = analysisResults;
     }
 
+
     // Methods
-    public Path analyze(Path repository) {
+    /**
+     * Run tools on all benchmark projects to collect normalized values of each property across each project
+     * Knowledge of properties to associate with tool findings comes from the quality model description.
+     *
+     * @param projectRootFlag
+     *      Flag, usually a file extension, that signals that a project to be analyzed is
+     *      within the directory the flag was found in.
+     * @return
+     *      The path to the file containing normalized values of each property across each project
+     */
+    public Path analyze(String projectRootFlag) {
+
+        // Collect root paths of each benchmark project
+        Set<Path> projectRoots = FileUtility.multiProjectCollector(this.benchmarkRepository, projectRootFlag);
+
+        System.out.println("* Beginning repository benchmark analysis");
+        System.out.println(projectRoots.size() + " projects to analyze.\n");
+
+
+        for (Path projectPath : projectRoots) {
+
+            // Instantiate new project object
+//            Project project = new Project(projectPath.getFileName().toString(), projectPath, );
+
+            // Run tool to set lines of code
+//            project.setLinesOfCode(locTool.analyze(projectPath));
+
+            // Run tool to find occurances of each diagnostic for each property
+        }
+
         throw new NotImplementedException();
     }
 
@@ -76,7 +109,7 @@ public class Benchmarker {
      * @return
      *      A mapping of property names to the associated thresholds of that property
      */
-    public Map<String, Double[]> generateThresholds(Path output) {
+    Map<String, Double[]> generateThresholds(Path output) {
 
         // Precondition check
         if (!this.analysisResults.toFile().isFile()) {

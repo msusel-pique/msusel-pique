@@ -30,7 +30,7 @@ public class ComparisonMatricesGeneratorTests {
 //    @Test
     // todo: fix test
     public void testMain() {
-        String qmDescription = TestHelper.TEST_RESOURCES.toString() + "/quality_models/qualityModel_test_description.xml";
+        String qmDescription = TestHelper.TEST_RESOURCES.toString() + "/quality_models/qualityModel_test_description.json";
         String output = TestHelper.OUTPUT.toString();
         String runFuzzy = "false";
 

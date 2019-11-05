@@ -7,7 +7,6 @@ import org.junit.Test;
 import qatch.TestHelper;
 import qatch.evaluation.Project;
 import qatch.model.QualityModel;
-import qatch.model.QualityModelLoader;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -18,7 +17,7 @@ public class SingleProjectEvaluatorTests {
     private SingleProjectEvaluator spe;
     private Path PROJECT_DIR = Paths.get("src/test/resources/FakeProject_01");
     private Path RESULTS_DIR = Paths.get("src/test/output/SingleProjEval");
-    private Path QM_LOCATION = Paths.get("src/test/resources/quality_models/qualityModel_test.xml");
+    private Path QM_LOCATION = Paths.get("src/test/resources/quality_models/qualityModel_test.json");
     private Path TOOL_RESULTS = Paths.get("src/test/resources/tool_results");
     private Path TEST_OUT = Paths.get("src/test/output");
 
@@ -51,8 +50,7 @@ public class SingleProjectEvaluatorTests {
 //        p.getCharacteristics_depreicated().removeCharacteristic(0);
 //        p.getCharacteristics_depreicated().removeCharacteristic(0);
 
-        QualityModelLoader qmImporter = new QualityModelLoader(QM_LOCATION);
-        QualityModel qm = qmImporter.importQualityModel();
+        QualityModel qm = new QualityModel(QM_LOCATION);
 
         // TODO: add more edge cases
 //        p.getProperties_depreicated().get(0).getMeasure().setNormalizedValue(0.90);

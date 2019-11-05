@@ -7,14 +7,13 @@ import qatch.analysis.Measure;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class QualityModelLoaderTests {
+public class QualityModelTests {
 
     private Path qmTest = Paths.get("src/test/resources/quality_models/qualityModel_test.json");
 
     @Test
     public void testImportQualityModel() {
-        QualityModelLoader qml = new QualityModelLoader(qmTest);
-        QualityModel qm = qml.importQualityModel();
+        QualityModel qm = new QualityModel(qmTest);
 
         Tqi tqi = qm.getTqi();
         Characteristic ch1 = qm.getCharacteristic("Characteristic 01");

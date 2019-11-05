@@ -62,7 +62,7 @@ public class TestHelper {
     }
 
     public static QualityModel makeQualityModel() {
-        QualityModel qm = new QualityModel();
+        QualityModel qm = new QualityModel(null);
 
         qm.setName("Test Quality Model");
         qm.setTqi(TestHelper.makeTqi("Test TQI"));

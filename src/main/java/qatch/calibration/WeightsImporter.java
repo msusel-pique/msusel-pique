@@ -19,6 +19,7 @@ import java.io.FileReader;
  * inside R working directory.
  * 
  */
+@Deprecated
 public class WeightsImporter {
 	
 	/**
