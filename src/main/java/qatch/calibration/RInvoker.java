@@ -25,6 +25,20 @@ class RInvoker {
 
 
 	// TODO: assert that expected behavior occurs after running script (e.g. the file was created)
+
+	/**
+	 * Run an R script according to its enumeration.
+	 * In most cases the input and output parameters should point to a directory containing the needed
+	 * files for R execution, not the file itself. Check the relevant R script for details.
+	 *
+	 * @param script
+	 * 		Enumeration of the descired R script to run
+	 * @param input
+	 * 		Path to the directory containin the relevant parameters needed for the r script execution
+	 * @param output
+	 * 		Path to the desired directory to place results in.
+	 * 		The directory is created if it does not yet exist.
+	 */
 	static void executeRScript(Script script, String input, String output){
 
 		new File(output).mkdirs();

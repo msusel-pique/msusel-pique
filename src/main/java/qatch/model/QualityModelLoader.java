@@ -3,12 +3,11 @@ package qatch.model;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.jdom.Element;
 import qatch.analysis.Diagnostic;
 import qatch.analysis.Measure;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +58,11 @@ public class QualityModelLoader {
 
 		// parse json data and update quality model object
 		try {
-			JsonObject jsonQm = new JsonParser().parse(new FileReader(qmFilePath.toString())).getAsJsonObject();
+			FileReader fr = new FileReader(qmFilePath.toString());
+			JsonObject jsonQm = new JsonParser().parse(fr).getAsJsonObject();
+			fr.close();
+
+			// name
 			qm.setName(jsonQm.getAsJsonPrimitive("name").getAsString());
 
 			// root node
@@ -118,7 +121,7 @@ public class QualityModelLoader {
 
 				qm.setProperty(qmProperty.getName(), qmProperty);
 			});
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 

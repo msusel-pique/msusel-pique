@@ -1,15 +1,11 @@
 package qatch.calibration;
 
+import com.google.gson.*;
+import qatch.model.PropertySet;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import qatch.model.PropertySet;
 
 /**
  * This class is responsible for importing the thresholds, 
@@ -24,6 +20,7 @@ import qatch.model.PropertySet;
  * 
  */
 
+@Deprecated
 public class ThresholdImporter {
 
 	/**
@@ -35,6 +32,7 @@ public class ThresholdImporter {
 	 *               file.
 	 *              
 	 */
+	@Deprecated
 	public void importThresholdsFromJSON(PropertySet properties){
 
 		try {
@@ -70,15 +68,13 @@ public class ThresholdImporter {
 	 *     are in an ascending order and the json object sequence 
 	 *     corresponds to the sequence of the properties stored in the
 	 *     desired PropertySet.
-	 *   - TODO: Check The WeightsImporter if you want to add a check 
 	 */
-	
-	//TODO: Create an alternative method that does't make any assumption about the object order - It checks the names of the objects
 	/*
 	 * Exactly as we do at BenchmarkResultsImporter where we load an IssueSet and
 	 * we search to find the Issue with the same name in the desirable IssueSet
 	 * 
 	 */
+	@Deprecated
 	public void gsonParser(String jsonLine, PropertySet properties){
 		
 		//Get a JsonElement by using a jsonParser

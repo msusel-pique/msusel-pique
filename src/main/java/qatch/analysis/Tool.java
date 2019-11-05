@@ -2,8 +2,8 @@ package qatch.analysis;
 
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Path;
 import java.util.*;
@@ -56,6 +56,7 @@ public abstract class Tool implements ITool {
         try {
             Reader yamlFile = new FileReader(toolConfig.toFile());
             Map<String, Object> yamlMaps = yaml.load(yamlFile);
+            yamlFile.close();
             Set<String> keys = yamlMaps.keySet();
 
             keys.forEach(k -> {
@@ -70,7 +71,7 @@ public abstract class Tool implements ITool {
                 mappings.put(k, measure);
             });
         }
-        catch (FileNotFoundException e) { e.printStackTrace(); }
+        catch (IOException e) { e.printStackTrace(); }
 
         return mappings;
     }

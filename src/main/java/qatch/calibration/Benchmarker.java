@@ -1,11 +1,19 @@
 package qatch.calibration;
 
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.apache.commons.io.FileUtils;
 import qatch.analysis.ITool;
 import qatch.analysis.IToolLOC;
 import qatch.evaluation.Project;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,11 +85,44 @@ public class Benchmarker {
 
         // Prepare temp file for R Script results
         output.toFile().mkdirs();
+        File thresholdsFile = new File(output.toFile(), "threshold.json");
+
+        // R script expects the directory containining the analysis results as a parameter
+        Path analysisDirectory = this.analysisResults.getParent();
 
         // Run R Script
-        RInvoker.executeRScript(RInvoker.Script.THRESHOLD, this.analysisResults.toString(), output.toString());
+        RInvoker.executeRScript(RInvoker.Script.THRESHOLD, analysisDirectory.toString(), output.toString());
+        if (!thresholdsFile.isFile()) {
+            throw new RuntimeException("Execution of R script did not result in an existing file at " + thresholdsFile.toString());
+        }
 
-        System.out.println("...");
-        throw new NotImplementedException();
+        // Build object representation of data from R script
+        Map<String, Double[]> thresholds = new HashMap<>();
+        try {
+            FileReader fr = new FileReader(thresholdsFile.toString());
+            JsonArray jsonEntries = new JsonParser().parse(fr).getAsJsonArray();
+
+            for (JsonElement entry : jsonEntries) {
+                JsonObject jsonProperty = entry.getAsJsonObject();
+                String name = jsonProperty.getAsJsonPrimitive("_row").getAsString().replaceAll("\\.", " ");
+                Double[] threshold = new Double[] {
+                        jsonProperty.getAsJsonPrimitive("t1").getAsDouble(),
+                        jsonProperty.getAsJsonPrimitive("t2").getAsDouble(),
+                        jsonProperty.getAsJsonPrimitive("t3").getAsDouble()
+                };
+                thresholds.put(name, threshold);
+            }
+
+            fr.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Delete temporary artifacts
+        try { FileUtils.deleteDirectory(output.toFile()); }
+        catch (IOException e) { e.printStackTrace(); }
+
+        this.thresholds = thresholds;
+        return thresholds;
     }
 }
