@@ -1,5 +1,6 @@
 package qatch.calibration;
 
+import com.opencsv.CSVReader;
 import org.junit.Assert;
 import org.junit.Test;
 import qatch.TestHelper;
@@ -7,16 +8,83 @@ import qatch.analysis.Diagnostic;
 import qatch.analysis.ITool;
 import qatch.analysis.IToolLOC;
 import qatch.analysis.Measure;
+import qatch.evaluation.Project;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
 public class BenchmarkerTests {
 
-    private Path analysisResults = Paths.get("src/test/resources/benchmark_results/properties.csv");
+    private Path analysisResults = Paths.get("src/test/resources/benchmark_results/benchmark_data.csv");
     private Path benchmarkRepo = Paths.get("src/test/resources/benchmark_repository");
     private Path qmDescription = Paths.get("src/test/resources/quality_models/qualityModel_test_description.json");
+
+
+    @Test
+    public void testCreateProjectMeasureMatrix() throws IOException {
+
+        // Set-up
+        Project project01 = TestHelper.makeProject("Project 01");
+        Project project02 = TestHelper.makeProject("Project 02");
+        Project project03 = TestHelper.makeProject("Project 03");
+        HashMap<String, Project> projects = new HashMap<>();
+        Benchmarker benchmarker = new Benchmarker();
+
+        project01.getMeasure("Property 01 measure").setNormalizedValue(0.11);
+        project01.getMeasure("Property 02 measure").setNormalizedValue(0.12);
+        project02.getMeasure("Property 01 measure").setNormalizedValue(0.21);
+        project02.getMeasure("Property 02 measure").setNormalizedValue(0.22);
+        project03.getMeasure("Property 01 measure").setNormalizedValue(0.31);
+        project03.getMeasure("Property 02 measure").setNormalizedValue(0.32);
+
+        projects.put(project01.getName(), project01);
+        projects.put(project02.getName(), project02);
+        projects.put(project03.getName(), project03);
+
+        benchmarker.setAnalysisResults(analysisResults);
+
+        // Run method
+        List<Project> projectsList = new ArrayList<>(projects.values());
+        Path generatedMatrix = benchmarker.createProjectMeasureMatrix(projectsList);
+
+        // Get reader for results
+        FileReader fr = new FileReader(generatedMatrix.toFile());
+        CSVReader reader = new CSVReader(fr);
+        String[] header = reader.readNext();
+        String[] row1 = reader.readNext();
+        String[] row2 = reader.readNext();
+        String[] row3 = reader.readNext();
+
+        String projectAName = row1[0];
+        String projectBName = row2[0];
+        String projectCName = row3[0];
+
+        String measure01Name = header[1];
+        String measure02Name = header[2];
+
+        // Assert results
+        Assert.assertEquals(4, (int)reader.getLinesRead());
+
+        Assert.assertTrue(header[0].equalsIgnoreCase("Project_Name"));
+
+        Assert.assertTrue(row1[0].startsWith("Project"));
+        Assert.assertTrue(row1[1].equalsIgnoreCase(String.valueOf(projects.get(projectAName).getMeasure(measure01Name).getNormalizedValue())));
+        Assert.assertTrue(row1[2].equalsIgnoreCase(String.valueOf(projects.get(projectAName).getMeasure(measure02Name).getNormalizedValue())));
+
+        Assert.assertTrue(row2[0].startsWith("Project"));
+        Assert.assertTrue(row2[1].equalsIgnoreCase(String.valueOf(projects.get(projectBName).getMeasure(measure01Name).getNormalizedValue())));
+        Assert.assertTrue(row2[2].equalsIgnoreCase(String.valueOf(projects.get(projectBName).getMeasure(measure02Name).getNormalizedValue())));
+
+        Assert.assertTrue(row3[0].startsWith("Project"));
+        Assert.assertTrue(row3[1].equalsIgnoreCase(String.valueOf(projects.get(projectCName).getMeasure(measure01Name).getNormalizedValue())));
+        Assert.assertTrue(row3[2].equalsIgnoreCase(String.valueOf(projects.get(projectCName).getMeasure(measure02Name).getNormalizedValue())));
+
+        reader.close();
+        fr.close();
+    }
 
     @Test
     public void testAnalyze() {
@@ -70,7 +138,6 @@ public class BenchmarkerTests {
         // Create benchmarker and run process
         Benchmarker benchmarker = new Benchmarker(benchmarkRepo, qmDescription, fakeLocTool, tools);
         benchmarker.analyze(".txt");
-
     }
 
     @Test

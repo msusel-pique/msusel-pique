@@ -5,17 +5,19 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.opencsv.CSVWriter;
 import org.apache.commons.io.FileUtils;
 import qatch.analysis.Diagnostic;
 import qatch.analysis.ITool;
 import qatch.analysis.IToolLOC;
+import qatch.analysis.Measure;
 import qatch.evaluation.Project;
 import qatch.model.QualityModel;
 import qatch.utility.FileUtility;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
@@ -79,17 +81,16 @@ public class Benchmarker {
      *      Flag, usually a file extension, that signals that a project to be analyzed is
      *      within the directory the flag was found in.
      * @return
-     *      The path to the file containing normalized values of each measure across each project
+     *      The path to the file ready for R input containing normalized values of each measure across each project
      */
     public Path analyze(String projectRootFlag) {
 
         // Collect root paths of each benchmark project
         Set<Path> projectRoots = FileUtility.multiProjectCollector(this.benchmarkRepository, projectRootFlag);
-        Map<String, Project> projects = new HashMap<>();
+        ArrayList<Project> projects = new ArrayList<>();
 
         System.out.println("* Beginning repository benchmark analysis");
         System.out.println(projectRoots.size() + " projects to analyze.\n");
-
 
         for (Path projectPath : projectRoots) {
 
@@ -118,21 +119,18 @@ public class Benchmarker {
 
 
             // Evaluate project up to Measure level (normalize diagnostic values according to LoC)
+            project.evaluateMeasures();
 
-            projects.put(project.getName(), project);
-
-            throw new NotImplementedException();
+            // Add new project (with tool findings information included) to the list
+            projects.add(project);
         }
 
-        // Export matrix of [Project_name, Measure 1 value, Measure 2 value, ...] for R to analyze
-
+        // Create and export matrix of [Project_name, Measure 1 value, Measure 2 value, ...] for R to analyze
+        return createProjectMeasureMatrix(projects);
 
         // Attach resulting thresholds to their associated property objects
 
-
         // Return quality model, now with benchmarked threshold values
-
-        throw new NotImplementedException();
     }
 
     /**
@@ -193,5 +191,63 @@ public class Benchmarker {
 
         this.thresholds = thresholds;
         return thresholds;
+    }
+
+
+    // Helper methods
+
+    /**
+     * Transform a collection of Project objects into a matrix (likely .csv) with the Project name
+     * as the rows and the normalized measure values of that project as the columns.
+     *
+     * @param projects
+     *      Collection of projects
+     * @return
+     *      The path to the matrix file on the hard drive.
+     */
+    Path createProjectMeasureMatrix(List<Project> projects) {
+
+        // Ensure containing directory of matrix output file exists
+        analysisResults.getParent().toFile().mkdirs();
+        // Make ArrayList of measures to assert order of measure data retrieval
+        ArrayList<Measure> measureList = new ArrayList<>(projects.get(0).getMeasures().values());
+        // Basic matrix data
+        int numMeasures = measureList.size();
+
+        try {
+            FileWriter fw = new FileWriter(analysisResults.toFile());
+            CSVWriter writer = new CSVWriter(fw);
+
+            // Build rows of string arrays to eventually feed to writer
+            ArrayList<String[]> csvRows = new ArrayList<>();
+
+            // Header
+            String[] header = new String[numMeasures + 1];
+            header[0] = "Project_Name";
+            for (int i = 1; i < measureList.size() + 1; i++) {
+                header[i] = measureList.get(i-1).getName();
+            }
+            csvRows.add(header);
+
+            // Additional rows
+            for (Project project : projects) {
+                String[] row = new String[numMeasures + 1];
+                row[0] = project.getName();
+                for (int i = 1; i < measureList.size() + 1; i++) {
+                    row[i] = String.valueOf(project.getMeasure(measureList.get(i-1).getName()).getNormalizedValue());
+                }
+                csvRows.add(row);
+            }
+
+            // Run writer
+            csvRows.forEach(writer::writeNext);
+            writer.close();
+            fw.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return analysisResults;
     }
 }

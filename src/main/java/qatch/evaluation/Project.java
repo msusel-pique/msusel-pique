@@ -14,9 +14,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -69,12 +67,15 @@ public class Project{
 	public Path getPath() { return path; }
 	public void setPath(Path path) { this.path = path; }
 
-	public Measure getMeasure(String propertyName) {
+	public Measure getMeasure(String measureName) {
+		return getMeasures().get(measureName);
+	}
+	public Measure getMeasureByPropertyName(String propertyName) {
 		return this.properties.get(propertyName).getMeasure();
 	}
-	public List<Measure> getMeasures() {
-		ArrayList<Measure> measures = new ArrayList<>();
-		this.getProperties().values().forEach(p -> { measures.add(p.getMeasure()); });
+	public Map<String, Measure> getMeasures() {
+		Map<String, Measure> measures = new HashMap<>();
+		this.getProperties().values().forEach(p -> { measures.put(p.getMeasure().getName(), p.getMeasure()); });
 		return measures;
 	}
 	public void setMeasure(String propertyName, Measure measure) {
@@ -137,7 +138,7 @@ public class Project{
 					"total lines of code, or failing to assign the TLOC to the project.");
 		}
 
-		this.getMeasures().forEach(m -> {
+		this.getMeasures().values().forEach(m -> {
 			m.setNormalizedValue(m.getValue() / (double) this.getLinesOfCode());
 		});
 	}

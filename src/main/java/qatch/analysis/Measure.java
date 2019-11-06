@@ -62,6 +62,7 @@ public class Measure {
 	public double getNormalizedValue() { return normalizedValue; }
 	public void setNormalizedValue(double normalizedValue) { this.normalizedValue = normalizedValue; }
 
+	// TODO: this probably causes a bug when called multiple times on the same object
 	public double getValue() {
 		this.value = evaluate();
 		return this.value;
