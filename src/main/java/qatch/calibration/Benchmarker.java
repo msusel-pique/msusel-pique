@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.commons.io.FileUtils;
+import qatch.analysis.Diagnostic;
 import qatch.analysis.ITool;
 import qatch.analysis.IToolLOC;
 import qatch.evaluation.Project;
@@ -17,9 +18,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class is responsible for analyzing all the projects that are stored in a
@@ -43,7 +42,11 @@ public class Benchmarker {
     private Map<String, Double[]> thresholds = new HashMap<>();  // { key: property name, value: property thresholds }
 
 
-    // Constructor
+    // Constructors
+    Benchmarker() {
+        this.benchmarkRepository = null;
+    }
+
     /**
      * @param benchmarkRepository
      *      Location of root foldering containing language-specific projects for benchmarking
@@ -69,19 +72,20 @@ public class Benchmarker {
 
     // Methods
     /**
-     * Run tools on all benchmark projects to collect normalized values of each property across each project
-     * Knowledge of properties to associate with tool findings comes from the quality model description.
+     * Run tools on all benchmark projects to collect normalized values of each Measure across each project
+     * Knowledge of measures to associate with tool findings comes from the quality model description.
      *
      * @param projectRootFlag
      *      Flag, usually a file extension, that signals that a project to be analyzed is
      *      within the directory the flag was found in.
      * @return
-     *      The path to the file containing normalized values of each property across each project
+     *      The path to the file containing normalized values of each measure across each project
      */
     public Path analyze(String projectRootFlag) {
 
         // Collect root paths of each benchmark project
         Set<Path> projectRoots = FileUtility.multiProjectCollector(this.benchmarkRepository, projectRootFlag);
+        Map<String, Project> projects = new HashMap<>();
 
         System.out.println("* Beginning repository benchmark analysis");
         System.out.println(projectRoots.size() + " projects to analyze.\n");
@@ -92,14 +96,41 @@ public class Benchmarker {
             // Instantiate new project object
             Project project = new Project(projectPath.getFileName().toString(), projectPath, this.qmDescription);
 
-            // Run tool to set lines of code
+            // Run LOC tool to set lines of code
             project.setLinesOfCode(locTool.analyze(projectPath));
 
-            // Run tool to find occurances of each diagnostic for each property
+            // Run tools, collect files of tool run results
+            Map<ITool, Path> results = new HashMap<>();  // {key: tool, value: path to that tool's analysis file}
+            tools.values().forEach(tool -> results.put(tool, tool.analyze(projectPath)));
+
+            // Collect diagnostics
+            Map<String, Diagnostic> diagnostics = new HashMap<>();
+            // This loop essentially flattens the <String, Diagnostic> mapping from multiple tools into a single collection
+            results.forEach((tool, resultPath) -> {
+                Map<String, Diagnostic> resultParse = tool.parseAnalysis(resultPath);
+                resultParse.forEach(diagnostics::put);
+            });
+
+            // Apply collected diagnostics (containing findings) to the project
+            diagnostics.forEach((diagnosticName, diagnostic) -> {
+                project.addFindings(diagnostic);
+            });
+
+
+            // Evaluate project up to Measure level (normalize diagnostic values according to LoC)
+
+            projects.put(project.getName(), project);
+
             throw new NotImplementedException();
-
-
         }
+
+        // Export matrix of [Project_name, Measure 1 value, Measure 2 value, ...] for R to analyze
+
+
+        // Attach resulting thresholds to their associated property objects
+
+
+        // Return quality model, now with benchmarked threshold values
 
         throw new NotImplementedException();
     }

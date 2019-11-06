@@ -31,7 +31,7 @@ public class BenchmarkerTests {
         ITool fakeTool = new ITool() {
             @Override
             public Path analyze(Path projectLocation) {
-                return null;
+                return Paths.get("src/test/resources/tool_results/faketool_output.xml");
             }
 
             @Override
@@ -46,7 +46,13 @@ public class BenchmarkerTests {
 
             @Override
             public Map<String, Diagnostic> parseAnalysis(Path toolResults) {
-                return null;
+                Map<String, Diagnostic> diagnostics = new HashMap<>();
+                diagnostics.put("TST0001", TestHelper.makeDiagnostic("TST0001"));
+                diagnostics.put("TST0002", TestHelper.makeDiagnostic("TST0002"));
+                diagnostics.put("TST0003", TestHelper.makeDiagnostic("TST0003"));
+                diagnostics.put("TST0004", TestHelper.makeDiagnostic("TST0004"));
+                diagnostics.put("TST0005", TestHelper.makeDiagnostic("TST0005"));
+                return diagnostics;
             }
 
             @Override
@@ -69,7 +75,7 @@ public class BenchmarkerTests {
 
     @Test
     public void testGenerateThresholds() {
-        Benchmarker benchmarker = new Benchmarker(null, null, null, null);
+        Benchmarker benchmarker = new Benchmarker();
 
         benchmarker.setAnalysisResults(this.analysisResults);
         Map<String, Double[]> thresholds = benchmarker.generateThresholds(TestHelper.OUTPUT);

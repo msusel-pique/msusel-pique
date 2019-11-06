@@ -38,6 +38,7 @@ public interface ITool {
      *      Measure.Diagnostic.Finding objects updated with the tool's findings.
      */
     // TODO: this likely belongs in a different class
+    @Deprecated
     Map<String, Measure> applyFindings(Map<String, Measure> measures, Map<String, Diagnostic> diagnosticFindings);
 
     /**
@@ -64,6 +65,7 @@ public interface ITool {
      *      A map (Key: property name, Value: the measure object of the property) object representation of
      *      the config file.
      */
+    @Deprecated
     Map<String, Measure> parseConfig(Path toolConfig);
 
     /**

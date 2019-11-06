@@ -3,6 +3,7 @@ package qatch.evaluation;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
+import qatch.analysis.Diagnostic;
 import qatch.analysis.Measure;
 import qatch.model.Characteristic;
 import qatch.model.Property;
@@ -106,6 +107,24 @@ public class Project{
 
 
 	// Methods
+
+	/**
+	 * Search through diagnostics associated with this project and update the findings of the diagnostic
+	 * with the diagnostic resulting from a tool analysis run.
+	 *
+	 * Search time complexity is O(n) where n is number of diagnostics in the project.
+	 *
+	 * @param toolResult
+	 * 		A diagnostic object parsed from the tool result file
+	 */
+	public void addFindings(Diagnostic toolResult) {
+		for (Property property : this.properties.values()) {
+			for (Diagnostic diagnostic : property.getMeasure().getDiagnostics()) {
+				if (diagnostic.getId().equals(toolResult.getId())) { diagnostic.setFindings(toolResult.getFindings()); }
+			}
+		}
+	}
+
 	/**
 	 * Evaluate and set the this project's Measures.normalizedValue values according using the lines
 	 * of code value in the project
