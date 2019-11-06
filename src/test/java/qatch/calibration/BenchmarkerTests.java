@@ -1,6 +1,7 @@
 package qatch.calibration;
 
 import com.opencsv.CSVReader;
+import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import qatch.TestHelper;
@@ -18,7 +19,8 @@ import java.util.*;
 
 public class BenchmarkerTests {
 
-    private Path analysisResults = Paths.get("src/test/resources/benchmark_results/benchmark_data.csv");
+    private Path analysisResultsAsInput = Paths.get("src/test/resources/benchmark_results/benchmark_data.csv");
+    private Path analysisResultsAsOutput = Paths.get("src/test/out/benchmark_results/benchmark_data.csv");
     private Path benchmarkRepo = Paths.get("src/test/resources/benchmark_repository");
     private Path qmDescription = Paths.get("src/test/resources/quality_models/qualityModel_test_description.json");
 
@@ -44,7 +46,7 @@ public class BenchmarkerTests {
         projects.put(project02.getName(), project02);
         projects.put(project03.getName(), project03);
 
-        benchmarker.setAnalysisResults(analysisResults);
+        benchmarker.setAnalysisResults(analysisResultsAsOutput);
 
         // Run method
         List<Project> projectsList = new ArrayList<>(projects.values());
@@ -84,6 +86,7 @@ public class BenchmarkerTests {
 
         reader.close();
         fr.close();
+        FileUtils.deleteDirectory(analysisResultsAsOutput.getParent().toFile());
     }
 
     @Test
@@ -144,7 +147,7 @@ public class BenchmarkerTests {
     public void testGenerateThresholds() {
         Benchmarker benchmarker = new Benchmarker();
 
-        benchmarker.setAnalysisResults(this.analysisResults);
+        benchmarker.setAnalysisResults(this.analysisResultsAsInput);
         Map<String, Double[]> thresholds = benchmarker.generateThresholds(TestHelper.OUTPUT);
 
         Assert.assertEquals(3, thresholds.size());
