@@ -91,7 +91,7 @@ public class BenchmarkerTests {
     }
 
     @Test
-    public void run() {
+    public void testRun() {
 
         // Initialize mock tools
         IToolLOC fakeLocTool = new IToolLOC() {

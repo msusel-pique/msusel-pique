@@ -30,7 +30,7 @@ import java.util.*;
  * 		2. all the Properties of the Quality Model.
  * to produce thresholds associated to each property of the quality model.
  *
- * The Benchmarker provides functionality to run batch tool analysis and run R threshold
+ * The Benchmarker provides functionality to run batch tool analysis, run R threshold
  * generation on the resulting Property-Finding pairings from each benchmark project.
  */
 public class Benchmarker {
@@ -87,6 +87,8 @@ public class Benchmarker {
      * @param projectRootFlag
      *      Flag, usually a file extension, that signals that a project to be analyzed is
      *      within the directory the flag was found in.
+     * @param rThresholdsOutput
+     *      Path to desired directory to hold the output of running the R Thresholds script
      * @return
      *      The path to the file ready for R input containing normalized values of each measure across each project
      */
@@ -136,13 +138,8 @@ public class Benchmarker {
         this.analysisResults = createProjectMeasureMatrix(projects);
 
         // Run the R script to generate thresholds
-        return generateThresholds(rThresholdsOutput);
-
-        // Create and export matrix of [Project_name, Measure 1 value, Measure 2 value, ...] for R to analyze
-
-        // Attach resulting thresholds to their associated property objects
-
-        // Return quality model, now with benchmarked threshold values
+        this.thresholds = generateThresholds(rThresholdsOutput);
+        return this.thresholds;
     }
 
     /**
@@ -152,6 +149,10 @@ public class Benchmarker {
      * This method assumes the analysisResults fields points to an existing, generated file path
      * as a precondition.
      *
+     * @param output
+     *      Path to desired directory to hold the output of running the R Thresholds script.
+     *      The disk file may be considered temporary (only needed for the scope of this method)
+     *      and thus deleted after method execution.
      * @return
      *      A mapping of property names to the associated thresholds of that property
      */
