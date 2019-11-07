@@ -26,21 +26,17 @@ public abstract class ModelNode {
     public String getName() {
         return name;
     }
-    public double getValue() {
-        setValue(evaluate());
-        return this.value;
-    }
-    private void setValue(double value) { this.value = value; }
+    public double getValue() { return this.value; }
 
 
     // Methods
     /**
-     * Calculates the value field of this object.
+     * Calculates and update the value field of this object.
      * If evaluating TQI or Characteristic nodes, this will likely be a weight sum function.
      * If evaluating Property nodes, this will likely be the linear interpolation utility function.
      *
-     * @return
-     *      A decimal value representing the value field of this object, a number between [0.0, 1.0].
+     * Post:
+     *      The value field is updated.
      */
-    protected abstract double evaluate();
+    public abstract void evaluate();
 }

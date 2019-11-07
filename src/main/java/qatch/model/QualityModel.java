@@ -30,7 +30,7 @@ public class QualityModel {
 
 	// Fields
 	private String name;  //The name of the QM found in the XML file
-	private Tqi tqi = new Tqi();  // root node, the total quality evaluation, contains characteristic objects as children
+	private Tqi tqi = new Tqi(null, null, null);  // root node, the total quality evaluation, contains characteristic objects as children
 	private Map<String, Characteristic> characteristics = new HashMap<>();
 	private Map<String, Property> properties = new HashMap<>();  // each property has one Measure associated with it
 	private CharacteristicSet characteristics_deprecated;  //The CharacteristicSet containing all the characteristics_deprecated of the Quality Model

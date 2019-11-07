@@ -79,7 +79,7 @@ public class TestHelper {
             put("Characteristic 01", 0.7);
             put("Characteristic 02", 0.3);
         }};
-        return new Tqi(name, weights);
+        return new Tqi(name, "Tqi description from TestHelper.", weights);
     }
 
     public static Project makeProject(String name) {

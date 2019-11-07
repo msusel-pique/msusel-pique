@@ -64,7 +64,7 @@ public class Tqi extends ModelNode {
 
 	// Methods
 	@Override
-	protected double evaluate() {
+	public void evaluate() {
 
 		// assert a weight mapping exists for each provided characteristic
 		getWeights().keySet().forEach(k -> {
@@ -80,6 +80,6 @@ public class Tqi extends ModelNode {
 			sum += getChildren().get(weightMap.getKey()).getValue() * weightMap.getValue();
 		}
 
-		return sum;
+		this.value = sum;
 	}
 }

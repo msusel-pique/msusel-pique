@@ -1,11 +1,10 @@
 package qatch.calibration;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import qatch.model.PropertySet;
-
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 
 /**
  * This class is responsible for importing the thresholds, 
@@ -35,21 +34,21 @@ public class ThresholdImporter {
 	@Deprecated
 	public void importThresholdsFromJSON(PropertySet properties){
 
-		try {
-			//Create a BufferedReader in order to load the json file where the thresholds are stored
-			BufferedReader br = new BufferedReader(new FileReader(RInvoker.R_WORK_DIR + "/threshold.json"));
-			
-			//Create a Gson json Parser
-			Gson gson = new Gson();
-			
-			//Parse the json into an  object of type Object
-			Object obj = gson.fromJson(br,  Object.class);
-			String s = obj.toString();
-			gsonParser(s,properties);
-
-		} catch (FileNotFoundException e) {
-			System.out.println(e.getMessage());
-		}
+//		try {
+//			//Create a BufferedReader in order to load the json file where the thresholds are stored
+//			BufferedReader br = new BufferedReader(new FileReader(RInvoker.R_WORK_DIR + "/threshold.json"));
+//
+//			//Create a Gson json Parser
+//			Gson gson = new Gson();
+//
+//			//Parse the json into an  object of type Object
+//			Object obj = gson.fromJson(br,  Object.class);
+//			String s = obj.toString();
+//			gsonParser(s,properties);
+//
+//		} catch (FileNotFoundException e) {
+//			System.out.println(e.getMessage());
+//		}
 	}
 	
 	/**

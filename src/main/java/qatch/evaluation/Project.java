@@ -41,7 +41,7 @@ public class Project{
 	// Constructors
 	public Project(String name){
 		this.name = name;
-		this.tqi = new Tqi(null, null);
+		this.tqi = new Tqi(null, null, null);
 	}
 
 	public Project(String name, Path path, QualityModel qm) {
@@ -156,11 +156,11 @@ public class Project{
 	 * provided by the quality model and the findings contained in the Measure nodes.
 	 */
 	public void evaluateProperties() {
-		this.getProperties().values().forEach(Property::evaluate);
+		getProperties().values().forEach(Property::evaluate);
 	}
 
 	public void evaluateTqi() {
-		this.getTqi().evaluate(this.getCharacteristics());
+		getTqi().evaluate();
 	}
 
 	/**
@@ -240,8 +240,7 @@ public class Project{
 	 * 		The language-specific quality model
 	 */
 	private Tqi initializeTqi(QualityModel qm) {
-		String name = qm.getTqi().getName();
-		Map<String, Double> weights = qm.getTqi().getWeights();
-		return new Tqi(name, weights);
+		Tqi qmTqi = qm.getTqi();
+		return new Tqi(qmTqi.getName(), qmTqi.getDescription(), qmTqi.getWeights());
 	}
 }
