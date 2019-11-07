@@ -13,31 +13,34 @@ import java.util.Map;
  * @author Miltos
  *
  */
-public class Tqi {
+public class Tqi extends ModelNode {
 	
-	// fields
+	// Fields
 	@Expose
 	private double value;  //The total quality index (total quality score) of a project
 	@Expose
 	private String name;
 	@Expose
 	private Map<String, Double> weights = new HashMap<>();  // mapping of characteristic names and their weights
+	private Map<String, Characteristic> children = new HashMap<>(); // mapping of characteristic names and their object
 
-	// getters and setters
+
+	// Getters and setters
+	public Map<String, Characteristic> getChildren() {
+		return children;
+	}
 	public double getValue() {
 		return value;
 	}
 	public void setValue(double value) {
 		this.value = value;
 	}
-
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
-
 	public double getWeight(String characteristicName) {
 		return weights.get(characteristicName);
 	}
@@ -52,21 +55,20 @@ public class Tqi {
 	}
 
 
-	// constructor
-	public Tqi() { }
-
-	public Tqi(String name, Map<String, Double> weights) {
-		this.name = name;
+	// Constructor
+	public Tqi(String name, String description, Map<String, Double> weights) {
+		super(name, description);
 		this.weights = weights;
 	}
 
 
-	// methods
-	public void evaluate(Map<String, Characteristic> characteristics) {
+	// Methods
+	@Override
+	protected double evaluate() {
 
 		// assert a weight mapping exists for each provided characteristic
-		this.getWeights().keySet().forEach(k -> {
-			if (!characteristics.containsKey(k)) {
+		getWeights().keySet().forEach(k -> {
+			if (!getChildren().containsKey(k)) {
 				throw new RuntimeException("No weight-measure mapping in root node " + this.getName() +
 						"exists for Characteristic " + k);
 			}
@@ -74,10 +76,10 @@ public class Tqi {
 
 		// evaluate: standard weighted sum of characteristic values
 		double sum = 0.0;
-		for (Map.Entry<String, Double> weightMap : this.getWeights().entrySet()) {
-			sum += characteristics.get(weightMap.getKey()).getValue() * weightMap.getValue();
+		for (Map.Entry<String, Double> weightMap : getWeights().entrySet()) {
+			sum += getChildren().get(weightMap.getKey()).getValue() * weightMap.getValue();
 		}
 
-		this.setValue(sum);
+		return sum;
 	}
 }
