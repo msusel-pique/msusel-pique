@@ -30,7 +30,7 @@ import java.util.*;
  * 		2. all the Properties of the Quality Model.
  * to produce thresholds associated to each property of the quality model.
  *
- * The Benchmarker provides functionality to run batch tool analysis, run R threshold
+ * The Benchmarker provides functionality to run batch tool analysis and run R threshold
  * generation on the resulting Property-Finding pairings from each benchmark project.
  */
 public class Benchmarker {
