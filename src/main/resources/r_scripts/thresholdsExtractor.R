@@ -1,7 +1,7 @@
 # In:
 #   This script assumes a directory location is passed in as
 #   command argument args[1]. That directory must exist and must contain
-#   a file "properties.csv" that contains the .csv file representing
+#   a file "benchmark_data.csv" that contains the .csv file representing
 #   property findings per project
 #
 # Out:
@@ -21,7 +21,7 @@ setwd(input)
 library(jsonlite)
 
 # Read the data frame
-df <- read.csv("properties.csv", fileEncoding="UTF-8-BOM", stringsAsFactors = F, header = T)
+df <- read.csv("benchmark_data.csv", fileEncoding="UTF-8-BOM", stringsAsFactors = F, header = T)
 
 # drop the left column (assumes the left column is the project names)
 df <- df[,-1]

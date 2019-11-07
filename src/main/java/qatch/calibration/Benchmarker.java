@@ -20,6 +20,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -35,7 +36,7 @@ import java.util.*;
 public class Benchmarker {
 
     // Fields
-    private Path analysisResults;  // location of hard-disk file of analysis results (disk file necessary for R script)
+    private Path analysisResults;  // location to place hard-disk file of analysis results (disk file necessary for R script)
     private final Path benchmarkRepository;  // location of root foldering containing language-specific projects for benchmarking
     private QualityModel qmDescription;  // location of quality model description file
     private IToolLOC locTool;  // loc-specific purpose tool, necessary for normalization
@@ -54,10 +55,15 @@ public class Benchmarker {
      *      Location of root foldering containing language-specific projects for benchmarking
      * @param qmDescription
      *      Location of quality model description file
+     * @param analysisResults
+     *      Desired location to place the benchmarking [Project_Name:Measure_Value] matrix results.
+     *      This path should go up to the directory level containing the results but not specify the
+     *      actual result file name.
      */
-    Benchmarker(Path benchmarkRepository, Path qmDescription, IToolLOC locTool, Set<ITool> tools) {
+    Benchmarker(Path benchmarkRepository, Path qmDescription, Path analysisResults, IToolLOC locTool, Set<ITool> tools) {
         this.benchmarkRepository = benchmarkRepository;
         this.qmDescription = new QualityModel(qmDescription);
+        this.analysisResults = Paths.get(analysisResults.toString(), "benchmark_data.csv");
         this.locTool = locTool;
         tools.forEach(t -> this.tools.put(t.getName(), t));
     }
@@ -74,7 +80,8 @@ public class Benchmarker {
 
     // Methods
     /**
-     * Run tools on all benchmark projects to collect normalized values of each Measure across each project
+     * Run tools on all benchmark projects to collect normalized values of each Measure across each project.
+     * Use the tool run data with the R script to generate thresholds for each known property.
      * Knowledge of measures to associate with tool findings comes from the quality model description.
      *
      * @param projectRootFlag
@@ -83,7 +90,7 @@ public class Benchmarker {
      * @return
      *      The path to the file ready for R input containing normalized values of each measure across each project
      */
-    public Path analyze(String projectRootFlag) {
+    public Map<String, Double[]> run(String projectRootFlag, Path rThresholdsOutput) {
 
         // Collect root paths of each benchmark project
         Set<Path> projectRoots = FileUtility.multiProjectCollector(this.benchmarkRepository, projectRootFlag);
@@ -125,8 +132,13 @@ public class Benchmarker {
             projects.add(project);
         }
 
+        // Create and set reference to [Project_Name:Measure_Values] matrix file
+        this.analysisResults = createProjectMeasureMatrix(projects);
+
+        // Run the R script to generate thresholds
+        return generateThresholds(rThresholdsOutput);
+
         // Create and export matrix of [Project_name, Measure 1 value, Measure 2 value, ...] for R to analyze
-        return createProjectMeasureMatrix(projects);
 
         // Attach resulting thresholds to their associated property objects
 
@@ -158,7 +170,12 @@ public class Benchmarker {
         Path analysisDirectory = this.analysisResults.getParent();
 
         // Run R Script
-        RInvoker.executeRScript(RInvoker.Script.THRESHOLD, analysisDirectory.toString(), output.toString());
+        RInvoker.executeRScript(
+                RInvoker.Script.THRESHOLD,
+                analysisDirectory.toAbsolutePath().toString(),
+                output.toAbsolutePath().toString()
+        );
+
         if (!thresholdsFile.isFile()) {
             throw new RuntimeException("Execution of R script did not result in an existing file at " + thresholdsFile.toString());
         }

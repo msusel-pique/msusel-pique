@@ -34,10 +34,11 @@ class RInvoker {
 	 * @param script
 	 * 		Enumeration of the descired R script to run
 	 * @param input
-	 * 		Path to the directory containin the relevant parameters needed for the r script execution
+	 * 		Path to the directory containin the relevant parameters needed for the r script execution.
+	 * 	C:\Users\davidrice3\Repository\msusel-qatch\msusel-qatch\
 	 * @param output
-	 * 		Path to the desired directory to place results in.
-	 * 		The directory is created if it does not yet exist.
+	 * 		Path to the desired directory to place results in. The directory is created if it does not yet exist.
+	 * 		The path should be absolute.
 	 */
 	static void executeRScript(Script script, String input, String output){
 

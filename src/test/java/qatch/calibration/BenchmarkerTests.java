@@ -20,9 +20,10 @@ import java.util.*;
 public class BenchmarkerTests {
 
     private Path analysisResultsAsInput = Paths.get("src/test/resources/benchmark_results/benchmark_data.csv");
-    private Path analysisResultsAsOutput = Paths.get("src/test/out/benchmark_results/benchmark_data.csv");
+    private Path analysisResultsAsOutput = Paths.get("src/test/output/benchmark_results/benchmark_data.csv");
     private Path benchmarkRepo = Paths.get("src/test/resources/benchmark_repository");
     private Path qmDescription = Paths.get("src/test/resources/quality_models/qualityModel_test_description.json");
+    private Path rThresholdsOutput = Paths.get("src/test/output/r_thresholds");
 
 
     @Test
@@ -90,7 +91,7 @@ public class BenchmarkerTests {
     }
 
     @Test
-    public void testAnalyze() {
+    public void run() {
 
         // Initialize mock tools
         IToolLOC fakeLocTool = new IToolLOC() {
@@ -139,8 +140,25 @@ public class BenchmarkerTests {
         Set<ITool> tools = new HashSet<>(Collections.singletonList(fakeTool));
 
         // Create benchmarker and run process
-        Benchmarker benchmarker = new Benchmarker(benchmarkRepo, qmDescription, fakeLocTool, tools);
-        benchmarker.analyze(".txt");
+        Benchmarker benchmarker = new Benchmarker(
+                benchmarkRepo, qmDescription, analysisResultsAsOutput.getParent(), fakeLocTool, tools
+        );
+        Map<String, Double[]> result = benchmarker.run(".txt", this.rThresholdsOutput);
+
+        // Assert results
+        Assert.assertTrue(result.containsKey("Measure 01"));
+        Assert.assertTrue(result.containsKey("Measure 02"));
+
+        Double[] m1Values = result.get("Measure 01");
+        Double[] m2Values = result.get("Measure 02");
+
+        Assert.assertEquals(0.004, m1Values[0], 0);
+        Assert.assertEquals(0.004, m1Values[1], 0);
+        Assert.assertEquals(0.004, m1Values[2], 0);
+
+        Assert.assertEquals(0.006, m2Values[0], 0);
+        Assert.assertEquals(0.006, m2Values[1], 0);
+        Assert.assertEquals(0.006, m2Values[2], 0);
     }
 
     @Test
@@ -152,12 +170,12 @@ public class BenchmarkerTests {
 
         Assert.assertEquals(3, thresholds.size());
 
-        Assert.assertTrue(thresholds.containsKey("Property 01"));
-        Assert.assertTrue(thresholds.containsKey("Property 02"));
-        Assert.assertTrue(thresholds.containsKey("Property 03"));
+        Assert.assertTrue(thresholds.containsKey("Property 01 measure"));
+        Assert.assertTrue(thresholds.containsKey("Property 02 measure"));
+        Assert.assertTrue(thresholds.containsKey("Property 03 measure"));
 
-        Assert.assertArrayEquals(thresholds.get("Property 01"), new Double[]{0.01, 0.019, 0.022});
-        Assert.assertArrayEquals(thresholds.get("Property 02"), new Double[]{0.05, 0.068, 0.07});
-        Assert.assertArrayEquals(thresholds.get("Property 03"), new Double[]{0.091, 0.093, 0.099});
+        Assert.assertArrayEquals(thresholds.get("Property 01 measure"), new Double[]{0.01, 0.019, 0.022});
+        Assert.assertArrayEquals(thresholds.get("Property 02 measure"), new Double[]{0.05, 0.068, 0.07});
+        Assert.assertArrayEquals(thresholds.get("Property 03 measure"), new Double[]{0.091, 0.093, 0.099});
     }
 }

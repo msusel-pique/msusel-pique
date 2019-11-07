@@ -46,7 +46,11 @@ public class RInvokerTests {
         File weightsOutput = new File(TestHelper.OUTPUT.toFile(), "weights.json");
 
         // run R execution
-        RInvoker.executeRScript(RInvoker.Script.AHP, comp_matrix_simple.toString(), TestHelper.OUTPUT.toString());
+        RInvoker.executeRScript(
+                RInvoker.Script.AHP,
+                comp_matrix_simple.toAbsolutePath().toString(),
+                TestHelper.OUTPUT.toAbsolutePath().toString()
+        );
 
         if (!weightsOutput.isFile()) {
             Assert.fail("R execution did not generate the expected file. "
@@ -72,7 +76,11 @@ public class RInvokerTests {
         File weightsOutput = new File(TestHelper.OUTPUT.toFile(), "weights.json");
 
         // run R execution
-        RInvoker.executeRScript(RInvoker.Script.AHP, comp_matrix_zeroes.toString(), TestHelper.OUTPUT.toString());
+        RInvoker.executeRScript(
+                RInvoker.Script.AHP,
+                comp_matrix_zeroes.toAbsolutePath().toString(),
+                TestHelper.OUTPUT.toAbsolutePath().toString()
+        );
 
         if (!weightsOutput.isFile()) {
             Assert.fail("R execution did not generate the expected file. "
@@ -102,7 +110,11 @@ public class RInvokerTests {
         File weightsOutput = new File(TestHelper.OUTPUT.toFile(), "weights.json");
 
         // run R execution
-        RInvoker.executeRScript(RInvoker.Script.AHP, comp_matrix_fractions.toString(), TestHelper.OUTPUT.toString());
+        RInvoker.executeRScript(
+                RInvoker.Script.AHP,
+                comp_matrix_fractions.toAbsolutePath().toString(),
+                TestHelper.OUTPUT.toAbsolutePath().toString()
+        );
 
         if (!weightsOutput.isFile()) {
             Assert.fail("R execution did not generate the expected file. "
@@ -132,7 +144,11 @@ public class RInvokerTests {
         File thresholdOutput = new File(TestHelper.OUTPUT.toFile(), "threshold.json");
 
         // run R Executions
-        RInvoker.executeRScript(RInvoker.Script.THRESHOLD, benchmark_results.toString(), TestHelper.OUTPUT.toString());
+        RInvoker.executeRScript(
+                RInvoker.Script.THRESHOLD,
+                benchmark_results.toAbsolutePath().toString(),
+                TestHelper.OUTPUT.toAbsolutePath().toString()
+        );
 
         if (!thresholdOutput.isFile()) {
             Assert.fail("R execution did not generate the expected file. "
