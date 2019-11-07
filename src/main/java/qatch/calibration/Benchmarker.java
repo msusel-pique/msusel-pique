@@ -33,6 +33,7 @@ import java.util.*;
  * The Benchmarker provides functionality to run batch tool analysis and run R threshold
  * generation on the resulting Property-Finding pairings from each benchmark project.
  */
+// TODO: turn this class into an abstract utility class (shouldn't need to instantiate more than one of these)
 public class Benchmarker {
 
     // Fields

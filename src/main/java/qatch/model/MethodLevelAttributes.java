@@ -12,6 +12,7 @@ package qatch.model;
  * @author Miltos
  *
  */
+@Deprecated
 public class MethodLevelAttributes {
 
     private String methodName;

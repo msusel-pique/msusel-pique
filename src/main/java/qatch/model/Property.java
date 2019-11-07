@@ -111,9 +111,8 @@ public class Property {
 	public void evaluate() {
 		/*
 		 * Check the sign of the impact that this property has on the total quality
-		 * and choose  the monotony of the utility function.
+		 * and choose the monotony of the utility function.
 		 */
-		
 		if(positive){
 			//If the metric has a positive impact on quality -> Ascending utility function
 			if(this.measure.getNormalizedValue() <= this.thresholds[0]){

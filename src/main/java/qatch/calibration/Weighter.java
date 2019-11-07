@@ -1,12 +1,9 @@
 package qatch.calibration;
 
-import qatch.model.QualityModel;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.nio.file.Path;
-
 /**
- * This class is responsible for deriving the weights (TQI-Characteristics layer and Characteristics-Properties layer)
+ * Utility class responsible for deriving the weights (TQI-Characteristics layer and Characteristics-Properties layer)
  * described by hand-entered comparison matrices as part of the analytical hierarchy process.
  *
  * It should ensure the hand-entered matrices match TQI, characteristic, and properties nodes
@@ -17,26 +14,8 @@ import java.nio.file.Path;
  */
 public class Weighter {
 
-    // Fields
-    private Path comparisonMatricesDirectory;  // location of root folder containing comparison matrices (likely .csv)
-    private QualityModel qmDescription;  // object representation of a not-yet-derived quality model
-
-
-    // Constructor
-    public Weighter(Path comparisonMatricesDirectory, QualityModel qmDescription) {
-        this.comparisonMatricesDirectory = comparisonMatricesDirectory;
-        this.qmDescription = qmDescription;
-    }
-
-
-    // Getters and setters
-    public Path getComparisonMatricesDirectory() { return comparisonMatricesDirectory; }
-
-    public QualityModel getQmDescription() { return qmDescription; }
-
-
     // Methods
-    public void run() {
+    public static void run() {
         throw new NotImplementedException();
     }
 }

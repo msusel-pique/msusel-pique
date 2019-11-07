@@ -18,14 +18,9 @@ import java.nio.file.Paths;
 class RInvoker {
 
 	public enum Script { AHP, FAPH, THRESHOLD }
-	
-	//Fixed paths
-	static final Path R_WORK_DIR = Paths.get(System.getProperty("user.dir"), "r_working_directory");
-
 
 
 	// TODO: assert that expected behavior occurs after running script (e.g. the file was created)
-
 	/**
 	 * Run an R script according to its enumeration.
 	 * In most cases the input and output parameters should point to a directory containing the needed
