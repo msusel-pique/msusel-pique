@@ -191,6 +191,8 @@ public class QualityModel {
 			getTqi().setCharacteristics(getCharacteristics());
 			getTqi().getCharacteristics().values().forEach(c -> c.setProperties(getProperties()));
 
+			// TODO: Assert that weight mappings have correct Property and Characteristics to map to (make new method)
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

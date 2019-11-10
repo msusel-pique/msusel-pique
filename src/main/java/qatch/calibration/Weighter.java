@@ -15,6 +15,10 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 public class Weighter {
 
     // Methods
+
+    /**
+     *
+     */
     public static void run() {
         throw new NotImplementedException();
     }

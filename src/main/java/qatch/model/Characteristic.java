@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class Characteristic {
 
-	// instance variables
+	// Instance variables
 	private String description;	 //A brief description of the characteristic
 	@Expose
 	private double value;  //The quality score of this characteristic (derives from the weighted average of the eval fields of the QM's properties)
@@ -27,7 +27,7 @@ public class Characteristic {
 	private Map<String, Double> weights = new HashMap<>();  // mapping of property names and their weights
 
 
-	// constructors
+	// Constructors
 	public Characteristic(String name, String standard, String description, Map<String, Double> weights){
 		this.name = name;
 		this.description = standard;
