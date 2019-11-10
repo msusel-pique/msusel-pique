@@ -2,6 +2,7 @@ package qatch.calibration;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.internal.runners.statements.Fail;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,12 +21,28 @@ public class WeighterTests {
         Path tempResults = Paths.get("src/test/out/weighter");
 
         // Run method
-        Set<WeightResult> result = Weighter.elicitateWeights(matrices, tempResults);
+        Set<WeightResult> results = Weighter.elicitateWeights(matrices, tempResults);
 
         // Assert expected values
-
-
-        System.out.println("...");
+        for (WeightResult result : results) {
+            switch (result.name) {
+                case "TQI":
+                    Assert.assertEquals(0.1499, result.weights.get("Design"), 0);
+                    Assert.assertEquals(0.0446, result.weights.get("Mobility"), 0);
+                    Assert.assertEquals(0.0732, result.weights.get("Portability"), 0);
+                    Assert.assertEquals(0.7323, result.weights.get("Security"), 0);
+                    break;
+                case "Design":
+                case "Security":
+                    Assert.assertEquals(0.5842, result.weights.get("Property 01"), 0);
+                    Assert.assertEquals(0.135, result.weights.get("Property 02"), 0);
+                    Assert.assertEquals(0.2808, result.weights.get("Property 03"), 0);
+                    break;
+                default:
+                    Assert.fail("No expected WeightResult node names were found");
+                    break;
+            }
+        }
     }
 
     @Test

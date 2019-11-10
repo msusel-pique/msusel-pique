@@ -1,5 +1,9 @@
 package qatch.calibration;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.opencsv.CSVReader;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -37,18 +41,47 @@ public class Weighter {
         // Create directory for temporary generated file results if not yet exists
         tempResultsDirectory.toFile().mkdirs();
 
-        // Parse node name ordering for each matrix
-        // TODO: eventually easiest to just have R map the names to the weights instead of parsing the files again
-
-
         // Run R script
         RInvoker.executeRScript(RInvoker.Script.AHP, comparisonMatricesDirectory, tempResultsDirectory);
 
-        // Transform into WeightResults object
-        System.out.println("...");
+        // Parse node name ordering for each matrix
+        // TODO: eventually easiest to just have R map the names to the weights instead of parsing the files again
+        Map<String, ArrayList<String>> weightNameOrders = parseNameOrder(comparisonMatricesDirectory);
 
-        // Return set
-        throw new NotImplementedException();
+        // Transform into WeightResults objects
+        Set<WeightResult> weightResults = new HashSet<>();
+        File weightsJson = new File(tempResultsDirectory.toFile(), "weights.json");
+
+        try {
+            FileReader fr = new FileReader(weightsJson);
+            JsonObject jsonObject = new JsonParser().parse(fr).getAsJsonObject();
+            jsonObject.keySet().forEach(nodeName -> {
+
+                if (!weightNameOrders.containsKey(nodeName)) {
+                    throw new RuntimeException("parseNameOrder failed to create ordering for node name " + nodeName);
+                }
+
+                JsonArray nodeWeights = jsonObject.getAsJsonArray(nodeName);
+                ArrayList<String> nameList = weightNameOrders.get(nodeName);
+
+                if (nodeWeights.size() != nameList.size()) {
+                    throw new RuntimeException("nodeWeights and nameList arrays do not match lenghts");
+                }
+
+                WeightResult weightResult = new WeightResult(nodeName);
+                // zip-like function would be great here if Java eventually supports a one-line version of it
+                for (int i = 0; i < nodeWeights.size(); i++) {
+                    weightResult.weights.put(nameList.get(i), nodeWeights.get(i).getAsDouble());
+                }
+
+                weightResults.add(weightResult);
+            });
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return weightResults;
     }
 
 
