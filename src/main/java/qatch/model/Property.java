@@ -5,9 +5,10 @@ import qatch.analysis.Measure;
 
 public class Property {
 	
-	/* Static constants that belong to this class */
+	// Statics
 	public static final int THRESHOLDS_NUM = 3;
 
+	// Fields
 	private String description;//A brief description of the property (optional)
 	private double value;//The quality score of the property
 	@Expose

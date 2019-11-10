@@ -23,7 +23,7 @@ import java.util.Map;
  * of the XML file that describes the quality model and assign their values to the 
  * project (or projects) that we want to evaluate.
  * 
- * @author Miltos
+ * @author Miltos, Rice
  *
  */
 public class QualityModel {
@@ -42,6 +42,7 @@ public class QualityModel {
 		importQualityModel(qmFilePath);
 	}
 
+
 	// Setters and Getters
 	public Characteristic getCharacteristic(String name) {
 		return this.characteristics.get(name);
@@ -52,14 +53,12 @@ public class QualityModel {
 	public void setCharacteristic(String characteristicName, Characteristic characteristic) {
 		this.characteristics.put(characteristicName, characteristic);
 	}
-
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
-
 	public Property getProperty(String name) {
 		return this.properties.get(name);
 	}
@@ -69,21 +68,18 @@ public class QualityModel {
 	public void setProperty(String propertyName, Property property) {
 		this.properties.put(propertyName, property);
 	}
-
 	public Tqi getTqi() {
 		return tqi;
 	}
 	public void setTqi(Tqi tqi) {
 		this.tqi = tqi;
 	}
-
 	public PropertySet getProperties_deprecated() {
 		return properties_deprecated;
 	}
 	public void setProperties_deprecated(PropertySet properties_deprecated) {
 		this.properties_deprecated = properties_deprecated;
 	}
-
 	public CharacteristicSet getCharacteristics_deprecated() {
 		return characteristics_deprecated;
 	}
@@ -98,27 +94,26 @@ public class QualityModel {
 	 * by parsing the file that contains the text data of the Quality Model.
 	 */
 	private void importQualityModel(Path qmFilePath) {
-		// parse json data and update quality model object
+		// Parse json data and update quality model object
 		try {
 			// TODO: break this large method into smaller method calls
 			FileReader fr = new FileReader(qmFilePath.toString());
 			JsonObject jsonQm = new JsonParser().parse(fr).getAsJsonObject();
 			fr.close();
 
-			// name
+			// Name
 			setName(jsonQm.getAsJsonPrimitive("name").getAsString());
 
-			// root node
+			// Root node
 			JsonObject jsonTqi = jsonQm.getAsJsonObject("tqi");
-			Tqi qmTqi = getTqi();
-			qmTqi.setName(jsonTqi.getAsJsonPrimitive("name").getAsString());
+			getTqi().setName(jsonTqi.getAsJsonPrimitive("name").getAsString());
 			if (jsonTqi.getAsJsonObject("weights") != null) {
 				jsonTqi.getAsJsonObject("weights").keySet().forEach(weight -> {
-					qmTqi.setWeight(weight, jsonTqi.getAsJsonObject("weights").getAsJsonPrimitive(weight).getAsDouble());
+					getTqi().setWeight(weight, jsonTqi.getAsJsonObject("weights").getAsJsonPrimitive(weight).getAsDouble());
 				});
 			}
 
-			// characteristics nodes
+			// Characteristics nodes
 			JsonArray jsonCharacteristics = jsonQm.getAsJsonArray("characteristics");
 			jsonCharacteristics.forEach(c -> {
 				JsonObject jsonCharacteristic = c.getAsJsonObject();
@@ -136,7 +131,7 @@ public class QualityModel {
 				setCharacteristic(qmCharacteristic.getName(), qmCharacteristic);
 			});
 
-			// properties nodes
+			// Properties nodes
 			JsonArray jsonProperties = jsonQm.getAsJsonArray("properties");
 
 			jsonProperties.forEach(p -> {
@@ -169,6 +164,11 @@ public class QualityModel {
 
 				setProperty(qmProperty.getName(), qmProperty);
 			});
+
+			// Construct tree structure with TQI as root node
+			getTqi().setCharacteristics(getCharacteristics());
+			getTqi().getCharacteristics().values().forEach(c -> c.setProperties(getProperties()));
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

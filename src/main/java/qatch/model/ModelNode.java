@@ -1,5 +1,7 @@
 package qatch.model;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Abstract representation of a node belonging to the Quality, Characteristic,
  * or Property layer
@@ -8,7 +10,9 @@ public abstract class ModelNode {
 
     // Fields
     private String description;
+    @Expose
     private String name;
+    @Expose
     private double value;  // the value this node evaluates to
 
 
@@ -26,7 +30,13 @@ public abstract class ModelNode {
     public String getName() {
         return name;
     }
+    public void setName(String name) {
+        this.name = name;
+    }
     public double getValue() { return this.value; }
+    public void setValue(double value) {
+        this.value = value;
+    }
 
 
     // Methods

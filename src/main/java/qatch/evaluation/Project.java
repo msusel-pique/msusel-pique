@@ -25,11 +25,12 @@ import java.util.Map;
 public class Project{
 
 	// Fields
-	@Expose
-	private int linesOfCode;
+
 	@Expose
 	private String name;
-	private Path path; //The original path where the sources of the project are stored (with or without the name)
+	@Expose
+	private int linesOfCode;
+	private Path path;  // the original path where the sources of the project are stored (with or without the name)
 	@Expose
 	private Map<String, Characteristic> characteristics = new HashMap<>();
 	@Expose
@@ -37,8 +38,9 @@ public class Project{
 	@Expose
 	private Tqi tqi;
 
-	
+
 	// Constructors
+
 	public Project(String name){
 		this.name = name;
 		this.tqi = new Tqi(null, null, null);
@@ -47,26 +49,24 @@ public class Project{
 	public Project(String name, Path path, QualityModel qm) {
 		this.name = name;
 		this.path = path;
-		initializeProperties(qm);
+		initializeTqi(qm);
 		initializeCharacteristics(qm);
-		this.tqi = initializeTqi(qm);
+		initializeProperties(qm);
 	}
 	
 	
-	// Getters and setters.
+	// Getters and setters
+
 	public int getLinesOfCode() { return linesOfCode; }
 	public void setLinesOfCode(int linesOfCode) { this.linesOfCode = linesOfCode; }
-
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
-
 	public Path getPath() { return path; }
 	public void setPath(Path path) { this.path = path; }
-
 	public Measure getMeasure(String measureName) {
 		return getMeasures().get(measureName);
 	}
@@ -88,19 +88,21 @@ public class Project{
 			this.setMeasure(propertyName, measure);
 		}
 	}
-
 	public Property getProperty(String name) { return this.properties.get(name); }
 	public Map<String, Property> getProperties() { return this.properties; }
 	public void setProperty(String name, Property property) {
 		this.properties.put(name, property);
 	}
-
 	public Characteristic getCharacteristic(String name) { return this.characteristics.get(name); }
-	public Map<String, Characteristic> getCharacteristics() { return this.characteristics; }
+	public Map<String, Characteristic> getCharacteristics() {
+		return getTqi().getCharacteristics();
+	}
 	public void setCharacteristic(String name, Characteristic characteristic) { this.characteristics.put(name, characteristic); }
-
+	public void setCharacteristics(Map<String, Characteristic> characteristics) {
+		this.characteristics = characteristics;
+	}
 	public Tqi getTqi() {
-		return tqi;
+		return this.tqi;
 	}
 	public void setTqi(Tqi tqi) {
 		this.tqi = tqi;
@@ -202,16 +204,7 @@ public class Project{
 	 * 		The language-specific quality model
 	 */
 	private void initializeCharacteristics(QualityModel qm) {
-		for (String characteristicName : qm.getCharacteristics().keySet()) {
-
-			// create new project characteristic entry using weights information from quality model
-			Characteristic reference = qm.getCharacteristic(characteristicName);
-			Characteristic projectCharacteristic = new Characteristic(
-					characteristicName, reference.getStandard(),
-					reference.getDescription(), reference.getWeights()
-			);
-			this.setCharacteristic(characteristicName, projectCharacteristic);
-		}
+		this.characteristics = qm.getCharacteristics();
 	}
 
 	/**
@@ -221,16 +214,7 @@ public class Project{
 	 * 		The language-specific quality model
 	 */
 	private void initializeProperties(QualityModel qm) {
-		for (String propertyName : qm.getProperties().keySet()) {
-
-			// create new project property entry using thresholds and impact from quality model
-			Property referenceProperty = qm.getProperty(propertyName);
-			Property projectProperty = new Property(
-					propertyName, referenceProperty.getDescription(), referenceProperty.isPositive(),
-					referenceProperty.getThresholds(), referenceProperty.getMeasure()
-			);
-			this.setProperty(propertyName, projectProperty);
-		}
+		this.properties = qm.getProperties();
 	}
 
 	/**
@@ -239,8 +223,9 @@ public class Project{
 	 * @param qm
 	 * 		The language-specific quality model
 	 */
-	private Tqi initializeTqi(QualityModel qm) {
-		Tqi qmTqi = qm.getTqi();
-		return new Tqi(qmTqi.getName(), qmTqi.getDescription(), qmTqi.getWeights());
+	private void initializeTqi(QualityModel qm) {
+		this.tqi = qm.getTqi();
+		this.tqi.setCharacteristics(qm.getCharacteristics());
+
 	}
 }

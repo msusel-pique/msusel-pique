@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 /**
- * Test utility class for creating commonly used Qatch model objects and references
+ * Utility framework for quickly generating model and project objects for testing
  */
 public class TestHelper {
 
@@ -54,6 +54,13 @@ public class TestHelper {
         return new Measure(name, name + " tool name", Arrays.asList(d1, d2));
     }
 
+    /**
+     * Automatically create a measure with diagnostics and finidings and attach to property field
+     * @param name
+     *      Property name
+     * @return
+     *      Property with satisfying data in its fields
+     */
     public static Property makeProperty(String name) {
         Measure m = makeMeasure(name + " measure");
         Property p = new Property(name, m);
@@ -63,31 +70,68 @@ public class TestHelper {
 
     public static QualityModel makeQualityModel() {
         QualityModel qm = new QualityModel(null);
+        Characteristic c1 = makeCharacteristic("Characteristic 01");
+        Characteristic c2 = makeCharacteristic("Characteristic 02");
+        Property p1 = makeProperty("Property 01");
+        Property p2 = makeProperty("Property 02");
 
         qm.setName("Test Quality Model");
-        qm.setTqi(TestHelper.makeTqi("Test TQI"));
-        qm.setCharacteristic("Characteristic 01", makeCharacteristic("Characteristic 01"));
-        qm.setCharacteristic("Characteristic 02", makeCharacteristic("Characteristic 02"));
-        qm.setProperty("Property 01", makeProperty("Property 01"));
-        qm.setProperty("Property 02", makeProperty("Property 02"));
+        qm.setTqi(TestHelper.makeTqi(
+                "Test TQI",
+                new HashMap<String, Characteristic>() {{
+                    put(c1.getName(), c1);
+                    put(c2.getName(), c2);
+                }},
+                new HashMap<String, Property>() {{
+                    put(p1.getName(), p1);
+                    put(p2.getName(), p2);
+                }}
+        ));
 
         return qm;
     }
 
-    public static Tqi makeTqi(String name) {
+    public static Tqi makeTqi(String name, HashMap<String, Characteristic> characteristics, HashMap<String, Property> properties) {
         HashMap<String, Double> weights = new HashMap<String, Double>() {{
             put("Characteristic 01", 0.7);
             put("Characteristic 02", 0.3);
         }};
-        return new Tqi(name, "Tqi description from TestHelper.", weights);
+        Tqi tqi = new Tqi(name, "Tqi description from TestHelper.", weights);
+
+        tqi.setCharacteristics(characteristics);
+        tqi.getCharacteristics().values().forEach(c -> {
+            c.setProperties(properties);
+        });
+        return tqi;
     }
 
+    /**
+     * Make project without reliance on a quality model file
+     */
     public static Project makeProject(String name) {
         Property p1 = makeProperty("Property 01");
         Property p2 = makeProperty("Property 02");
         Characteristic c1 = makeCharacteristic("Characteristic 01");
         Characteristic c2 = makeCharacteristic("Characteristic 02");
-        Tqi tqi = makeTqi("TQI");
+        c1.setProperties(new HashMap<String, Property>() {{
+            put(p1.getName(), p1);
+            put(p2.getName(), p2);
+        }});
+        c2.setProperties(new HashMap<String, Property>() {{
+            put(p1.getName(), p1);
+            put(p2.getName(), p2);
+        }});
+        Tqi tqi = makeTqi(
+            "TQI",
+            new HashMap<String, Characteristic>() {{
+                put(c1.getName(), c1);
+                put(c2.getName(), c2);
+            }},
+            new HashMap<String, Property>() {{
+                put(p1.getName(), p1);
+                put(p2.getName(), p2);
+            }}
+        );
 
         Project project = new Project(name);
         project.setLinesOfCode(100);

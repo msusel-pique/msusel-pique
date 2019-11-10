@@ -10,7 +10,7 @@ import java.util.Map;
  * Quality Model that is used in order to evaluate a 
  * project or a set of projects.
  * 
- * @author Miltos
+ * @author Miltos, Rice
  *
  */
 public class Characteristic {
@@ -21,6 +21,8 @@ public class Characteristic {
 	private double value;  //The quality score of this characteristic (derives from the weighted average of the eval fields of the QM's properties)
 	private String name;  //The name of the characteristic
 	private String standard;  //The standard from which this characteristic derives
+	// TODO: eventually consider new tree object that combines properties and their weight instead of relying on String name matching (not enough time for me to refactor currently)
+	private Map<String, Property> properties = new HashMap<>();  // mapping of property names and their property objects
 	@Expose
 	private Map<String, Double> weights = new HashMap<>();  // mapping of property names and their weights
 
@@ -53,33 +55,35 @@ public class Characteristic {
 	public void setDescription(String desription) {
 		this.description = desription;
 	}
-
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
-
+	public Map<String, Property> getProperties() {
+		return properties;
+	}
+	public void setProperties(Map<String, Property> properties) {
+		this.properties = properties;
+	}
 	public String getStandard() {
 		return standard;
 	}
 	public void setStandard(String standard) {
 		this.standard = standard;
 	}
-
-	public double getWeight(String propertyName) {
-		return this.weights.get(propertyName);
-	}
-	public Map<String, Double> getWeights() { return weights; }
-	public void setWeight(String propertyName, double value) { this.weights.put(propertyName, value); }
-	
 	public double getValue() {
 		return value;
 	}
 	public void setValue(double value) {
 		this.value = value;
 	}
+	public double getWeight(String propertyName) {
+		return this.weights.get(propertyName);
+	}
+	public Map<String, Double> getWeights() { return weights; }
+	public void setWeight(String propertyName, double value) { this.weights.put(propertyName, value); }
 
 
 	// methods

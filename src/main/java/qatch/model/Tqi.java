@@ -10,36 +10,23 @@ import java.util.Map;
  * It is used for the evaluation (quality assessment - estimation) of a 
  * certain project or a benchmark of projects.
  * 
- * @author Miltos
+ * @author Miltos, Rice
  *
  */
 public class Tqi extends ModelNode {
 	
-	// Fields
+	// Fields, some inherit from super class
 	@Expose
-	private double value;  //The total quality index (total quality score) of a project
-	@Expose
-	private String name;
-	@Expose
-	private Map<String, Double> weights = new HashMap<>();  // mapping of characteristic names and their weights
-	private Map<String, Characteristic> children = new HashMap<>(); // mapping of characteristic names and their object
+	private Map<String, Double> weights;  // mapping of characteristic names and their weights
+	private Map<String, Characteristic> characteristics = new HashMap<>(); // mapping of characteristic names and their object
 
 
 	// Getters and setters
-	public Map<String, Characteristic> getChildren() {
-		return children;
+	public Map<String, Characteristic> getCharacteristics() {
+		return characteristics;
 	}
-	public double getValue() {
-		return value;
-	}
-	public void setValue(double value) {
-		this.value = value;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
+	public void setCharacteristics(Map<String, Characteristic> characteristics) {
+		this.characteristics = characteristics;
 	}
 	public double getWeight(String characteristicName) {
 		return weights.get(characteristicName);
@@ -58,7 +45,7 @@ public class Tqi extends ModelNode {
 	// Constructor
 	public Tqi(String name, String description, Map<String, Double> weights) {
 		super(name, description);
-		this.weights = weights;
+		this.weights = (weights == null) ? new HashMap<>() : weights;
 	}
 
 
@@ -68,7 +55,7 @@ public class Tqi extends ModelNode {
 
 		// assert a weight mapping exists for each provided characteristic
 		getWeights().keySet().forEach(k -> {
-			if (!getChildren().containsKey(k)) {
+			if (!getCharacteristics().containsKey(k)) {
 				throw new RuntimeException("No weight-measure mapping in root node " + this.getName() +
 						"exists for Characteristic " + k);
 			}
@@ -77,9 +64,9 @@ public class Tqi extends ModelNode {
 		// evaluate: standard weighted sum of characteristic values
 		double sum = 0.0;
 		for (Map.Entry<String, Double> weightMap : getWeights().entrySet()) {
-			sum += getChildren().get(weightMap.getKey()).getValue() * weightMap.getValue();
+			sum += getCharacteristics().get(weightMap.getKey()).getValue() * weightMap.getValue();
 		}
 
-		this.value = sum;
+		setValue(sum);
 	}
 }
