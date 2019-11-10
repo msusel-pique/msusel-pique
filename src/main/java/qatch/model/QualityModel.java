@@ -127,6 +127,7 @@ public class QualityModel {
 
 			// Root node
 			JsonObject jsonTqi = jsonQm.getAsJsonObject("tqi");
+			setTqi(new Tqi(null, null, null));
 			getTqi().setName(jsonTqi.getAsJsonPrimitive("name").getAsString());
 			if (jsonTqi.getAsJsonObject("weights") != null) {
 				jsonTqi.getAsJsonObject("weights").keySet().forEach(weight -> {
