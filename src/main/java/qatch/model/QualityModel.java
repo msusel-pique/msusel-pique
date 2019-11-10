@@ -30,14 +30,29 @@ public class QualityModel {
 
 	// Fields
 	private String name;  //The name of the QM found in the XML file
-	private Tqi tqi = new Tqi(null, null, null);  // root node, the total quality evaluation, contains characteristic objects as children
+	private Tqi tqi;  // root node, the total quality evaluation, contains characteristic objects as children
 	private Map<String, Characteristic> characteristics = new HashMap<>();
 	private Map<String, Property> properties = new HashMap<>();  // each property has one Measure associated with it
 	private CharacteristicSet characteristics_deprecated;  //The CharacteristicSet containing all the characteristics_deprecated of the Quality Model
 	private PropertySet properties_deprecated;			   //The PropertySet containing all the properties of the Quality Model
 
 
-	// Constructor
+	// Constructors
+
+	/**
+	 * Instantiate a QM object with no data or config. Likely only use this constructor for testing
+	 * @param name
+	 * 		Name of the quality model
+	 */
+	public QualityModel(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * Constructor for deriving QM object from a disk file description (likely .json or .xml)
+	 * @param qmFilePath
+	 * 		File path to the quality model description
+	 */
 	public QualityModel(Path qmFilePath) {
 		importQualityModel(qmFilePath);
 	}
@@ -56,6 +71,9 @@ public class QualityModel {
 	public String getName() {
 		return name;
 	}
+	public void setCharacteristics(Map<String, Characteristic> characteristics) {
+		this.characteristics = characteristics;
+	}
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -67,6 +85,9 @@ public class QualityModel {
 	}
 	public void setProperty(String propertyName, Property property) {
 		this.properties.put(propertyName, property);
+	}
+	public void setProperties(Map<String, Property> properties) {
+		this.properties = properties;
 	}
 	public Tqi getTqi() {
 		return tqi;

@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Utility framework for quickly generating model and project objects for testing
@@ -68,30 +69,35 @@ public class TestHelper {
         return p;
     }
 
+    /**
+     * Make quality model without reliance on a hard-drive file
+     * @return
+     *      QualityModel with valid instances in all fields
+     */
     public static QualityModel makeQualityModel() {
-        QualityModel qm = new QualityModel(null);
+        QualityModel qm = new QualityModel("Test Quality Model");
         Characteristic c1 = makeCharacteristic("Characteristic 01");
         Characteristic c2 = makeCharacteristic("Characteristic 02");
         Property p1 = makeProperty("Property 01");
         Property p2 = makeProperty("Property 02");
+        Map<String, Characteristic> characteristics = new HashMap<String, Characteristic>() {{
+            put(c1.getName(), c1);
+            put(c2.getName(), c2);
+        }};
+        Map<String, Property> properties = new HashMap<String, Property>() {{
+            put(p1.getName(), p1);
+            put(p2.getName(), p2);
+        }};
+        Tqi tqi = TestHelper.makeTqi("Test TQI", characteristics, properties );
 
-        qm.setName("Test Quality Model");
-        qm.setTqi(TestHelper.makeTqi(
-                "Test TQI",
-                new HashMap<String, Characteristic>() {{
-                    put(c1.getName(), c1);
-                    put(c2.getName(), c2);
-                }},
-                new HashMap<String, Property>() {{
-                    put(p1.getName(), p1);
-                    put(p2.getName(), p2);
-                }}
-        ));
+        qm.setTqi(tqi);
+        qm.setCharacteristics(characteristics);
+        qm.setProperties(properties);
 
         return qm;
     }
 
-    public static Tqi makeTqi(String name, HashMap<String, Characteristic> characteristics, HashMap<String, Property> properties) {
+    public static Tqi makeTqi(String name, Map<String, Characteristic> characteristics, Map<String, Property> properties) {
         HashMap<String, Double> weights = new HashMap<String, Double>() {{
             put("Characteristic 01", 0.7);
             put("Characteristic 02", 0.3);

@@ -7,7 +7,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import qatch.TestHelper;
+import qatch.analysis.Measure;
 import qatch.model.Property;
+import qatch.model.QualityModel;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -186,5 +188,39 @@ public class ProjectTests {
         Assert.assertEquals(0.92, tqiValue, 0);
 
         FileUtils.forceDelete(exportLocation.toFile());
+    }
+
+    @Test
+    /**
+     * Test state of fields of project object immediately after construction
+     */
+    public void testProjectConstructor() {
+        String name = "Test Project";
+        Path path = Paths.get("test/path");
+        QualityModel qm = TestHelper.makeQualityModel();
+
+        Project project = new Project(name, path, qm);
+
+        // Assertions
+        Assert.assertEquals(name, project.getName());
+        Assert.assertEquals(path, project.getPath());
+
+        // Assert tree structure pass-by-reference from TQI root node compared to fields
+        project.getTqi().getCharacteristics().values().forEach(tqiCharacteristic -> {
+            // Characteristic layer
+            Assert.assertEquals(project.getCharacteristics().get(tqiCharacteristic.getName()), tqiCharacteristic);
+            tqiCharacteristic.getProperties().values().forEach(tqiProperty -> {
+                // Properties layer
+                Assert.assertEquals(project.getProperties().get(tqiProperty.getName()), tqiProperty);
+                Measure projectMeasure = project.getProperties().get(tqiProperty.getName()).getMeasure();
+                // Property's measure
+                Assert.assertEquals(projectMeasure, tqiProperty.getMeasure());
+                tqiProperty.getMeasure().getDiagnostics().forEach(tqiDiagnostic -> {
+                    // Measure's diagnostics
+                    Assert.assertEquals(projectMeasure.getDiagnostic(tqiDiagnostic.getId()), tqiDiagnostic);
+                });
+            });
+        });
+
     }
 }
