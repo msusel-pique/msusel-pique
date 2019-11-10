@@ -14,10 +14,12 @@ public class WeighterTests {
         // Setup
         Path matrices = Paths.get("src/test/resources/comparison_matrices/multiple");
         Path tempResults = Paths.get("src/test/out/weighter");
-        Set<WeightResult> result = Weighter.elicitateWeights(matrices, tempResults);
 
         // Run method
-        RInvoker.executeRScript(RInvoker.Script.AHP, matrices, tempResults);
+        Set<WeightResult> result = Weighter.elicitateWeights(matrices, tempResults);
+
+        // Assert expected values
+
 
         System.out.println("...");
     }

@@ -1,10 +1,13 @@
 package qatch.calibration;
 
+import com.opencsv.CSVReader;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Utility class responsible for deriving the weights (TQI-Characteristics layer and Characteristics-Properties layer)
@@ -33,9 +36,53 @@ public class Weighter {
         // Create directory for temporary generated file results if not yet exists
         tempResultsDirectory.toFile().mkdirs();
 
+        // Parse node name ordering for each matrix
+        // TODO: eventually easiest to just have R map the names to the weights instead of parsing the files again
+
+
         // Run R script
+        RInvoker.executeRScript(RInvoker.Script.AHP, comparisonMatricesDirectory, tempResultsDirectory);
+
+        // Transform into WeightResults object
+        System.out.println("...");
+
+        // Return set
+        throw new NotImplementedException();
+    }
 
 
+    /**
+     * Extract the left-to-right order of the comparison matrix characteristic or property names.
+     * Ordering is necessary because the weights.json output from the R script generates weights in order according
+     * to the left-to-right comparison matrix it receives as input.
+     * Eventually this method should be depreicated by modifying the R-script to automatically attach the names
+     * to its output.
+     *
+     * @param comparisonMatrix
+     *      Path to the file of the comparison matrix to extract name order from.
+     *      E.g. "src/test/comparison_matrix_tqi.csv"
+     * @return
+     *      Mapping of {
+     *          Key: node name of weights receiver,
+     *          Value: left-to-right ordered list of characteristic or property names under comparison
+     *      }
+     */
+    private static Map<String, ArrayList<String>> parseNameOrder(Path comparisonMatrix) {
+        try {
+            FileReader fr = new FileReader(comparisonMatrix.toFile());
+            CSVReader reader = new CSVReader(fr);
+            String[] header = reader.readNext();
+
+            String nodeName = header[0];
+            ArrayList<String> weightNameOrder = new ArrayList<>(Arrays.asList(header).subList(1, header.length));
+
+            // TODO PICKUP: decide whether to have this method only parse one file, or give it a directory and return
+            // a true map of the results.
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         throw new NotImplementedException();
     }
