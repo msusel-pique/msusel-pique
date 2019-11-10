@@ -3,6 +3,7 @@ package qatch.calibration;
 import com.opencsv.CSVReader;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -58,32 +59,34 @@ public class Weighter {
      * Eventually this method should be depreicated by modifying the R-script to automatically attach the names
      * to its output.
      *
-     * @param comparisonMatrix
-     *      Path to the file of the comparison matrix to extract name order from.
-     *      E.g. "src/test/comparison_matrix_tqi.csv"
+     * @param comparisonMatricesDirectory
+     *      Path to the directory holding the comparison matrix files to extract name order from.
+     *      E.g. "src/comparison_matrices/"
      * @return
      *      Mapping of {
      *          Key: node name of weights receiver,
      *          Value: left-to-right ordered list of characteristic or property names under comparison
      *      }
      */
-    private static Map<String, ArrayList<String>> parseNameOrder(Path comparisonMatrix) {
-        try {
-            FileReader fr = new FileReader(comparisonMatrix.toFile());
-            CSVReader reader = new CSVReader(fr);
-            String[] header = reader.readNext();
+    static Map<String, ArrayList<String>> parseNameOrder(Path comparisonMatricesDirectory) {
 
-            String nodeName = header[0];
-            ArrayList<String> weightNameOrder = new ArrayList<>(Arrays.asList(header).subList(1, header.length));
+        Map<String, ArrayList<String>> orderedWeightNames = new HashMap<>();
+        for (final File matrixFile : Objects.requireNonNull(comparisonMatricesDirectory.toFile().listFiles())) {
 
-            // TODO PICKUP: decide whether to have this method only parse one file, or give it a directory and return
-            // a true map of the results.
+            try {
+                FileReader fr = new FileReader(matrixFile);
+                CSVReader reader = new CSVReader(fr);
+                String[] header = reader.readNext();
 
+                String nodeName = header[0];
+                ArrayList<String> weightNameOrder = new ArrayList<>(Arrays.asList(header).subList(1, header.length));
 
-        } catch (IOException e) {
-            e.printStackTrace();
+                orderedWeightNames.put(nodeName, weightNameOrder);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
-        throw new NotImplementedException();
+        return orderedWeightNames;
     }
 }
