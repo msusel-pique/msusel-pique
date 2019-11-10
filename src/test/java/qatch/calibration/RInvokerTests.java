@@ -47,10 +47,7 @@ public class RInvokerTests {
 
         // run R execution
         RInvoker.executeRScript(
-                RInvoker.Script.AHP,
-                comp_matrix_simple.toAbsolutePath().toString(),
-                TestHelper.OUTPUT.toAbsolutePath().toString()
-        );
+                RInvoker.Script.AHP, comp_matrix_simple, TestHelper.OUTPUT);
 
         if (!weightsOutput.isFile()) {
             Assert.fail("R execution did not generate the expected file. "
@@ -76,11 +73,7 @@ public class RInvokerTests {
         File weightsOutput = new File(TestHelper.OUTPUT.toFile(), "weights.json");
 
         // run R execution
-        RInvoker.executeRScript(
-                RInvoker.Script.AHP,
-                comp_matrix_zeroes.toAbsolutePath().toString(),
-                TestHelper.OUTPUT.toAbsolutePath().toString()
-        );
+        RInvoker.executeRScript(RInvoker.Script.AHP, comp_matrix_zeroes, TestHelper.OUTPUT);
 
         if (!weightsOutput.isFile()) {
             Assert.fail("R execution did not generate the expected file. "
@@ -110,11 +103,7 @@ public class RInvokerTests {
         File weightsOutput = new File(TestHelper.OUTPUT.toFile(), "weights.json");
 
         // run R execution
-        RInvoker.executeRScript(
-                RInvoker.Script.AHP,
-                comp_matrix_fractions.toAbsolutePath().toString(),
-                TestHelper.OUTPUT.toAbsolutePath().toString()
-        );
+        RInvoker.executeRScript(RInvoker.Script.AHP, comp_matrix_fractions, TestHelper.OUTPUT);
 
         if (!weightsOutput.isFile()) {
             Assert.fail("R execution did not generate the expected file. "
@@ -145,10 +134,7 @@ public class RInvokerTests {
 
         // run R Executions
         RInvoker.executeRScript(
-                RInvoker.Script.THRESHOLD,
-                benchmark_results.toAbsolutePath().toString(),
-                TestHelper.OUTPUT.toAbsolutePath().toString()
-        );
+                RInvoker.Script.THRESHOLD, benchmark_results, TestHelper.OUTPUT);
 
         if (!thresholdOutput.isFile()) {
             Assert.fail("R execution did not generate the expected file. "

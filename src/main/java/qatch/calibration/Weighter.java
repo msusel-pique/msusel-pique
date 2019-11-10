@@ -3,6 +3,7 @@ package qatch.calibration;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -19,7 +20,23 @@ public class Weighter {
 
     // Methods
 
-    public static Set<WeightResult> elicitateWeights(Path ) {
+    public static Set<WeightResult> elicitateWeights(Path comparisonMatricesDirectory, Path tempResultsDirectory) {
+
+        // Precondition checks
+        if (!comparisonMatricesDirectory.toFile().isDirectory()) {
+            throw new RuntimeException("Parameter comparisonMatricesDirectory must be a directory");
+        }
+        if (Objects.requireNonNull(comparisonMatricesDirectory.toFile().listFiles()).length < 1) {
+            throw new RuntimeException("At least one file must exist in comparisonMatricesDirectory");
+        }
+
+        // Create directory for temporary generated file results if not yet exists
+        tempResultsDirectory.toFile().mkdirs();
+
+        // Run R script
+
+
+
         throw new NotImplementedException();
     }
 }

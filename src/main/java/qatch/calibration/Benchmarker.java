@@ -172,11 +172,7 @@ public class Benchmarker {
         Path analysisDirectory = this.analysisResults.getParent();
 
         // Run R Script
-        RInvoker.executeRScript(
-                RInvoker.Script.THRESHOLD,
-                analysisDirectory.toAbsolutePath().toString(),
-                output.toAbsolutePath().toString()
-        );
+        RInvoker.executeRScript(RInvoker.Script.THRESHOLD, analysisDirectory, output);
 
         if (!thresholdsFile.isFile()) {
             throw new RuntimeException("Execution of R script did not result in an existing file at " + thresholdsFile.toString());

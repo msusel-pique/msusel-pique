@@ -25,19 +25,22 @@ class RInvoker {
 	 * Run an R script according to its enumeration.
 	 * In most cases the input and output parameters should point to a directory containing the needed
 	 * files for R execution, not the file itself. Check the relevant R script for details.
-	 *
 	 * @param script
 	 * 		Enumeration of the descired R script to run
 	 * @param input
 	 * 		Path to the directory containin the relevant parameters needed for the r script execution.
-	 * 	C:\Users\davidrice3\Repository\msusel-qatch\msusel-qatch\
+	 * 		E.g. C:\Users\myname\Repository\msusel-qatch\msusel-qatch\
+	 * 		Can be relative or full path.
 	 * @param output
-	 * 		Path to the desired directory to place results in. The directory is created if it does not yet exist.
-	 * 		The path should be absolute.
+	 * 		Path to directory to place the files resulting from R execution.
+	 * 		Can be realive or full path.
 	 */
-	static void executeRScript(Script script, String input, String output){
+	static void executeRScript(Script script, Path input, Path output){
 
-		new File(output).mkdirs();
+		input = input.toAbsolutePath();
+		output = output.toAbsolutePath();
+
+		new File(output.toString()).mkdirs();
 
 		// TODO: Source Rscript bin in workspace-independent way
 		String rBinPath = findRRunner().toString();
@@ -49,7 +52,7 @@ class RInvoker {
 		if(System.getProperty("os.name").contains("Windows")){ cli = "cmd.exe"; }
 		else { cli = "sh"; }
 
-		pb = new ProcessBuilder(cli, "/c", rBinPath, scriptPath.toString(), input, output);
+		pb = new ProcessBuilder(cli, "/c", rBinPath, scriptPath.toString(), input.toString(), output.toString());
 
 		pb.redirectErrorStream(true);
 		Process p = null;
