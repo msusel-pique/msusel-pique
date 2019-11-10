@@ -1,8 +1,8 @@
 # In:
 #   This script assumes a directory location is passed in as
 #   a command argument. That directory must exist and must contain
-#   a directory "comparison_matrices" that contains the .csv files
-#   from ComparisonMatricesGenerator.generateCompMatrics().
+#   the .csv files: one for TQI node and each Characteristic node.
+#   (the .csv files can be generated from ComparisonMatricesGenerator.generateCompMatrics()).
 #   These spreadsheets must also have the HAND-ENTERED upper diagonal
 #   values filled in.  Note: the hand-entered values can be in decimal
 #   or fraction form, but if in fraction form they must be represented
@@ -24,9 +24,6 @@ setwd(input)
 
 # List the files found in this directory
 files <- dir(input)
-# files <- dir("./comparison_matrices")
-# setwd("./comparison_matrices")
-
 first <- TRUE
 
 # Iterate through each file found in the directory

@@ -2,6 +2,9 @@ package qatch.calibration;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.nio.file.Path;
+import java.util.Set;
+
 /**
  * Utility class responsible for deriving the weights (TQI-Characteristics layer and Characteristics-Properties layer)
  * described by hand-entered comparison matrices as part of the analytical hierarchy process.
@@ -16,10 +19,7 @@ public class Weighter {
 
     // Methods
 
-    /**
-     *
-     */
-    public static void run() {
+    public static Set<WeightResult> elicitateWeights(Path ) {
         throw new NotImplementedException();
     }
 }
