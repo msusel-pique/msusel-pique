@@ -52,7 +52,6 @@ public class Measure {
 		return this.diagnostics
 			.stream()
 		    .filter(d -> d.getId().equals(id))
-		    .map(d -> new Diagnostic(d.getId()))
 		    .findAny()
 		    .orElse(null);
 	}
