@@ -67,7 +67,7 @@ public class SingleProjectEvaluator {
         project.evaluateTqi();
 
         // create a file of the results and return its path
-        return project.exportEvaluation(resultsDir);
+        return project.exportToJson(resultsDir);
     }
 
     /**

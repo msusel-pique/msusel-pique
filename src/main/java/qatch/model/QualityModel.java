@@ -1,12 +1,13 @@
 package qatch.model;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import qatch.analysis.Diagnostic;
 import qatch.analysis.Measure;
+import qatch.utility.FileUtility;
 
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
@@ -113,11 +114,6 @@ public class QualityModel {
 	public void setTqi(Tqi tqi) {
 		this.tqi = tqi;
 	}
-	public Set<ModelNode> getTqiAndCharacteristicsNodes() {
-		Set<ModelNode> nodes = new HashSet<>(getCharacteristics().values());
-		nodes.add(getTqi());
-		return nodes;
-	}
 	public PropertySet getProperties_deprecated() {
 		return properties_deprecated;
 	}
@@ -133,6 +129,19 @@ public class QualityModel {
 
 
 	// Methods
+	/**
+	 * Create a hard-drive file representation of the model
+	 *
+	 * @param outputDirectory
+	 * 		The directory to place the QM file into.  Does not need to exist beforehand.
+	 * @return
+	 * 		The path of the exported model file.
+	 */
+	public Path exportToJson(Path outputDirectory) {
+		String fileName = "qualityModel_" + getName().replaceAll("\\s","");
+		return FileUtility.exportObjectToJson(this, outputDirectory, fileName);
+	}
+
 	/**
 	 * This method is responsible for importing the desired Quality Model
 	 * by parsing the file that contains the text data of the Quality Model.

@@ -170,7 +170,7 @@ public class ProjectTests {
     public void testExportEvaluation() throws IOException {
         Path exportLocation = Paths.get("src/test/output/TestExportEval");
 
-        Path result = p.exportEvaluation(exportLocation);
+        Path result = p.exportToJson(exportLocation);
         FileReader fr = new FileReader(result.toString());
         JsonObject jsonResults = new JsonParser().parse(fr).getAsJsonObject();
         fr.close();

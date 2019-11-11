@@ -9,6 +9,7 @@ import qatch.model.Characteristic;
 import qatch.model.Property;
 import qatch.model.QualityModel;
 import qatch.model.Tqi;
+import qatch.utility.FileUtility;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -166,35 +167,17 @@ public class Project{
 	}
 
 	/**
-	 * Create a hard-drive file representation of the project evaluation results
-	 * @return
-	 * 		The path to the hard-drive evaluation file
+	 * Create a hard-drive file representation of the project.
 	 *
+	 * @param resultsDir
+	 * 		The directory to place the project representation file into.  Does not need to exist beforehand.
+	 * @return
+	 * 		The path of the project json file.
 	 */
-	public Path exportEvaluation(Path resultsDir) {
+	public Path exportToJson(Path resultsDir) {
 
-		// ensure target path directory exists
-		resultsDir.toFile().mkdirs();
-
-		// instantiate results file reference
-		File evalResults = new File(resultsDir.toFile(), this.getName() + "_evalResults.json");
-
-		//Instantiate a Json Parser
-		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-
-		//Create the Json String of the projects
-		String json = gson.toJson(this);
-
-		//Save the results
-		try {
-			FileWriter writer = new FileWriter(evalResults.toString());
-			writer.write(json);
-			writer.close();
-		} catch(IOException e){
-			System.out.println(e.getMessage());
-		}
-
-		return evalResults.toPath();
+		String fileName = this.getName() + "_evalResults.json";
+		return FileUtility.exportObjectToJson(this, resultsDir, fileName);
 	}
 
 	/**

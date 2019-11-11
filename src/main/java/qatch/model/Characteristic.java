@@ -55,6 +55,9 @@ public class Characteristic extends ModelNode {
 	}
 	public Map<String, Double> getWeights() { return weights; }
 	public void setWeight(String propertyName, double value) { this.weights.put(propertyName, value); }
+	public void setWeights(Map<String, Double> weights) {
+		this.weights = weights;
+	}
 
 
 	// methods

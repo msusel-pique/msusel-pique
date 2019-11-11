@@ -5,6 +5,8 @@ import qatch.analysis.IToolLOC;
 import qatch.calibration.Benchmarker;
 import qatch.calibration.WeightResult;
 import qatch.calibration.Weighter;
+import qatch.model.Characteristic;
+import qatch.model.ModelNode;
 import qatch.model.QualityModel;
 
 import java.nio.file.Path;
@@ -21,7 +23,7 @@ import java.util.Set;
  */
 public class QualityModelDeriver {
 
-    public static void deriveModel(
+    public static QualityModel deriveModel(
             QualityModel qmDescription,
             IToolLOC locTool,
             Map<String, ITool> tools,
@@ -30,8 +32,7 @@ public class QualityModelDeriver {
             Path analysisResults,
             Path rThresholdsOutput,
             Path tempWeightsDirectory,
-            String projectRootFlag)
-    {
+            String projectRootFlag) {
 
         // (1) Derive thresholds
         Map<String, Double[]> measureNameThresholdMappings = Benchmarker.deriveThresholds(
@@ -42,14 +43,27 @@ public class QualityModelDeriver {
         Set<WeightResult> weights = Weighter.elicitateWeights(comparisonMatricesDirectory, tempWeightsDirectory);
 
         // (3) Apply results to nodes in quality model by matching names
+        // Thresholds (Property nodes)
         measureNameThresholdMappings.forEach((measureName, thresholds) -> {
             qmDescription.getPropertyByMeasureName(measureName).setThresholds(thresholds);
         });
 
-        weights.forEach(weightsIn -> {
-//            qmDescription.
-        });
+        // Weights (TQI and Characteristic nodes)
+        for (WeightResult weightsIn : weights) {
+            // Check root node case
+            if (qmDescription.getTqi().getName().equals(weightsIn.name)) { qmDescription.getTqi().setWeights(weightsIn.weights); }
+            // Otherwise search though Characteristic nodes
+            else {
+                for (Characteristic characteristic : qmDescription.getCharacteristics().values()) {
+                    if (characteristic.getName().equals(weightsIn.name)) {
+                        characteristic.setWeights(weightsIn.weights);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return qmDescription;
 
     }
-
 }
