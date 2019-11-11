@@ -92,49 +92,8 @@ public class BenchmarkerTests {
     public void testDeriveThresholds() {
 
         // Initialize mock tools
-        IToolLOC fakeLocTool = new IToolLOC() {
-            @Override
-            public Integer analyze(Path projectLocation) {
-                return 1000;
-            }
-        };
-        ITool fakeTool = new ITool() {
-            @Override
-            public Path analyze(Path projectLocation) {
-                return Paths.get("src/test/resources/tool_results/faketool_output.xml");
-            }
-
-            @Override
-            public Map<String, Measure> applyFindings(Map<String, Measure> measures, Map<String, Diagnostic> diagnosticFindings) {
-                return null;
-            }
-
-            @Override
-            public Map<String, Measure> parseConfig(Path toolConfig) {
-                return null;
-            }
-
-            @Override
-            public Map<String, Diagnostic> parseAnalysis(Path toolResults) {
-                Map<String, Diagnostic> diagnostics = new HashMap<>();
-                diagnostics.put("TST0001", TestHelper.makeDiagnostic("TST0001"));
-                diagnostics.put("TST0002", TestHelper.makeDiagnostic("TST0002"));
-                diagnostics.put("TST0003", TestHelper.makeDiagnostic("TST0003"));
-                diagnostics.put("TST0004", TestHelper.makeDiagnostic("TST0004"));
-                diagnostics.put("TST0005", TestHelper.makeDiagnostic("TST0005"));
-                return diagnostics;
-            }
-
-            @Override
-            public Path getConfig() {
-                return null;
-            }
-
-            @Override
-            public String getName() {
-                return "Fake Tool";
-            }
-        };
+        IToolLOC fakeLocTool = TestHelper.makeIToolLoc();
+        ITool fakeTool = TestHelper.makeITool();
         Map<String, ITool> tools = new HashMap<String, ITool>() {{ put(fakeTool.getName(), fakeTool); }};
 
         // Create benchmarker and run process

@@ -1,9 +1,7 @@
 package qatch;
 
 import org.apache.commons.io.FileUtils;
-import qatch.analysis.Diagnostic;
-import qatch.analysis.Finding;
-import qatch.analysis.Measure;
+import qatch.analysis.*;
 import qatch.evaluation.Project;
 import qatch.model.Characteristic;
 import qatch.model.Property;
@@ -19,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Utility framework for quickly generating model and project objects for testing
+ * Utility framework for quickly generating model, project, and tool objects for testing
  */
 public class TestHelper {
 
@@ -27,15 +25,9 @@ public class TestHelper {
     public static final Path TEST_RESOURCES = Paths.get(TEST_DIR.toString(), "resources").toAbsolutePath();
     public static final Path OUTPUT = Paths.get(TEST_DIR.toString(), "output").toAbsolutePath();
 
-
-    public static Characteristic makeCharacteristic(String name) {
-        HashMap<String, Double> weights = new HashMap<String, Double>() {{
-            put("Property 01", 0.6);
-            put("Property 02", 0.4);
-        }};
-        return new Characteristic(name, name + " description", name + " standard", weights);
-    }
-
+    /*
+     * Analysis objects
+     */
     public static Diagnostic makeDiagnostic(String id) {
         Finding f1 = makeFinding(id + "/filepath/f1", 234, 2);
         Finding f2 = makeFinding(id + "/filepath/f2", 345, 3);
@@ -55,6 +47,60 @@ public class TestHelper {
         return new Measure(name, name + " tool name", Arrays.asList(d1, d2));
     }
 
+
+    /*
+     * Evaluation objects
+     */
+    /**
+     * Make project without reliance on a quality model file
+     */
+    public static Project makeProject(String name) {
+        Property p1 = makeProperty("Property 01");
+        Property p2 = makeProperty("Property 02");
+        Characteristic c1 = makeCharacteristic("Characteristic 01");
+        Characteristic c2 = makeCharacteristic("Characteristic 02");
+        c1.setProperties(new HashMap<String, Property>() {{
+            put(p1.getName(), p1);
+            put(p2.getName(), p2);
+        }});
+        c2.setProperties(new HashMap<String, Property>() {{
+            put(p1.getName(), p1);
+            put(p2.getName(), p2);
+        }});
+        Tqi tqi = makeTqi(
+                "TQI",
+                new HashMap<String, Characteristic>() {{
+                    put(c1.getName(), c1);
+                    put(c2.getName(), c2);
+                }},
+                new HashMap<String, Property>() {{
+                    put(p1.getName(), p1);
+                    put(p2.getName(), p2);
+                }}
+        );
+
+        Project project = new Project(name);
+        project.setLinesOfCode(100);
+        project.setTqi(tqi);
+        project.getTqi().setValue(0.92);
+        project.setCharacteristic(c1.getName(), c1);
+        project.setCharacteristic(c2.getName(), c2);
+        project.setProperty(p1.getName(), p1);
+        project.setProperty(p2.getName(), p2);
+
+        return project;
+    }
+
+    /*
+     * Model objects
+     */
+    public static Characteristic makeCharacteristic(String name) {
+        HashMap<String, Double> weights = new HashMap<String, Double>() {{
+            put("Property 01", 0.6);
+            put("Property 02", 0.4);
+        }};
+        return new Characteristic(name, name + " description", name + " standard", weights);
+    }
     /**
      * Automatically create a measure with diagnostics and finidings and attach to property field
      * @param name
@@ -111,46 +157,61 @@ public class TestHelper {
         return tqi;
     }
 
-    /**
-     * Make project without reliance on a quality model file
+    /*
+     * Tool objects
      */
-    public static Project makeProject(String name) {
-        Property p1 = makeProperty("Property 01");
-        Property p2 = makeProperty("Property 02");
-        Characteristic c1 = makeCharacteristic("Characteristic 01");
-        Characteristic c2 = makeCharacteristic("Characteristic 02");
-        c1.setProperties(new HashMap<String, Property>() {{
-            put(p1.getName(), p1);
-            put(p2.getName(), p2);
-        }});
-        c2.setProperties(new HashMap<String, Property>() {{
-            put(p1.getName(), p1);
-            put(p2.getName(), p2);
-        }});
-        Tqi tqi = makeTqi(
-            "TQI",
-            new HashMap<String, Characteristic>() {{
-                put(c1.getName(), c1);
-                put(c2.getName(), c2);
-            }},
-            new HashMap<String, Property>() {{
-                put(p1.getName(), p1);
-                put(p2.getName(), p2);
-            }}
-        );
+    public static ITool makeITool() {
+       return new ITool() {
+            @Override
+            public Path analyze(Path projectLocation) {
+                return Paths.get("src/test/resources/tool_results/faketool_output.xml");
+            }
 
-        Project project = new Project(name);
-        project.setLinesOfCode(100);
-        project.setTqi(tqi);
-        project.getTqi().setValue(0.92);
-        project.setCharacteristic(c1.getName(), c1);
-        project.setCharacteristic(c2.getName(), c2);
-        project.setProperty(p1.getName(), p1);
-        project.setProperty(p2.getName(), p2);
+            @Override
+            public Map<String, Measure> applyFindings(Map<String, Measure> measures, Map<String, Diagnostic> diagnosticFindings) {
+                return null;
+            }
 
-        return project;
+            @Override
+            public Map<String, Measure> parseConfig(Path toolConfig) {
+                return null;
+            }
+
+            @Override
+            public Map<String, Diagnostic> parseAnalysis(Path toolResults) {
+                Map<String, Diagnostic> diagnostics = new HashMap<>();
+                diagnostics.put("TST0001", TestHelper.makeDiagnostic("TST0001"));
+                diagnostics.put("TST0002", TestHelper.makeDiagnostic("TST0002"));
+                diagnostics.put("TST0003", TestHelper.makeDiagnostic("TST0003"));
+                diagnostics.put("TST0004", TestHelper.makeDiagnostic("TST0004"));
+                diagnostics.put("TST0005", TestHelper.makeDiagnostic("TST0005"));
+                return diagnostics;
+            }
+
+            @Override
+            public Path getConfig() {
+                return null;
+            }
+
+            @Override
+            public String getName() {
+                return "Fake Tool";
+            }
+        };
     }
 
+    public static IToolLOC makeIToolLoc() {
+        return new IToolLOC() {
+            @Override
+            public Integer analyze(Path projectLocation) {
+                return 1000;
+            }
+        };
+    }
+
+    /*
+     * Other
+     */
     public static void clean(File dest) throws IOException {
         if (dest.exists()) { FileUtils.cleanDirectory(dest); }
         else dest.mkdirs();
