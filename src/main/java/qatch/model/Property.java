@@ -18,27 +18,27 @@ public class Property {
 	@Expose
 	private boolean positive;//If this field is true then the metric has a positive impact on the property
 	@Expose
-	private double[] thresholds;//The three thresholds of the property metric, needed for the evaluation
+	private Double[] thresholds;//The three thresholds of the property metric, needed for the evaluation
 
 
 	public Property(){
 		// Just create the thresholds array.
-		thresholds = new double[THRESHOLDS_NUM];
+		thresholds = new Double[THRESHOLDS_NUM];
 		measure = new Measure();
 	}
 	
 	public Property(Measure measure){
-		thresholds = new double[THRESHOLDS_NUM];
+		thresholds = new Double[THRESHOLDS_NUM];
 		this.measure = measure;
 	}
 
 	public Property(String name, Measure measure) {
-		thresholds = new double[THRESHOLDS_NUM];
+		thresholds = new Double[THRESHOLDS_NUM];
 		this.name = name;
 		this.measure = measure;
 	}
 
-	public Property(String name, String description, boolean impact, double[] thresholds, Measure measure) {
+	public Property(String name, String description, boolean impact, Double[] thresholds, Measure measure) {
 		this.name = name;
 		this.description = description;
 		this.positive = impact;
@@ -71,11 +71,11 @@ public class Property {
 		this.description = description;
 	}
 	
-	public double[] getThresholds() {
+	public Double[] getThresholds() {
 		return thresholds;
 	}
 	
-	public void setThresholds(double[] thresholds) {
+	public void setThresholds(Double[] thresholds) {
 		this.thresholds = thresholds;
 	}
 	

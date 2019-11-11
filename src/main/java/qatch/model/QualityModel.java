@@ -9,10 +9,7 @@ import qatch.analysis.Measure;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class encapsulates all the appropriate information that describe a 
@@ -25,6 +22,10 @@ import java.util.Map;
  * 
  * @author Miltos, Rice
  *
+ */
+/*
+ * TODO:
+ *   (1) Add checks immediately after model creation that no duplicate node names by-level exist
  */
 public class QualityModel {
 
@@ -59,6 +60,7 @@ public class QualityModel {
 
 
 	// Setters and Getters
+
 	public Characteristic getCharacteristic(String name) {
 		return this.characteristics.get(name);
 	}
@@ -68,17 +70,33 @@ public class QualityModel {
 	public void setCharacteristic(String characteristicName, Characteristic characteristic) {
 		this.characteristics.put(characteristicName, characteristic);
 	}
-	public String getName() {
-		return name;
-	}
 	public void setCharacteristics(Map<String, Characteristic> characteristics) {
 		this.characteristics = characteristics;
+	}
+	public Measure getMeasure(String measureName) {
+		for (Property property : getProperties().values()) {
+			if (property.getMeasure().getName().equals(measureName)) {
+				return property.getMeasure();
+			}
+		}
+		throw new RuntimeException("Unable to find measure with name " + measureName + " from QM's property nodes");
+	}
+	public String getName() {
+		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
 	public Property getProperty(String name) {
 		return this.properties.get(name);
+	}
+	public Property getPropertyByMeasureName(String measureName) {
+		for (Property property : getProperties().values()) {
+			if (property.getMeasure().getName().equals(measureName)) {
+				return property;
+			}
+		}
+		throw new RuntimeException("Unable to find property with child measure name " + measureName + " from QM's property nodes");
 	}
 	public Map<String, Property> getProperties() {
 		return properties;
@@ -94,6 +112,11 @@ public class QualityModel {
 	}
 	public void setTqi(Tqi tqi) {
 		this.tqi = tqi;
+	}
+	public Set<ModelNode> getTqiAndCharacteristicsNodes() {
+		Set<ModelNode> nodes = new HashSet<>(getCharacteristics().values());
+		nodes.add(getTqi());
+		return nodes;
 	}
 	public PropertySet getProperties_deprecated() {
 		return properties_deprecated;
@@ -143,7 +166,7 @@ public class QualityModel {
 				String name = jsonCharacteristic.getAsJsonPrimitive("name").getAsString();
 				String standard = jsonCharacteristic.getAsJsonPrimitive("standard").getAsString();
 				String description = jsonCharacteristic.getAsJsonPrimitive("description").getAsString();
-				Characteristic qmCharacteristic = new Characteristic(name, standard, description);
+				Characteristic qmCharacteristic = new Characteristic(name, description, standard);
 				if (jsonCharacteristic.getAsJsonObject("weights") != null) {
 					jsonCharacteristic.getAsJsonObject("weights").keySet().forEach(weight -> {
 						qmCharacteristic.setWeight(weight, jsonCharacteristic.getAsJsonObject("weights").getAsJsonPrimitive(weight).getAsDouble());
@@ -161,7 +184,7 @@ public class QualityModel {
 				String name = jsonProperty.getAsJsonPrimitive("name").getAsString();
 				String description = jsonProperty.getAsJsonPrimitive("description").getAsString();
 				boolean impact = jsonProperty.getAsJsonPrimitive("positive_impact").getAsBoolean();
-				double[] thresholds = new double[3];
+				Double[] thresholds = new Double[3];
 
 				if (jsonProperty.getAsJsonArray("thresholds") != null) {
 					JsonArray jsonThresholds = jsonProperty.getAsJsonArray("thresholds");

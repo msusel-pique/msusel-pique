@@ -88,7 +88,7 @@ public class ThresholdImporter {
 			//Get the current object
 			JsonObject jobject = jarray.get(i).getAsJsonObject();
 			//Get the thresholds of the i-th object
-			double[] t = new double[3];
+			Double[] t = new Double[3];
 			t[0] = Double.parseDouble(jobject.get("t1").toString());
 			t[1] = Double.parseDouble(jobject.get("t2").toString());
 			t[2] = Double.parseDouble(jobject.get("t3").toString());

@@ -33,7 +33,7 @@ public class TestHelper {
             put("Property 01", 0.6);
             put("Property 02", 0.4);
         }};
-        return new Characteristic(name, name + " standard", name + " description", weights);
+        return new Characteristic(name, name + " description", name + " standard", weights);
     }
 
     public static Diagnostic makeDiagnostic(String id) {
@@ -65,7 +65,7 @@ public class TestHelper {
     public static Property makeProperty(String name) {
         Measure m = makeMeasure(name + " measure");
         Property p = new Property(name, m);
-        p.setThresholds(new double[] {0.1, 0.2, 0.5});
+        p.setThresholds(new Double[] {0.1, 0.2, 0.5});
         return p;
     }
 

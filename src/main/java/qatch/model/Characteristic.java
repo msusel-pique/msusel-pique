@@ -13,13 +13,9 @@ import java.util.Map;
  * @author Miltos, Rice
  *
  */
-public class Characteristic {
+public class Characteristic extends ModelNode {
 
 	// Instance variables
-	private String description;	 //A brief description of the characteristic
-	@Expose
-	private double value;  //The quality score of this characteristic (derives from the weighted average of the eval fields of the QM's properties)
-	private String name;  //The name of the characteristic
 	private String standard;  //The standard from which this characteristic derives
 	// TODO: eventually consider new tree object that combines properties and their weight instead of relying on String name matching (not enough time for me to refactor currently)
 	private Map<String, Property> properties = new HashMap<>();  // mapping of property names and their property objects
@@ -28,39 +24,20 @@ public class Characteristic {
 
 
 	// Constructors
-	public Characteristic(String name, String standard, String description, Map<String, Double> weights){
-		this.name = name;
-		this.description = standard;
+	public Characteristic(String name, String description, String standard, Map<String, Double> weights){
+		super(name, description);
 		this.standard = description;
 		this.weights = weights;
 	}
-
-	public Characteristic(){
-		this.name = "";
-		this.description = "";
-		this.standard = "";
-	}
 	
-	public Characteristic(String name, String standard, String description){
-		this.name = name;
-		this.description = standard;
-		this.standard = description;
+	public Characteristic(String name, String description, String standard){
+		super(name, description);
+		this.standard = standard;
 	}
 
 
 	// getters and setters
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String desription) {
-		this.description = desription;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
+
 	public Map<String, Property> getProperties() {
 		return properties;
 	}
@@ -72,12 +49,6 @@ public class Characteristic {
 	}
 	public void setStandard(String standard) {
 		this.standard = standard;
-	}
-	public double getValue() {
-		return value;
-	}
-	public void setValue(double value) {
-		this.value = value;
 	}
 	public double getWeight(String propertyName) {
 		return this.weights.get(propertyName);
@@ -97,20 +68,20 @@ public class Characteristic {
 	 * Typically, it calculates the weighted average of the values of the eval fields
 	 * of the project properties and stores it to the eval field of this characteristic.
 	 */
-	public void evaluate(Map<String, Property> properties) {
-
+	@Override
+	public void evaluate() {
 		// assert a weight mapping exists for each provided property
-		this.getWeights().keySet().forEach(k -> {
-			if (!properties.containsKey(k)) {
-				throw new RuntimeException("No weight-measure mapping in Characteristic " + this.getName() +
-					"exists for Property " + k);
+		getWeights().keySet().forEach(k -> {
+			if (!getProperties().containsKey(k)) {
+				throw new RuntimeException("No weight-measure mapping in Characteristic " + getName() +
+						"exists for Property " + k);
 			}
 		});
 
 		// evaluate: standard weighted sum of property values
 		double sum = 0.0;
-		for (Map.Entry<String, Double> weightMap : this.getWeights().entrySet()) {
-			sum += properties.get(weightMap.getKey()).getValue() * weightMap.getValue();
+		for (Map.Entry<String, Double> weightMap : getWeights().entrySet()) {
+			sum += getProperties().get(weightMap.getKey()).getValue() * weightMap.getValue();
 		}
 
 		this.setValue(sum);

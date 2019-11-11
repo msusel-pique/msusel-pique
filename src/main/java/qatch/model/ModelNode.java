@@ -27,6 +27,9 @@ public abstract class ModelNode {
     public String getDescription() {
         return description;
     }
+    public void setDescription(String desription) {
+        this.description = desription;
+    }
     public String getName() {
         return name;
     }

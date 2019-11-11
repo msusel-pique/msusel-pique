@@ -33,51 +33,7 @@ import java.util.*;
  * The Benchmarker provides functionality to run batch tool analysis and run R threshold
  * generation on the resulting Property-Finding pairings from each benchmark project.
  */
-// TODO: turn this class into an abstract utility class (shouldn't need to instantiate more than one of these and fields aren't needed for data storage)
 public class Benchmarker {
-
-//    // Fields
-//    private Path analysisResults;  // location to place hard-disk file of analysis results (disk file necessary for R script)
-//    private final Path benchmarkRepository;  // location of root foldering containing language-specific projects for benchmarking
-//    private QualityModel qmDescription;  // location of quality model description file
-//    private IToolLOC locTool;  // loc-specific purpose tool, necessary for normalization
-//    private Map<String, Project> projects = new HashMap<>();  // { key: project name, value: project object }
-//    private Map<String, ITool> tools = new HashMap<>();  // tools intended for static analysis of diagnostic findings
-//    private Map<String, Double[]> thresholds = new HashMap<>();  // { key: property name, value: property thresholds }
-//
-//
-//    // Constructors
-//    Benchmarker() {
-//        this.benchmarkRepository = null;
-//    }
-//
-//    /**
-//     * @param benchmarkRepository
-//     *      Location of root foldering containing language-specific projects for benchmarking
-//     * @param qmDescription
-//     *      Location of quality model description file
-//     * @param analysisResults
-//     *      Desired location to place the benchmarking [Project_Name:Measure_Value] matrix results.
-//     *      This path should go up to the directory level containing the results but not specify the
-//     *      actual result file name.
-//     */
-//    Benchmarker(Path benchmarkRepository, Path qmDescription, Path analysisResults, IToolLOC locTool, Set<ITool> tools) {
-//        this.benchmarkRepository = benchmarkRepository;
-//        this.qmDescription = new QualityModel(qmDescription);
-//        this.analysisResults = Paths.get(analysisResults.toString(), "benchmark_data.csv");
-//        this.locTool = locTool;
-//        tools.forEach(t -> this.tools.put(t.getName(), t));
-//    }
-//
-//
-//    // Getters and setters
-//    public Path getAnalysisResults() {
-//        return analysisResults;
-//    }
-//    void setAnalysisResults(Path analysisResults) {
-//        this.analysisResults = analysisResults;
-//    }
-
 
     // Methods
     /**
@@ -85,6 +41,14 @@ public class Benchmarker {
      * Use the tool run data with the R script to generate thresholds for each known property.
      * Knowledge of measures to associate with tool findings comes from the quality model description.
      *
+     * @param benchmarkRepository
+     *      Location of folder containing all projects intended for use in benchmarking
+     * @param qmDescription
+     *      Location of quality model description file on disk
+     * @param locTool
+     *      Language specific instance of tool to use for getting lines of code from a project
+     * @param tools
+     *      Collection of all tools needed for static analysis of Diagnostics described in the quality model
      * @param projectRootFlag
      *      Flag, usually a file extension, that signals that a project to be analyzed is
      *      within the directory the flag was found in.
@@ -140,7 +104,6 @@ public class Benchmarker {
                 project.addFindings(diagnostic);
             });
 
-
             // Evaluate project up to Measure level (normalize diagnostic values according to LoC)
             project.evaluateMeasures();
 
@@ -167,9 +130,9 @@ public class Benchmarker {
      *      The disk file may be considered temporary (only needed for the scope of this method)
      *      and thus deleted after method execution.
      * @param analysisResults
-     *      Output for R Threshold script
+     *      Input for R Threshold script: matrix of project name's and their measure values
      * @return
-     *      A mapping of property names to the associated thresholds of that property
+     *      A mapping of property's measure names to the associated thresholds of that measure's property
      */
     static Map<String, Double[]> rThresholdRunnerMapper(Path output, Path analysisResults) {
 

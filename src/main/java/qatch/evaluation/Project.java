@@ -150,7 +150,7 @@ public class Project{
 	 * provided by the quality model and the values contained in the project's Property nodes.
 	 */
 	public void evaluateCharacteristics() {
-		this.getCharacteristics().values().forEach(c -> { c.evaluate(this.getProperties()); });
+		this.getCharacteristics().values().forEach(Characteristic::evaluate);
 	}
 
 	/**
