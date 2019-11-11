@@ -10,6 +10,7 @@ import qatch.analysis.ITool;
 import qatch.analysis.IToolLOC;
 import qatch.analysis.Measure;
 import qatch.evaluation.Project;
+import qatch.model.QualityModel;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -34,7 +35,6 @@ public class BenchmarkerTests {
         Project project02 = TestHelper.makeProject("Project 02");
         Project project03 = TestHelper.makeProject("Project 03");
         HashMap<String, Project> projects = new HashMap<>();
-        Benchmarker benchmarker = new Benchmarker();
 
         project01.getMeasure("Property 01 measure").setNormalizedValue(0.11);
         project01.getMeasure("Property 02 measure").setNormalizedValue(0.12);
@@ -47,11 +47,9 @@ public class BenchmarkerTests {
         projects.put(project02.getName(), project02);
         projects.put(project03.getName(), project03);
 
-        benchmarker.setAnalysisResults(analysisResultsAsOutput);
-
         // Run method
         List<Project> projectsList = new ArrayList<>(projects.values());
-        Path generatedMatrix = benchmarker.createProjectMeasureMatrix(projectsList);
+        Path generatedMatrix = Benchmarker.createProjectMeasureMatrix(projectsList, analysisResultsAsOutput);
 
         // Get reader for results
         FileReader fr = new FileReader(generatedMatrix.toFile());
@@ -91,7 +89,7 @@ public class BenchmarkerTests {
     }
 
     @Test
-    public void testRun() {
+    public void testDeriveThresholds() {
 
         // Initialize mock tools
         IToolLOC fakeLocTool = new IToolLOC() {
@@ -137,13 +135,14 @@ public class BenchmarkerTests {
                 return "Fake Tool";
             }
         };
-        Set<ITool> tools = new HashSet<>(Collections.singletonList(fakeTool));
+        Map<String, ITool> tools = new HashMap<String, ITool>() {{ put(fakeTool.getName(), fakeTool); }};
 
         // Create benchmarker and run process
-        Benchmarker benchmarker = new Benchmarker(
-                benchmarkRepo, qmDescription, analysisResultsAsOutput.getParent(), fakeLocTool, tools
-        );
-        Map<String, Double[]> result = benchmarker.run(".txt", this.rThresholdsOutput);
+        Map<String, Double[]> result = Benchmarker.deriveThresholds(
+                this.benchmarkRepo, new QualityModel(this.qmDescription),
+                fakeLocTool, tools,
+                ".txt",
+                analysisResultsAsOutput, this.rThresholdsOutput);
 
         // Assert results
         Assert.assertTrue(result.containsKey("Measure 01"));
@@ -162,11 +161,8 @@ public class BenchmarkerTests {
     }
 
     @Test
-    public void testGenerateThresholds() {
-        Benchmarker benchmarker = new Benchmarker();
-
-        benchmarker.setAnalysisResults(this.analysisResultsAsInput);
-        Map<String, Double[]> thresholds = benchmarker.generateThresholds(TestHelper.OUTPUT);
+    public void testRThresholdRunnerMapper() {
+        Map<String, Double[]> thresholds = Benchmarker.rThresholdRunnerMapper(TestHelper.OUTPUT, this.analysisResultsAsInput);
 
         Assert.assertEquals(3, thresholds.size());
 

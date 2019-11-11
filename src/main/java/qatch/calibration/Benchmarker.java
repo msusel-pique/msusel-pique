@@ -36,47 +36,47 @@ import java.util.*;
 // TODO: turn this class into an abstract utility class (shouldn't need to instantiate more than one of these and fields aren't needed for data storage)
 public class Benchmarker {
 
-    // Fields
-    private Path analysisResults;  // location to place hard-disk file of analysis results (disk file necessary for R script)
-    private final Path benchmarkRepository;  // location of root foldering containing language-specific projects for benchmarking
-    private QualityModel qmDescription;  // location of quality model description file
-    private IToolLOC locTool;  // loc-specific purpose tool, necessary for normalization
-    private Map<String, Project> projects = new HashMap<>();  // { key: project name, value: project object }
-    private Map<String, ITool> tools = new HashMap<>();  // tools intended for static analysis of diagnostic findings
-    private Map<String, Double[]> thresholds = new HashMap<>();  // { key: property name, value: property thresholds }
-
-
-    // Constructors
-    Benchmarker() {
-        this.benchmarkRepository = null;
-    }
-
-    /**
-     * @param benchmarkRepository
-     *      Location of root foldering containing language-specific projects for benchmarking
-     * @param qmDescription
-     *      Location of quality model description file
-     * @param analysisResults
-     *      Desired location to place the benchmarking [Project_Name:Measure_Value] matrix results.
-     *      This path should go up to the directory level containing the results but not specify the
-     *      actual result file name.
-     */
-    Benchmarker(Path benchmarkRepository, Path qmDescription, Path analysisResults, IToolLOC locTool, Set<ITool> tools) {
-        this.benchmarkRepository = benchmarkRepository;
-        this.qmDescription = new QualityModel(qmDescription);
-        this.analysisResults = Paths.get(analysisResults.toString(), "benchmark_data.csv");
-        this.locTool = locTool;
-        tools.forEach(t -> this.tools.put(t.getName(), t));
-    }
-
-
-    // Getters and setters
-    public Path getAnalysisResults() {
-        return analysisResults;
-    }
-    void setAnalysisResults(Path analysisResults) {
-        this.analysisResults = analysisResults;
-    }
+//    // Fields
+//    private Path analysisResults;  // location to place hard-disk file of analysis results (disk file necessary for R script)
+//    private final Path benchmarkRepository;  // location of root foldering containing language-specific projects for benchmarking
+//    private QualityModel qmDescription;  // location of quality model description file
+//    private IToolLOC locTool;  // loc-specific purpose tool, necessary for normalization
+//    private Map<String, Project> projects = new HashMap<>();  // { key: project name, value: project object }
+//    private Map<String, ITool> tools = new HashMap<>();  // tools intended for static analysis of diagnostic findings
+//    private Map<String, Double[]> thresholds = new HashMap<>();  // { key: property name, value: property thresholds }
+//
+//
+//    // Constructors
+//    Benchmarker() {
+//        this.benchmarkRepository = null;
+//    }
+//
+//    /**
+//     * @param benchmarkRepository
+//     *      Location of root foldering containing language-specific projects for benchmarking
+//     * @param qmDescription
+//     *      Location of quality model description file
+//     * @param analysisResults
+//     *      Desired location to place the benchmarking [Project_Name:Measure_Value] matrix results.
+//     *      This path should go up to the directory level containing the results but not specify the
+//     *      actual result file name.
+//     */
+//    Benchmarker(Path benchmarkRepository, Path qmDescription, Path analysisResults, IToolLOC locTool, Set<ITool> tools) {
+//        this.benchmarkRepository = benchmarkRepository;
+//        this.qmDescription = new QualityModel(qmDescription);
+//        this.analysisResults = Paths.get(analysisResults.toString(), "benchmark_data.csv");
+//        this.locTool = locTool;
+//        tools.forEach(t -> this.tools.put(t.getName(), t));
+//    }
+//
+//
+//    // Getters and setters
+//    public Path getAnalysisResults() {
+//        return analysisResults;
+//    }
+//    void setAnalysisResults(Path analysisResults) {
+//        this.analysisResults = analysisResults;
+//    }
 
 
     // Methods
@@ -88,15 +88,28 @@ public class Benchmarker {
      * @param projectRootFlag
      *      Flag, usually a file extension, that signals that a project to be analyzed is
      *      within the directory the flag was found in.
+     * @param analysisResults
+     *      Path to desired directory that holds the file containing benchmark repository data.
+     *      This data is a matrix with the Project names as the rows and their normalized property measure
+     *      values as the columns.
      * @param rThresholdsOutput
-     *      Path to desired directory to hold the output of running the R Thresholds script
+     *      Path to desired directory to hold the output of running the R Thresholds script.
      * @return
-     *      The path to the file ready for R input containing normalized values of each measure across each project
+     *      Object representation of each Measure name and its associated thresholds.
      */
-    public Map<String, Double[]> run(String projectRootFlag, Path rThresholdsOutput) {
+    public static Map<String, Double[]> deriveThresholds(
+            Path benchmarkRepository,
+            QualityModel qmDescription,
+            IToolLOC locTool,
+            Map<String, ITool> tools,
+            String projectRootFlag,
+            Path analysisResults,
+            Path rThresholdsOutput) {
+
+        analysisResults = Paths.get(analysisResults.toString(), "benchmark_data.csv");
 
         // Collect root paths of each benchmark project
-        Set<Path> projectRoots = FileUtility.multiProjectCollector(this.benchmarkRepository, projectRootFlag);
+        Set<Path> projectRoots = FileUtility.multiProjectCollector(benchmarkRepository, projectRootFlag);
         ArrayList<Project> projects = new ArrayList<>();
 
         System.out.println("* Beginning repository benchmark analysis");
@@ -105,7 +118,7 @@ public class Benchmarker {
         for (Path projectPath : projectRoots) {
 
             // Instantiate new project object
-            Project project = new Project(projectPath.getFileName().toString(), projectPath, this.qmDescription);
+            Project project = new Project(projectPath.getFileName().toString(), projectPath, qmDescription);
 
             // Run LOC tool to set lines of code
             project.setLinesOfCode(locTool.analyze(projectPath));
@@ -135,12 +148,11 @@ public class Benchmarker {
             projects.add(project);
         }
 
-        // Create and set reference to [Project_Name:Measure_Values] matrix file
-        this.analysisResults = createProjectMeasureMatrix(projects);
+        // Create [Project_Name:Measure_Values] matrix file
+        createProjectMeasureMatrix(projects, analysisResults);
 
         // Run the R script to generate thresholds
-        this.thresholds = generateThresholds(rThresholdsOutput);
-        return this.thresholds;
+        return rThresholdRunnerMapper(rThresholdsOutput, analysisResults);
     }
 
     /**
@@ -154,13 +166,15 @@ public class Benchmarker {
      *      Path to desired directory to hold the output of running the R Thresholds script.
      *      The disk file may be considered temporary (only needed for the scope of this method)
      *      and thus deleted after method execution.
+     * @param analysisResults
+     *      Output for R Threshold script
      * @return
      *      A mapping of property names to the associated thresholds of that property
      */
-    Map<String, Double[]> generateThresholds(Path output) {
+    static Map<String, Double[]> rThresholdRunnerMapper(Path output, Path analysisResults) {
 
         // Precondition check
-        if (!this.analysisResults.toFile().isFile()) {
+        if (!analysisResults.toFile().isFile()) {
             throw new RuntimeException("Benchmark analysisResults field must point to an existing file");
         }
 
@@ -169,7 +183,7 @@ public class Benchmarker {
         File thresholdsFile = new File(output.toFile(), "threshold.json");
 
         // R script expects the directory containining the analysis results as a parameter
-        Path analysisDirectory = this.analysisResults.getParent();
+        Path analysisDirectory = analysisResults.getParent();
 
         // Run R Script
         RInvoker.executeRScript(RInvoker.Script.THRESHOLD, analysisDirectory, output);
@@ -204,7 +218,6 @@ public class Benchmarker {
         try { FileUtils.deleteDirectory(output.toFile()); }
         catch (IOException e) { e.printStackTrace(); }
 
-        this.thresholds = thresholds;
         return thresholds;
     }
 
@@ -216,11 +229,13 @@ public class Benchmarker {
      * as the rows and the normalized measure values of that project as the columns.
      *
      * @param projects
-     *      Collection of projects
+     *      Collection of projects.
+     * @param analysisResults
+     *      The file to write the matrix to.
      * @return
      *      The path to the matrix file on the hard drive.
      */
-    Path createProjectMeasureMatrix(List<Project> projects) {
+    static Path createProjectMeasureMatrix(List<Project> projects, Path analysisResults) {
 
         // Ensure containing directory of matrix output file exists
         analysisResults.getParent().toFile().mkdirs();
