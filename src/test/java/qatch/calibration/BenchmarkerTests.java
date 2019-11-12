@@ -5,10 +5,8 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import qatch.TestHelper;
-import qatch.analysis.Diagnostic;
 import qatch.analysis.ITool;
 import qatch.analysis.IToolLOC;
-import qatch.analysis.Measure;
 import qatch.evaluation.Project;
 import qatch.model.QualityModel;
 
@@ -16,15 +14,18 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class BenchmarkerTests {
 
     private Path analysisResultsAsInput = Paths.get("src/test/resources/benchmark_results/benchmark_data.csv");
-    private Path analysisResultsAsOutput = Paths.get("src/test/output/benchmark_results/benchmark_data.csv");
+    private Path analysisResultsAsOutput = Paths.get("src/test/out/benchmark_results/benchmark_data.csv");
     private Path benchmarkRepo = Paths.get("src/test/resources/benchmark_repository");
     private Path qmDescription = Paths.get("src/test/resources/quality_models/qualityModel_test_description.json");
-    private Path rThresholdsOutput = Paths.get("src/test/output/r_thresholds");
+    private Path rThresholdsOutput = Paths.get("src/test/out/r_thresholds");
 
 
     @Test

@@ -6,7 +6,6 @@ import qatch.calibration.Benchmarker;
 import qatch.calibration.WeightResult;
 import qatch.calibration.Weighter;
 import qatch.model.Characteristic;
-import qatch.model.ModelNode;
 import qatch.model.QualityModel;
 
 import java.nio.file.Path;
@@ -62,6 +61,34 @@ public class QualityModelDeriver {
                 }
             }
         }
+
+        // Assert postcondition that weights and thresholds now exist for all appropriate model nodes
+        // TQI weights check
+        for (String characteristicWeightName : qmDescription.getCharacteristics().keySet()) {
+            if (!qmDescription.getTqi().getWeights().containsKey(characteristicWeightName)) {
+                throw new RuntimeException("After running weight elicitation, no weight mapping found for TQI node and " +
+                        "Characteristic node, " + characteristicWeightName);
+            }
+        }
+
+        // Characteristics weights check
+        qmDescription.getCharacteristics().values().forEach(characteristic -> {
+            for (String propertyWeightName : qmDescription.getProperties().keySet()) {
+                if (!characteristic.getWeights().containsKey(propertyWeightName)) {
+                    throw new RuntimeException("After running weight elicitation, no weight mapping found for Characteristic" +
+                            " node, " + characteristic.getName() + ", and " +
+                            "Property node, " + propertyWeightName);
+                }
+            }
+        });
+
+        // Properties thresholds check
+        qmDescription.getProperties().values().forEach(property -> {
+            if (property.getThresholds().length != 3) {
+                throw new RuntimeException("After running threshold derivation, the threshold size of " +
+                    "property, " + property.getName() + ", does not equal 3");
+            }
+        });
 
         return qmDescription;
 

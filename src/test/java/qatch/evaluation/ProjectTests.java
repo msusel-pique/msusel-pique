@@ -168,7 +168,7 @@ public class ProjectTests {
 
     @Test
     public void testExportEvaluation() throws IOException {
-        Path exportLocation = Paths.get("src/test/output/TestExportEval");
+        Path exportLocation = Paths.get("src/test/out/TestExportEval");
 
         Path result = p.exportToJson(exportLocation);
         FileReader fr = new FileReader(result.toString());

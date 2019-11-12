@@ -16,10 +16,10 @@ public class SingleProjectEvaluatorTests {
 
     private SingleProjectEvaluator spe;
     private Path PROJECT_DIR = Paths.get("src/test/resources/FakeProject_01");
-    private Path RESULTS_DIR = Paths.get("src/test/output/SingleProjEval");
+    private Path RESULTS_DIR = Paths.get("src/test/out/SingleProjEval");
     private Path QM_LOCATION = Paths.get("src/test/resources/quality_models/qualityModel_test.json");
     private Path TOOL_RESULTS = Paths.get("src/test/resources/tool_results");
-    private Path TEST_OUT = Paths.get("src/test/output");
+    private Path TEST_OUT = Paths.get("src/test/out");
 
 
     @Before
@@ -76,7 +76,7 @@ public class SingleProjectEvaluatorTests {
         try {
             spe.initialize(
                     Paths.get("src/test/resources/IDONTEXIST"),
-                    Paths.get("src/test/output/SingleProjEval"),
+                    Paths.get("src/test/out/SingleProjEval"),
                     QM_LOCATION
             );
         } catch (IllegalArgumentException ignored) {  }

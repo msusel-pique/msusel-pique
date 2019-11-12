@@ -19,9 +19,9 @@ public class QualityModelDeriverTests {
         // Configs
         Path qmDescriptionPath = Paths.get("src/test/resources/quality_models/qualityModel_test_description.json");
         Path benchmarkRepo = Paths.get("src/test/resources/benchmark_repository");
-        Path comparisonMatricesDirectory = Paths.get("src/test/resources/comparison_matrices/multiple");
-        Path analysisResults = Paths.get("src/test/output/benchmark_results/benchmark_data.csv");
-        Path rThresholdsOutput = Paths.get("src/test/output/r_thresholds");
+        Path comparisonMatricesDirectory = Paths.get("src/test/resources/comparison_matrices/test_derive_model");
+        Path analysisResults = Paths.get("src/test/out/benchmark_results/benchmark_data.csv");
+        Path rThresholdsOutput = Paths.get("src/test/out/r_thresholds");
         Path tempWeightsDirectory = Paths.get("src/test/out/weighter");
         String projectRootFlag = ".txt";
 

@@ -7,7 +7,6 @@ import com.opencsv.CSVReader;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -68,18 +67,24 @@ public class Weighter {
             JsonObject jsonObject = new JsonParser().parse(fr).getAsJsonObject();
             jsonObject.keySet().forEach(nodeName -> {
 
-                if (!weightNameOrders.containsKey(nodeName)) {
-                    throw new RuntimeException("parseNameOrder failed to create ordering for node name " + nodeName);
+                /*
+                 * TODO: the below regex 'replaceAll("\\.")' commands are due to the R script transforming spaces in
+                 *  column names with dots.  This regex will be an issue if the input quality model has a node name
+                 *  with an intentional dot. Change the r-script to reproduce names with spaces and then remove the regex calls.
+                 */
+                if (!weightNameOrders.containsKey(nodeName.replaceAll("\\.", " "))) {
+                    throw new RuntimeException("parseNameOrder failed to create ordering for node name " + nodeName +
+                        ". Check the quality model description and comparison matrices for naming inconsistencies.");
                 }
 
                 JsonArray nodeWeights = jsonObject.getAsJsonArray(nodeName);
-                ArrayList<String> nameList = weightNameOrders.get(nodeName);
+                ArrayList<String> nameList = weightNameOrders.get(nodeName.replaceAll("\\.", " "));
 
                 if (nodeWeights.size() != nameList.size()) {
                     throw new RuntimeException("nodeWeights and nameList arrays do not match lenghts");
                 }
 
-                WeightResult weightResult = new WeightResult(nodeName);
+                WeightResult weightResult = new WeightResult(nodeName.replaceAll("\\.", " "));
                 // zip-like function would be great here if Java eventually supports a one-line version of it
                 for (int i = 0; i < nodeWeights.size(); i++) {
                     weightResult.weights.put(nameList.get(i), nodeWeights.get(i).getAsDouble());
