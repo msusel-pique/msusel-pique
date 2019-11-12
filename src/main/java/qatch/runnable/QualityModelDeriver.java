@@ -46,7 +46,6 @@ public class QualityModelDeriver {
         measureNameThresholdMappings.forEach((measureName, thresholds) -> {
             qmDescription.getPropertyByMeasureName(measureName).setThresholds(thresholds);
         });
-
         // Weights (TQI and Characteristic nodes)
         for (WeightResult weightsIn : weights) {
             // Check root node case
