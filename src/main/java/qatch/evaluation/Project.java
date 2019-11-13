@@ -1,7 +1,5 @@
 package qatch.evaluation;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import qatch.analysis.Diagnostic;
 import qatch.analysis.Measure;
@@ -11,9 +9,6 @@ import qatch.model.QualityModel;
 import qatch.model.Tqi;
 import qatch.utility.FileUtility;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -176,7 +171,7 @@ public class Project{
 	 */
 	public Path exportToJson(Path resultsDir) {
 
-		String fileName = this.getName() + "_evalResults.json";
+		String fileName = this.getName() + "_evalResults";
 		return FileUtility.exportObjectToJson(this, resultsDir, fileName);
 	}
 
