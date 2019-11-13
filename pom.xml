@@ -90,7 +90,7 @@
           <configuration>
             <filesets>
               <fileset>
-                <directory>src/test/output</directory>
+                <directory>src/test/out</directory>
                 <includes>
                   <include>**/*</include>
                 </includes>

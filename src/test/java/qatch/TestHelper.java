@@ -23,7 +23,7 @@ public class TestHelper {
 
     public static final Path TEST_DIR = new File("src/test").toPath();
     public static final Path TEST_RESOURCES = Paths.get(TEST_DIR.toString(), "resources").toAbsolutePath();
-    public static final Path OUTPUT = Paths.get(TEST_DIR.toString(), "output").toAbsolutePath();
+    public static final Path OUTPUT = Paths.get(TEST_DIR.toString(), "out").toAbsolutePath();
 
     /*
      * Analysis objects

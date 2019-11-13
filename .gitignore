@@ -207,5 +207,5 @@ $RECYCLE.BIN/
 /.idea
 r_working_directory
 src/test/java/qatch/Scratch.java
-src/test/output
+src/test/out
 

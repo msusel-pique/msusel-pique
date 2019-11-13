@@ -103,6 +103,7 @@ public class Measure {
 	// helper methods
 	/**
 	 * Define the default evaluation function to simply be a count of all diagnostic findings
+	 *
 	 * @param diagnostics
 	 *      The list of diagnostics belonging to the measure
 	 * @return

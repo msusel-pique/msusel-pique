@@ -20,7 +20,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -53,7 +52,7 @@ public class Benchmarker {
      *      Flag, usually a file extension, that signals that a project to be analyzed is
      *      within the directory the flag was found in.
      * @param analysisResults
-     *      Path to desired directory that holds the file containing benchmark repository data.
+     *      Path to file for benchmark repository data to write to (e.g. results/benchmark_data.csv).
      *      This data is a matrix with the Project names as the rows and their normalized property measure
      *      values as the columns.
      * @param rThresholdsOutput
@@ -69,8 +68,6 @@ public class Benchmarker {
             String projectRootFlag,
             Path analysisResults,
             Path rThresholdsOutput) {
-
-        analysisResults = Paths.get(analysisResults.toString(), "benchmark_data.csv");
 
         // Collect root paths of each benchmark project
         Set<Path> projectRoots = FileUtility.multiProjectCollector(benchmarkRepository, projectRootFlag);
@@ -130,7 +127,7 @@ public class Benchmarker {
      *      The disk file may be considered temporary (only needed for the scope of this method)
      *      and thus deleted after method execution.
      * @param analysisResults
-     *      Input for R Threshold script: matrix of project name's and their measure values
+     *      Input file for R Threshold script: matrix of project name's and their measure values
      * @return
      *      A mapping of property's measure names to the associated thresholds of that measure's property
      */
