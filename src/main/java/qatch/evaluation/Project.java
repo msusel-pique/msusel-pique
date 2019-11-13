@@ -52,17 +52,27 @@ public class Project{
 	
 	
 	// Getters and setters
-
+	public void setDiagnostics(Map<String, Diagnostic> diagnostics) {
+		diagnostics.values().forEach(diagnostic -> {
+			getMeasures().values().forEach(measure -> {
+				measure.getDiagnostics().forEach(oldDiagnostic -> {
+					if (oldDiagnostic.getId().equals(diagnostic.getId())) {
+						oldDiagnostic = diagnostic;
+					}
+				});
+			});
+		});
+	}
+	public Characteristic getCharacteristic(String name) { return this.characteristics.get(name); }
+	public Map<String, Characteristic> getCharacteristics() {
+		return getTqi().getCharacteristics();
+	}
+	public void setCharacteristic(String name, Characteristic characteristic) { this.characteristics.put(name, characteristic); }
+	public void setCharacteristics(Map<String, Characteristic> characteristics) {
+		this.characteristics = characteristics;
+	}
 	public int getLinesOfCode() { return linesOfCode; }
 	public void setLinesOfCode(int linesOfCode) { this.linesOfCode = linesOfCode; }
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public Path getPath() { return path; }
-	public void setPath(Path path) { this.path = path; }
 	public Measure getMeasure(String measureName) {
 		return getMeasures().get(measureName);
 	}
@@ -84,18 +94,18 @@ public class Project{
 			this.setMeasure(propertyName, measure);
 		}
 	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public Path getPath() { return path; }
+	public void setPath(Path path) { this.path = path; }
 	public Property getProperty(String name) { return this.properties.get(name); }
 	public Map<String, Property> getProperties() { return this.properties; }
 	public void setProperty(String name, Property property) {
 		this.properties.put(name, property);
-	}
-	public Characteristic getCharacteristic(String name) { return this.characteristics.get(name); }
-	public Map<String, Characteristic> getCharacteristics() {
-		return getTqi().getCharacteristics();
-	}
-	public void setCharacteristic(String name, Characteristic characteristic) { this.characteristics.put(name, characteristic); }
-	public void setCharacteristics(Map<String, Characteristic> characteristics) {
-		this.characteristics = characteristics;
 	}
 	public Tqi getTqi() {
 		return this.tqi;

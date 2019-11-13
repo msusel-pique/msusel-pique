@@ -81,4 +81,15 @@ public class SingleProjectEvaluatorTests {
             );
         } catch (IllegalArgumentException ignored) {  }
     }
+
+    @Test
+    public void testRunEvaluator() {
+
+        SingleProjectEvaluator spe = new SingleProjectEvaluator();
+        spe.runEvaluator(PROJECT_DIR, RESULTS_DIR, QM_LOCATION, TestHelper.makeITool(), TestHelper.makeIToolLoc());
+
+        System.out.println("...");
+
+        // TODO PICKUP: write test run evaluator on mock objects
+    }
 }
