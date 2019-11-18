@@ -10,6 +10,7 @@ public class Property {
 
 	// Fields
 	private String description;//A brief description of the property (optional)
+	@Expose
 	private double value;//The quality score of the property
 	@Expose
 	private Measure measure;

@@ -52,17 +52,7 @@ public class Project{
 	
 	
 	// Getters and setters
-	public void setDiagnostics(Map<String, Diagnostic> diagnostics) {
-		diagnostics.values().forEach(diagnostic -> {
-			getMeasures().values().forEach(measure -> {
-				measure.getDiagnostics().forEach(oldDiagnostic -> {
-					if (oldDiagnostic.getId().equals(diagnostic.getId())) {
-						oldDiagnostic = diagnostic;
-					}
-				});
-			});
-		});
-	}
+
 	public Characteristic getCharacteristic(String name) { return this.characteristics.get(name); }
 	public Map<String, Characteristic> getCharacteristics() {
 		return getTqi().getCharacteristics();
@@ -215,5 +205,25 @@ public class Project{
 		this.tqi = qm.getTqi();
 		this.tqi.setCharacteristics(qm.getCharacteristics());
 
+	}
+
+	/**
+	 * Find the diagnostic objects in this project and update their findings with findings containing in
+	 * the input parameter.  This method matches the diagnostic objects by name.
+	 *
+	 * @param diagnosticsWithFindings
+	 * 		A map {Key: diagnostic name, Value: diagnostic object} of diagnostics contaning > 0 values of
+	 * 		findings.
+	 */
+	public void updateDiagnosticsWithFindings(Map<String, Diagnostic> diagnosticsWithFindings) {
+		diagnosticsWithFindings.values().forEach(diagnostic -> {
+			getMeasures().values().forEach(measure -> {
+				measure.getDiagnostics().forEach(oldDiagnostic -> {
+					if (oldDiagnostic.getId().equals(diagnostic.getId())) {
+						oldDiagnostic.setFindings(diagnostic.getFindings());
+					}
+				});
+			});
+		});
 	}
 }

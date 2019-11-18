@@ -90,19 +90,4 @@ public class ToolTests {
         Assert.assertTrue(m.get("Cryptography").getDiagnostics().get(1).getFindings().contains(f51));
     }
 
-    @Test
-    public void testMapMeasure() {
-
-        ITool t = new ToolInstance("Test Tool", null);
-        Map<String, Measure> mappings = t.parseConfig(Paths.get("src/test/resources/config/test_tool_measures.yaml"));
-
-        Assert.assertEquals("Test Tool", mappings.get("Injection").getToolName());
-        Assert.assertEquals("Test Tool", mappings.get("Cryptography").getToolName());
-        Assert.assertEquals("Injection Findings", mappings.get("Injection").getName());
-        Assert.assertEquals("Cryptography Findings", mappings.get("Cryptography").getName());
-        Assert.assertEquals("SCS0001", mappings.get("Injection").getDiagnostics().get(0).getId());
-        Assert.assertEquals("SCS0007", mappings.get("Injection").getDiagnostics().get(3).getId());
-        Assert.assertEquals("SCS0004", mappings.get("Cryptography").getDiagnostics().get(0).getId());
-        Assert.assertEquals("SCS0010", mappings.get("Cryptography").getDiagnostics().get(3).getId());
-    }
 }

@@ -35,8 +35,8 @@
 			"positive_impact": "false",
 			"thresholds": [
 				0.0,
-				0.5,
-				1.0
+				0.004,
+				0.02
 			],
 			"measure": {
 				"name": "Measure 01",
@@ -53,8 +53,8 @@
 			"positive_impact": "false",
 			"thresholds": [
 				0.0,
-				0.5,
-				1.0
+				0.01,
+				0.02
 			],
 			"measure": {
 				"name": "Measure 02",

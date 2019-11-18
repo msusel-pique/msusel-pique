@@ -20,7 +20,8 @@ public class QualityModelTests {
         Characteristic ch2 = qm.getCharacteristic("Characteristic 02");
         Property p1 = qm.getProperty("Property 01");
         Property p2 = qm.getProperty("Property 02");
-        double[] thresholds = new double[] { 0.0, 0.5, 1.0 };
+        double[] thresholds01 = new double[] { 0.0, 0.004, 0.02 };
+        double[] thresholds02 = new double[] { 0.0, 0.01, 0.02 };
         Measure p1Measure = p1.getMeasure();
         Measure p2Measure = p2.getMeasure();
 
@@ -42,8 +43,8 @@ public class QualityModelTests {
         Assert.assertEquals("Property 02", p2.getName());
         Assert.assertFalse(p1.isPositive());
         Assert.assertFalse(p2.isPositive());
-        Assert.assertEquals(thresholds[1], p1.getThresholds()[1], 0);
-        Assert.assertEquals(thresholds[1], p2.getThresholds()[1], 0);
+        Assert.assertEquals(thresholds01[1], p1.getThresholds()[1], 0);
+        Assert.assertEquals(thresholds02[1], p2.getThresholds()[1], 0);
 
         Assert.assertEquals("Measure 01", p1Measure.getName());
         Assert.assertEquals("Measure 02", p2Measure.getName());

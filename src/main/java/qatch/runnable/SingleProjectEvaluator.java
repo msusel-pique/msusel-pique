@@ -45,28 +45,28 @@ public class SingleProjectEvaluator {
      */
     public Path runEvaluator(Path projectDir, Path resultsDir, Path qmLocation, ITool tool, IToolLOC locTool) {
 
-        // initialize data structures
+        // Initialize data structures
         initialize(projectDir, resultsDir, qmLocation);
         QualityModel qualityModel = new QualityModel(qmLocation);
         Project project = new Project(FilenameUtils.getBaseName(projectDir.getFileName().toString()), projectDir, qualityModel);
 
-        // run the static analysis tools process
+        // Run the static analysis tools process
         Map<String, Diagnostic> diagnosticResults = runTool(projectDir, tool);
         int projectLoc = locTool.analyze(projectDir);
 
-        // apply tool results to Project object
-        project.setDiagnostics(diagnosticResults);
+        // Apply tool results to Project object
+        project.updateDiagnosticsWithFindings(diagnosticResults);
         project.setLinesOfCode(projectLoc);
 
-        // evaluate measure nodes (normalize using lines of code)
+        // Evaluate measure nodes (normalize using lines of code)
         project.evaluateMeasures();
 
-        // aggregate properties -> characteristics -> tqi values using quality model (thresholds for properties and weights for characteristics and tqi)
+        // Aggregate properties -> characteristics -> tqi values using quality model (thresholds for properties and weights for characteristics and tqi)
         project.evaluateProperties();
         project.evaluateCharacteristics();
         project.evaluateTqi();
 
-        // create a file of the results and return its path
+        // Create a file of the results and return its path
         return project.exportToJson(resultsDir);
     }
 
