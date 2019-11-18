@@ -9,6 +9,7 @@ import org.junit.Test;
 import qatch.TestHelper;
 import qatch.analysis.Measure;
 import qatch.model.Property;
+import qatch.model.QualityModel;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -59,8 +60,8 @@ public class ProjectTests {
 
         p.evaluateProperties();
 
-        Assert.assertEquals(0.95, p1.getValue(), .01);
-        Assert.assertEquals(0.55, p2.getValue(), .01);
+        Assert.assertEquals(0.95, p1.getValue(), .001);
+        Assert.assertEquals(0.55, p2.getValue(), .001);
     }
 
     @Test
@@ -87,8 +88,8 @@ public class ProjectTests {
 
         p.evaluateProperties();
 
-        Assert.assertEquals(0.483, p1.getValue(), .01);
-        Assert.assertEquals(0.016, p2.getValue(), .01);
+        Assert.assertEquals(0.483, p1.getValue(), .001);
+        Assert.assertEquals(0.016, p2.getValue(), .001);
     }
 
     @Test
@@ -119,8 +120,8 @@ public class ProjectTests {
 
         p.evaluateProperties();
 
-        Assert.assertEquals(0.05, p1.getValue(), .01);
-        Assert.assertEquals(0.45, p2.getValue(), .01);
+        Assert.assertEquals(0.05, p1.getValue(), .001);
+        Assert.assertEquals(0.45, p2.getValue(), .001);
     }
 
     @Test
@@ -151,8 +152,8 @@ public class ProjectTests {
 
         p.evaluateProperties();
 
-        Assert.assertEquals(0.516, p1.getValue(), .01);
-        Assert.assertEquals(0.983, p2.getValue(), .01);
+        Assert.assertEquals(0.516, p1.getValue(), .001);
+        Assert.assertEquals(0.983, p2.getValue(), .001);
     }
 
     @Test
@@ -167,9 +168,9 @@ public class ProjectTests {
 
     @Test
     public void testExportEvaluation() throws IOException {
-        Path exportLocation = Paths.get("src/test/output/TestExportEval");
+        Path exportLocation = Paths.get("src/test/out/TestExportEval");
 
-        Path result = p.exportEvaluation(exportLocation);
+        Path result = p.exportToJson(exportLocation);
         FileReader fr = new FileReader(result.toString());
         JsonObject jsonResults = new JsonParser().parse(fr).getAsJsonObject();
         fr.close();
@@ -187,5 +188,39 @@ public class ProjectTests {
         Assert.assertEquals(0.92, tqiValue, 0);
 
         FileUtils.forceDelete(exportLocation.toFile());
+    }
+
+    @Test
+    /**
+     * Test state of fields of project object immediately after construction
+     */
+    public void testProjectConstructor() {
+        String name = "Test Project";
+        Path path = Paths.get("test/path");
+        QualityModel qm = TestHelper.makeQualityModel();
+
+        Project project = new Project(name, path, qm);
+
+        // Assertions
+        Assert.assertEquals(name, project.getName());
+        Assert.assertEquals(path, project.getPath());
+
+        // Assert tree structure pass-by-reference from TQI root node compared to fields
+        project.getTqi().getCharacteristics().values().forEach(tqiCharacteristic -> {
+            // Characteristic layer
+            Assert.assertEquals(project.getCharacteristics().get(tqiCharacteristic.getName()), tqiCharacteristic);
+            tqiCharacteristic.getProperties().values().forEach(tqiProperty -> {
+                // Properties layer
+                Assert.assertEquals(project.getProperties().get(tqiProperty.getName()), tqiProperty);
+                Measure projectMeasure = project.getProperties().get(tqiProperty.getName()).getMeasure();
+                // Property's measure
+                Assert.assertEquals(projectMeasure, tqiProperty.getMeasure());
+                tqiProperty.getMeasure().getDiagnostics().forEach(tqiDiagnostic -> {
+                    // Measure's diagnostics
+                    Assert.assertEquals(projectMeasure.getDiagnostic(tqiDiagnostic.getId()), tqiDiagnostic);
+                });
+            });
+        });
+
     }
 }

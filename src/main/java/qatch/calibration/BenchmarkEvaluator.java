@@ -13,6 +13,7 @@ import java.util.Iterator;
  * each project found in a BenchmarkProjects object in order
  * to calculate the eval field of each Property.
  */
+@Deprecated
 public class BenchmarkEvaluator {
 	
 	public void evaluateProjects(BenchmarkProjects projects){

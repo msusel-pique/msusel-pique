@@ -6,10 +6,8 @@ import org.slf4j.LoggerFactory;
 import qatch.analysis.Diagnostic;
 import qatch.analysis.ITool;
 import qatch.analysis.IToolLOC;
-import qatch.analysis.Measure;
 import qatch.evaluation.Project;
 import qatch.model.QualityModel;
-import qatch.model.QualityModelLoader;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -19,6 +17,7 @@ import java.util.Map;
  * in a language agnostic way.  It is the responsibility of extending projects
  * (e.g. qatch-csharp) to provide the language specific tools.
  */
+// TODO: turn into static methods (maybe unelss logger problems)
 public class SingleProjectEvaluator {
 
     private final Logger logger = LoggerFactory.getLogger(SingleProjectEvaluator.class);
@@ -46,29 +45,29 @@ public class SingleProjectEvaluator {
      */
     public Path runEvaluator(Path projectDir, Path resultsDir, Path qmLocation, ITool tool, IToolLOC locTool) {
 
-        // initialize data structures
+        // Initialize data structures
         initialize(projectDir, resultsDir, qmLocation);
-        QualityModel qualityModel = new QualityModelLoader(qmLocation).importQualityModel();
+        QualityModel qualityModel = new QualityModel(qmLocation);
         Project project = new Project(FilenameUtils.getBaseName(projectDir.getFileName().toString()), projectDir, qualityModel);
 
-        // run the static analysis tools process
-        Map<String, Measure> measureResults = runTool(projectDir, tool);
+        // Run the static analysis tools process
+        Map<String, Diagnostic> diagnosticResults = runTool(projectDir, tool);
         int projectLoc = locTool.analyze(projectDir);
 
-        // apply tool results to Project object
-        project.setMeasures(measureResults);
+        // Apply tool results to Project object
+        project.updateDiagnosticsWithFindings(diagnosticResults);
         project.setLinesOfCode(projectLoc);
 
-        // evaluate measure nodes (normalize using lines of code)
+        // Evaluate measure nodes (normalize using lines of code)
         project.evaluateMeasures();
 
-        // aggregate properties -> characteristics -> tqi values using quality model (thresholds for properties and weights for characteristics and tqi)
+        // Aggregate properties -> characteristics -> tqi values using quality model (thresholds for properties and weights for characteristics and tqi)
         project.evaluateProperties();
         project.evaluateCharacteristics();
         project.evaluateTqi();
 
-        // create a file of the results and return its path
-        return project.exportEvaluation(resultsDir);
+        // Create a file of the results and return its path
+        return project.exportToJson(resultsDir);
     }
 
     /**
@@ -112,21 +111,13 @@ public class SingleProjectEvaluator {
      *      A mapping of (Key: property name, Value: measure object) where the measure objects contain the
      *      static analysis findings for that measure.
      */
-    private Map<String, Measure> runTool(Path projectDir, ITool tool) {
+    private Map<String, Diagnostic> runTool(Path projectDir, ITool tool) {
 
         // (1) run static analysis tool
         // TODO: turn this into a temp file that always deletes on/before program exit
         Path analysisOutput = tool.analyze(projectDir);
 
-        // (2) parse config: get object representation of the .yaml measure->diagnostics configuration
-        Map<String, Measure> propertyMeasureMap = tool.parseConfig(tool.getConfig());
-
-        // (3) prase output: make collection of diagnostic objects
-        Map<String, Diagnostic> analysisResults = tool.parseAnalysis(analysisOutput);
-
-        // (4) link findings and diagnostics to Measure objects
-        propertyMeasureMap = tool.applyFindings(propertyMeasureMap, analysisResults);
-
-        return propertyMeasureMap;
+        // (2) prase output: make collection of {Key: diagnostic name, Value: diagnostic objects}
+        return tool.parseAnalysis(analysisOutput);
     }
 }

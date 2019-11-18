@@ -22,7 +22,7 @@ import java.util.Iterator;
  * 
  * TODO: Remove the clone method - Add a Cloner class!!!
  */
-
+@Deprecated
 public class BenchmarkCharacteristicEvaluator {
 	
 	/**

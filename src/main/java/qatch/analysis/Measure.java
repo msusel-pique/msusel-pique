@@ -52,7 +52,6 @@ public class Measure {
 		return this.diagnostics
 			.stream()
 		    .filter(d -> d.getId().equals(id))
-		    .map(d -> new Diagnostic(d.getId()))
 		    .findAny()
 		    .orElse(null);
 	}
@@ -62,6 +61,7 @@ public class Measure {
 	public double getNormalizedValue() { return normalizedValue; }
 	public void setNormalizedValue(double normalizedValue) { this.normalizedValue = normalizedValue; }
 
+	// TODO: this probably causes a bug when called multiple times on the same object
 	public double getValue() {
 		this.value = evaluate();
 		return this.value;
@@ -103,6 +103,7 @@ public class Measure {
 	// helper methods
 	/**
 	 * Define the default evaluation function to simply be a count of all diagnostic findings
+	 *
 	 * @param diagnostics
 	 *      The list of diagnostics belonging to the measure
 	 * @return

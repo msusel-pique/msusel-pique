@@ -1,5 +1,7 @@
 package qatch.utility;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;
@@ -13,10 +15,45 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A collection of useful static methods for common
- * file procedures used in Qatch operation
+ * A collection of useful static methods for common file procedures used in Qatch operation
  */
 public class FileUtility {
+
+    /**
+     * Create a hard-drive file representation of the model
+     *
+     * @param outputDirectory
+     * 		The directory to place the json file into.  Does not need to exist beforehand.
+     * @param fileName
+     *      What to name the file.  Should not inclue '.json' suffix.
+     * @return
+     * 		The path of the exported object as a json file.
+     */
+    public static Path exportObjectToJson(Object object, Path outputDirectory, String fileName) {
+
+        // ensure target path directory exists
+        outputDirectory.toFile().mkdirs();
+
+        // instantiate results file reference
+        File fileOut = new File(outputDirectory.toFile(),fileName.replaceAll("\\s","") + ".json");
+
+        //Instantiate a Json Parser
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+
+        //Create the Json String of the projects
+        String json = gson.toJson(object);
+
+        //Save the results
+        try {
+            FileWriter writer = new FileWriter(fileOut.toString());
+            writer.write(json);
+            writer.close();
+        } catch(IOException e){
+            System.out.println(e.getMessage());
+        }
+
+        return fileOut.toPath();
+    }
 
     /**
      * Recursively find all files under a root directory with specified extension(s) and optionally with name matching

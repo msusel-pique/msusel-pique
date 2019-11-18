@@ -13,6 +13,7 @@ import java.util.Vector;
  *
  */
 
+@Deprecated
 public class BenchmarkProjects {
 
 	//A vector of Project objects

@@ -16,14 +16,14 @@ import java.util.Set;
 
 public class FileUtilityTests {
 
-    private File testOut = new File("./src/test/output");
+    private File testOut = new File("./src/test/out");
 
     @Test
     public void testFindAssemblies() throws IOException {
         FileUtils.forceMkdir(testOut);
-        File file1 = File.createTempFile("file1", ".ext1", new File("./src/test/output"));
-        File file2 = File.createTempFile("file2", ".ext1", new File("./src/test/output"));
-        File file3 = File.createTempFile("file3", ".ext2", new File("./src/test/output"));
+        File file1 = File.createTempFile("file1", ".ext1", new File("./src/test/out"));
+        File file2 = File.createTempFile("file2", ".ext1", new File("./src/test/out"));
+        File file3 = File.createTempFile("file3", ".ext2", new File("./src/test/out"));
 
         file1.deleteOnExit();
         file2.deleteOnExit();
@@ -45,11 +45,11 @@ public class FileUtilityTests {
     @Test
     public void testFindFileNamesFromExtension() throws IOException {
         FileUtils.forceMkdir(testOut);
-        File file1 = File.createTempFile("file1", ".ext1", new File("./src/test/output"));
-        File file2 = File.createTempFile("file2", ".ext1", new File("./src/test/output"));
-        File file3 = File.createTempFile("file3", ".ext2", new File("./src/test/output"));
-        File file4 = File.createTempFile("file4", ".ext2.ext3", new File("./src/test/output"));
-        File file5 = File.createTempFile("file5", "", new File("./src/test/output"));
+        File file1 = File.createTempFile("file1", ".ext1", new File("./src/test/out"));
+        File file2 = File.createTempFile("file2", ".ext1", new File("./src/test/out"));
+        File file3 = File.createTempFile("file3", ".ext2", new File("./src/test/out"));
+        File file4 = File.createTempFile("file4", ".ext2.ext3", new File("./src/test/out"));
+        File file5 = File.createTempFile("file5", "", new File("./src/test/out"));
 
         file1.deleteOnExit();
         file2.deleteOnExit();

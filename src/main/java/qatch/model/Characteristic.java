@@ -10,75 +10,53 @@ import java.util.Map;
  * Quality Model that is used in order to evaluate a 
  * project or a set of projects.
  * 
- * @author Miltos
+ * @author Miltos, Rice
  *
  */
-public class Characteristic {
+public class Characteristic extends ModelNode {
 
-	// instance variables
-	private String description;	 //A brief description of the characteristic
-	@Expose
-	private double value;  //The quality score of this characteristic (derives from the weighted average of the eval fields of the QM's properties)
-	private String name;  //The name of the characteristic
+	// Instance variables
 	private String standard;  //The standard from which this characteristic derives
+	// TODO: eventually consider new tree object that combines properties and their weight instead of relying on String name matching (not enough time for me to refactor currently)
+	private Map<String, Property> properties = new HashMap<>();  // mapping of property names and their property objects
 	@Expose
 	private Map<String, Double> weights = new HashMap<>();  // mapping of property names and their weights
 
 
-	// constructors
-	public Characteristic(String name, String standard, String description, Map<String, Double> weights){
-		this.name = name;
-		this.description = standard;
+	// Constructors
+	public Characteristic(String name, String description, String standard, Map<String, Double> weights){
+		super(name, description);
 		this.standard = description;
 		this.weights = weights;
 	}
-
-	public Characteristic(){
-		this.name = "";
-		this.description = "";
-		this.standard = "";
-	}
 	
-	public Characteristic(String name, String standard, String description){
-		this.name = name;
-		this.description = standard;
-		this.standard = description;
+	public Characteristic(String name, String description, String standard){
+		super(name, description);
+		this.standard = standard;
 	}
 
 
 	// getters and setters
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String desription) {
-		this.description = desription;
-	}
 
-	public String getName() {
-		return name;
+	public Map<String, Property> getProperties() {
+		return properties;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setProperties(Map<String, Property> properties) {
+		this.properties = properties;
 	}
-
 	public String getStandard() {
 		return standard;
 	}
 	public void setStandard(String standard) {
 		this.standard = standard;
 	}
-
 	public double getWeight(String propertyName) {
 		return this.weights.get(propertyName);
 	}
 	public Map<String, Double> getWeights() { return weights; }
 	public void setWeight(String propertyName, double value) { this.weights.put(propertyName, value); }
-	
-	public double getValue() {
-		return value;
-	}
-	public void setValue(double value) {
-		this.value = value;
+	public void setWeights(Map<String, Double> weights) {
+		this.weights = weights;
 	}
 
 
@@ -93,20 +71,20 @@ public class Characteristic {
 	 * Typically, it calculates the weighted average of the values of the eval fields
 	 * of the project properties and stores it to the eval field of this characteristic.
 	 */
-	public void evaluate(Map<String, Property> properties) {
-
+	@Override
+	public void evaluate() {
 		// assert a weight mapping exists for each provided property
-		this.getWeights().keySet().forEach(k -> {
-			if (!properties.containsKey(k)) {
-				throw new RuntimeException("No weight-measure mapping in Characteristic " + this.getName() +
-					"exists for Property " + k);
+		getWeights().keySet().forEach(k -> {
+			if (!getProperties().containsKey(k)) {
+				throw new RuntimeException("No weight-measure mapping in Characteristic " + getName() +
+						"exists for Property " + k);
 			}
 		});
 
 		// evaluate: standard weighted sum of property values
 		double sum = 0.0;
-		for (Map.Entry<String, Double> weightMap : this.getWeights().entrySet()) {
-			sum += properties.get(weightMap.getKey()).getValue() * weightMap.getValue();
+		for (Map.Entry<String, Double> weightMap : getWeights().entrySet()) {
+			sum += getProperties().get(weightMap.getKey()).getValue() * weightMap.getValue();
 		}
 
 		this.setValue(sum);

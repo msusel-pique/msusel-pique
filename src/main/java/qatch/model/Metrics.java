@@ -15,6 +15,7 @@ import java.util.Vector;
  */
 
 //TODO: Instead of different fields replace it with a Vector of Metric objects
+	@Deprecated
 public class Metrics {
 	
 	private String className;

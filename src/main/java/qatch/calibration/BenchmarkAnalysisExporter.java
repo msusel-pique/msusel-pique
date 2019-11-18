@@ -1,6 +1,7 @@
 package qatch.calibration;
 
-import java.io.File;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import java.nio.file.Path;
 
 /**
@@ -46,14 +47,15 @@ public class BenchmarkAnalysisExporter {
 	 *      the total PropertySet containing the model's properties.
 	 */
 	@Deprecated
-	public Path exportToCsv(BenchmarkProjects projects){
-		
-		//Set the path where the csv file will be stored and the name of the csv file
-		File outFile = new File(RInvoker.R_WORK_DIR.toFile(), "properties.csv");
-		
-		//Create the folder
-		RInvoker.R_WORK_DIR.toFile().mkdirs();
+	public Path exportToCsv(BenchmarkProjects projects) {
 
-		return outFile.toPath();
+//		//Set the path where the csv file will be stored and the name of the csv file
+//		File outFile = new File(RInvoker.R_WORK_DIR.toFile(), "properties.csv");
+//
+//		//Create the folder
+//		RInvoker.R_WORK_DIR.toFile().mkdirs();
+//
+//		return outFile.toPath();
+		throw new NotImplementedException();
 	}
 }

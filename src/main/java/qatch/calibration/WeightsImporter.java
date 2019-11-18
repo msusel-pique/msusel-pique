@@ -1,13 +1,8 @@
 package qatch.calibration;
 
-import com.google.gson.Gson;
 import qatch.model.CharacteristicSet;
 import qatch.model.Tqi;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 
 
 /**
@@ -19,6 +14,7 @@ import java.io.FileReader;
  * inside R working directory.
  * 
  */
+@Deprecated
 public class WeightsImporter {
 	
 	/**
@@ -32,21 +28,21 @@ public class WeightsImporter {
 	@Deprecated
 	public void importWeights(Tqi tqi, CharacteristicSet characteristics){
 		
-		try {
-			//Create a BufferedReader in order to load the json file where the weights are stored
-			BufferedReader br = new BufferedReader(new FileReader(RInvoker.R_WORK_DIR + "/weights.json"));
-			
-			//Create a Gson json Parser
-			Gson gson = new Gson();
-			
-			//Parse the json into an  object of type Object
-			Object obj = gson.fromJson(br,  Object.class);
-			String s = obj.toString();
-			gsonParser(s,tqi, characteristics);
-			
-		} catch (FileNotFoundException e) {
-			System.out.println(e.getMessage());
-		}
+//		try {
+//			//Create a BufferedReader in order to load the json file where the weights are stored
+//			BufferedReader br = new BufferedReader(new FileReader(RInvoker.R_WORK_DIR + "/weights.json"));
+//
+//			//Create a Gson json Parser
+//			Gson gson = new Gson();
+//
+//			//Parse the json into an  object of type Object
+//			Object obj = gson.fromJson(br,  Object.class);
+//			String s = obj.toString();
+//			gsonParser(s,tqi, characteristics);
+//
+//		} catch (FileNotFoundException e) {
+//			System.out.println(e.getMessage());
+//		}
 	}
 
 	/**
