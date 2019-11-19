@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.opencsv.CSVReader;
 import org.apache.commons.io.FileUtils;
+import qatch.utility.FileUtility;
 
 import java.io.File;
 import java.io.FileReader;
@@ -52,7 +53,7 @@ public class Weighter {
         tempWeightsDirectory.toFile().mkdirs();
 
         // Run R script
-        RInvoker.executeRScript(RInvoker.Script.AHP, comparisonMatricesDirectory, tempWeightsDirectory);
+        RInvoker.executeRScript(RInvoker.Script.AHP, comparisonMatricesDirectory, tempWeightsDirectory, FileUtility.getRoot());
 
         // Parse node name ordering for each matrix
         // TODO: eventually easiest to just have R map the names to the weights instead of parsing the files again

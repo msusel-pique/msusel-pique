@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -28,6 +27,7 @@ public class RInvokerTests {
             "comparison_matrices", "zeroes");
     private Path benchmark_results = Paths.get(TestHelper.TEST_RESOURCES.toString(),
             "benchmark_results");
+    private Path tempResourcesdirectory = Paths.get("src/test/out");
 
     @Before
     public void cleanBefore() throws IOException {
@@ -47,7 +47,7 @@ public class RInvokerTests {
 
         // run R execution
         RInvoker.executeRScript(
-                RInvoker.Script.AHP, comp_matrix_simple, TestHelper.OUTPUT);
+                RInvoker.Script.AHP, this.comp_matrix_simple, TestHelper.OUTPUT, this.tempResourcesdirectory);
 
         if (!weightsOutput.isFile()) {
             Assert.fail("R execution did not generate the expected file. "
@@ -73,7 +73,7 @@ public class RInvokerTests {
         File weightsOutput = new File(TestHelper.OUTPUT.toFile(), "weights.json");
 
         // run R execution
-        RInvoker.executeRScript(RInvoker.Script.AHP, comp_matrix_zeroes, TestHelper.OUTPUT);
+        RInvoker.executeRScript(RInvoker.Script.AHP, this.comp_matrix_zeroes, TestHelper.OUTPUT, this.tempResourcesdirectory);
 
         if (!weightsOutput.isFile()) {
             Assert.fail("R execution did not generate the expected file. "
@@ -103,7 +103,7 @@ public class RInvokerTests {
         File weightsOutput = new File(TestHelper.OUTPUT.toFile(), "weights.json");
 
         // run R execution
-        RInvoker.executeRScript(RInvoker.Script.AHP, comp_matrix_fractions, TestHelper.OUTPUT);
+        RInvoker.executeRScript(RInvoker.Script.AHP, this.comp_matrix_fractions, TestHelper.OUTPUT, this.tempResourcesdirectory);
 
         if (!weightsOutput.isFile()) {
             Assert.fail("R execution did not generate the expected file. "
@@ -134,7 +134,7 @@ public class RInvokerTests {
 
         // run R Executions
         RInvoker.executeRScript(
-                RInvoker.Script.THRESHOLD, benchmark_results, TestHelper.OUTPUT);
+                RInvoker.Script.THRESHOLD, benchmark_results, TestHelper.OUTPUT, this.tempResourcesdirectory);
 
         if (!thresholdOutput.isFile()) {
             Assert.fail("R execution did not generate the expected file. "
@@ -173,20 +173,16 @@ public class RInvokerTests {
 
     @Test
     public void testGetRScriptResource() {
-        URL ahp = RInvoker.getRScriptResource(RInvoker.Script.AHP);
-        URL faph = RInvoker.getRScriptResource(RInvoker.Script.FAPH);
-        URL threshold = RInvoker.getRScriptResource(RInvoker.Script.THRESHOLD);
+        Path ahp = RInvoker.getRScriptResource(RInvoker.Script.AHP, this.tempResourcesdirectory);
+        Path faph = RInvoker.getRScriptResource(RInvoker.Script.FAPH, this.tempResourcesdirectory);
+        Path threshold = RInvoker.getRScriptResource(RInvoker.Script.THRESHOLD, this.tempResourcesdirectory);
 
-        File ahpFile = new File(ahp.getFile());
-        File faphFile = new File(faph.getFile());
-        File tFile = new File(threshold.getFile());
-
-        Assert.assertTrue(ahpFile.exists());
-        Assert.assertTrue(ahpFile.isFile());
-        Assert.assertTrue(faphFile.exists());
-        Assert.assertTrue(faphFile.isFile());
-        Assert.assertTrue(tFile.exists());
-        Assert.assertTrue(tFile.isFile());
+        Assert.assertTrue(ahp.toFile().exists());
+        Assert.assertTrue(ahp.toFile().isFile());
+        Assert.assertTrue(faph.toFile().exists());
+        Assert.assertTrue(faph.toFile().isFile());
+        Assert.assertTrue(threshold.toFile().exists());
+        Assert.assertTrue(threshold.toFile().isFile());
     }
 
 }

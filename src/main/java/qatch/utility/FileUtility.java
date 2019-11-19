@@ -2,17 +2,18 @@ package qatch.utility;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * A collection of useful static methods for common file procedures used in Qatch operation
@@ -53,6 +54,101 @@ public class FileUtility {
         }
 
         return fileOut.toPath();
+    }
+
+    /**
+     * Extract all resources found in this project (msusel-qatch) to a temporary file-system directory.
+     *
+     * @param destination
+     *      Location to create the temporary directory. Does not need to initially exist.
+     * @param directoryNameToExtract
+     *      Name of jar resource directory containing the files desired to be extracted
+     * @return
+     *      The temporary file-system directory with resources extracted into it.
+     */
+    public static Path extractResources(Path destination, String directoryNameToExtract)  {
+
+        destination.toFile().mkdirs();
+        String protocol = FileUtility.class.getResource("").getProtocol();
+
+        try {
+            Path resourcesDirectory = Files.createTempDirectory(destination, "resources");
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try { FileUtils.deleteDirectory(resourcesDirectory.toFile()); }
+                catch (IOException e) { e.printStackTrace(); }
+            }));
+
+            if (Objects.equals(protocol, "jar")) {
+                try { extractResourcesToTempFolder(resourcesDirectory, directoryNameToExtract); }
+                catch (IOException | URISyntaxException e) { e.printStackTrace(); }
+            }
+
+            else if (Objects.equals(protocol, "file")) {
+                File rScripts = new File("src/main/resources", directoryNameToExtract);
+                try {
+                    FileUtils.copyDirectory(rScripts , resourcesDirectory.toFile());
+                }
+                catch (IOException e) {  e.printStackTrace(); }
+            }
+
+            else { throw new RuntimeException("Unable to determine if project is running from IDE or JAR"); }
+
+            return resourcesDirectory;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        throw new RuntimeException("retrun statement in try block was never reached.");
+    }
+
+    /**
+     * Code from https://stackoverflow.com/questions/1529611/how-to-write-a-java-program-which-can-extract-a-jar-file-and-store-its-data-in-s/1529707#1529707
+     * by user Jamesst20
+     *
+     * Used when running program as a JAR.
+     * Takes resources in the resources folder within the JAR and copies them to a
+     * resources folder in the same directory as the JAR.
+     *
+     * @param destination
+     *      Location (directory) to extract the resource files to
+     * @param directoryName
+     *      Name of directory containing the files desired to be extracted
+     */
+    private static void extractResourcesToTempFolder(Path destination, String directoryName) throws IOException, URISyntaxException {
+        File jarFile = new File(FileUtility
+                .class
+                .getProtectionDomain()
+                .getCodeSource()
+                .getLocation()
+                .toURI());
+
+        //Recursively build resources folder from JAR sibling to JAR file
+        JarFile jar = new JarFile(jarFile.getPath());
+        Enumeration<JarEntry> enums = jar.entries();
+        while (enums.hasMoreElements()) {
+            JarEntry entry = enums.nextElement();
+            if (entry.getName().startsWith(directoryName)) {
+                File toWrite = new File(destination.toFile(), entry.getName());
+                if (entry.isDirectory()) {
+                    toWrite.mkdirs();
+                    continue;
+                }
+                InputStream in = new BufferedInputStream(jar.getInputStream(entry));
+                OutputStream out = new BufferedOutputStream(new FileOutputStream(toWrite));
+                byte[] buffer = new byte[2048];
+                for (;;) {
+                    int nBytes = in.read(buffer);
+                    if (nBytes <= 0) {
+                        break;
+                    }
+                    out.write(buffer, 0, nBytes);
+                }
+                out.flush();
+                out.close();
+                in.close();
+            }
+        }
     }
 
     /**
@@ -121,6 +217,14 @@ public class FileUtility {
         return fileNames;
     }
 
+
+    /**
+     * @return
+     *      Path of working root directory of the project calling this method
+     */
+    public static Path getRoot() {
+        return Paths.get(System.getProperty("user.dir"));
+    }
 
     /**
      * Collect set of directory file paths belonging to individual project or module roots when starting
