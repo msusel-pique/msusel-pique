@@ -168,16 +168,6 @@ public class TestHelper {
             }
 
             @Override
-            public Map<String, Measure> applyFindings(Map<String, Measure> measures, Map<String, Diagnostic> diagnosticFindings) {
-                return null;
-            }
-
-            @Override
-            public Map<String, Measure> parseConfig(Path toolConfig) {
-                return null;
-            }
-
-            @Override
             public Map<String, Diagnostic> parseAnalysis(Path toolResults) {
                 Map<String, Diagnostic> diagnostics = new HashMap<>();
                 diagnostics.put("TST0001", TestHelper.makeDiagnostic("TST0001"));
@@ -186,11 +176,6 @@ public class TestHelper {
                 diagnostics.put("TST0004", TestHelper.makeDiagnostic("TST0004"));
                 diagnostics.put("TST0005", TestHelper.makeDiagnostic("TST0005"));
                 return diagnostics;
-            }
-
-            @Override
-            public Path getConfig() {
-                return null;
             }
 
             @Override

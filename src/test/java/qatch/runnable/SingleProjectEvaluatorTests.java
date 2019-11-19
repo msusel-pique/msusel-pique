@@ -10,7 +10,6 @@ import qatch.TestHelper;
 import qatch.evaluation.Project;
 import qatch.model.QualityModel;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -113,7 +112,7 @@ public class SingleProjectEvaluatorTests {
         Assert.assertEquals("FakeProject_01", projectName);
         Assert.assertEquals(1000, loc, 0);
 
-        // Assert: diagnostic
+        // Assert: diagnostics
         Assert.assertEquals(2, measure01.getAsJsonArray("diagnostics").size());
         Assert.assertEquals(2.0, measure01.getAsJsonArray("diagnostics").get(0).getAsJsonObject().get("value").getAsDouble(), 0);
 
