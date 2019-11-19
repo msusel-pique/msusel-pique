@@ -57,9 +57,9 @@ public class FileUtilityTests {
         file4.deleteOnExit();
         file5.deleteOnExit();
 
-        Set<String> namesExt1 = FileUtility.findFileNamesFromExtension(Paths.get("./src"), ".ext1");
-        Set<String> namesExt2 = FileUtility.findFileNamesFromExtension(Paths.get("./src"), ".ext2");
-        Set<String> namesExt3 = FileUtility.findFileNamesFromExtension(Paths.get("./src"), ".ext3");
+        Set<String> namesExt1 = FileUtility.findFileNamesFromExtension(Paths.get("./src"), ".ext1", Integer.MAX_VALUE);
+        Set<String> namesExt2 = FileUtility.findFileNamesFromExtension(Paths.get("./src"), ".ext2", Integer.MAX_VALUE);
+        Set<String> namesExt3 = FileUtility.findFileNamesFromExtension(Paths.get("./src"), ".ext3", Integer.MAX_VALUE);
 
         String file1Name = file1.getName();
         String file2Name = file2.getName();

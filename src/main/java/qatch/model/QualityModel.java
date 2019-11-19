@@ -1,16 +1,19 @@
 package qatch.model;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import qatch.analysis.Diagnostic;
 import qatch.analysis.Measure;
 import qatch.utility.FileUtility;
 
-import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class encapsulates all the appropriate information that describe a 
@@ -47,6 +50,8 @@ public class QualityModel {
 	 * 		Name of the quality model
 	 */
 	public QualityModel(String name) {
+		System.out.println("--- WARNING ---\n" +
+				"You are calling QualityModel with a String input, this should only be used for testing purposes.");
 		this.name = name;
 	}
 

@@ -28,14 +28,14 @@ public class QualityModelDeriver {
             Map<String, ITool> tools,
             Path benchmarkRepository,
             Path comparisonMatricesDirectory,
-            Path analysisResults,
+            Path benchmarkData,
             Path rThresholdsOutput,
             Path tempWeightsDirectory,
             String projectRootFlag) {
 
         // (1) Derive thresholds
         Map<String, Double[]> measureNameThresholdMappings = Benchmarker.deriveThresholds(
-                benchmarkRepository, qmDescription, locTool, tools, projectRootFlag, analysisResults, rThresholdsOutput
+                benchmarkRepository, qmDescription, locTool, tools, projectRootFlag, benchmarkData, rThresholdsOutput
         );
 
         // (2) Elicitate weights

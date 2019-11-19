@@ -107,12 +107,12 @@ public class FileUtility {
      *      Set of file names without the extension and path (e.g. {WpfApp1, Roslyn} if the root directory
      *      contained files named src/bin/WpfApp1.exe and src/obj/Roslyn.exe
      */
-    public static Set<String> findFileNamesFromExtension(Path rootDirectory, String extension) {
+    public static Set<String> findFileNamesFromExtension(Path rootDirectory, String extension, Integer depth) {
 
         Set<String> fileNames = new HashSet<>();
 
         try {
-            Files.find(rootDirectory, Integer.MAX_VALUE, (path, attr) -> path.toString().endsWith(extension))
+            Files.find(rootDirectory, depth, (path, attr) -> path.toString().endsWith(extension))
                     .forEach(p -> fileNames.add(FilenameUtils.getBaseName(p.toString())));
         } catch (IOException e) {
             e.printStackTrace();
