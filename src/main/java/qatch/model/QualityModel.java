@@ -117,9 +117,6 @@ public class QualityModel {
 	public PropertySet getProperties_deprecated() {
 		return properties_deprecated;
 	}
-	public void setProperties_deprecated(PropertySet properties_deprecated) {
-		this.properties_deprecated = properties_deprecated;
-	}
 	public CharacteristicSet getCharacteristics_deprecated() {
 		return characteristics_deprecated;
 	}
