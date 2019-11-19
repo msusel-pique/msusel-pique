@@ -1,8 +1,9 @@
 package qatch.calibration;
 
+import qatch.utility.FileUtility;
+
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -23,8 +24,7 @@ class RInvoker {
 	// TODO: assert that expected behavior occurs after running script (e.g. the file was created)
 	/**
 	 * Run an R script according to its enumeration.
-	 * In most cases the input and output parameters should point to a directory containing the needed
-	 * files for R execution, not the file itself. Check the relevant R script for details.
+	 *
 	 * @param script
 	 * 		Enumeration of the descired R script to run
 	 * @param input
@@ -35,7 +35,7 @@ class RInvoker {
 	 * 		Path to directory to place the files resulting from R execution.
 	 * 		Can be realive or full path.
 	 */
-	static void executeRScript(Script script, Path input, Path output){
+	static void executeRScript(Script script, Path input, Path output, Path tempResourcesDirectory){
 
 		input = input.toAbsolutePath();
 		output = output.toAbsolutePath();
@@ -44,7 +44,7 @@ class RInvoker {
 
 		// TODO: Source Rscript bin in workspace-independent way
 		String rBinPath = findRRunner().toString();
-		Path scriptPath = new File(getRScriptResource(script).getFile()).toPath();
+		Path scriptPath = getRScriptResource(script, tempResourcesDirectory);
 
 		ProcessBuilder pb;
 		String cli;
@@ -69,21 +69,28 @@ class RInvoker {
 	}
 
 
-	static URL getRScriptResource(Script choice) {
-		URL resource;
+	static Path getRScriptResource(Script choice, Path outputDirectory) {
+
+		Path tempResourceDirectory = FileUtility.extractResources(outputDirectory, "r_scripts");
+
+		Path resource = null;
 		switch (choice) {
 			case AHP:
-				resource = RInvoker.class.getClassLoader().getResource("r_scripts/ahpWeightElicitation.R");
+				resource = Paths.get(tempResourceDirectory.toString(), "ahpWeightElicitation.R");
 				break;
 			case FAPH:
-				resource = RInvoker.class.getClassLoader().getResource("r_scripts/fahpWeightElicitator.R");
+				resource = Paths.get(tempResourceDirectory.toString(), "fahpWeightElicitator.R");
 				break;
 			case THRESHOLD:
-				resource = RInvoker.class.getClassLoader().getResource("r_scripts/thresholdsExtractor.R");
+				resource = Paths.get(tempResourceDirectory.toString(), "thresholdsExtractor.R");
 				break;
 			default:
 				throw new RuntimeException("Invalid choice enum given: [" + choice.name() + "]");
 		}
+
+		if (!resource.toFile().isFile()) throw new RuntimeException("getRScriptResource does not point to a existing " +
+				"file at path " + resource.toString());
+
 		return resource;
 	}
 

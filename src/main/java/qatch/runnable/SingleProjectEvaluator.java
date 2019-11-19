@@ -33,7 +33,7 @@ public class SingleProjectEvaluator {
      * @param projectDir
      *      Path to root directory of project to be analyzed.
      * @param resultsDir
-     *      Directory to place the analysis results in. Does not need to exist initially.
+     *      Directory to place the analysis results in. Does not needy to exist initially.
      * @param qmLocation
      *      Path to a completely derived quality model (likely .xml format).
      * @param tool
@@ -95,13 +95,8 @@ public class SingleProjectEvaluator {
     /**
      * Run static analysis tool evaluation process:
      *   (1) run static analysis tool
-     *   (2) parse config: get object representation of the .yaml measure->diagnostics configuration
-     *   (3) prase output: make collection of diagnostic objects
-     *   (4) link findings and diagnostics to Measure objects
-     *
-     * A successful analysis results in the tool having a measureMappings instance variable
-     * with similar structure to the input .yaml config but with Measure objects, and those Measure
-     * objects have the actual findings from the analysis run included as Finding objects.
+     *   (2) parse: get object representation of the diagnostics described by the QM
+     *   (3) make collection of diagnostic objects
      *
      * @param projectDir
      *      Path to root directory of project to be analyzed.
