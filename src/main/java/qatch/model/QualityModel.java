@@ -3,6 +3,7 @@ package qatch.model;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.annotations.Expose;
 import qatch.analysis.Diagnostic;
 import qatch.analysis.Measure;
 import qatch.utility.FileUtility;
@@ -34,9 +35,13 @@ import java.util.Map;
 public class QualityModel {
 
 	// Fields
+	@Expose
 	private String name;  //The name of the QM found in the XML file
+	@Expose
 	private Tqi tqi;  // root node, the total quality evaluation, contains characteristic objects as children
+	@Expose
 	private Map<String, Characteristic> characteristics = new HashMap<>();
+	@Expose
 	private Map<String, Property> properties = new HashMap<>();  // each property has one Measure associated with it
 	private CharacteristicSet characteristics_deprecated;  //The CharacteristicSet containing all the characteristics_deprecated of the Quality Model
 	private PropertySet properties_deprecated;			   //The PropertySet containing all the properties of the Quality Model

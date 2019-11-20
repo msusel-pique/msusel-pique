@@ -9,6 +9,7 @@ import com.google.gson.annotations.Expose;
 public abstract class ModelNode {
 
     // Fields
+    @Expose
     private String description;
     @Expose
     private String name;
