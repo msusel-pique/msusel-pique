@@ -105,6 +105,7 @@ public class Benchmarker {
             project.evaluateMeasures();
 
             // Add new project (with tool findings information included) to the list
+            // TODO PICKUP: debug why previous projects in list update with measure values of most recent evaluated project
             projects.add(project);
         }
 

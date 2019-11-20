@@ -3,6 +3,8 @@ package qatch.runnable;
 import org.junit.Assert;
 import org.junit.Test;
 import qatch.TestHelper;
+import qatch.analysis.Diagnostic;
+import qatch.analysis.Finding;
 import qatch.analysis.ITool;
 import qatch.analysis.IToolLOC;
 import qatch.model.Characteristic;
@@ -14,6 +16,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class QualityModelDeriverTests {
 
@@ -33,7 +37,99 @@ public class QualityModelDeriverTests {
         QualityModel qmDescription = new QualityModel(qmDescriptionPath);
         IToolLOC fakeLocTool = TestHelper.makeIToolLoc();
         ITool fakeTool = TestHelper.makeITool();
-        Map<String, ITool> tools = new HashMap<String, ITool>() {{ put(fakeTool.getName(), fakeTool); }};
+
+        // Make ITools to return different values for each project
+        ITool tool = new ITool() {
+            @Override
+            public Path analyze(Path projectLocation) {
+                switch (projectLocation.getFileName().toString()) {
+                    case "BenchmarkProjectOne":
+                        return Paths.get("src/test/resources/tool_results/benchmark_one_results.xml");
+                    case "BenchmarkProjectTwo":
+                        return Paths.get("src/test/resources/tool_results/benchmark_two_results.xml");
+                    case "BenchmarkProjectThree":
+                        return Paths.get("src/test/resources/tool_results/benchmark_three_results.xml");
+                    default:
+                        throw new RuntimeException("switch statement default case");
+                }
+            }
+
+            /*
+             * Project 1: TST01, TST03 with one finding for each
+             * Project 2: TST01-TST05 with two findings for each
+             * Project 3: TST01-TST05 with three findings for each
+             */
+            @Override
+            public Map<String, Diagnostic> parseAnalysis(Path toolResults) {
+                Finding f1 = TestHelper.makeFinding("file/path/one", 11, 1);
+                Finding f2 = TestHelper.makeFinding("file/path/two", 22, 2);
+                Finding f3 = TestHelper.makeFinding("file/path/three", 33, 3);
+
+                Map<String, Diagnostic> diagnostics = new HashMap<>();
+                switch (toolResults.getFileName().toString()) {
+                    case "benchmark_one_results.xml":
+
+                        Diagnostic bench1tst1 = new Diagnostic("TST0001");
+                        Diagnostic bench1tst3 = new Diagnostic("TST0003");
+                        bench1tst1.setFinding(f1);
+                        bench1tst3.setFinding(f1);
+
+                        diagnostics.put("TST0001", bench1tst1);
+                        diagnostics.put("TST0003", bench1tst3);
+
+                        return diagnostics;
+                    case "benchmark_two_results.xml":
+                        Diagnostic bench2tst1 = new Diagnostic("TST0001");
+                        Diagnostic bench2tst2 = new Diagnostic("TST0002");
+                        Diagnostic bench2tst3 = new Diagnostic("TST0003");
+                        Diagnostic bench2tst4 = new Diagnostic("TST0004");
+                        Diagnostic bench2tst5 = new Diagnostic("TST0005");
+
+                        bench2tst1.setFindings(Stream.of(f1, f2).collect(Collectors.toSet()));
+                        bench2tst2.setFindings(Stream.of(f1, f2).collect(Collectors.toSet()));
+                        bench2tst3.setFindings(Stream.of(f1, f2).collect(Collectors.toSet()));
+                        bench2tst4.setFindings(Stream.of(f1, f2).collect(Collectors.toSet()));
+                        bench2tst5.setFindings(Stream.of(f1, f2).collect(Collectors.toSet()));
+
+                        diagnostics.put("TST0001", bench2tst1);
+                        diagnostics.put("TST0002", bench2tst2);
+                        diagnostics.put("TST0003", bench2tst3);
+                        diagnostics.put("TST0004", bench2tst4);
+                        diagnostics.put("TST0005", bench2tst5);
+
+                        return diagnostics;
+                    case "benchmark_three_results.xml":
+                        Diagnostic bench3tst1 = new Diagnostic("TST0001");
+                        Diagnostic bench3tst2 = new Diagnostic("TST0002");
+                        Diagnostic bench3tst3 = new Diagnostic("TST0003");
+                        Diagnostic bench3tst4 = new Diagnostic("TST0004");
+                        Diagnostic bench3tst5 = new Diagnostic("TST0005");
+
+                        bench3tst1.setFindings(Stream.of(f1, f2, f3).collect(Collectors.toSet()));
+                        bench3tst2.setFindings(Stream.of(f1, f2, f3).collect(Collectors.toSet()));
+                        bench3tst3.setFindings(Stream.of(f1, f2, f3).collect(Collectors.toSet()));
+                        bench3tst4.setFindings(Stream.of(f1, f2, f3).collect(Collectors.toSet()));
+                        bench3tst5.setFindings(Stream.of(f1, f2, f3).collect(Collectors.toSet()));
+
+                        diagnostics.put("TST0001", bench3tst1);
+                        diagnostics.put("TST0002", bench3tst2);
+                        diagnostics.put("TST0003", bench3tst3);
+                        diagnostics.put("TST0004", bench3tst4);
+                        diagnostics.put("TST0005", bench3tst5);
+
+                        return diagnostics;
+                    default:
+                        throw new RuntimeException("switch statement default case");
+                }
+            }
+
+            @Override
+            public String getName() {
+                return "Deriver Test Tool";
+            }
+        };
+
+        Map<String, ITool> tools = new HashMap<String, ITool>() {{ put(tool.getName(), tool); }};
 
         // Run process
         QualityModel qm = QualityModelDeriver.deriveModel(
