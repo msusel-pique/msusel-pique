@@ -86,7 +86,7 @@ public class FileUtility {
             else if (Objects.equals(protocol, "file")) {
                 File rScripts = new File("src/main/resources", directoryNameToExtract);
                 try {
-                    FileUtils.copyDirectory(rScripts , resourcesDirectory.toFile());
+                    FileUtils.copyDirectoryToDirectory(rScripts , resourcesDirectory.toFile());
                 }
                 catch (IOException e) {  e.printStackTrace(); }
             }

@@ -76,13 +76,13 @@ class RInvoker {
 		Path resource = null;
 		switch (choice) {
 			case AHP:
-				resource = Paths.get(tempResourceDirectory.toString(), "ahpWeightElicitation.R");
+				resource = Paths.get(tempResourceDirectory.toString(), "r_scripts", "ahpWeightElicitation.R");
 				break;
 			case FAPH:
-				resource = Paths.get(tempResourceDirectory.toString(), "fahpWeightElicitator.R");
+				resource = Paths.get(tempResourceDirectory.toString(), "r_scripts", "fahpWeightElicitator.R");
 				break;
 			case THRESHOLD:
-				resource = Paths.get(tempResourceDirectory.toString(), "thresholdsExtractor.R");
+				resource = Paths.get(tempResourceDirectory.toString(), "r_scripts", "thresholdsExtractor.R");
 				break;
 			default:
 				throw new RuntimeException("Invalid choice enum given: [" + choice.name() + "]");
