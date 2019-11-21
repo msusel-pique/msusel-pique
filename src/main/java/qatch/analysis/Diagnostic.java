@@ -1,49 +1,64 @@
 package qatch.analysis;
 
 import com.google.gson.annotations.Expose;
+import qatch.model.ModelNode;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
-public class Diagnostic {
+public class Diagnostic extends ModelNode {
 
-    // instance variables
+    // Instance variables
+
     private Function<Set<Finding>, Double> evalFunction;
     @Expose
     private Set<Finding> findings = new HashSet<>();
     @Expose
-    private String id;
+    private String toolName;
     @Expose
     private double value;
 
 
-    // constructors
-    public Diagnostic(String id) {
-        this.id = id;
+    // Constructors
+
+    public Diagnostic(String id, String description, String toolName) {
+        super(id, description);
         this.evalFunction = this::defaultEvalFunction;
-    }
-
-    public Diagnostic(String id, Function<Set<Finding>, Double> evalFunction) {
-        this.id = id;
-        this.evalFunction = evalFunction;
+        this.toolName = toolName;
     }
 
 
-    // getters and setters
-    public String getId() { return id; }
+    // Getters and setters
 
     public Set<Finding> getFindings() { return findings; }
     public void setFinding(Finding finding) { findings.add(finding); }
     public void setFindings(Set<Finding> findings) { this.findings = findings; }
+    public String getToolName() {
+        return toolName;
+    }
+    public void setToolName(String toolName) {
+        this.toolName = toolName;
+    }
 
     public double getValue() {
-        this.value = evaluate();
+        evaluate();
         return this.value;
     }
 
 
-    // methods
+    // Methods
+
+    @Override
+    public ModelNode clone() {
+        Diagnostic clonedDiagnostic = new Diagnostic(getName(), getDescription(), getToolName());
+        findings.forEach(finding -> {
+            setFinding(finding.deepClone());
+        });
+
+        return clonedDiagnostic;
+    }
+
     /**
      * Diagnostics must define in their instantiating, language-specific class
      * how to evaluate the collection of its findings.  Often this will simply be
@@ -53,13 +68,14 @@ public class Diagnostic {
      * @return
      *      The non-normalized value of the diagnostic
      */
-    private double evaluate() {
+    public void evaluate() {
         assert this.evalFunction != null;
-        return this.evalFunction.apply(this.findings);
+        this.value = this.evalFunction.apply(this.findings);
     }
 
 
-    // helper methods
+    // Helper methods
+
     /**
      * Define the default evaluation function to simply be a count of findings
      * @param findings

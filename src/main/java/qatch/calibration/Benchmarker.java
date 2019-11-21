@@ -201,7 +201,7 @@ public class Benchmarker {
         // Ensure containing directory of matrix output file exists
         analysisResults.getParent().toFile().mkdirs();
         // Make ArrayList of measures to assert order of measure data retrieval
-        ArrayList<Measure> measureList = new ArrayList<>(projects.get(0).getMeasures().values());
+        ArrayList<Measure> measureList = new ArrayList<>(projects.get(0).getQualityModel().getMeasures().values());
         // Basic matrix data
         int numMeasures = measureList.size();
 
@@ -225,7 +225,7 @@ public class Benchmarker {
                 String[] row = new String[numMeasures + 1];
                 row[0] = project.getName();
                 for (int i = 1; i < measureList.size() + 1; i++) {
-                    row[i] = String.valueOf(project.getMeasure(measureList.get(i-1).getName()).getNormalizedValue());
+                    row[i] = String.valueOf(project.getQualityModel().getMeasure(measureList.get(i-1).getName()).getNormalizedValue());
                 }
                 csvRows.add(row);
             }

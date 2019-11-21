@@ -1,11 +1,13 @@
 package qatch.analysis;
 
 import com.google.gson.annotations.Expose;
+import qatch.model.ModelNode;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public class Measure {
+public class Measure extends ModelNode {
 
 	// instance variables
 	private Function<List<Diagnostic>, Double> evalFunction;
@@ -14,74 +16,75 @@ public class Measure {
 	@Expose
 	private double normalizedValue;
 	@Expose
-	private String toolName;
-	@Expose
 	private List<Diagnostic> diagnostics;
 	@Expose
 	private double value;
 
 
-	// constructors
-	public Measure() {
-		this.evalFunction = this::defaultEvalFunction;
-	}
+	// Constructors
 
-	public Measure(String name, String toolName, List<Diagnostic> diagnostics) {
-		this.name = name;
-		this.toolName = toolName;
+	public Measure(String name, String description, List<Diagnostic> diagnostics) {
+		super(name, description);
 		this.diagnostics = diagnostics;
 		this.evalFunction = this::defaultEvalFunction;
 	}
 
-	public Measure(String name, String toolName, List<Diagnostic> diagnostics, Function<List<Diagnostic>, Double> evalFunction) {
-		this.name = name;
-		this.toolName = toolName;
+	public Measure() {
+		super(null, null);
+		this.evalFunction = this::defaultEvalFunction;
+	}
+
+	public Measure(String name, String description, List<Diagnostic> diagnostics, Function<List<Diagnostic>, Double> evalFunction) {
+		super(name, description);
 		this.diagnostics = diagnostics;
 		this.evalFunction = evalFunction;
 	}
 
 
-	// getters and setters
+	// Getters and setters
+
 	public String getName() { return name; }
 	public void setName(String name) { this.name = name; }
-
-	public String getToolName() { return toolName; }
-	public void setToolName(String toolName) { this.toolName = toolName; }
-
-	public Diagnostic getDiagnostic(String id) {
+	public Diagnostic getDiagnostic(String name) {
 		return this.diagnostics
 			.stream()
-		    .filter(d -> d.getId().equals(id))
+		    .filter(d -> d.getName().equals(name))
 		    .findAny()
 		    .orElse(null);
 	}
 	public List<Diagnostic> getDiagnostics() { return diagnostics; }
 	public void setDiagnostics(List<Diagnostic> diagnostics) { this.diagnostics = diagnostics; }
-
 	public double getNormalizedValue() { return normalizedValue; }
 	public void setNormalizedValue(double normalizedValue) { this.normalizedValue = normalizedValue; }
-
 	// TODO: this probably causes a bug when called multiple times on the same object
 	public double getValue() {
-		this.value = evaluate();
+		evaluate();
 		return this.value;
 	}
 
+	@Override
+	public ModelNode clone() {
+		List<Diagnostic> clonedDiagnostics = new ArrayList<>();
+		getDiagnostics().forEach(diagnostic -> {
+			Diagnostic clonedDiagnostic = (Diagnostic) diagnostic.clone();
+			clonedDiagnostics.add(clonedDiagnostic);
+		});
+		return new Measure(getName(), getDescription(), clonedDiagnostics);
+	}
 
-	// methods
+
+	// Methods
+
 	/**
 	 * Measures must define in their instantiating, language-specific class
 	 * how to evaluate its collection of diagnostics.  Often this will simply be
 	 * a count of findings, but quality evaluation (especially in the context of security)
 	 * should allow for other evaluation functions.
-	 *
-	 * @return
-	 *      The non-normalized value of the measure
 	 */
-	public double evaluate() {
+	public void evaluate() {
 		assert this.evalFunction != null;
 		this.getDiagnostics().forEach(Diagnostic::getValue);
-		return this.evalFunction.apply(this.diagnostics);
+		this.value = this.evalFunction.apply(this.diagnostics);
 	}
 
 

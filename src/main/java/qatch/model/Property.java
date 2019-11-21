@@ -3,12 +3,14 @@ package qatch.model;
 import com.google.gson.annotations.Expose;
 import qatch.analysis.Measure;
 
-public class Property {
+public class Property extends ModelNode {
 	
 	// Statics
+
 	public static final int THRESHOLDS_NUM = 3;
 
 	// Fields
+
 	private String description;//A brief description of the property (optional)
 	@Expose
 	private double value;//The quality score of the property
@@ -22,81 +24,82 @@ public class Property {
 	private Double[] thresholds;//The three thresholds of the property metric, needed for the evaluation
 
 
+	// Constructors
+
+	public Property(String name, String description) {
+		super(name, description);
+		thresholds = new Double[THRESHOLDS_NUM];
+	}
+
 	public Property(){
 		// Just create the thresholds array.
+		super(null, null);
 		thresholds = new Double[THRESHOLDS_NUM];
 		measure = new Measure();
 	}
 	
-	public Property(Measure measure){
+	public Property(String name, String description, Measure measure){
+		super(name, description);
 		thresholds = new Double[THRESHOLDS_NUM];
 		this.measure = measure;
 	}
 
-	public Property(String name, Measure measure) {
-		thresholds = new Double[THRESHOLDS_NUM];
-		this.name = name;
-		this.measure = measure;
-	}
 
 	public Property(String name, String description, boolean impact, Double[] thresholds, Measure measure) {
-		this.name = name;
-		this.description = description;
+		super(name, description);
 		this.positive = impact;
 		this.thresholds = thresholds;
 		this.measure = measure;
 	}
-	
+
+
+	// Getters and setters
 
 	public boolean isPositive() {
 		return positive;
 	}
-
 	public void setPositive(boolean positive) {
 		this.positive = positive;
 	}
-
 	public String getName() {
 		return name;
 	}
-	
 	public void setName(String name) {
 		this.name = name;
 	}
-	
 	public String getDescription() {
 		return description;
 	}
-	
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
 	public Double[] getThresholds() {
 		return thresholds;
 	}
-	
 	public void setThresholds(Double[] thresholds) {
 		this.thresholds = thresholds;
 	}
-	
 	public double getValue() {
 		return value;
 	}
-	
 	public void setValue(double value) {
 		this.value = value;
 	}
-	
 	public void setMeasure(Measure measure){
 		this.measure = measure;
 	}
-	
 	public Measure getMeasure(){
 		return measure;
 	}
 
-	
+
+	// Methods
+
+	@Override
+	public ModelNode clone() {
+		return new Property(getName(), getDescription(), isPositive(), getThresholds(), (Measure)getMeasure().clone());
+	}
+
 	/**
 	 * A method for evaluating a Property object (i.e this property). 
 	 * In other words, this method calculates the eval field

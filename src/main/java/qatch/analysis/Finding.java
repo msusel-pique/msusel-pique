@@ -4,7 +4,8 @@ import com.google.gson.annotations.Expose;
 
 public class Finding {
 
-    // instance variables
+    // Instance variables
+
     @Expose
     private int characterNumber;
     @Expose
@@ -15,7 +16,8 @@ public class Finding {
     private int severity;  // TODO: think about enum or better extensible approaches for finding custom information
 
 
-    // constructors
+    // Constructors
+
     public Finding() { }
 
     public Finding(String filePath, int lineNumber, int characterNumber) {
@@ -32,14 +34,21 @@ public class Finding {
     }
 
 
-    // getters and setters
-    public void setFilePath(String filePath) { this.filePath = filePath; }
-
-    public void setLineNumber(int lineNumber) { this.lineNumber = lineNumber; }
+    // Getters and setters
 
     public void setCharacterNumber(int characterNumber) {  this.characterNumber = characterNumber; }
-
+    public void setFilePath(String filePath) { this.filePath = filePath; }
+    public String getFilePath() {
+        return filePath;
+    }
+    public void setLineNumber(int lineNumber) { this.lineNumber = lineNumber; }
     public String getLocation() { return filePath + "," + lineNumber + "," + characterNumber; }
-
     public int getSeverity() { return severity; }
+
+
+    // Methods
+
+    public Finding deepClone() {
+        return new Finding(getFilePath(), this.lineNumber, this.characterNumber, getSeverity());
+    }
 }

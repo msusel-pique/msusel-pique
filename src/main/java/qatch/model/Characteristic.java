@@ -16,39 +16,42 @@ import java.util.Map;
 public class Characteristic extends ModelNode {
 
 	// Instance variables
-	private String standard;  //The standard from which this characteristic derives
+
 	// TODO: eventually consider new tree object that combines properties and their weight instead of relying on String name matching (not enough time for me to refactor currently)
 	private Map<String, Property> properties = new HashMap<>();  // mapping of property names and their property objects
 	@Expose
 	private Map<String, Double> weights = new HashMap<>();  // mapping of property names and their weights
 
 
+
 	// Constructors
-	public Characteristic(String name, String description, String standard, Map<String, Double> weights){
+
+	public Characteristic(String name, String description){
 		super(name, description);
-		this.standard = description;
+	}
+
+	public Characteristic(String name, String description, Map<String, Double> weights){
+		super(name, description);
 		this.weights = weights;
 	}
-	
-	public Characteristic(String name, String description, String standard){
+
+	public Characteristic(String name, String description, Map<String, Double> weights, Map<String, Property> properties){
 		super(name, description);
-		this.standard = standard;
+		this.weights = weights;
+		this.properties = properties;
 	}
 
 
-	// getters and setters
+	// Getters and setters
 
 	public Map<String, Property> getProperties() {
 		return properties;
 	}
+	public void setProperty(Property property) {
+		getProperties().put(property.getName(), property);
+	}
 	public void setProperties(Map<String, Property> properties) {
 		this.properties = properties;
-	}
-	public String getStandard() {
-		return standard;
-	}
-	public void setStandard(String standard) {
-		this.standard = standard;
 	}
 	public double getWeight(String propertyName) {
 		return this.weights.get(propertyName);
@@ -60,7 +63,19 @@ public class Characteristic extends ModelNode {
 	}
 
 
-	// methods
+	// Methods
+
+	@Override
+	public ModelNode clone() {
+		Map<String, Property> clonedProperties = new HashMap<>();
+		getProperties().values().forEach(property -> {
+			Property clonedProperty = (Property)property.clone();
+			clonedProperties.put(clonedProperty.getName(), clonedProperty);
+		});
+
+		return new Characteristic(getName(), getDescription(), getWeights(), clonedProperties);
+	}
+
 	/**
 	 * This method is used in order to calculate the eval field of this Characteristic
 	 * object, based

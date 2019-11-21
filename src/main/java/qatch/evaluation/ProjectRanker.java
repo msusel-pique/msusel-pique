@@ -1,10 +1,5 @@
 package qatch.evaluation;
 
-import qatch.calibration.BenchmarkProjects;
-
-import java.util.Collections;
-import java.util.Comparator;
-
 /**
  * This class is responsible for sorting the a set of projects
  * in a descending order, based on the field "eval".
@@ -12,20 +7,21 @@ import java.util.Comparator;
  * @author Miltos
  *
  */
+@Deprecated
 public class ProjectRanker {
-	/**
-	 * Specify the comparator for the sorting process...
-	 */
-	 static final Comparator<Project> TQI_ORDER = new Comparator<Project>() {
-		 public int compare(Project p1, Project p2) {
-			 return Double.compare(p2.getTqi().getValue(), p1.getTqi().getValue());
-		 }
-	 };
-	 
-	 /**
-	  * A method for implementing the desired sorting...
-	  */
-	 public static void rank(BenchmarkProjects projects){
-		 Collections.sort(projects.getProjects(), TQI_ORDER);
-	 }
+//	/**
+//	 * Specify the comparator for the sorting process...
+//	 */
+//	 static final Comparator<Project> TQI_ORDER = new Comparator<Project>() {
+//		 public int compare(Project p1, Project p2) {
+//			 return Double.compare(p2.getTqi().getValue(), p1.getTqi().getValue());
+//		 }
+//	 };
+//
+//	 /**
+//	  * A method for implementing the desired sorting...
+//	  */
+//	 public static void rank(BenchmarkProjects projects){
+//		 Collections.sort(projects.getProjects(), TQI_ORDER);
+//	 }
 }

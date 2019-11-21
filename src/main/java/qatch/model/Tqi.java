@@ -16,12 +16,14 @@ import java.util.Map;
 public class Tqi extends ModelNode {
 	
 	// Fields, some inherit from super class
+
 	@Expose
 	private Map<String, Double> weights;  // mapping of characteristic names and their weights
 	private Map<String, Characteristic> characteristics = new HashMap<>(); // mapping of characteristic names and their object
 
 
 	// Getters and setters
+
 	public Map<String, Characteristic> getCharacteristics() {
 		return characteristics;
 	}
@@ -43,13 +45,32 @@ public class Tqi extends ModelNode {
 
 
 	// Constructor
+
 	public Tqi(String name, String description, Map<String, Double> weights) {
 		super(name, description);
 		this.weights = (weights == null) ? new HashMap<>() : weights;
 	}
 
+	public Tqi(String name, String description, Map<String, Double> weights, Map<String, Characteristic> characteristics) {
+		super(name, description);
+		this.weights = (weights == null) ? new HashMap<>() : weights;
+		this.characteristics = characteristics;
+	}
+
 
 	// Methods
+
+	@Override
+	public ModelNode clone() {
+		Map<String, Characteristic> clonedCharacteristics = new HashMap<>();
+		getCharacteristics().values().forEach(characteristic -> {
+			Characteristic clonedCharacteristic = (Characteristic)characteristic.clone();
+			clonedCharacteristics.put(clonedCharacteristic.getName(), clonedCharacteristic);
+		});
+
+		return new Tqi(getName(), getDescription(), getWeights(), clonedCharacteristics);
+	}
+
 	@Override
 	public void evaluate() {
 

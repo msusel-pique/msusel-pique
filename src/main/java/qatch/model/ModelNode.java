@@ -3,21 +3,22 @@ package qatch.model;
 import com.google.gson.annotations.Expose;
 
 /**
- * Abstract representation of a node belonging to the Quality, Characteristic,
- * or Property layer
+ * Abstract representation of a node belonging to the Quality Model
  */
 public abstract class ModelNode {
 
     // Fields
-    @Expose
-    private String description;
+
     @Expose
     private String name;
+    @Expose
+    private String description;
     @Expose
     private double value;  // the value this node evaluates to
 
 
     // Constructor
+
     public ModelNode(String name, String description) {
         this.name = name;
         this.description = description;
@@ -25,6 +26,7 @@ public abstract class ModelNode {
 
 
     // Getters and setters
+
     public String getDescription() {
         return description;
     }
@@ -44,6 +46,16 @@ public abstract class ModelNode {
 
 
     // Methods
+
+    /**
+     * A loose way of implementing the Prototype design pattern.
+     * Each quality model node must describe how to clone itself.
+     *
+     * @return
+     *      A deep clone of the current node object.
+     */
+    public abstract ModelNode clone();
+
     /**
      * Calculates and update the value field of this object.
      * If evaluating TQI or Characteristic nodes, this will likely be a weight sum function.
@@ -53,4 +65,6 @@ public abstract class ModelNode {
      *      The value field is updated.
      */
     public abstract void evaluate();
+
+
 }

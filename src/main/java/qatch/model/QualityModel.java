@@ -7,14 +7,12 @@ import com.google.gson.annotations.Expose;
 import qatch.analysis.Diagnostic;
 import qatch.analysis.Measure;
 import qatch.utility.FileUtility;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class encapsulates all the appropriate information that describe a 
@@ -26,7 +24,6 @@ import java.util.Map;
  * project (or projects) that we want to evaluate.
  * 
  * @author Miltos, Rice
- *
  */
 /*
  * TODO:
@@ -39,13 +36,6 @@ public class QualityModel {
 	private String name;  //The name of the QM found in the XML file
 	@Expose
 	private Tqi tqi;  // root node, the total quality evaluation, contains characteristic objects as children
-	@Expose
-	private Map<String, Characteristic> characteristics = new HashMap<>();
-	@Expose
-	private Map<String, Property> properties = new HashMap<>();  // each property has one Measure associated with it
-	private CharacteristicSet characteristics_deprecated;  //The CharacteristicSet containing all the characteristics_deprecated of the Quality Model
-	private PropertySet properties_deprecated;			   //The PropertySet containing all the properties of the Quality Model
-
 
 	// Constructors
 
@@ -71,18 +61,22 @@ public class QualityModel {
 
 
 	// Setters and Getters
-
+	private Characteristic getAnyCharacteristic() {
+		Characteristic anyCharacteristic = getTqi().getCharacteristics().values().stream().findAny().orElse(null);
+		assert anyCharacteristic != null;
+		return anyCharacteristic;
+	}
 	public Characteristic getCharacteristic(String name) {
-		return this.characteristics.get(name);
+		return getTqi().getCharacteristics().get(name);
 	}
 	public Map<String, Characteristic> getCharacteristics() {
-		return characteristics;
+		return getTqi().getCharacteristics();
 	}
 	public void setCharacteristic(String characteristicName, Characteristic characteristic) {
-		this.characteristics.put(characteristicName, characteristic);
+		getTqi().getCharacteristics().put(characteristicName, characteristic);
 	}
 	public void setCharacteristics(Map<String, Characteristic> characteristics) {
-		this.characteristics = characteristics;
+		getTqi().setCharacteristics(characteristics);
 	}
 	public Measure getMeasure(String measureName) {
 		for (Property property : getProperties().values()) {
@@ -92,6 +86,14 @@ public class QualityModel {
 		}
 		throw new RuntimeException("Unable to find measure with name " + measureName + " from QM's property nodes");
 	}
+	public Map<String, Measure> getMeasures() {
+		Map<String, Measure> measures = new HashMap<>();
+		List<Property> propertyList = new ArrayList<>(getProperties().values());
+		propertyList.forEach(property -> {
+			measures.put(property.getMeasure().getName(), property.getMeasure());
+		});
+		return measures;
+	}
 	public String getName() {
 		return name;
 	}
@@ -99,7 +101,7 @@ public class QualityModel {
 		this.name = name;
 	}
 	public Property getProperty(String name) {
-		return this.properties.get(name);
+		return getProperties().get(name);
 	}
 	public Property getPropertyByMeasureName(String measureName) {
 		for (Property property : getProperties().values()) {
@@ -110,13 +112,19 @@ public class QualityModel {
 		throw new RuntimeException("Unable to find property with child measure name " + measureName + " from QM's property nodes");
 	}
 	public Map<String, Property> getProperties() {
-		return properties;
+		return getAnyCharacteristic().getProperties();
 	}
-	public void setProperty(String propertyName, Property property) {
-		this.properties.put(propertyName, property);
+	public void setProperty(Property property) {
+		Set<Characteristic> allCharacteristics = new HashSet<>(getTqi().getCharacteristics().values());
+		allCharacteristics.forEach(characteristic -> {
+			characteristic.setProperty(property);
+		});
 	}
 	public void setProperties(Map<String, Property> properties) {
-		this.properties = properties;
+		Set<Characteristic> allCharacteristics = new HashSet<>(getTqi().getCharacteristics().values());
+		allCharacteristics.forEach(characteristic -> {
+			characteristic.setProperties(properties);
+		});
 	}
 	public Tqi getTqi() {
 		return tqi;
@@ -124,18 +132,19 @@ public class QualityModel {
 	public void setTqi(Tqi tqi) {
 		this.tqi = tqi;
 	}
-	public PropertySet getProperties_deprecated() {
-		return properties_deprecated;
-	}
-	public CharacteristicSet getCharacteristics_deprecated() {
-		return characteristics_deprecated;
-	}
-	public void setCharacteristics_deprecated(CharacteristicSet characteristics_deprecated) {
-		this.characteristics_deprecated = characteristics_deprecated;
-	}
 
 
 	// Methods
+
+	/**
+	 * @return
+	 * 		Deep clone of this QualityModel object
+	 */
+	public QualityModel clone() {
+
+		throw new NotImplementedException();
+	}
+
 	/**
 	 * Create a hard-drive file representation of the model
 	 *
@@ -182,7 +191,7 @@ public class QualityModel {
 				String name = jsonCharacteristic.getAsJsonPrimitive("name").getAsString();
 				String standard = jsonCharacteristic.getAsJsonPrimitive("standard").getAsString();
 				String description = jsonCharacteristic.getAsJsonPrimitive("description").getAsString();
-				Characteristic qmCharacteristic = new Characteristic(name, description, standard);
+				Characteristic qmCharacteristic = new Characteristic(name, description);
 				if (jsonCharacteristic.getAsJsonObject("weights") != null) {
 					jsonCharacteristic.getAsJsonObject("weights").keySet().forEach(weight -> {
 						qmCharacteristic.setWeight(weight, jsonCharacteristic.getAsJsonObject("weights").getAsJsonPrimitive(weight).getAsDouble());
@@ -214,16 +223,18 @@ public class QualityModel {
 				Measure qmMeasure = new Measure();
 				List<Diagnostic> qmDiagnostics = new ArrayList<>();
 				jsonDiagnostics.forEach(d -> {
-					qmDiagnostics.add(new Diagnostic(d.getAsString()));
+					String dName = d.getAsJsonObject().get("name").getAsString();
+					String dDescription = d.getAsJsonObject().get("description").getAsString();
+					String dToolName = d.getAsJsonObject().get("toolName").getAsString();
+					qmDiagnostics.add(new Diagnostic(dName, dDescription, dToolName));
 				});
 
 				qmMeasure.setName(jsonMeasure.getAsJsonPrimitive("name").getAsString());
-				qmMeasure.setToolName(jsonMeasure.getAsJsonPrimitive("tool").getAsString());
 				qmMeasure.setDiagnostics(qmDiagnostics);
 
 				Property qmProperty = new Property(name, description, impact, thresholds, qmMeasure);
 
-				setProperty(qmProperty.getName(), qmProperty);
+				setProperty(qmProperty);
 			});
 
 			// Construct tree structure with TQI as root node
@@ -236,5 +247,4 @@ public class QualityModel {
 			e.printStackTrace();
 		}
 	}
-
 }

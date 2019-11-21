@@ -2,15 +2,11 @@ package qatch.evaluation;
 
 import com.google.gson.annotations.Expose;
 import qatch.analysis.Diagnostic;
-import qatch.analysis.Measure;
-import qatch.model.Characteristic;
-import qatch.model.Property;
 import qatch.model.QualityModel;
-import qatch.model.Tqi;
 import qatch.utility.FileUtility;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -27,63 +23,25 @@ public class Project{
 	@Expose
 	private int linesOfCode;
 	private Path path;  // the original path where the sources of the project are stored (with or without the name)
-	@Expose
-	private Map<String, Characteristic> characteristics = new HashMap<>();
-	@Expose
-	private Map<String, Property> properties = new HashMap<>();  // each property has one Measure associated with it
-	@Expose
-	private Tqi tqi;
+	private QualityModel qualityModel;  // the QM prototype this project uses for evaluation
 
 
 	// Constructors
 
 	public Project(String name){
 		this.name = name;
-		this.tqi = new Tqi(null, null, null);
 	}
 
 	public Project(String name, Path path, QualityModel qm) {
 		this.name = name;
 		this.path = path;
-		initializeTqi(qm);
-		initializeCharacteristics(qm);
-		initializeProperties(qm);
+		this.qualityModel = qm.clone();
 	}
 	
 	
 	// Getters and setters
-
-	public Characteristic getCharacteristic(String name) { return this.characteristics.get(name); }
-	public Map<String, Characteristic> getCharacteristics() {
-		return getTqi().getCharacteristics();
-	}
-	public void setCharacteristic(String name, Characteristic characteristic) { this.characteristics.put(name, characteristic); }
-	public void setCharacteristics(Map<String, Characteristic> characteristics) {
-		this.characteristics = characteristics;
-	}
 	public int getLinesOfCode() { return linesOfCode; }
 	public void setLinesOfCode(int linesOfCode) { this.linesOfCode = linesOfCode; }
-	public Measure getMeasure(String measureName) {
-		return getMeasures().get(measureName);
-	}
-	public Measure getMeasureByPropertyName(String propertyName) {
-		return this.properties.get(propertyName).getMeasure();
-	}
-	public Map<String, Measure> getMeasures() {
-		Map<String, Measure> measures = new HashMap<>();
-		this.getProperties().values().forEach(p -> { measures.put(p.getMeasure().getName(), p.getMeasure()); });
-		return measures;
-	}
-	public void setMeasure(String propertyName, Measure measure) {
-		this.getProperty(propertyName).setMeasure(measure);
-	}
-	public void setMeasures(Map<String, Measure> measures) {
-		for (Map.Entry<String, Measure> propertyAndMeasures : measures.entrySet()) {
-			String propertyName = propertyAndMeasures.getKey();
-			Measure measure = propertyAndMeasures.getValue();
-			this.setMeasure(propertyName, measure);
-		}
-	}
 	public String getName() {
 		return name;
 	}
@@ -92,16 +50,8 @@ public class Project{
 	}
 	public Path getPath() { return path; }
 	public void setPath(Path path) { this.path = path; }
-	public Property getProperty(String name) { return this.properties.get(name); }
-	public Map<String, Property> getProperties() { return this.properties; }
-	public void setProperty(String name, Property property) {
-		this.properties.put(name, property);
-	}
-	public Tqi getTqi() {
-		return this.tqi;
-	}
-	public void setTqi(Tqi tqi) {
-		this.tqi = tqi;
+	public QualityModel getQualityModel() {
+		return qualityModel;
 	}
 
 
@@ -117,11 +67,13 @@ public class Project{
 	 * 		A diagnostic object parsed from the tool result file
 	 */
 	public void addFindings(Diagnostic toolResult) {
-		for (Property property : this.properties.values()) {
-			for (Diagnostic diagnostic : property.getMeasure().getDiagnostics()) {
-				if (diagnostic.getId().equals(toolResult.getId())) { diagnostic.setFindings(toolResult.getFindings()); }
-			}
-		}
+		throw new NotImplementedException();
+
+//		for (Property property : this.properties.values()) {
+//			for (Diagnostic diagnostic : property.getMeasure().getDiagnostics()) {
+//				if (diagnostic.getId().equals(toolResult.getId())) { diagnostic.setFindings(toolResult.getFindings()); }
+//			}
+//		}
 	}
 
 	/**
@@ -130,15 +82,17 @@ public class Project{
 	 */
 	public void evaluateMeasures() {
 
-		if (this.linesOfCode < 1) {
-			throw new RuntimeException("Normalization of measures failed" +
-					". This is likely due to the LoC analyzer either \nfailing to get the " +
-					"total lines of code, or failing to assign the TLOC to the project.");
-		}
+		throw new NotImplementedException();
 
-		this.getMeasures().values().forEach(m -> {
-			m.setNormalizedValue(m.getValue() / (double) this.getLinesOfCode());
-		});
+//		if (this.linesOfCode < 1) {
+//			throw new RuntimeException("Normalization of measures failed" +
+//					". This is likely due to the LoC analyzer either \nfailing to get the " +
+//					"total lines of code, or failing to assign the TLOC to the project.");
+//		}
+//
+//		this.getMeasures().values().forEach(m -> {
+//			m.setNormalizedValue(m.getValue() / (double) this.getLinesOfCode());
+//		});
 	}
 
 	/**
@@ -146,7 +100,8 @@ public class Project{
 	 * provided by the quality model and the values contained in the project's Property nodes.
 	 */
 	public void evaluateCharacteristics() {
-		this.getCharacteristics().values().forEach(Characteristic::evaluate);
+		throw new NotImplementedException();
+//		this.getCharacteristics().values().forEach(Characteristic::evaluate);
 	}
 
 	/**
@@ -154,11 +109,13 @@ public class Project{
 	 * provided by the quality model and the findings contained in the Measure nodes.
 	 */
 	public void evaluateProperties() {
-		getProperties().values().forEach(Property::evaluate);
+		throw new NotImplementedException();
+//		getProperties().values().forEach(Property::evaluate);
 	}
 
 	public void evaluateTqi() {
-		getTqi().evaluate();
+		throw new NotImplementedException();
+//		getTqi().evaluate();
 	}
 
 	/**
@@ -176,38 +133,6 @@ public class Project{
 	}
 
 	/**
-	 * Initialize characteristics layer of the project using the quality model description
-	 *
-	 * @param qm
-	 * 		The language-specific quality model
-	 */
-	private void initializeCharacteristics(QualityModel qm) {
-		this.characteristics = qm.getCharacteristics();
-	}
-
-	/**
-	 * Initialize properties layer of the project using the quality model description
-	 *
-	 * @param qm
-	 * 		The language-specific quality model
-	 */
-	private void initializeProperties(QualityModel qm) {
-		this.properties = qm.getProperties();
-	}
-
-	/**
-	 * Initialize Tqi object of the project using weights from the quality model
-	 *
-	 * @param qm
-	 * 		The language-specific quality model
-	 */
-	private void initializeTqi(QualityModel qm) {
-		this.tqi = qm.getTqi();
-		this.tqi.setCharacteristics(qm.getCharacteristics());
-
-	}
-
-	/**
 	 * Find the diagnostic objects in this project and update their findings with findings containing in
 	 * the input parameter.  This method matches the diagnostic objects by name.
 	 *
@@ -216,14 +141,15 @@ public class Project{
 	 * 		findings.
 	 */
 	public void updateDiagnosticsWithFindings(Map<String, Diagnostic> diagnosticsWithFindings) {
-		diagnosticsWithFindings.values().forEach(diagnostic -> {
-			getMeasures().values().forEach(measure -> {
-				measure.getDiagnostics().forEach(oldDiagnostic -> {
-					if (oldDiagnostic.getId().equals(diagnostic.getId())) {
-						oldDiagnostic.setFindings(diagnostic.getFindings());
-					}
-				});
-			});
-		});
+		throw new NotImplementedException();
+//		diagnosticsWithFindings.values().forEach(diagnostic -> {
+//			getMeasures().values().forEach(measure -> {
+//				measure.getDiagnostics().forEach(oldDiagnostic -> {
+//					if (oldDiagnostic.getId().equals(diagnostic.getId())) {
+//						oldDiagnostic.setFindings(diagnostic.getFindings());
+//					}
+//				});
+//			});
+//		});
 	}
 }
