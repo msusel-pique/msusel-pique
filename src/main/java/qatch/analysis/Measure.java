@@ -12,8 +12,6 @@ public class Measure extends ModelNode {
 	// instance variables
 	private Function<List<Diagnostic>, Double> evalFunction;
 	@Expose
-	private String name;
-	@Expose
 	private double normalizedValue;
 	@Expose
 	private List<Diagnostic> diagnostics;
@@ -43,8 +41,6 @@ public class Measure extends ModelNode {
 
 	// Getters and setters
 
-	public String getName() { return name; }
-	public void setName(String name) { this.name = name; }
 	public Diagnostic getDiagnostic(String name) {
 		return this.diagnostics
 			.stream()
@@ -96,7 +92,7 @@ public class Measure extends ModelNode {
 		if (loc != 0) {
 			return this.value/loc;
 		} else {
-			throw new RuntimeException("Division by zero occured on metric " + this.name +
+			throw new RuntimeException("Division by zero occured on metric " + getName() +
 				". This is likely due to the metrics analyzer either \nfailing to get the " +
 				"total lines of code, or failing to assign the TLOC to the property's measure's normalizer.");
 		}

@@ -11,13 +11,10 @@ public class Property extends ModelNode {
 
 	// Fields
 
-	private String description;//A brief description of the property (optional)
 	@Expose
 	private double value;//The quality score of the property
 	@Expose
 	private Measure measure;
-	@Expose
-	private String name;//The name of the property
 	@Expose
 	private boolean positive;//If this field is true then the metric has a positive impact on the property
 	@Expose
@@ -60,18 +57,6 @@ public class Property extends ModelNode {
 	}
 	public void setPositive(boolean positive) {
 		this.positive = positive;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
 	}
 	public Double[] getThresholds() {
 		return thresholds;

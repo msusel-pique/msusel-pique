@@ -23,10 +23,17 @@
 			"positive_impact": "false",
 			"measure": {
 				"name": "Measure 01",
-				"tool": "Test tool",
 				"diagnostics": [
-					"TST0001",
-					"TST0002"
+					{
+						"name": "TST0001",
+						"description": "Description for TST0001 diagnostic",
+						"toolName": "Test tool"
+					},
+					{
+						"name": "TST0002",
+						"description": "Description for TST0002 diagnostic",
+						"toolName": "Test tool"
+					}
 				]
 			}
 		},
@@ -36,11 +43,22 @@
 			"positive_impact": "false",
 			"measure": {
 				"name": "Measure 02",
-				"tool": "Test tool",
 				"diagnostics": [
-					"TST0003",
-					"TST0004",
-					"TST0005"
+					{
+						"name": "TST0003",
+						"description": "Description for TST0003 diagnostic",
+						"toolName": "Test tool"
+					},
+					{
+						"name": "TST0004",
+						"description": "Description for TST0004 diagnostic",
+						"toolName": "Test tool"
+					},
+					{
+						"name": "TST0005",
+						"description": "Description for TST0005 diagnostic",
+						"toolName": "Test tool"
+					}
 				]
 			}
 		}

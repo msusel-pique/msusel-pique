@@ -163,6 +163,9 @@ public class QualityModel {
 	 * by parsing the file that contains the text data of the Quality Model.
 	 */
 	private void importQualityModel(Path qmFilePath) {
+
+		// TODO: assert well-formed quality model json file
+
 		// Parse json data and update quality model object
 		try {
 			// TODO: break this large method into smaller method calls
@@ -203,7 +206,6 @@ public class QualityModel {
 
 			// Properties nodes
 			JsonArray jsonProperties = jsonQm.getAsJsonArray("properties");
-
 			jsonProperties.forEach(p -> {
 				JsonObject jsonProperty = p.getAsJsonObject();
 				String name = jsonProperty.getAsJsonPrimitive("name").getAsString();
@@ -218,6 +220,7 @@ public class QualityModel {
 					}
 				}
 
+				// Property's Measure and Diagnostics nodes
 				JsonObject jsonMeasure = jsonProperty.getAsJsonObject("measure");
 				JsonArray jsonDiagnostics = jsonMeasure.getAsJsonArray("diagnostics");
 				Measure qmMeasure = new Measure();
@@ -236,10 +239,6 @@ public class QualityModel {
 
 				setProperty(qmProperty);
 			});
-
-			// Construct tree structure with TQI as root node
-			getTqi().setCharacteristics(getCharacteristics());
-			getTqi().getCharacteristics().values().forEach(c -> c.setProperties(getProperties()));
 
 			// TODO: Assert that weight mappings have correct Property and Characteristics to map to (make new method)
 
