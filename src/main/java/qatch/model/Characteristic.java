@@ -95,23 +95,31 @@ public class Characteristic extends ModelNode {
 	 *
 	 * Typically, it calculates the weighted average of the values of the eval fields
 	 * of the project properties and stores it to the eval field of this characteristic.
+	 *
+	 * @param args
+	 * 		Empty args. No parameters needed.
 	 */
 	@Override
-	protected void evaluate() {
-		// assert a weight mapping exists for each provided property
-		getWeights().keySet().forEach(k -> {
-			if (!getProperties().containsKey(k)) {
-				throw new RuntimeException("No weight-measure mapping in Characteristic " + getName() +
-						"exists for Property " + k);
-			}
-		});
+	protected void evaluate(Double... args) {
 
-		// evaluate: standard weighted sum of property values
-		double sum = 0.0;
-		for (Map.Entry<String, Double> weightMap : getWeights().entrySet()) {
-			sum += getProperties().get(weightMap.getKey()).getValue() * weightMap.getValue();
+		if (args.length == 0) {
+			// assert a weight mapping exists for each provided property
+			getWeights().keySet().forEach(k -> {
+				if (!getProperties().containsKey(k)) {
+					throw new RuntimeException("No weight-measure mapping in Characteristic " + getName() +
+							"exists for Property " + k);
+				}
+			});
+
+			// evaluate: standard weighted sum of property values
+			double sum = 0.0;
+			for (Map.Entry<String, Double> weightMap : getWeights().entrySet()) {
+				sum += getProperties().get(weightMap.getKey()).getValue() * weightMap.getValue();
+			}
+
+			this.setValue(sum);
 		}
 
-		this.setValue(sum);
+		else throw new RuntimeException("Characteristic.evaluate() expects input args of length 0.");
 	}
 }

@@ -12,8 +12,6 @@ public class Measure extends ModelNode {
 	// instance variables
 	private Function<List<Diagnostic>, Double> evalFunction;
 	@Expose
-	private double normalizedValue;
-	@Expose
 	private List<Diagnostic> diagnostics;
 
 
@@ -48,25 +46,9 @@ public class Measure extends ModelNode {
 	}
 	public List<Diagnostic> getDiagnostics() { return diagnostics; }
 	public void setDiagnostics(List<Diagnostic> diagnostics) { this.diagnostics = diagnostics; }
-	public double getNormalizedValue() { return normalizedValue; }
-	public void setNormalizedValue(double normalizedValue) { this.normalizedValue = normalizedValue; }
 
 
 	// Methods
-
-	/**
-	 * This method calculates the normalized value of this measure.
-	 * It just divides the value field by the normalizer field.
-	 */
-	public double calculateNormValue(int loc){
-		if (loc != 0) {
-			return getValue()/loc;
-		} else {
-			throw new RuntimeException("Division by zero occured on metric " + getName() +
-					". This is likely due to the metrics analyzer either \nfailing to get the " +
-					"total lines of code, or failing to assign the TLOC to the property's measure's normalizer.");
-		}
-	}
 
 	@Override
 	public ModelNode clone() {
@@ -83,12 +65,32 @@ public class Measure extends ModelNode {
 	 * how to evaluate its collection of diagnostics.  Often this will simply be
 	 * a count of findings, but quality evaluation (especially in the context of security)
 	 * should allow for other evaluation functions.
+	 *
+	 * The measure value must also be normalzed according to the input argument (Likly LLoC).
+	 *
+	 * @param args
+	 * 		A single entry representing the lines of code. This is needed for normalization.
 	 */
 	@Override
-	protected void evaluate() {
-		assert this.evalFunction != null;
-		this.getDiagnostics().forEach(Diagnostic::evaluate);
-		setValue(this.evalFunction.apply(this.diagnostics));
+	protected void evaluate(Double... args) {
+
+		if (args.length != 1) throw new RuntimeException("Measure.evaluate() expects input args of lenght 1.");
+
+		else {
+			Double loc = args[0];
+			if (loc != 0) {
+				assert this.evalFunction != null;
+				getDiagnostics().forEach(Diagnostic::evaluate);
+				Double notNormalizedValue = this.evalFunction.apply(getDiagnostics());
+				double normalizedValue = notNormalizedValue/loc;
+				setValue(normalizedValue);
+			}
+			else {
+				throw new RuntimeException("Division by zero occured on metric " + getName() +
+						". This is likely due to the metrics analyzer either \nfailing to get the " +
+						"total lines of code, or failing to assign the TLOC to the property's measure's normalizer.");
+			}
+		}
 	}
 
 	@Override

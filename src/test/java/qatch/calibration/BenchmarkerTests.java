@@ -37,12 +37,12 @@ public class BenchmarkerTests {
         Project project03 = TestHelper.makeProject("Project 03");
         HashMap<String, Project> projects = new HashMap<>();
 
-        project01.getQualityModel().getMeasure("Property 01 measure").setNormalizedValue(0.11);
-        project01.getQualityModel().getMeasure("Property 02 measure").setNormalizedValue(0.12);
-        project02.getQualityModel().getMeasure("Property 01 measure").setNormalizedValue(0.21);
-        project02.getQualityModel().getMeasure("Property 02 measure").setNormalizedValue(0.22);
-        project03.getQualityModel().getMeasure("Property 01 measure").setNormalizedValue(0.31);
-        project03.getQualityModel().getMeasure("Property 02 measure").setNormalizedValue(0.32);
+        project01.getQualityModel().getMeasure("Property 01 measure").setValue(0.11);
+        project01.getQualityModel().getMeasure("Property 02 measure").setValue(0.12);
+        project02.getQualityModel().getMeasure("Property 01 measure").setValue(0.21);
+        project02.getQualityModel().getMeasure("Property 02 measure").setValue(0.22);
+        project03.getQualityModel().getMeasure("Property 01 measure").setValue(0.31);
+        project03.getQualityModel().getMeasure("Property 02 measure").setValue(0.32);
 
         projects.put(project01.getName(), project01);
         projects.put(project02.getName(), project02);
@@ -73,16 +73,16 @@ public class BenchmarkerTests {
         Assert.assertTrue(header[0].equalsIgnoreCase("Project_Name"));
 
         Assert.assertTrue(row1[0].startsWith("Project"));
-        Assert.assertTrue(row1[1].equalsIgnoreCase(String.valueOf(projects.get(projectAName).getQualityModel().getMeasure(measure01Name).getNormalizedValue())));
-        Assert.assertTrue(row1[2].equalsIgnoreCase(String.valueOf(projects.get(projectAName).getQualityModel().getMeasure(measure02Name).getNormalizedValue())));
+        Assert.assertTrue(row1[1].equalsIgnoreCase(String.valueOf(projects.get(projectAName).getQualityModel().getMeasure(measure01Name).getValue())));
+        Assert.assertTrue(row1[2].equalsIgnoreCase(String.valueOf(projects.get(projectAName).getQualityModel().getMeasure(measure02Name).getValue())));
 
         Assert.assertTrue(row2[0].startsWith("Project"));
-        Assert.assertTrue(row2[1].equalsIgnoreCase(String.valueOf(projects.get(projectBName).getQualityModel().getMeasure(measure01Name).getNormalizedValue())));
-        Assert.assertTrue(row2[2].equalsIgnoreCase(String.valueOf(projects.get(projectBName).getQualityModel().getMeasure(measure02Name).getNormalizedValue())));
+        Assert.assertTrue(row2[1].equalsIgnoreCase(String.valueOf(projects.get(projectBName).getQualityModel().getMeasure(measure01Name).getValue())));
+        Assert.assertTrue(row2[2].equalsIgnoreCase(String.valueOf(projects.get(projectBName).getQualityModel().getMeasure(measure02Name).getValue())));
 
         Assert.assertTrue(row3[0].startsWith("Project"));
-        Assert.assertTrue(row3[1].equalsIgnoreCase(String.valueOf(projects.get(projectCName).getQualityModel().getMeasure(measure01Name).getNormalizedValue())));
-        Assert.assertTrue(row3[2].equalsIgnoreCase(String.valueOf(projects.get(projectCName).getQualityModel().getMeasure(measure02Name).getNormalizedValue())));
+        Assert.assertTrue(row3[1].equalsIgnoreCase(String.valueOf(projects.get(projectCName).getQualityModel().getMeasure(measure01Name).getValue())));
+        Assert.assertTrue(row3[2].equalsIgnoreCase(String.valueOf(projects.get(projectCName).getQualityModel().getMeasure(measure02Name).getValue())));
 
         reader.close();
         fr.close();

@@ -81,23 +81,31 @@ public class Tqi extends ModelNode {
 				&& getCharacteristics().size() == otherTqi.getCharacteristics().size();
 	}
 
+	/**
+	 * @param args
+	 * 		Empty args. No parameters needed.
+	 */
 	@Override
-	protected void evaluate() {
+	protected void evaluate(Double... args) {
 
-		// assert a weight mapping exists for each provided characteristic
-		getWeights().keySet().forEach(k -> {
-			if (!getCharacteristics().containsKey(k)) {
-				throw new RuntimeException("No weight-measure mapping in root node " + this.getName() +
-						"exists for Characteristic " + k);
+		if (args.length == 0) {
+			// assert a weight mapping exists for each provided characteristic
+			getWeights().keySet().forEach(k -> {
+				if (!getCharacteristics().containsKey(k)) {
+					throw new RuntimeException("No weight-measure mapping in root node " + this.getName() +
+							"exists for Characteristic " + k);
+				}
+			});
+
+			// evaluate: standard weighted sum of characteristic values
+			double sum = 0.0;
+			for (Map.Entry<String, Double> weightMap : getWeights().entrySet()) {
+				sum += getCharacteristics().get(weightMap.getKey()).getValue() * weightMap.getValue();
 			}
-		});
 
-		// evaluate: standard weighted sum of characteristic values
-		double sum = 0.0;
-		for (Map.Entry<String, Double> weightMap : getWeights().entrySet()) {
-			sum += getCharacteristics().get(weightMap.getKey()).getValue() * weightMap.getValue();
+			setValue(sum);
 		}
 
-		setValue(sum);
+		else throw new RuntimeException("Tqi.evaluate() expects input args of length 0.");
 	}
 }

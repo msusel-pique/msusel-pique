@@ -7,7 +7,7 @@ public class Property extends ModelNode {
 	
 	// Statics
 
-	public static final int THRESHOLDS_NUM = 3;
+	private static final int THRESHOLDS_NUM = 3;
 
 	// Fields
 
@@ -87,55 +87,62 @@ public class Property extends ModelNode {
 	}
 
 	/**
-	 * A method for evaluating a Property object (i.e this property). 
-	 * In other words, this method calculates the eval field
-	 * of a property based on the values of the following fields:
+	 * A method for evaluating a Property object (i.e this property). In other words, this method calculates the eval
+	 * field of a property based on the values of the following fields:
 	 * 
 	 * 		- positive   : User defined or received by the QM.xml
 	 * 		- normValue  : Calculated by the aggregator.
 	 * 		- thresholds : Imported by ThresholdImporter or by the
 	 * 					   QM.xml file.
 	 * 
-	 * Typically, it simulates the Utility Function that is used
-	 * for the evaluation of the properties.
+	 * Typically, it simulates the Utility Function that is used  for the evaluation of the properties.
+	 *
+	 * @param args
+	 *      Empty args. No parameters needed.
 	 */
 	@Override
-	protected void evaluate() {
-		/*
-		 * Check the sign of the impact that this property has on the total quality
-		 * and choose the monotony of the utility function.
-		 */
-		if(positive){
-			//If the metric has a positive impact on quality -> Ascending utility function
-			if(this.measure.getNormalizedValue() <= this.thresholds[0]){
-				//Lower Group
-				setValue(0);
-			}else if(this.measure.getNormalizedValue() <= this.thresholds[1]){
-				//Middle Group
-				setValue((0.5/(thresholds[1]-thresholds[0]))*(this.getMeasure().getNormalizedValue() - thresholds[0]));
-			}else if(this.measure.getNormalizedValue() <= this.thresholds[2]){
-				//Upper Group
-				setValue(1 - (0.5/(thresholds[2]-thresholds[1]))*(thresholds[2] - this.getMeasure().getNormalizedValue()));
-			}else{
-				//Saturation
-				setValue(1);
-			}
-		}else{
-			//If the metric has a negative impact on quality -> Descending utility function
-			if(roundDown4(this.measure.getNormalizedValue()) <= this.thresholds[0]){
-				//Lower Group
-				setValue(1);
-			}else if(roundDown4(this.measure.getNormalizedValue()) <= this.thresholds[1]){
-				//Middle Group
-				setValue(1 - (0.5/(thresholds[1]-thresholds[0]))*(this.getMeasure().getNormalizedValue() - thresholds[0]));
-			}else if(roundDown4(this.measure.getNormalizedValue()) <= this.thresholds[2]){
-				//Upper Group
-				setValue((0.5/(thresholds[2]-thresholds[1]))*(thresholds[2] - roundDown4(this.getMeasure().getNormalizedValue())));
-			}else{
-				//Saturation
-				setValue(0);
+	protected void evaluate(Double... args) {
+
+		if (args.length == 0) {
+			/*
+			 * Check the sign of the impact that this property has on the total quality
+			 * and choose the monotony of the utility function.
+			 */
+			Double measureValue = getMeasure().getValue();
+			if (positive) {
+				//If the metric has a positive impact on quality -> Ascending utility function
+				if (measureValue <= this.thresholds[0]) {
+					//Lower Group
+					setValue(0);
+				} else if (measureValue <= this.thresholds[1]) {
+					//Middle Group
+					setValue((0.5 / (thresholds[1] - thresholds[0])) * (measureValue - thresholds[0]));
+				} else if (measureValue <= this.thresholds[2]) {
+					//Upper Group
+					setValue(1 - (0.5 / (thresholds[2] - thresholds[1])) * (thresholds[2] - measureValue));
+				} else {
+					//Saturation
+					setValue(1);
+				}
+			} else {
+				//If the metric has a negative impact on quality -> Descending utility function
+				if (roundDown4(measureValue) <= this.thresholds[0]) {
+					//Lower Group
+					setValue(1);
+				} else if (roundDown4(measureValue) <= this.thresholds[1]) {
+					//Middle Group
+					setValue(1 - (0.5 / (thresholds[1] - thresholds[0])) * (measureValue - thresholds[0]));
+				} else if (roundDown4(measureValue) <= this.thresholds[2]) {
+					//Upper Group
+					setValue((0.5 / (thresholds[2] - thresholds[1])) * (thresholds[2] - roundDown4(measureValue)));
+				} else {
+					//Saturation
+					setValue(0);
+				}
 			}
 		}
+
+		else throw new RuntimeException("Property.evaluate() expects input args of length 0.");
 	}
 	
 	/**

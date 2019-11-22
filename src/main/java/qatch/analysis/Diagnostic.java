@@ -73,11 +73,17 @@ public class Diagnostic extends ModelNode {
      * how to evaluate the collection of its findings.  Often this will simply be
      * a count of findings, but quality evaluation (especially in the context of security)
      * should allow for other evaluation functions.
+     *
+     * @param args
+     *      Empty args. No parameters needed.
      */
     @Override
-    protected void evaluate() {
-        assert this.evalFunction != null;
-        setValue(this.evalFunction.apply(this.findings));
+    protected void evaluate(Double... args) {
+        if (args.length == 0) {
+            assert this.evalFunction != null;
+            setValue(this.evalFunction.apply(this.findings));
+        }
+        else throw new RuntimeException("Diagnostic.evaluate() expects input args of length 0.");
     }
 
 

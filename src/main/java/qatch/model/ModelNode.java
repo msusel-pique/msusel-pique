@@ -39,8 +39,8 @@ public abstract class ModelNode {
     public void setName(String name) {
         this.name = name;
     }
-    public double getValue() {
-        evaluate();
+    public double getValue(Double... args) {
+        evaluate(args);
         return this.value;
     }
     public void setValue(double value) {
@@ -67,7 +67,7 @@ public abstract class ModelNode {
      * Post:
      *      The value field is updated.
      */
-    protected abstract void evaluate();
+    protected abstract void evaluate(Double... args);
 
 
 }

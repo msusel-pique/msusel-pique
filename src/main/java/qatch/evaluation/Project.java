@@ -80,10 +80,6 @@ public class Project{
 		}
 	}
 
-	/**
-	 * Evaluate and set the this project's Measures.normalizedValue values according using the lines
-	 * of code value in the project
-	 */
 	public void evaluateMeasures() {
 		if (getLinesOfCode() < 1) {
 			throw new RuntimeException("Normalization of measures failed" +
@@ -92,7 +88,7 @@ public class Project{
 		}
 
 		getQualityModel().getMeasures().values().forEach(m -> {
-			m.setNormalizedValue(m.getValue() / (double) getLinesOfCode());
+			m.getValue((double) getLinesOfCode());
 		});
 	}
 
