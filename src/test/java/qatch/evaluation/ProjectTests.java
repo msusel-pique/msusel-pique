@@ -41,8 +41,8 @@ public class ProjectTests {
         Property p1 = p.getQualityModel().getProperty("Property 01");
         Property p2 = p.getQualityModel().getProperty("Property 02");
 
-        p1.getMeasure().setNormalizedValue(0.01);
-        p2.getMeasure().setNormalizedValue(0.09);
+        p1.getMeasure().setValue(0.01);
+        p2.getMeasure().setValue(0.09);
 
         p.evaluateProperties();
 
@@ -55,8 +55,8 @@ public class ProjectTests {
         Property p1 = p.getQualityModel().getProperty("Property 01");
         Property p2 = p.getQualityModel().getProperty("Property 02");
 
-        p1.getMeasure().setNormalizedValue(0.11);
-        p2.getMeasure().setNormalizedValue(0.19);
+        p1.getMeasure().setValue(0.11);
+        p2.getMeasure().setValue(0.19);
 
         p.evaluateProperties();
 
@@ -69,8 +69,8 @@ public class ProjectTests {
         Property p1 = p.getQualityModel().getProperty("Property 01");
         Property p2 = p.getQualityModel().getProperty("Property 02");
 
-        p1.getMeasure().setNormalizedValue(0.51);
-        p2.getMeasure().setNormalizedValue(0.99);
+        p1.getMeasure().setValue(0.51);
+        p2.getMeasure().setValue(0.99);
 
         p.evaluateProperties();
 
@@ -83,8 +83,8 @@ public class ProjectTests {
         Property p1 = p.getQualityModel().getProperty("Property 01");
         Property p2 = p.getQualityModel().getProperty("Property 02");
 
-        p1.getMeasure().setNormalizedValue(0.21);
-        p2.getMeasure().setNormalizedValue(0.49);
+        p1.getMeasure().setValue(0.21);
+        p2.getMeasure().setValue(0.49);
 
         p.evaluateProperties();
 
@@ -99,8 +99,8 @@ public class ProjectTests {
 
         p1.setPositive(true);
         p2.setPositive(true);
-        p1.getMeasure().setNormalizedValue(0.01);
-        p2.getMeasure().setNormalizedValue(0.09);
+        p1.getMeasure().setValue(0.01);
+        p2.getMeasure().setValue(0.09);
 
         p.evaluateProperties();
 
@@ -115,8 +115,8 @@ public class ProjectTests {
 
         p1.setPositive(true);
         p2.setPositive(true);
-        p1.getMeasure().setNormalizedValue(0.11);
-        p2.getMeasure().setNormalizedValue(0.19);
+        p1.getMeasure().setValue(0.11);
+        p2.getMeasure().setValue(0.19);
 
         p.evaluateProperties();
 
@@ -131,8 +131,8 @@ public class ProjectTests {
 
         p1.setPositive(true);
         p2.setPositive(true);
-        p1.getMeasure().setNormalizedValue(0.51);
-        p2.getMeasure().setNormalizedValue(0.99);
+        p1.getMeasure().setValue(0.51);
+        p2.getMeasure().setValue(0.99);
 
         p.evaluateProperties();
 
@@ -147,8 +147,8 @@ public class ProjectTests {
 
         p1.setPositive(true);
         p2.setPositive(true);
-        p1.getMeasure().setNormalizedValue(0.21);
-        p2.getMeasure().setNormalizedValue(0.49);
+        p1.getMeasure().setValue(0.21);
+        p2.getMeasure().setValue(0.49);
 
         p.evaluateProperties();
 

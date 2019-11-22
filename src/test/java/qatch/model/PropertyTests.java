@@ -20,7 +20,8 @@ public class PropertyTests {
         p.getMeasure().getDiagnostic("Property 01 measure diagnostic02").setFinding(f2);
         p.getMeasure().getDiagnostic("Property 01 measure diagnostic02").setFinding(f3);
 
-//        Assert.assertEquals(3, p.getValue(), 0);
+        // TODO PICKUP: debut how to eval measures JIT for property eval
+        Assert.assertEquals(3, p.getValue(), 0);
     }
 
 }

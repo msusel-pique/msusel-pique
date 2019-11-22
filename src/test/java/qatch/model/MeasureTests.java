@@ -10,6 +10,8 @@ public class MeasureTests {
 
     @Test
     public void testEvaluate() {
+        Double projectLoc = 100.0;
+
         Finding f1 = TestHelper.makeFinding("file/path", 11, 1);
         Finding f2 = TestHelper.makeFinding("file/path", 22, 1);
         Finding f3 = TestHelper.makeFinding("file/path", 22, 1);
@@ -19,7 +21,7 @@ public class MeasureTests {
         m.getDiagnostic("Measure 01 diagnostic02").setFinding(f2);
         m.getDiagnostic("Measure 01 diagnostic02").setFinding(f3);
 
-        Assert.assertEquals(3, m.getValue(), 0);
+        Assert.assertEquals(.03, m.getValue(projectLoc), 0);
     }
 
 }
