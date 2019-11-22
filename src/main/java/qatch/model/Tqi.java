@@ -82,7 +82,7 @@ public class Tqi extends ModelNode {
 	}
 
 	@Override
-	public void evaluate() {
+	protected void evaluate() {
 
 		// assert a weight mapping exists for each provided characteristic
 		getWeights().keySet().forEach(k -> {

@@ -73,11 +73,9 @@ public class Diagnostic extends ModelNode {
      * how to evaluate the collection of its findings.  Often this will simply be
      * a count of findings, but quality evaluation (especially in the context of security)
      * should allow for other evaluation functions.
-     *
-     * @return
-     *      The non-normalized value of the diagnostic
      */
-    public void evaluate() {
+    @Override
+    protected void evaluate() {
         assert this.evalFunction != null;
         setValue(this.evalFunction.apply(this.findings));
     }

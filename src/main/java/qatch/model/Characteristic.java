@@ -97,7 +97,7 @@ public class Characteristic extends ModelNode {
 	 * of the project properties and stores it to the eval field of this characteristic.
 	 */
 	@Override
-	public void evaluate() {
+	protected void evaluate() {
 		// assert a weight mapping exists for each provided property
 		getWeights().keySet().forEach(k -> {
 			if (!getProperties().containsKey(k)) {

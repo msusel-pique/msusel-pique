@@ -99,7 +99,8 @@ public class Property extends ModelNode {
 	 * Typically, it simulates the Utility Function that is used
 	 * for the evaluation of the properties.
 	 */
-	public void evaluate() {
+	@Override
+	protected void evaluate() {
 		/*
 		 * Check the sign of the impact that this property has on the total quality
 		 * and choose the monotony of the utility function.

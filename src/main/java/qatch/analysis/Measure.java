@@ -84,9 +84,10 @@ public class Measure extends ModelNode {
 	 * a count of findings, but quality evaluation (especially in the context of security)
 	 * should allow for other evaluation functions.
 	 */
-	public void evaluate() {
+	@Override
+	protected void evaluate() {
 		assert this.evalFunction != null;
-		this.getDiagnostics().forEach(Diagnostic::getValue);
+		this.getDiagnostics().forEach(Diagnostic::evaluate);
 		setValue(this.evalFunction.apply(this.diagnostics));
 	}
 

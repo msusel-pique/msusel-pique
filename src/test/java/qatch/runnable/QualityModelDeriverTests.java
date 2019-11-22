@@ -35,9 +35,7 @@ public class QualityModelDeriverTests {
         // Initialize objects
         QualityModel qmDescription = new QualityModel(qmDescriptionPath);
         IToolLOC fakeLocTool = TestHelper.makeIToolLoc();
-        ITool fakeTool = TestHelper.makeITool();
-
-        // Make ITools to return different values for each project
+        // Make ITool to return different values for each project
         ITool tool = new ITool() {
             @Override
             public Path analyze(Path projectLocation) {
@@ -77,6 +75,7 @@ public class QualityModelDeriverTests {
                         diagnostics.put("TST0003", bench1tst3);
 
                         return diagnostics;
+
                     case "benchmark_two_results.xml":
                         Diagnostic bench2tst1 = new Diagnostic("TST0001", "Sample Description", "Sample Tool Name");
                         Diagnostic bench2tst2 = new Diagnostic("TST0002", "Sample Description", "Sample Tool Name");
@@ -97,6 +96,7 @@ public class QualityModelDeriverTests {
                         diagnostics.put("TST0005", bench2tst5);
 
                         return diagnostics;
+
                     case "benchmark_three_results.xml":
                         Diagnostic bench3tst1 = new Diagnostic("TST0001", "Sample Description", "Sample Tool Name");
                         Diagnostic bench3tst2 = new Diagnostic("TST0002", "Sample Description", "Sample Tool Name");
@@ -117,6 +117,7 @@ public class QualityModelDeriverTests {
                         diagnostics.put("TST0005", bench3tst5);
 
                         return diagnostics;
+
                     default:
                         throw new RuntimeException("switch statement default case");
                 }

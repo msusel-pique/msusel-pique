@@ -101,7 +101,7 @@ public class Project{
 	 * provided by the quality model and the values contained in the project's Property nodes.
 	 */
 	public void evaluateCharacteristics() {
-		getQualityModel().getCharacteristics().values().forEach(Characteristic::evaluate);
+		getQualityModel().getCharacteristics().values().forEach(Characteristic::getValue);
 	}
 
 	/**
@@ -109,11 +109,11 @@ public class Project{
 	 * provided by the quality model and the findings contained in the Measure nodes.
 	 */
 	public void evaluateProperties() {
-		getQualityModel().getProperties().values().forEach(Property::evaluate);
+		getQualityModel().getProperties().values().forEach(Property::getValue);
 	}
 
 	public void evaluateTqi() {
-		getQualityModel().getTqi().evaluate();
+		getQualityModel().getTqi().getValue();
 	}
 
 	/**
