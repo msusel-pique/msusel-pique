@@ -5,7 +5,7 @@ import org.junit.Test;
 import qatch.TestHelper;
 import qatch.analysis.Finding;
 
-public class CharacteristicTests {
+public class TqiTests {
 
     @Test
     public void testEvaluate() {
@@ -24,10 +24,18 @@ public class CharacteristicTests {
         p2.getMeasure().getDiagnostic("Property 02 measure diagnostic02").setFinding(f2);
         p2.getMeasure().getDiagnostic("Property 02 measure diagnostic02").setFinding(f3);
 
-        Characteristic c = TestHelper.makeCharacteristic("Characteristic 01");
-        c.setProperty(p1);
-        c.setProperty(p2);
+        Characteristic c1 = TestHelper.makeCharacteristic("Characteristic 01");
+        Characteristic c2 = TestHelper.makeCharacteristic("Characteristic 02");
+        c1.setProperty(p1);
+        c1.setProperty(p2);
+        c2.setProperty(p1);
+        c2.setProperty(p2);
 
-        Assert.assertEquals(0.7, c.getValue(loc), 0);
+        Tqi tqi = TestHelper.makeTqi("Test TQI");
+        tqi.setCharacteristic(c1);
+        tqi.setCharacteristic(c2);
+
+        Assert.assertEquals(0.7, tqi.getValue(loc), 0);
     }
+
 }

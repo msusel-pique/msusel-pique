@@ -102,24 +102,24 @@ public class Characteristic extends ModelNode {
 	@Override
 	protected void evaluate(Double... args) {
 
-		if (args.length == 0) {
-			// assert a weight mapping exists for each provided property
-			getWeights().keySet().forEach(k -> {
-				if (!getProperties().containsKey(k)) {
-					throw new RuntimeException("No weight-measure mapping in Characteristic " + getName() +
-							"exists for Property " + k);
-				}
-			});
+		if (args.length != 1) throw new RuntimeException("Characteristic.evaluate() expects input args of lenght 1.");
 
-			// evaluate: standard weighted sum of property values
-			double sum = 0.0;
-			for (Map.Entry<String, Double> weightMap : getWeights().entrySet()) {
-				sum += getProperties().get(weightMap.getKey()).getValue() * weightMap.getValue();
+		Double loc = args[0];
+
+		// assert a weight mapping exists for each provided property
+		getWeights().keySet().forEach(k -> {
+			if (!getProperties().containsKey(k)) {
+				throw new RuntimeException("No weight-measure mapping in Characteristic " + getName() +
+						" exists for Property " + k);
 			}
+		});
 
-			this.setValue(sum);
+		// evaluate: standard weighted sum of property values
+		double sum = 0.0;
+		for (Map.Entry<String, Double> weightMap : getWeights().entrySet()) {
+			sum += getProperties().get(weightMap.getKey()).getValue(loc) * weightMap.getValue();
 		}
 
-		else throw new RuntimeException("Characteristic.evaluate() expects input args of length 0.");
+		this.setValue(sum);
 	}
 }

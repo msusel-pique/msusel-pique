@@ -113,8 +113,7 @@ public class TestHelper {
             put("Characteristic 01", 0.7);
             put("Characteristic 02", 0.3);
         }};
-        Tqi tqi = new Tqi(name, "Tqi description from TestHelper.", weights);
-        return tqi;
+        return new Tqi(name, "Tqi description from TestHelper.", weights);
     }
 
     /*
