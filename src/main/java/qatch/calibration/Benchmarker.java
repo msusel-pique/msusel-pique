@@ -224,7 +224,7 @@ public class Benchmarker {
                 String[] row = new String[numMeasures + 1];
                 row[0] = project.getName();
                 for (int i = 1; i < measureList.size() + 1; i++) {
-                    row[i] = String.valueOf(project.getQualityModel().getMeasure(measureList.get(i-1).getName()).getValue((double) project.getLinesOfCode()));
+                    row[i] = String.valueOf(project.getQualityModel().getMeasure(measureList.get(i-1).getName()).getValue((double)project.getLinesOfCode()));
                 }
                 csvRows.add(row);
             }

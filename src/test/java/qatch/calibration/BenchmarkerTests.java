@@ -6,11 +6,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import qatch.TestHelper;
 import qatch.analysis.Finding;
-import qatch.analysis.ITool;
-import qatch.analysis.IToolLOC;
 import qatch.analysis.Measure;
 import qatch.evaluation.Project;
-import qatch.model.QualityModel;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -48,6 +45,8 @@ public class BenchmarkerTests {
         HashMap<String, Project> projects = new HashMap<>();
 
         /*
+         * Test info for reference and assertions:
+         *
          * Project 01: Measure 01 = 0.11, Measure 02 = 0.11
          *      Property 01 measure diagnostic01: 1 finding
          *      Property 01 measure diagnostic02: 0 finding
@@ -143,33 +142,7 @@ public class BenchmarkerTests {
 
     @Test
     public void testDeriveThresholds() {
-
-        // Initialize mock tools
-        IToolLOC fakeLocTool = TestHelper.makeIToolLoc();
-        ITool fakeTool = TestHelper.makeITool();
-        Map<String, ITool> tools = new HashMap<String, ITool>() {{ put(fakeTool.getName(), fakeTool); }};
-
-        // Create benchmarker and run process
-        Map<String, Double[]> result = Benchmarker.deriveThresholds(
-                this.benchmarkRepo, new QualityModel(this.qmDescription),
-                fakeLocTool, tools,
-                ".txt",
-                analysisResultsAsOutput, this.rThresholdsOutput);
-
-        // Assert results
-        Assert.assertTrue(result.containsKey("Measure 01"));
-        Assert.assertTrue(result.containsKey("Measure 02"));
-
-        Double[] m1Values = result.get("Measure 01");
-        Double[] m2Values = result.get("Measure 02");
-
-        Assert.assertEquals(0.004, m1Values[0], 0);
-        Assert.assertEquals(0.004, m1Values[1], 0);
-        Assert.assertEquals(0.004, m1Values[2], 0);
-
-        Assert.assertEquals(0.006, m2Values[0], 0);
-        Assert.assertEquals(0.006, m2Values[1], 0);
-        Assert.assertEquals(0.006, m2Values[2], 0);
+        // TODO: write integration-like test
     }
 
     @Test

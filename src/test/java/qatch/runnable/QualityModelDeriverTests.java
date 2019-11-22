@@ -1,5 +1,6 @@
 package qatch.runnable;
 
+import org.junit.Assert;
 import org.junit.Test;
 import qatch.TestHelper;
 import qatch.analysis.Diagnostic;
@@ -34,8 +35,8 @@ public class QualityModelDeriverTests {
 
         // Initialize objects
         QualityModel qmDescription = new QualityModel(qmDescriptionPath);
-        IToolLOC fakeLocTool = TestHelper.makeIToolLoc();
-        // Make ITool to return different values for each project
+        IToolLOC fakeLocTool = projectLocation -> 50;
+        // (Make ITool to return different values for each project)
         ITool tool = new ITool() {
             @Override
             public Path analyze(Path projectLocation) {
@@ -52,9 +53,23 @@ public class QualityModelDeriverTests {
             }
 
             /*
-             * Project 1: TST01, TST03 with one finding for each
-             * Project 2: TST01-TST05 with two findings for each
-             * Project 3: TST01-TST05 with three findings for each
+             * Test info for assertion reference:
+             *
+             * Project 1:
+             *      Property 01, Measure 01, Diagnostic TST01: 1 finding
+             *      Property 02, Measure 02, Diagnostic TST03: 1 finidng
+             * Project 2:
+             *      Property 01, Measure 01, Diagnostic TST01: 2 findings
+             *      Property 01, Measure 01, Diagnostic TST02: 2 findings
+             *      Property 02, Measure 02, Diagnostic TST03: 2 findings
+             *      Property 02, Measure 02, Diagnostic TST04: 2 findings
+             *      Property 02, Measure 02, Diagnostic TST05: 2 findings
+             * Project 3:
+             *      Property 01, Measure 01, Diagnostic TST01: 3 findings
+             *      Property 01, Measure 01, Diagnostic TST02: 3 findings
+             *      Property 02, Measure 02, Diagnostic TST03: 3 findings
+             *      Property 02, Measure 02, Diagnostic TST04: 3 findings
+             *      Property 02, Measure 02, Diagnostic TST05: 3 findings
              */
             @Override
             public Map<String, Diagnostic> parseAnalysis(Path toolResults) {
@@ -144,17 +159,15 @@ public class QualityModelDeriverTests {
         Property p1 = qm.getProperty("Property 01");
         Property p2 = qm.getProperty("Property 02");
 
-        // TODO PICKUP: write assertions
+        Assert.assertEquals(0.6667, tqi.getWeight("Characteristic 01"), 0.0001);
+        Assert.assertEquals(0.3333, tqi.getWeight("Characteristic 02"), 0.0001);
 
-//        Assert.assertEquals(0.6667, tqi.getWeight("Characteristic 01"), 0.0001);
-//        Assert.assertEquals(0.3333, tqi.getWeight("Characteristic 02"), 0.0001);
-//
-//        Assert.assertEquals(0.25, c1.getWeight("Property 01"), 0.0001);
-//        Assert.assertEquals(0.75, c1.getWeight("Property 02"), 0.0001);
-//        Assert.assertEquals(0.8, c2.getWeight("Property 01"), 0.0001);
-//        Assert.assertEquals(0.2, c2.getWeight("Property 02"), 0.0001);
-//
-//        Assert.assertArrayEquals(new Double[]{0.004, 0.004, 0.004}, p1.getThresholds());
-//        Assert.assertArrayEquals(new Double[]{0.006, 0.006, 0.006}, p2.getThresholds());
+        Assert.assertEquals(0.25, c1.getWeight("Property 01"), 0.0001);
+        Assert.assertEquals(0.75, c1.getWeight("Property 02"), 0.0001);
+        Assert.assertEquals(0.8, c2.getWeight("Property 01"), 0.0001);
+        Assert.assertEquals(0.2, c2.getWeight("Property 02"), 0.0001);
+
+        Assert.assertArrayEquals(new Double[]{0.02, 0.08, 0.12}, p1.getThresholds());
+        Assert.assertArrayEquals(new Double[]{0.02, 0.12, 0.18}, p2.getThresholds());
     }
 }
