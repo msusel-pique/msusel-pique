@@ -2,9 +2,10 @@ package qatch.evaluation;
 
 import com.google.gson.annotations.Expose;
 import qatch.analysis.Diagnostic;
+import qatch.model.Characteristic;
+import qatch.model.Property;
 import qatch.model.QualityModel;
 import qatch.utility.FileUtility;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -53,6 +54,9 @@ public class Project{
 	public QualityModel getQualityModel() {
 		return qualityModel;
 	}
+	public void setQualityModel(QualityModel qualityModel) {
+		this.qualityModel = qualityModel;
+	}
 
 
 	// Methods
@@ -67,13 +71,11 @@ public class Project{
 	 * 		A diagnostic object parsed from the tool result file
 	 */
 	public void addFindings(Diagnostic toolResult) {
-		throw new NotImplementedException();
-
-//		for (Property property : this.properties.values()) {
-//			for (Diagnostic diagnostic : property.getMeasure().getDiagnostics()) {
-//				if (diagnostic.getId().equals(toolResult.getId())) { diagnostic.setFindings(toolResult.getFindings()); }
-//			}
-//		}
+		for (Property property : getQualityModel().getProperties().values()) {
+			for (Diagnostic diagnostic : property.getMeasure().getDiagnostics()) {
+				if (diagnostic.getName().equals(toolResult.getName())) { diagnostic.setFindings(toolResult.getFindings()); }
+			}
+		}
 	}
 
 	/**
@@ -81,18 +83,15 @@ public class Project{
 	 * of code value in the project
 	 */
 	public void evaluateMeasures() {
+		if (getLinesOfCode() < 1) {
+			throw new RuntimeException("Normalization of measures failed" +
+					". This is likely due to the LoC analyzer either \nfailing to get the " +
+					"total lines of code, or failing to assign the TLOC to the project.");
+		}
 
-		throw new NotImplementedException();
-
-//		if (this.linesOfCode < 1) {
-//			throw new RuntimeException("Normalization of measures failed" +
-//					". This is likely due to the LoC analyzer either \nfailing to get the " +
-//					"total lines of code, or failing to assign the TLOC to the project.");
-//		}
-//
-//		this.getMeasures().values().forEach(m -> {
-//			m.setNormalizedValue(m.getValue() / (double) this.getLinesOfCode());
-//		});
+		getQualityModel().getMeasures().values().forEach(m -> {
+			m.setNormalizedValue(m.getValue() / (double) getLinesOfCode());
+		});
 	}
 
 	/**
@@ -100,8 +99,7 @@ public class Project{
 	 * provided by the quality model and the values contained in the project's Property nodes.
 	 */
 	public void evaluateCharacteristics() {
-		throw new NotImplementedException();
-//		this.getCharacteristics().values().forEach(Characteristic::evaluate);
+		getQualityModel().getCharacteristics().values().forEach(Characteristic::evaluate);
 	}
 
 	/**
@@ -109,13 +107,11 @@ public class Project{
 	 * provided by the quality model and the findings contained in the Measure nodes.
 	 */
 	public void evaluateProperties() {
-		throw new NotImplementedException();
-//		getProperties().values().forEach(Property::evaluate);
+		getQualityModel().getProperties().values().forEach(Property::evaluate);
 	}
 
 	public void evaluateTqi() {
-		throw new NotImplementedException();
-//		getTqi().evaluate();
+		getQualityModel().getTqi().evaluate();
 	}
 
 	/**
@@ -141,15 +137,14 @@ public class Project{
 	 * 		findings.
 	 */
 	public void updateDiagnosticsWithFindings(Map<String, Diagnostic> diagnosticsWithFindings) {
-		throw new NotImplementedException();
-//		diagnosticsWithFindings.values().forEach(diagnostic -> {
-//			getMeasures().values().forEach(measure -> {
-//				measure.getDiagnostics().forEach(oldDiagnostic -> {
-//					if (oldDiagnostic.getId().equals(diagnostic.getId())) {
-//						oldDiagnostic.setFindings(diagnostic.getFindings());
-//					}
-//				});
-//			});
-//		});
+		diagnosticsWithFindings.values().forEach(diagnostic -> {
+			getQualityModel().getMeasures().values().forEach(measure -> {
+				measure.getDiagnostics().forEach(oldDiagnostic -> {
+					if (oldDiagnostic.getName().equals(diagnostic.getName())) {
+						oldDiagnostic.setFindings(diagnostic.getFindings());
+					}
+				});
+			});
+		});
 	}
 }

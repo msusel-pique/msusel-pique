@@ -58,6 +58,25 @@ public class Measure extends ModelNode {
 		return this.value;
 	}
 
+
+
+
+	// Methods
+
+	/**
+	 * This method calculates the normalized value of this measure.
+	 * It just divides the value field by the normalizer field.
+	 */
+	public double calculateNormValue(int loc){
+		if (loc != 0) {
+			return this.value/loc;
+		} else {
+			throw new RuntimeException("Division by zero occured on metric " + getName() +
+					". This is likely due to the metrics analyzer either \nfailing to get the " +
+					"total lines of code, or failing to assign the TLOC to the property's measure's normalizer.");
+		}
+	}
+
 	@Override
 	public ModelNode clone() {
 		List<Diagnostic> clonedDiagnostics = new ArrayList<>();
@@ -67,9 +86,6 @@ public class Measure extends ModelNode {
 		});
 		return new Measure(getName(), getDescription(), clonedDiagnostics);
 	}
-
-
-	// Methods
 
 	/**
 	 * Measures must define in their instantiating, language-specific class
@@ -83,19 +99,14 @@ public class Measure extends ModelNode {
 		this.value = this.evalFunction.apply(this.diagnostics);
 	}
 
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof Measure)) { return false; }
+		Measure otherMeasure = (Measure) other;
 
-	/**
-	 * This method calculates the normalized value of this measure.
-	 * It just divides the value field by the normalizer field.
-	 */
-	public double calculateNormValue(int loc){
-		if (loc != 0) {
-			return this.value/loc;
-		} else {
-			throw new RuntimeException("Division by zero occured on metric " + getName() +
-				". This is likely due to the metrics analyzer either \nfailing to get the " +
-				"total lines of code, or failing to assign the TLOC to the property's measure's normalizer.");
-		}
+		return getName().equals(otherMeasure.getName())
+				&& getDescription().equals(otherMeasure.getDescription())
+				&& (getDiagnostics().size() == otherMeasure.getDiagnostics().size());
 	}
 
 

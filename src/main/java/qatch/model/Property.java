@@ -85,6 +85,16 @@ public class Property extends ModelNode {
 		return new Property(getName(), getDescription(), isPositive(), getThresholds(), (Measure)getMeasure().clone());
 	}
 
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof Property)) { return false; }
+		Property otherProperty = (Property) other;
+
+		return getName().equals(otherProperty.getName())
+				&& getDescription().equals(otherProperty.getDescription())
+				&& getMeasure().getName().equals(otherProperty.getMeasure().getName());
+	}
+
 	/**
 	 * A method for evaluating a Property object (i.e this property). 
 	 * In other words, this method calculates the eval field

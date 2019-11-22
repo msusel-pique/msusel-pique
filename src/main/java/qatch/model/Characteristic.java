@@ -76,6 +76,16 @@ public class Characteristic extends ModelNode {
 		return new Characteristic(getName(), getDescription(), getWeights(), clonedProperties);
 	}
 
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof Characteristic)) { return false; }
+		Characteristic otherCharacteristic = (Characteristic) other;
+
+		return getName().equals(otherCharacteristic.getName())
+				&& getDescription().equals(otherCharacteristic.getDescription())
+				&& getProperties().size() == otherCharacteristic.getProperties().size();
+	}
+
 	/**
 	 * This method is used in order to calculate the eval field of this Characteristic
 	 * object, based

@@ -7,7 +7,6 @@ import com.google.gson.annotations.Expose;
 import qatch.analysis.Diagnostic;
 import qatch.analysis.Measure;
 import qatch.utility.FileUtility;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -59,12 +58,31 @@ public class QualityModel {
 		importQualityModel(qmFilePath);
 	}
 
+	/**
+	 * Constructor for use in deep cloning this quality model
+	 *
+	 * @param name
+	 * 		Quality model name
+	 * @param tqi
+	 * 		Root node of quality model tree. Careful passing this by reference.
+	 * 		Will likely want to use this.tqi.clone().
+	 */
+	public QualityModel(String name, Tqi tqi) {
+		this.name = name;
+		this.tqi = tqi;
+	}
+
 
 	// Setters and Getters
-	private Characteristic getAnyCharacteristic() {
+	public Characteristic getAnyCharacteristic() {
 		Characteristic anyCharacteristic = getTqi().getCharacteristics().values().stream().findAny().orElse(null);
 		assert anyCharacteristic != null;
 		return anyCharacteristic;
+	}
+	public Property getAnyProperty() {
+		Property anyProperty = getAnyCharacteristic().getProperties().values().stream().findAny().orElse(null);
+		assert anyProperty != null;
+		return anyProperty;
 	}
 	public Characteristic getCharacteristic(String name) {
 		return getTqi().getCharacteristics().get(name);
@@ -140,9 +158,10 @@ public class QualityModel {
 	 * @return
 	 * 		Deep clone of this QualityModel object
 	 */
+	@Override
 	public QualityModel clone() {
-
-		throw new NotImplementedException();
+		Tqi rootNode = (Tqi)getTqi().clone();
+		return new QualityModel(getName(), rootNode);
 	}
 
 	/**

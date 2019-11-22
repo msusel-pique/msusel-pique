@@ -190,10 +190,10 @@ public class ProjectTests {
         FileUtils.forceDelete(exportLocation.toFile());
     }
 
-    @Test
-    /**
+    /*
      * Test state of fields of project object immediately after construction
      */
+    @Test
     public void testProjectConstructor() {
         String name = "Test Project";
         Path path = Paths.get("test/path");

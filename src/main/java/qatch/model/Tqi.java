@@ -72,6 +72,16 @@ public class Tqi extends ModelNode {
 	}
 
 	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof Tqi)) { return false; }
+		Tqi otherTqi = (Tqi) other;
+
+		return getName().equals(otherTqi.getName())
+				&& getDescription().equals(otherTqi.getDescription())
+				&& getCharacteristics().size() == otherTqi.getCharacteristics().size();
+	}
+
+	@Override
 	public void evaluate() {
 
 		// assert a weight mapping exists for each provided characteristic

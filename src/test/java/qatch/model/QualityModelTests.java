@@ -2,6 +2,8 @@ package qatch.model;
 
 import org.junit.Assert;
 import org.junit.Test;
+import qatch.TestHelper;
+import qatch.analysis.Diagnostic;
 import qatch.analysis.Measure;
 
 import java.nio.file.Path;
@@ -10,6 +12,27 @@ import java.nio.file.Paths;
 public class QualityModelTests {
 
     private Path qmTest = Paths.get("src/test/resources/quality_models/qualityModel_test.json");
+
+    /*
+     * Test full quality model clone stack (Diagnostic.clone() -> Measure.clone() -> ... -> Tqi.clone())
+     */
+    @Test
+    public void testCloneStack() {
+        QualityModel qmOirginal = TestHelper.makeQualityModel();
+
+        Diagnostic diagnosticOriginal = qmOirginal.getMeasure("Property 01 measure").getDiagnostic("Property 01 measure diagnostic01");
+        Diagnostic diagnosticNew = (Diagnostic) diagnosticOriginal.clone();
+        Measure measureOriginal = qmOirginal.getMeasure("Property 01 measure");
+        Measure measureNew = (Measure) measureOriginal.clone();
+        Property propertyOriginal = qmOirginal.getProperty("Property 01");
+        Property propertyNew = (Property)propertyOriginal.clone();
+        Characteristic characteristicOriginal = qmOirginal.getCharacteristic("Characteristic 01");
+        Characteristic characteristicNew = (Characteristic)characteristicOriginal.clone();
+        Tqi tqiOriginal = qmOirginal.getTqi();
+        Tqi tqiNew = (Tqi)tqiOriginal.clone();
+
+        System.out.println("...");
+    }
 
     @Test
     public void testImportQualityModel() {

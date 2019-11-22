@@ -29,12 +29,7 @@ public class TestHelper {
      * Analysis objects
      */
     public static Diagnostic makeDiagnostic(String id) {
-        Finding f1 = makeFinding(id + "/filepath/f1", 234, 2);
-        Finding f2 = makeFinding(id + "/filepath/f2", 345, 3);
-        Diagnostic d = new Diagnostic(id, "Sample Description", "Sample Tool Name");
-        d.setFinding(f1);
-        d.setFinding(f2);
-        return d;
+        return new Diagnostic(id, "Sample Description", "Sample Tool Name");
     }
 
     public static Finding makeFinding(String filePath, int lineNumber, int severity) {
@@ -55,39 +50,9 @@ public class TestHelper {
      * Make project without reliance on a quality model file
      */
     public static Project makeProject(String name) {
-        Property p1 = makeProperty("Property 01");
-        Property p2 = makeProperty("Property 02");
-        Characteristic c1 = makeCharacteristic("Characteristic 01");
-        Characteristic c2 = makeCharacteristic("Characteristic 02");
-        c1.setProperties(new HashMap<String, Property>() {{
-            put(p1.getName(), p1);
-            put(p2.getName(), p2);
-        }});
-        c2.setProperties(new HashMap<String, Property>() {{
-            put(p1.getName(), p1);
-            put(p2.getName(), p2);
-        }});
-        Tqi tqi = makeTqi(
-                "TQI",
-                new HashMap<String, Characteristic>() {{
-                    put(c1.getName(), c1);
-                    put(c2.getName(), c2);
-                }},
-                new HashMap<String, Property>() {{
-                    put(p1.getName(), p1);
-                    put(p2.getName(), p2);
-                }}
-        );
-
         Project project = new Project(name);
         project.setLinesOfCode(100);
-        project.getQualityModel().setTqi(tqi);
-        project.getQualityModel().getTqi().setValue(0.92);
-        project.getQualityModel().setCharacteristic(c1.getName(), c1);
-        project.getQualityModel().setCharacteristic(c2.getName(), c2);
-        project.getQualityModel().setProperty(p1);
-        project.getQualityModel().setProperty(p2);
-
+        project.setQualityModel(makeQualityModel());
         return project;
     }
 
@@ -134,7 +99,7 @@ public class TestHelper {
             put(p1.getName(), p1);
             put(p2.getName(), p2);
         }};
-        Tqi tqi = TestHelper.makeTqi("Test TQI", characteristics, properties );
+        Tqi tqi = TestHelper.makeTqi("Test TQI");
 
         qm.setTqi(tqi);
         qm.setCharacteristics(characteristics);
@@ -143,17 +108,12 @@ public class TestHelper {
         return qm;
     }
 
-    public static Tqi makeTqi(String name, Map<String, Characteristic> characteristics, Map<String, Property> properties) {
+    public static Tqi makeTqi(String name) {
         HashMap<String, Double> weights = new HashMap<String, Double>() {{
             put("Characteristic 01", 0.7);
             put("Characteristic 02", 0.3);
         }};
         Tqi tqi = new Tqi(name, "Tqi description from TestHelper.", weights);
-
-        tqi.setCharacteristics(characteristics);
-        tqi.getCharacteristics().values().forEach(c -> {
-            c.setProperties(properties);
-        });
         return tqi;
     }
 

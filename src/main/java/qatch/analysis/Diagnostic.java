@@ -81,6 +81,16 @@ public class Diagnostic extends ModelNode {
     }
 
 
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof Diagnostic)) { return false; }
+        Diagnostic otherDiagnostic = (Diagnostic) other;
+
+        return getName().equals(otherDiagnostic.getName())
+                && getToolName().equals(otherDiagnostic.getToolName())
+                && getDescription().equals(otherDiagnostic.getDescription());
+    }
+
     // Helper methods
 
     /**
