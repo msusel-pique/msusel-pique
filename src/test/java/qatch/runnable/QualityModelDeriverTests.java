@@ -144,7 +144,7 @@ public class QualityModelDeriverTests {
         Property p1 = qm.getProperty("Property 01");
         Property p2 = qm.getProperty("Property 02");
 
-        // TODO: write assertions
+        // TODO PICKUP: write assertions
 
 //        Assert.assertEquals(0.6667, tqi.getWeight("Characteristic 01"), 0.0001);
 //        Assert.assertEquals(0.3333, tqi.getWeight("Characteristic 02"), 0.0001);
