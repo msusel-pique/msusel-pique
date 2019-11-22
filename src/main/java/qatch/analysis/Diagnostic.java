@@ -60,10 +60,19 @@ public class Diagnostic extends ModelNode {
     public ModelNode clone() {
         Diagnostic clonedDiagnostic = new Diagnostic(getName(), getDescription(), getToolName());
         findings.forEach(finding -> {
-            setFinding(finding.deepClone());
+            setFinding(finding.clone());
         });
 
         return clonedDiagnostic;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof Diagnostic)) { return false; }
+        Diagnostic otherDiagnostic = (Diagnostic) other;
+
+        return getName().equals(otherDiagnostic.getName())
+                && getToolName().equals(otherDiagnostic.getToolName());
     }
 
     /**
@@ -80,16 +89,6 @@ public class Diagnostic extends ModelNode {
         this.value = this.evalFunction.apply(this.findings);
     }
 
-
-    @Override
-    public boolean equals(Object other) {
-        if (!(other instanceof Diagnostic)) { return false; }
-        Diagnostic otherDiagnostic = (Diagnostic) other;
-
-        return getName().equals(otherDiagnostic.getName())
-                && getToolName().equals(otherDiagnostic.getToolName())
-                && getDescription().equals(otherDiagnostic.getDescription());
-    }
 
     // Helper methods
 

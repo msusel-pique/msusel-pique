@@ -91,8 +91,7 @@ public class Property extends ModelNode {
 		Property otherProperty = (Property) other;
 
 		return getName().equals(otherProperty.getName())
-				&& getDescription().equals(otherProperty.getDescription())
-				&& getMeasure().getName().equals(otherProperty.getMeasure().getName());
+				&& getMeasure().equals(otherProperty.getMeasure());
 	}
 
 	/**

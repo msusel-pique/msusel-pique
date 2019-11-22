@@ -82,7 +82,6 @@ public class Characteristic extends ModelNode {
 		Characteristic otherCharacteristic = (Characteristic) other;
 
 		return getName().equals(otherCharacteristic.getName())
-				&& getDescription().equals(otherCharacteristic.getDescription())
 				&& getProperties().size() == otherCharacteristic.getProperties().size();
 	}
 

@@ -77,7 +77,6 @@ public class Tqi extends ModelNode {
 		Tqi otherTqi = (Tqi) other;
 
 		return getName().equals(otherTqi.getName())
-				&& getDescription().equals(otherTqi.getDescription())
 				&& getCharacteristics().size() == otherTqi.getCharacteristics().size();
 	}
 

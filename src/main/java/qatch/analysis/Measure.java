@@ -105,7 +105,6 @@ public class Measure extends ModelNode {
 		Measure otherMeasure = (Measure) other;
 
 		return getName().equals(otherMeasure.getName())
-				&& getDescription().equals(otherMeasure.getDescription())
 				&& (getDiagnostics().size() == otherMeasure.getDiagnostics().size());
 	}
 

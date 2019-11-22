@@ -164,6 +164,15 @@ public class QualityModel {
 		return new QualityModel(getName(), rootNode);
 	}
 
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof QualityModel)) { return false; }
+		QualityModel otherQm = (QualityModel) other;
+
+		return getName().equals(otherQm.getName())
+				&& getTqi().equals(otherQm.getTqi());
+	}
+
 	/**
 	 * Create a hard-drive file representation of the model
 	 *

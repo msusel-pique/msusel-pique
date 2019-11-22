@@ -30,8 +30,25 @@ public class QualityModelTests {
         Characteristic characteristicNew = (Characteristic)characteristicOriginal.clone();
         Tqi tqiOriginal = qmOirginal.getTqi();
         Tqi tqiNew = (Tqi)tqiOriginal.clone();
+        QualityModel qmNew = qmOirginal.clone();
 
-        System.out.println("...");
+        Assert.assertNotSame(diagnosticOriginal, diagnosticNew);
+        Assert.assertEquals(diagnosticOriginal, diagnosticNew);
+
+        Assert.assertNotSame(measureOriginal, measureNew);
+        Assert.assertEquals(measureOriginal, measureNew);
+
+        Assert.assertNotSame(propertyOriginal, propertyNew);
+        Assert.assertEquals(propertyOriginal, propertyNew);
+
+        Assert.assertNotSame(characteristicOriginal, characteristicNew);
+        Assert.assertEquals(characteristicOriginal, characteristicNew);
+
+        Assert.assertNotSame(tqiOriginal, tqiNew);
+        Assert.assertEquals(tqiOriginal, tqiNew);
+
+        Assert.assertNotSame(qmOirginal, qmNew);
+        Assert.assertEquals(qmOirginal, qmNew);
     }
 
     @Test
