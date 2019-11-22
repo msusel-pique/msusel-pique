@@ -2,10 +2,8 @@ package qatch.evaluation;
 
 import com.google.gson.annotations.Expose;
 import qatch.analysis.Diagnostic;
-import qatch.model.Characteristic;
 import qatch.model.Property;
 import qatch.model.QualityModel;
-import qatch.model.Tqi;
 import qatch.utility.FileUtility;
 
 import java.nio.file.Path;
@@ -97,7 +95,7 @@ public class Project{
 	 * provided by the quality model and the values contained in the project's Property nodes.
 	 */
 	public void evaluateCharacteristics() {
-		getQualityModel().getCharacteristics().values().forEach(Characteristic::getValue);
+		getQualityModel().getCharacteristics().values().forEach(characteristic -> characteristic.getValue((double)getLinesOfCode()));
 	}
 
 	/**
@@ -105,11 +103,11 @@ public class Project{
 	 * provided by the quality model and the findings contained in the Measure nodes.
 	 */
 	public void evaluateProperties() {
-		getQualityModel().getProperties().values().forEach(Property::getValue);
+		getQualityModel().getProperties().values().forEach(property -> property.getValue((double)getLinesOfCode()));
 	}
 
 	public void evaluateTqi() {
-		getQualityModel().getTqi().getValue();
+		getQualityModel().getTqi().getValue((double)getLinesOfCode());
 	}
 
 	/**
