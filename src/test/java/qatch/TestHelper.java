@@ -31,7 +31,7 @@ public class TestHelper {
     public static Diagnostic makeDiagnostic(String id) {
         Finding f1 = makeFinding(id + "/filepath/f1", 234, 2);
         Finding f2 = makeFinding(id + "/filepath/f2", 345, 3);
-        Diagnostic d = new Diagnostic(id);
+        Diagnostic d = new Diagnostic(id, "Sample Description", "Sample Tool Name");
         d.setFinding(f1);
         d.setFinding(f2);
         return d;
@@ -81,12 +81,12 @@ public class TestHelper {
 
         Project project = new Project(name);
         project.setLinesOfCode(100);
-        project.setTqi(tqi);
-        project.getTqi().setValue(0.92);
-        project.setCharacteristic(c1.getName(), c1);
-        project.setCharacteristic(c2.getName(), c2);
-        project.setProperty(p1.getName(), p1);
-        project.setProperty(p2.getName(), p2);
+        project.getQualityModel().setTqi(tqi);
+        project.getQualityModel().getTqi().setValue(0.92);
+        project.getQualityModel().setCharacteristic(c1.getName(), c1);
+        project.getQualityModel().setCharacteristic(c2.getName(), c2);
+        project.getQualityModel().setProperty(p1);
+        project.getQualityModel().setProperty(p2);
 
         return project;
     }
@@ -99,7 +99,7 @@ public class TestHelper {
             put("Property 01", 0.6);
             put("Property 02", 0.4);
         }};
-        return new Characteristic(name, name + " description", name + " standard", weights);
+        return new Characteristic(name, name + " description", weights);
     }
     /**
      * Automatically create a measure with diagnostics and finidings and attach to property field
@@ -110,7 +110,7 @@ public class TestHelper {
      */
     public static Property makeProperty(String name) {
         Measure m = makeMeasure(name + " measure");
-        Property p = new Property(name, m);
+        Property p = new Property(name, "Sample Description", m);
         p.setThresholds(new Double[] {0.1, 0.2, 0.5});
         return p;
     }

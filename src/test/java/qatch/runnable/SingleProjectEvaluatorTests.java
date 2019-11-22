@@ -67,7 +67,7 @@ public class SingleProjectEvaluatorTests {
 //        Assert.assertEquals(0.42, p.getCharacteristics_depreicated().get(0).getValue(), 0.00001);
 //        Assert.assertEquals(0.50, p.getCharacteristics_depreicated().get(1).getValue(), 0.00001);
 
-        Assert.assertEquals(0.436, p.getTqi().getValue(),0.00001);
+        Assert.assertEquals(0.436, p.getQualityModel().getTqi().getValue(),0.00001);
     }
 
 

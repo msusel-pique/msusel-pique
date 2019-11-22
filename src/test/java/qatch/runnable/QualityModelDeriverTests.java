@@ -68,8 +68,8 @@ public class QualityModelDeriverTests {
                 switch (toolResults.getFileName().toString()) {
                     case "benchmark_one_results.xml":
 
-                        Diagnostic bench1tst1 = new Diagnostic("TST0001");
-                        Diagnostic bench1tst3 = new Diagnostic("TST0003");
+                        Diagnostic bench1tst1 = new Diagnostic("TST0001", "Sample Description", "Sample Tool Name");
+                        Diagnostic bench1tst3 = new Diagnostic("TST0003", "Sample Description", "Sample Tool Name");
                         bench1tst1.setFinding(f1);
                         bench1tst3.setFinding(f1);
 
@@ -78,11 +78,11 @@ public class QualityModelDeriverTests {
 
                         return diagnostics;
                     case "benchmark_two_results.xml":
-                        Diagnostic bench2tst1 = new Diagnostic("TST0001");
-                        Diagnostic bench2tst2 = new Diagnostic("TST0002");
-                        Diagnostic bench2tst3 = new Diagnostic("TST0003");
-                        Diagnostic bench2tst4 = new Diagnostic("TST0004");
-                        Diagnostic bench2tst5 = new Diagnostic("TST0005");
+                        Diagnostic bench2tst1 = new Diagnostic("TST0001", "Sample Description", "Sample Tool Name");
+                        Diagnostic bench2tst2 = new Diagnostic("TST0002", "Sample Description", "Sample Tool Name");
+                        Diagnostic bench2tst3 = new Diagnostic("TST0003", "Sample Description", "Sample Tool Name");
+                        Diagnostic bench2tst4 = new Diagnostic("TST0004", "Sample Description", "Sample Tool Name");
+                        Diagnostic bench2tst5 = new Diagnostic("TST0005", "Sample Description", "Sample Tool Name");
 
                         bench2tst1.setFindings(Stream.of(f1, f2).collect(Collectors.toSet()));
                         bench2tst2.setFindings(Stream.of(f1, f2).collect(Collectors.toSet()));
@@ -98,11 +98,11 @@ public class QualityModelDeriverTests {
 
                         return diagnostics;
                     case "benchmark_three_results.xml":
-                        Diagnostic bench3tst1 = new Diagnostic("TST0001");
-                        Diagnostic bench3tst2 = new Diagnostic("TST0002");
-                        Diagnostic bench3tst3 = new Diagnostic("TST0003");
-                        Diagnostic bench3tst4 = new Diagnostic("TST0004");
-                        Diagnostic bench3tst5 = new Diagnostic("TST0005");
+                        Diagnostic bench3tst1 = new Diagnostic("TST0001", "Sample Description", "Sample Tool Name");
+                        Diagnostic bench3tst2 = new Diagnostic("TST0002", "Sample Description", "Sample Tool Name");
+                        Diagnostic bench3tst3 = new Diagnostic("TST0003", "Sample Description", "Sample Tool Name");
+                        Diagnostic bench3tst4 = new Diagnostic("TST0004", "Sample Description", "Sample Tool Name");
+                        Diagnostic bench3tst5 = new Diagnostic("TST0005", "Sample Description", "Sample Tool Name");
 
                         bench3tst1.setFindings(Stream.of(f1, f2, f3).collect(Collectors.toSet()));
                         bench3tst2.setFindings(Stream.of(f1, f2, f3).collect(Collectors.toSet()));

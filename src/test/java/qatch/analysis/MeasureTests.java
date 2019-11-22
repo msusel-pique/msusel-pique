@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 
 public class MeasureTests {
@@ -20,8 +19,8 @@ public class MeasureTests {
         finding01 = new Finding("A", 1, 1, 1);
         finding02 = new Finding("B", 2, 2, 2);
         finding03 = new Finding("C", 3, 3, 3);
-        diagnostic01 = new Diagnostic("Diag01");
-        diagnostic02 = new Diagnostic("Diag02");
+        diagnostic01 = new Diagnostic("Diag01", "Sample Description", "Sample Tool Name");
+        diagnostic02 = new Diagnostic("Diag02", "Sample Description", "Sample Tool Name");
 
         diagnostic01.setFinding(finding01);
         diagnostic02.setFinding(finding02);

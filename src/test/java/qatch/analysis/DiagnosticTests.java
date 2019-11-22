@@ -21,7 +21,7 @@ public class DiagnosticTests {
 
     @Test
     public void testEvaluate_defaultFunction() {
-        Diagnostic d = new Diagnostic("id01");
+        Diagnostic d = new Diagnostic("id01", "Sample Description", "Sample Tool Name");
         d.setFinding(finding01);
         d.setFinding(finding02);
         d.setFinding(finding03);
@@ -40,7 +40,7 @@ public class DiagnosticTests {
             return value;
         };
 
-        Diagnostic d = new Diagnostic("id01", customFunct);
+        Diagnostic d = new Diagnostic("id01", "Sample Description", "Sample Tool Name", customFunct);
         d.setFinding(finding01);
         d.setFinding(finding02);
         d.setFinding(finding03);

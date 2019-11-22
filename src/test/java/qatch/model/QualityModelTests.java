@@ -48,8 +48,8 @@ public class QualityModelTests {
 
         Assert.assertEquals("Measure 01", p1Measure.getName());
         Assert.assertEquals("Measure 02", p2Measure.getName());
-        Assert.assertEquals("TST0001", p1Measure.getDiagnostic("TST0001").getId());
-        Assert.assertEquals("TST0004", p2Measure.getDiagnostic("TST0004").getId());
+        Assert.assertEquals("TST0001", p1Measure.getDiagnostic("TST0001").getName());
+        Assert.assertEquals("TST0004", p2Measure.getDiagnostic("TST0004").getName());
 
         // Assert tree structure pass-by-reference from TQI root node compared to fields
         qm.getTqi().getCharacteristics().values().forEach(tqiCharacteristic -> {
@@ -63,7 +63,7 @@ public class QualityModelTests {
                 Assert.assertEquals(qmMeasure, tqiProperty.getMeasure());
                 tqiProperty.getMeasure().getDiagnostics().forEach(tqiDiagnostic -> {
                     // Measure's diagnostics
-                    Assert.assertEquals(qmMeasure.getDiagnostic(tqiDiagnostic.getId()), tqiDiagnostic);
+                    Assert.assertEquals(qmMeasure.getDiagnostic(tqiDiagnostic.getName()), tqiDiagnostic);
                 });
             });
         });

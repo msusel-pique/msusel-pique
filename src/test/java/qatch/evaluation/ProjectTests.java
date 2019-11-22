@@ -28,18 +28,18 @@ public class ProjectTests {
 
     @Test
     public void testEvaluateCharacteristics() {
-        p.getProperty("Property 01").setValue(0.1);
-        p.getProperty("Property 02").setValue(0.9);
+        p.getQualityModel().getProperty("Property 01").setValue(0.1);
+        p.getQualityModel().getProperty("Property 02").setValue(0.9);
         p.evaluateCharacteristics();
 
-        Assert.assertEquals(0.42, p.getCharacteristic("Characteristic 01").getValue(), 0.001);
-        Assert.assertEquals(0.42, p.getCharacteristic("Characteristic 02").getValue(), 0.001);
+        Assert.assertEquals(0.42, p.getQualityModel().getCharacteristic("Characteristic 01").getValue(), 0.001);
+        Assert.assertEquals(0.42, p.getQualityModel().getCharacteristic("Characteristic 02").getValue(), 0.001);
     }
 
     @Test
     public void testEvaluateProperties_negative_lowerGroup() {
-        Property p1 = p.getProperty("Property 01");
-        Property p2 = p.getProperty("Property 02");
+        Property p1 = p.getQualityModel().getProperty("Property 01");
+        Property p2 = p.getQualityModel().getProperty("Property 02");
 
         p1.getMeasure().setNormalizedValue(0.01);
         p2.getMeasure().setNormalizedValue(0.09);
@@ -52,8 +52,8 @@ public class ProjectTests {
 
     @Test
     public void testEvaluateProperties_negative_middleGroup() {
-        Property p1 = p.getProperty("Property 01");
-        Property p2 = p.getProperty("Property 02");
+        Property p1 = p.getQualityModel().getProperty("Property 01");
+        Property p2 = p.getQualityModel().getProperty("Property 02");
 
         p1.getMeasure().setNormalizedValue(0.11);
         p2.getMeasure().setNormalizedValue(0.19);
@@ -66,8 +66,8 @@ public class ProjectTests {
 
     @Test
     public void testEvaluateProperties_negative_saturation() {
-        Property p1 = p.getProperty("Property 01");
-        Property p2 = p.getProperty("Property 02");
+        Property p1 = p.getQualityModel().getProperty("Property 01");
+        Property p2 = p.getQualityModel().getProperty("Property 02");
 
         p1.getMeasure().setNormalizedValue(0.51);
         p2.getMeasure().setNormalizedValue(0.99);
@@ -80,8 +80,8 @@ public class ProjectTests {
 
     @Test
     public void testEvaluateProperties_negative_upperGroup() {
-        Property p1 = p.getProperty("Property 01");
-        Property p2 = p.getProperty("Property 02");
+        Property p1 = p.getQualityModel().getProperty("Property 01");
+        Property p2 = p.getQualityModel().getProperty("Property 02");
 
         p1.getMeasure().setNormalizedValue(0.21);
         p2.getMeasure().setNormalizedValue(0.49);
@@ -94,8 +94,8 @@ public class ProjectTests {
 
     @Test
     public void testEvaluateProperties_positive_lowerGroup() {
-        Property p1 = p.getProperty("Property 01");
-        Property p2 = p.getProperty("Property 02");
+        Property p1 = p.getQualityModel().getProperty("Property 01");
+        Property p2 = p.getQualityModel().getProperty("Property 02");
 
         p1.setPositive(true);
         p2.setPositive(true);
@@ -110,8 +110,8 @@ public class ProjectTests {
 
     @Test
     public void testEvaluateProperties_positive_middleGroup() {
-        Property p1 = p.getProperty("Property 01");
-        Property p2 = p.getProperty("Property 02");
+        Property p1 = p.getQualityModel().getProperty("Property 01");
+        Property p2 = p.getQualityModel().getProperty("Property 02");
 
         p1.setPositive(true);
         p2.setPositive(true);
@@ -126,8 +126,8 @@ public class ProjectTests {
 
     @Test
     public void testEvaluateProperties_positive_saturation() {
-        Property p1 = p.getProperty("Property 01");
-        Property p2 = p.getProperty("Property 02");
+        Property p1 = p.getQualityModel().getProperty("Property 01");
+        Property p2 = p.getQualityModel().getProperty("Property 02");
 
         p1.setPositive(true);
         p2.setPositive(true);
@@ -142,8 +142,8 @@ public class ProjectTests {
 
     @Test
     public void testEvaluateProperties_positive_upperGroup() {
-        Property p1 = p.getProperty("Property 01");
-        Property p2 = p.getProperty("Property 02");
+        Property p1 = p.getQualityModel().getProperty("Property 01");
+        Property p2 = p.getQualityModel().getProperty("Property 02");
 
         p1.setPositive(true);
         p2.setPositive(true);
@@ -158,11 +158,11 @@ public class ProjectTests {
 
     @Test
     public void testEvaluateTqi() {
-        p.getCharacteristic("Characteristic 01").setValue(0.1);
-        p.getCharacteristic("Characteristic 02").setValue(0.9);
+        p.getQualityModel().getCharacteristic("Characteristic 01").setValue(0.1);
+        p.getQualityModel().getCharacteristic("Characteristic 02").setValue(0.9);
         p.evaluateTqi();
 
-        Assert.assertEquals(0.34, p.getTqi().getValue(), 0.001);
+        Assert.assertEquals(0.34, p.getQualityModel().getTqi().getValue(), 0.001);
 
     }
 
@@ -206,18 +206,18 @@ public class ProjectTests {
         Assert.assertEquals(path, project.getPath());
 
         // Assert tree structure pass-by-reference from TQI root node compared to fields
-        project.getTqi().getCharacteristics().values().forEach(tqiCharacteristic -> {
+        project.getQualityModel().getTqi().getCharacteristics().values().forEach(tqiCharacteristic -> {
             // Characteristic layer
-            Assert.assertEquals(project.getCharacteristics().get(tqiCharacteristic.getName()), tqiCharacteristic);
+            Assert.assertEquals(project.getQualityModel().getCharacteristics().get(tqiCharacteristic.getName()), tqiCharacteristic);
             tqiCharacteristic.getProperties().values().forEach(tqiProperty -> {
                 // Properties layer
-                Assert.assertEquals(project.getProperties().get(tqiProperty.getName()), tqiProperty);
-                Measure projectMeasure = project.getProperties().get(tqiProperty.getName()).getMeasure();
+                Assert.assertEquals(project.getQualityModel().getProperties().get(tqiProperty.getName()), tqiProperty);
+                Measure projectMeasure = project.getQualityModel().getProperties().get(tqiProperty.getName()).getMeasure();
                 // Property's measure
                 Assert.assertEquals(projectMeasure, tqiProperty.getMeasure());
                 tqiProperty.getMeasure().getDiagnostics().forEach(tqiDiagnostic -> {
                     // Measure's diagnostics
-                    Assert.assertEquals(projectMeasure.getDiagnostic(tqiDiagnostic.getId()), tqiDiagnostic);
+                    Assert.assertEquals(projectMeasure.getDiagnostic(tqiDiagnostic.getName()), tqiDiagnostic);
                 });
             });
         });
