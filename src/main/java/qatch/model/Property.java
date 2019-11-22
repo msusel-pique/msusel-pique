@@ -98,51 +98,54 @@ public class Property extends ModelNode {
 	 * Typically, it simulates the Utility Function that is used  for the evaluation of the properties.
 	 *
 	 * @param args
-	 *      Empty args. No parameters needed.
+	 *      A single entry representing the lines of code. This is needed for normalization at the measure level.
 	 */
 	@Override
 	protected void evaluate(Double... args) {
 
-		if (args.length == 0) {
-			/*
-			 * Check the sign of the impact that this property has on the total quality
-			 * and choose the monotony of the utility function.
-			 */
-			Double measureValue = getMeasure().getValue();
-			if (positive) {
-				//If the metric has a positive impact on quality -> Ascending utility function
-				if (measureValue <= this.thresholds[0]) {
-					//Lower Group
-					setValue(0);
-				} else if (measureValue <= this.thresholds[1]) {
-					//Middle Group
-					setValue((0.5 / (thresholds[1] - thresholds[0])) * (measureValue - thresholds[0]));
-				} else if (measureValue <= this.thresholds[2]) {
-					//Upper Group
-					setValue(1 - (0.5 / (thresholds[2] - thresholds[1])) * (thresholds[2] - measureValue));
-				} else {
-					//Saturation
-					setValue(1);
-				}
+		if (args.length != 1) throw new RuntimeException("Property.evaluate() expects input args of lenght 1.");
+
+		/*
+		 * Check the sign of the impact that this property has on the total quality
+		 * and choose the monotony of the utility function.
+		 */
+		Double loc = args[0];
+		Double measureValue = getMeasure().getValue(loc);
+		Double lowerBound = getThresholds()[0];
+		Double middleBound = getThresholds()[1];
+		Double upperBound = getThresholds()[2];
+
+		if (positive) {
+			//If the metric has a positive impact on quality -> Ascending utility function
+			if (measureValue <= lowerBound) {
+				//Lower Group
+				setValue(0);
+			} else if (measureValue <= middleBound) {
+				//Middle Group
+				setValue((0.5 / (middleBound - lowerBound)) * (measureValue - lowerBound));
+			} else if (measureValue <= this.thresholds[2]) {
+				//Upper Group
+				setValue( 1 - (0.5 / (upperBound - middleBound)) * (upperBound - measureValue) );
 			} else {
-				//If the metric has a negative impact on quality -> Descending utility function
-				if (roundDown4(measureValue) <= this.thresholds[0]) {
-					//Lower Group
-					setValue(1);
-				} else if (roundDown4(measureValue) <= this.thresholds[1]) {
-					//Middle Group
-					setValue(1 - (0.5 / (thresholds[1] - thresholds[0])) * (measureValue - thresholds[0]));
-				} else if (roundDown4(measureValue) <= this.thresholds[2]) {
-					//Upper Group
-					setValue((0.5 / (thresholds[2] - thresholds[1])) * (thresholds[2] - roundDown4(measureValue)));
-				} else {
-					//Saturation
-					setValue(0);
-				}
+				//Saturation
+				setValue(1);
+			}
+		} else {
+			//If the metric has a negative impact on quality -> Descending utility function
+			if (roundDown4(measureValue) <= lowerBound) {
+				//Lower Group
+				setValue(1);
+			} else if (roundDown4(measureValue) <= middleBound) {
+				//Middle Group
+				setValue(1 - (0.5 / (middleBound - lowerBound)) * (measureValue - lowerBound));
+			} else if (roundDown4(measureValue) <= this.thresholds[2]) {
+				//Upper Group
+				setValue((0.5 / (upperBound - middleBound)) * (upperBound - roundDown4(measureValue)));
+			} else {
+				//Saturation
+				setValue(0);
 			}
 		}
-
-		else throw new RuntimeException("Property.evaluate() expects input args of length 0.");
 	}
 	
 	/**

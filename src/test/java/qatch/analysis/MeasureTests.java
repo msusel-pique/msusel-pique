@@ -10,6 +10,7 @@ import java.util.function.Function;
 
 public class MeasureTests {
 
+    private Double linesOfCode = 100.0;
     private Finding finding01, finding02, finding03;
     private Diagnostic diagnostic01, diagnostic02;
     private Measure measure01;
@@ -31,9 +32,8 @@ public class MeasureTests {
     public void testEvaluate_defaultFunction() {
         Measure m = new Measure();
         m.setDiagnostics(Arrays.asList(diagnostic01, diagnostic02));
-        double v = m.getValue();
 
-        Assert.assertEquals(3, v, 0);
+        Assert.assertEquals(.03, m.getValue(linesOfCode), 0);
 
     }
 
@@ -52,8 +52,7 @@ public class MeasureTests {
         Measure m = new Measure(null, null, null, customFunct);
         m.setDiagnostics(Arrays.asList(diagnostic01, diagnostic02));
 
-        double v = m.getValue();
-        Assert.assertEquals(6, v, 0);
+        Assert.assertEquals(.06, m.getValue(linesOfCode), 0);
     }
 
 }

@@ -79,11 +79,9 @@ public class Diagnostic extends ModelNode {
      */
     @Override
     protected void evaluate(Double... args) {
-        if (args.length == 0) {
-            assert this.evalFunction != null;
-            setValue(this.evalFunction.apply(this.findings));
-        }
-        else throw new RuntimeException("Diagnostic.evaluate() expects input args of length 0.");
+        assert this.evalFunction != null;
+        setValue(this.evalFunction.apply(this.findings));
+
     }
 
 
