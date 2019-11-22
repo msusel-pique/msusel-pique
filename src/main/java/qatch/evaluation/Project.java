@@ -5,6 +5,7 @@ import qatch.analysis.Diagnostic;
 import qatch.model.Characteristic;
 import qatch.model.Property;
 import qatch.model.QualityModel;
+import qatch.model.Tqi;
 import qatch.utility.FileUtility;
 
 import java.nio.file.Path;
@@ -24,6 +25,7 @@ public class Project{
 	@Expose
 	private int linesOfCode;
 	private Path path;  // the original path where the sources of the project are stored (with or without the name)
+	@Expose
 	private QualityModel qualityModel;  // the QM prototype this project uses for evaluation
 
 

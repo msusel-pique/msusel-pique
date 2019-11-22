@@ -15,8 +15,6 @@ public class Measure extends ModelNode {
 	private double normalizedValue;
 	@Expose
 	private List<Diagnostic> diagnostics;
-	@Expose
-	private double value;
 
 
 	// Constructors
@@ -52,13 +50,6 @@ public class Measure extends ModelNode {
 	public void setDiagnostics(List<Diagnostic> diagnostics) { this.diagnostics = diagnostics; }
 	public double getNormalizedValue() { return normalizedValue; }
 	public void setNormalizedValue(double normalizedValue) { this.normalizedValue = normalizedValue; }
-	// TODO: this probably causes a bug when called multiple times on the same object
-	public double getValue() {
-		evaluate();
-		return this.value;
-	}
-
-
 
 
 	// Methods
@@ -69,7 +60,7 @@ public class Measure extends ModelNode {
 	 */
 	public double calculateNormValue(int loc){
 		if (loc != 0) {
-			return this.value/loc;
+			return getValue()/loc;
 		} else {
 			throw new RuntimeException("Division by zero occured on metric " + getName() +
 					". This is likely due to the metrics analyzer either \nfailing to get the " +
@@ -96,7 +87,7 @@ public class Measure extends ModelNode {
 	public void evaluate() {
 		assert this.evalFunction != null;
 		this.getDiagnostics().forEach(Diagnostic::getValue);
-		this.value = this.evalFunction.apply(this.diagnostics);
+		setValue(this.evalFunction.apply(this.diagnostics));
 	}
 
 	@Override

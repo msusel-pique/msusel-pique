@@ -169,6 +169,7 @@ public class ProjectTests {
     @Test
     public void testExportEvaluation() throws IOException {
         Path exportLocation = Paths.get("src/test/out/TestExportEval");
+        p.getQualityModel().getTqi().setValue(0.92);
 
         Path result = p.exportToJson(exportLocation);
         FileReader fr = new FileReader(result.toString());
@@ -177,9 +178,10 @@ public class ProjectTests {
 
         int loc = jsonResults.getAsJsonPrimitive("linesOfCode").getAsInt();
         String name = jsonResults.getAsJsonPrimitive("name").getAsString();
-        int numCharacteristics = jsonResults.getAsJsonObject("characteristics").size();
-        int numProperties = jsonResults.getAsJsonObject("properties").size();
-        double tqiValue = jsonResults.getAsJsonObject("tqi").getAsJsonPrimitive("value").getAsDouble();
+        JsonObject jsonTqi = jsonResults.getAsJsonObject("qualityModel").getAsJsonObject("tqi");
+        double tqiValue = jsonTqi.getAsJsonPrimitive("value").getAsDouble();
+        int numCharacteristics = jsonTqi.getAsJsonObject("characteristics").keySet().size();
+        int numProperties = jsonTqi.getAsJsonObject("characteristics").getAsJsonObject("Characteristic 01").getAsJsonObject("properties").keySet().size();
 
         Assert.assertEquals(100, loc);
         Assert.assertEquals("TestProject", name);

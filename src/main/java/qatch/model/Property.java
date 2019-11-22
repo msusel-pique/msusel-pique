@@ -12,8 +12,6 @@ public class Property extends ModelNode {
 	// Fields
 
 	@Expose
-	private double value;//The quality score of the property
-	@Expose
 	private Measure measure;
 	@Expose
 	private boolean positive;//If this field is true then the metric has a positive impact on the property
@@ -64,12 +62,6 @@ public class Property extends ModelNode {
 	public void setThresholds(Double[] thresholds) {
 		this.thresholds = thresholds;
 	}
-	public double getValue() {
-		return value;
-	}
-	public void setValue(double value) {
-		this.value = value;
-	}
 	public void setMeasure(Measure measure){
 		this.measure = measure;
 	}
@@ -116,31 +108,31 @@ public class Property extends ModelNode {
 			//If the metric has a positive impact on quality -> Ascending utility function
 			if(this.measure.getNormalizedValue() <= this.thresholds[0]){
 				//Lower Group
-				this.value = 0;
+				setValue(0);
 			}else if(this.measure.getNormalizedValue() <= this.thresholds[1]){
 				//Middle Group
-				this.value = (0.5/(thresholds[1]-thresholds[0]))*(this.getMeasure().getNormalizedValue() - thresholds[0]);
+				setValue((0.5/(thresholds[1]-thresholds[0]))*(this.getMeasure().getNormalizedValue() - thresholds[0]));
 			}else if(this.measure.getNormalizedValue() <= this.thresholds[2]){
 				//Upper Group
-				this.value = 1 - (0.5/(thresholds[2]-thresholds[1]))*(thresholds[2] - this.getMeasure().getNormalizedValue());
+				setValue(1 - (0.5/(thresholds[2]-thresholds[1]))*(thresholds[2] - this.getMeasure().getNormalizedValue()));
 			}else{
 				//Saturation
-				this.value = 1;
+				setValue(1);
 			}
 		}else{
 			//If the metric has a negative impact on quality -> Descending utility function
 			if(roundDown4(this.measure.getNormalizedValue()) <= this.thresholds[0]){
 				//Lower Group
-				this.value = 1;
+				setValue(1);
 			}else if(roundDown4(this.measure.getNormalizedValue()) <= this.thresholds[1]){
 				//Middle Group
-				this.value = 1 - (0.5/(thresholds[1]-thresholds[0]))*(this.getMeasure().getNormalizedValue() - thresholds[0]);
+				setValue(1 - (0.5/(thresholds[1]-thresholds[0]))*(this.getMeasure().getNormalizedValue() - thresholds[0]));
 			}else if(roundDown4(this.measure.getNormalizedValue()) <= this.thresholds[2]){
 				//Upper Group
-				this.value = (0.5/(thresholds[2]-thresholds[1]))*(thresholds[2] - roundDown4(this.getMeasure().getNormalizedValue()));
+				setValue((0.5/(thresholds[2]-thresholds[1]))*(thresholds[2] - roundDown4(this.getMeasure().getNormalizedValue())));
 			}else{
 				//Saturation
-				this.value = 0;
+				setValue(0);
 			}
 		}
 	}

@@ -16,8 +16,6 @@ public class Diagnostic extends ModelNode {
     private Set<Finding> findings = new HashSet<>();
     @Expose
     private String toolName;
-    @Expose
-    private double value;
 
 
     // Constructors
@@ -46,11 +44,6 @@ public class Diagnostic extends ModelNode {
     }
     public void setToolName(String toolName) {
         this.toolName = toolName;
-    }
-
-    public double getValue() {
-        evaluate();
-        return this.value;
     }
 
 
@@ -86,7 +79,7 @@ public class Diagnostic extends ModelNode {
      */
     public void evaluate() {
         assert this.evalFunction != null;
-        this.value = this.evalFunction.apply(this.findings);
+        setValue(this.evalFunction.apply(this.findings));
     }
 
 
