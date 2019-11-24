@@ -51,7 +51,7 @@ public class TestHelper {
      */
     public static Project makeProject(String name) {
         Project project = new Project(name);
-        project.setLinesOfCode(100);
+        project.setLinesOfCode(10);
         project.setQualityModel(makeQualityModel());
         return project;
     }

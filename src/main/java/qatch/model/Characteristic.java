@@ -102,7 +102,7 @@ public class Characteristic extends ModelNode {
 	@Override
 	protected void evaluate(Double... args) {
 
-		if (args.length != 1) throw new RuntimeException("Characteristic.evaluate() expects input args of lenght 1.");
+		if (args.length != 1) throw new RuntimeException("Characteristic.evaluate() expects input args of length 1.");
 
 		Double loc = args[0];
 

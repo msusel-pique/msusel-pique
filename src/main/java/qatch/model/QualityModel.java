@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.Expose;
 import qatch.analysis.Diagnostic;
+import qatch.analysis.Finding;
 import qatch.analysis.Measure;
 import qatch.utility.FileUtility;
 
@@ -95,6 +96,9 @@ public class QualityModel {
 	}
 	public void setCharacteristics(Map<String, Characteristic> characteristics) {
 		getTqi().setCharacteristics(characteristics);
+	}
+	public void setFinding(Measure diagnosticsMeasure, String diagnosticName, Finding finding) {
+		diagnosticsMeasure.getDiagnostic(diagnosticName).setFinding(finding);
 	}
 	public Measure getMeasure(String measureName) {
 		for (Property property : getProperties().values()) {
