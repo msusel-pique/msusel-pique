@@ -40,12 +40,14 @@ public class QualityModelDeriver {
 
         // (2) Elicitate weights
         Set<WeightResult> weights = Weighter.elicitateWeights(comparisonMatricesDirectory, tempWeightsDirectory);
+        // TODO: assert WeightResult names match expected TQI, Characteristic, and Property names from quality model description
 
         // (3) Apply results to nodes in quality model by matching names
         // Thresholds (Property nodes)
         measureNameThresholdMappings.forEach((measureName, thresholds) -> {
             qmDescription.getPropertyByMeasureName(measureName).setThresholds(thresholds);
         });
+
         // Weights (TQI and Characteristic nodes)
         for (WeightResult weightsIn : weights) {
             // Check root node case

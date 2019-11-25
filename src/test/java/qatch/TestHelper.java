@@ -25,6 +25,7 @@ public class TestHelper {
     public static final Path TEST_RESOURCES = Paths.get(TEST_DIR.toString(), "resources").toAbsolutePath();
     public static final Path OUTPUT = Paths.get(TEST_DIR.toString(), "out").toAbsolutePath();
     private static final Path QUALITY_MODEL = Paths.get(TEST_RESOURCES.toString(), "quality_models", "qualityModel_test.json");
+    private static final Path QUALITY_MODEL_DESC = Paths.get(TEST_RESOURCES.toString(), "quality_models", "qualityModel_test_description.json");
 
     /*
      * Analysis objects

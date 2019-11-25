@@ -53,29 +53,28 @@ public class QualityModelDeriverTests {
             }
 
             /*
-             * Test info for assertion reference:
+             * Test info for reference and assertions:
              *
-             * Project 1:
-             *      Property 01, Measure 01, Diagnostic TST01: 1 finding
-             *      Property 02, Measure 02, Diagnostic TST03: 1 finidng
-             * Project 2:
-             *      Property 01, Measure 01, Diagnostic TST01: 2 findings
-             *      Property 01, Measure 01, Diagnostic TST02: 2 findings
-             *      Property 02, Measure 02, Diagnostic TST03: 2 findings
-             *      Property 02, Measure 02, Diagnostic TST04: 2 findings
-             *      Property 02, Measure 02, Diagnostic TST05: 2 findings
-             * Project 3:
-             *      Property 01, Measure 01, Diagnostic TST01: 3 findings
-             *      Property 01, Measure 01, Diagnostic TST02: 3 findings
-             *      Property 02, Measure 02, Diagnostic TST03: 3 findings
-             *      Property 02, Measure 02, Diagnostic TST04: 3 findings
-             *      Property 02, Measure 02, Diagnostic TST05: 3 findings
+             * Project 01: Measure 01 = 0.005, Measure 02 = 0.005
+             *      Measure 01, TST0001: 1 finding
+             *      Measure 02, TST0003: 1 finding
+             * Project 02: Measure 01 = 0.01, Measure 02 = 0.015
+             *      Measure 01, TST0001: 1 finding
+             *      Measure 01, TST0002: 1 finding
+             *      Measure 02, TST0003: 1 finding
+             *      Measure 02, TST0004: 1 finding
+             *      Measure 02, TST0005: 1 finding
+             * Project 03: Measure 01 = 0.02, Measure 02 = 0.03
+             *      Measure 01, TST0001: 2 findings
+             *      Measure 01, TST0002: 2 findings
+             *      Measure 02, TST0003: 2 findings
+             *      Measure 02, TST0004: 2 findings
+             *      Measure 02, TST0005: 2 findings
              */
             @Override
             public Map<String, Diagnostic> parseAnalysis(Path toolResults) {
                 Finding f1 = TestHelper.makeFinding("file/path/one", 11, 1);
                 Finding f2 = TestHelper.makeFinding("file/path/two", 22, 2);
-                Finding f3 = TestHelper.makeFinding("file/path/three", 33, 3);
 
                 Map<String, Diagnostic> diagnostics = new HashMap<>();
                 switch (toolResults.getFileName().toString()) {
@@ -98,11 +97,11 @@ public class QualityModelDeriverTests {
                         Diagnostic bench2tst4 = new Diagnostic("TST0004", "Sample Description", "Sample Tool Name");
                         Diagnostic bench2tst5 = new Diagnostic("TST0005", "Sample Description", "Sample Tool Name");
 
-                        bench2tst1.setFindings(Stream.of(f1, f2).collect(Collectors.toSet()));
-                        bench2tst2.setFindings(Stream.of(f1, f2).collect(Collectors.toSet()));
-                        bench2tst3.setFindings(Stream.of(f1, f2).collect(Collectors.toSet()));
-                        bench2tst4.setFindings(Stream.of(f1, f2).collect(Collectors.toSet()));
-                        bench2tst5.setFindings(Stream.of(f1, f2).collect(Collectors.toSet()));
+                        bench2tst1.setFinding(f1);
+                        bench2tst2.setFinding(f1);
+                        bench2tst3.setFinding(f1);
+                        bench2tst4.setFinding(f1);
+                        bench2tst5.setFinding(f1);
 
                         diagnostics.put("TST0001", bench2tst1);
                         diagnostics.put("TST0002", bench2tst2);
@@ -119,11 +118,11 @@ public class QualityModelDeriverTests {
                         Diagnostic bench3tst4 = new Diagnostic("TST0004", "Sample Description", "Sample Tool Name");
                         Diagnostic bench3tst5 = new Diagnostic("TST0005", "Sample Description", "Sample Tool Name");
 
-                        bench3tst1.setFindings(Stream.of(f1, f2, f3).collect(Collectors.toSet()));
-                        bench3tst2.setFindings(Stream.of(f1, f2, f3).collect(Collectors.toSet()));
-                        bench3tst3.setFindings(Stream.of(f1, f2, f3).collect(Collectors.toSet()));
-                        bench3tst4.setFindings(Stream.of(f1, f2, f3).collect(Collectors.toSet()));
-                        bench3tst5.setFindings(Stream.of(f1, f2, f3).collect(Collectors.toSet()));
+                        bench3tst1.setFindings(Stream.of(f1, f2).collect(Collectors.toSet()));
+                        bench3tst2.setFindings(Stream.of(f1, f2).collect(Collectors.toSet()));
+                        bench3tst3.setFindings(Stream.of(f1, f2).collect(Collectors.toSet()));
+                        bench3tst4.setFindings(Stream.of(f1, f2).collect(Collectors.toSet()));
+                        bench3tst5.setFindings(Stream.of(f1, f2).collect(Collectors.toSet()));
 
                         diagnostics.put("TST0001", bench3tst1);
                         diagnostics.put("TST0002", bench3tst2);
@@ -167,7 +166,7 @@ public class QualityModelDeriverTests {
         Assert.assertEquals(0.8, c2.getWeight("Property 01"), 0.0001);
         Assert.assertEquals(0.2, c2.getWeight("Property 02"), 0.0001);
 
-        Assert.assertArrayEquals(new Double[]{0.02, 0.08, 0.12}, p1.getThresholds());
-        Assert.assertArrayEquals(new Double[]{0.02, 0.12, 0.18}, p2.getThresholds());
+        Assert.assertArrayEquals(new Double[]{0.02, 0.04, 0.08}, p1.getThresholds());
+        Assert.assertArrayEquals(new Double[]{0.02, 0.06, 0.12}, p2.getThresholds());
     }
 }

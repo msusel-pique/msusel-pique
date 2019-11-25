@@ -49,6 +49,7 @@ public class Weighter {
             throw new RuntimeException("At least one file must exist in comparisonMatricesDirectory");
         }
 
+
         // Create directory for temporary generated file results if not yet exists
         tempWeightsDirectory.toFile().mkdirs();
 

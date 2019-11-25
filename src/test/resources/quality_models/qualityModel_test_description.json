@@ -1,7 +1,7 @@
 {
 	"name": "Test QM",
 	"tqi": {
-		"name": "TQI",
+		"name": "Total Quality",
 		"description": "Sample tqi description"
 	},
 	"characteristics": [
