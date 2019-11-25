@@ -18,7 +18,6 @@ public class Characteristic extends ModelNode {
 	// Instance variables
 
 	// TODO: eventually consider new tree object that combines properties and their weight instead of relying on String name matching (not enough time for me to refactor currently)
-	@Expose
 	private Map<String, Property> properties = new HashMap<>();  // mapping of property names and their property objects
 	@Expose
 	private Map<String, Double> weights = new HashMap<>();  // mapping of property names and their weights
