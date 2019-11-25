@@ -25,6 +25,11 @@ public class Tqi extends ModelNode {
 
 	// Getters and setters
 
+	public Characteristic getAnyCharacteristic() {
+		Characteristic anyCharacteristic = getCharacteristics().values().stream().findAny().orElse(null);
+		assert anyCharacteristic != null;
+		return anyCharacteristic;
+	}
 	public Map<String, Characteristic> getCharacteristics() {
 		return characteristics;
 	}
@@ -65,10 +70,21 @@ public class Tqi extends ModelNode {
 	// Methods
 
 	@Override
+	/**
+	 * Tqi clone needs to work from a bottom-up parse to allow the fully connected
+	 * Characteristic -> Property layer to pass the cloned property nodes by reference.
+	 */
 	public ModelNode clone() {
 		Map<String, Characteristic> clonedCharacteristics = new HashMap<>();
+		Map<String, Property> clonedProperties = new HashMap<>();
+
+		getAnyCharacteristic().getProperties().values().forEach(property -> {
+			Property clonedProperty = (Property)property.clone();
+			clonedProperties.put(clonedProperty.getName(), clonedProperty);
+		});
+
 		getCharacteristics().values().forEach(characteristic -> {
-			Characteristic clonedCharacteristic = (Characteristic)characteristic.clone();
+			Characteristic clonedCharacteristic = (Characteristic)characteristic.clone(clonedProperties);
 			clonedCharacteristics.put(clonedCharacteristic.getName(), clonedCharacteristic);
 		});
 

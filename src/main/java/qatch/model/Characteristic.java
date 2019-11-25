@@ -65,15 +65,12 @@ public class Characteristic extends ModelNode {
 
 
 	// Methods
-
 	@Override
 	public ModelNode clone() {
-		Map<String, Property> clonedProperties = new HashMap<>();
-		getProperties().values().forEach(property -> {
-			Property clonedProperty = (Property)property.clone();
-			clonedProperties.put(clonedProperty.getName(), clonedProperty);
-		});
+		return new Characteristic(getName(), getDescription(), getWeights(), new HashMap<String, Property>());
+	}
 
+	public ModelNode clone(Map<String, Property> clonedProperties) {
 		return new Characteristic(getName(), getDescription(), getWeights(), clonedProperties);
 	}
 

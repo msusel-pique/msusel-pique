@@ -65,9 +65,7 @@ public class QualityModel {
 
 	// Setters and Getters
 	public Characteristic getAnyCharacteristic() {
-		Characteristic anyCharacteristic = getTqi().getCharacteristics().values().stream().findAny().orElse(null);
-		assert anyCharacteristic != null;
-		return anyCharacteristic;
+		return getTqi().getAnyCharacteristic();
 	}
 	public Property getAnyProperty() {
 		Property anyProperty = getAnyCharacteristic().getProperties().values().stream().findAny().orElse(null);
@@ -260,7 +258,7 @@ public class QualityModel {
 				setProperty(qmProperty);
 			});
 
-			// TODO: Assert that weight mappings have correct Property and Characteristics to map to (make new method)
+			// TODO: Assert that weight mappings have correct Property and Characteristics to map to and are pass by reference for characteristics (make new method)
 
 		} catch (IOException e) {
 			e.printStackTrace();

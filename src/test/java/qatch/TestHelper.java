@@ -110,22 +110,20 @@ public class TestHelper {
 
                 Finding f1 = TestHelper.makeFinding("file/path/f1", 111, 1);
 
+                /*
+                 * Have enough findings to hit middle group of threshold property evaluation
+                 *
+                 * Measure 01, TST0001: 1 finding
+                 * Measure 02, TST0003: 1 finding
+                 */
                 Diagnostic tst01 = TestHelper.makeDiagnostic("TST0001");
-                Diagnostic tst02 = TestHelper.makeDiagnostic("TST0002");
                 Diagnostic tst03 = TestHelper.makeDiagnostic("TST0003");
-                Diagnostic tst04 = TestHelper.makeDiagnostic("TST0004");
-                Diagnostic tst05 = TestHelper.makeDiagnostic("TST0005");
 
                 tst01.setFinding(f1);
-                tst02.setFinding(f1);
-                tst04.setFinding(f1);
-                tst05.setFinding(f1);
+                tst03.setFinding(f1);
 
                 diagnostics.put("TST0001", tst01);
-                diagnostics.put("TST0002", tst02);
                 diagnostics.put("TST0003", tst03);
-                diagnostics.put("TST0004", tst04);
-                diagnostics.put("TST0005", tst05);
 
                 return diagnostics;
             }
