@@ -1,5 +1,19 @@
 package qatch.model;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.annotations.Expose;
+import qatch.analysis.Diagnostic;
+import qatch.analysis.Finding;
+import qatch.analysis.Measure;
+import qatch.utility.FileUtility;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.*;
+
 /**
  * This class encapsulates all the appropriate information that describe a 
  * Quality Model that can be used for the evaluation of a single project or 
@@ -9,72 +23,245 @@ package qatch.model;
  * of the XML file that describes the quality model and assign their values to the 
  * project (or projects) that we want to evaluate.
  * 
- * @author Miltos
- *
+ * @author Miltos, Rice
+ */
+/*
+ * TODO:
+ *   (1) Add checks immediately after model creation that no duplicate node names by-level exist
  */
 public class QualityModel {
 
-	//A representation of quality model inside JVM
-	private String name;						//The name of the QM found in the XML file
-	private PropertySet properties;				//The PropertySet containing all the properties of the Quality Model
-	private CharacteristicSet characteristics;  //The CharacteristicSet containing all the characteristics of the Quality Model
-	private Tqi tqi;							//The configuration for the calculation of the TQI of a project
-	
-	//Constructors
-	public QualityModel(){
-		this.name = "";
-		this.properties = new PropertySet();
-		this.characteristics = new CharacteristicSet();
-		this.tqi = new Tqi();
+	// Fields
+	@Expose
+	private String name;  //The name of the QM found in the XML file
+	@Expose
+	private Tqi tqi;  // root node, the total quality evaluation, contains characteristic objects as children
+
+	// Constructors
+
+	/**
+	 * Constructor for deriving QM object from a disk file description (likely .json or .xml)
+	 * @param qmFilePath
+	 * 		File path to the quality model description
+	 */
+	public QualityModel(Path qmFilePath) {
+		importQualityModel(qmFilePath);
 	}
-	
-	public QualityModel(String name){
+
+	/**
+	 * Constructor for use in deep cloning this quality model
+	 *
+	 * @param name
+	 * 		Quality model name
+	 * @param tqi
+	 * 		Root node of quality model tree. Careful passing this by reference.
+	 * 		Will likely want to use this.tqi.clone().
+	 */
+	public QualityModel(String name, Tqi tqi) {
 		this.name = name;
-		this.properties = new PropertySet();
-		this.characteristics = new CharacteristicSet();
-		this.tqi = new Tqi();
-	}
-	
-	public QualityModel(String name, PropertySet properties, CharacteristicSet characteristics, Tqi tqi){
-		this.name = name;
-		this.properties = properties;
-		this.characteristics = characteristics;
 		this.tqi = tqi;
 	}
-	
-	//Setters and Getters
+
+
+	// Setters and Getters
+	public Characteristic getAnyCharacteristic() {
+		return getTqi().getAnyCharacteristic();
+	}
+	public Property getAnyProperty() {
+		Property anyProperty = getAnyCharacteristic().getProperties().values().stream().findAny().orElse(null);
+		assert anyProperty != null;
+		return anyProperty;
+	}
+	public Characteristic getCharacteristic(String name) {
+		return getTqi().getCharacteristics().get(name);
+	}
+	public Map<String, Characteristic> getCharacteristics() {
+		return getTqi().getCharacteristics();
+	}
+	public void setCharacteristic(String characteristicName, Characteristic characteristic) {
+		getTqi().getCharacteristics().put(characteristicName, characteristic);
+	}
+	public void setCharacteristics(Map<String, Characteristic> characteristics) {
+		getTqi().setCharacteristics(characteristics);
+	}
+	public void setFinding(Measure diagnosticsMeasure, String diagnosticName, Finding finding) {
+		diagnosticsMeasure.getDiagnostic(diagnosticName).setFinding(finding);
+	}
+	public Measure getMeasure(String measureName) {
+		for (Property property : getProperties().values()) {
+			if (property.getMeasure().getName().equals(measureName)) {
+				return property.getMeasure();
+			}
+		}
+		throw new RuntimeException("Unable to find measure with name " + measureName + " from QM's property nodes");
+	}
+	public Map<String, Measure> getMeasures() {
+		Map<String, Measure> measures = new HashMap<>();
+		List<Property> propertyList = new ArrayList<>(getProperties().values());
+		propertyList.forEach(property -> {
+			measures.put(property.getMeasure().getName(), property.getMeasure());
+		});
+		return measures;
+	}
 	public String getName() {
 		return name;
 	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	public PropertySet getProperties() {
-		return properties;
+	public Property getProperty(String name) {
+		return getProperties().get(name);
 	}
-
-	public void setProperties(PropertySet properties) {
-		this.properties = properties;
+	public Property getPropertyByMeasureName(String measureName) {
+		for (Property property : getProperties().values()) {
+			if (property.getMeasure().getName().equals(measureName)) {
+				return property;
+			}
+		}
+		throw new RuntimeException("Unable to find property with child measure name " + measureName + " from QM's property nodes");
 	}
-
-	public CharacteristicSet getCharacteristics() {
-		return characteristics;
+	public Map<String, Property> getProperties() {
+		return getAnyCharacteristic().getProperties();
 	}
-
-	public void setCharacteristics(CharacteristicSet characteristics) {
-		this.characteristics = characteristics;
+	public void setProperty(Property property) {
+		Set<Characteristic> allCharacteristics = new HashSet<>(getTqi().getCharacteristics().values());
+		allCharacteristics.forEach(characteristic -> {
+			characteristic.setProperty(property);
+		});
 	}
-	
+	public void setProperties(Map<String, Property> properties) {
+		Set<Characteristic> allCharacteristics = new HashSet<>(getTqi().getCharacteristics().values());
+		allCharacteristics.forEach(characteristic -> {
+			characteristic.setProperties(properties);
+		});
+	}
 	public Tqi getTqi() {
 		return tqi;
 	}
-
 	public void setTqi(Tqi tqi) {
 		this.tqi = tqi;
 	}
-	
-	//TODO: Add extra methods for avoiding train expressions...
-	
+
+
+	// Methods
+
+	/**
+	 * @return
+	 * 		Deep clone of this QualityModel object
+	 */
+	@Override
+	public QualityModel clone() {
+		Tqi rootNode = (Tqi)getTqi().clone();
+		return new QualityModel(getName(), rootNode);
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof QualityModel)) { return false; }
+		QualityModel otherQm = (QualityModel) other;
+
+		return getName().equals(otherQm.getName())
+				&& getTqi().equals(otherQm.getTqi());
+	}
+
+	/**
+	 * Create a hard-drive file representation of the model
+	 *
+	 * @param outputDirectory
+	 * 		The directory to place the QM file into.  Does not need to exist beforehand.
+	 * @return
+	 * 		The path of the exported model file.
+	 */
+	public Path exportToJson(Path outputDirectory) {
+		String fileName = "qualityModel_" + getName().replaceAll("\\s","");
+		return FileUtility.exportObjectToJson(this, outputDirectory, fileName);
+	}
+
+	/**
+	 * This method is responsible for importing the desired Quality Model
+	 * by parsing the file that contains the text data of the Quality Model.
+	 */
+	private void importQualityModel(Path qmFilePath) {
+
+		// TODO: assert well-formed quality model json file
+
+		// Parse json data and update quality model object
+		try {
+			// TODO: break this large method into smaller method calls
+			FileReader fr = new FileReader(qmFilePath.toString());
+			JsonObject jsonQm = new JsonParser().parse(fr).getAsJsonObject();
+			fr.close();
+
+			// Name
+			setName(jsonQm.getAsJsonPrimitive("name").getAsString());
+
+			// Root node
+			JsonObject jsonTqi = jsonQm.getAsJsonObject("tqi");
+			setTqi(new Tqi(null, null, null));
+			getTqi().setName(jsonTqi.getAsJsonPrimitive("name").getAsString());
+			if (jsonTqi.getAsJsonObject("weights") != null) {
+				jsonTqi.getAsJsonObject("weights").keySet().forEach(weight -> {
+					getTqi().setWeight(weight, jsonTqi.getAsJsonObject("weights").getAsJsonPrimitive(weight).getAsDouble());
+				});
+			}
+
+			// Characteristics nodes
+			JsonArray jsonCharacteristics = jsonQm.getAsJsonArray("characteristics");
+			jsonCharacteristics.forEach(c -> {
+				JsonObject jsonCharacteristic = c.getAsJsonObject();
+
+				String name = jsonCharacteristic.getAsJsonPrimitive("name").getAsString();
+				String description = jsonCharacteristic.getAsJsonPrimitive("description").getAsString();
+				Characteristic qmCharacteristic = new Characteristic(name, description);
+				if (jsonCharacteristic.getAsJsonObject("weights") != null) {
+					jsonCharacteristic.getAsJsonObject("weights").keySet().forEach(weight -> {
+						qmCharacteristic.setWeight(weight, jsonCharacteristic.getAsJsonObject("weights").getAsJsonPrimitive(weight).getAsDouble());
+					});
+				}
+
+				setCharacteristic(qmCharacteristic.getName(), qmCharacteristic);
+			});
+
+			// Properties nodes
+			JsonArray jsonProperties = jsonQm.getAsJsonArray("properties");
+			jsonProperties.forEach(p -> {
+				JsonObject jsonProperty = p.getAsJsonObject();
+				String name = jsonProperty.getAsJsonPrimitive("name").getAsString();
+				String description = jsonProperty.getAsJsonPrimitive("description").getAsString();
+				boolean impact = jsonProperty.getAsJsonPrimitive("positive_impact").getAsBoolean();
+				Double[] thresholds = new Double[3];
+
+				if (jsonProperty.getAsJsonArray("thresholds") != null) {
+					JsonArray jsonThresholds = jsonProperty.getAsJsonArray("thresholds");
+					for (int i = 0; i < jsonThresholds.size(); i++) {
+						thresholds[i] = jsonThresholds.get(i).getAsDouble();
+					}
+				}
+
+				// Property's Measure and Diagnostics nodes
+				JsonObject jsonMeasure = jsonProperty.getAsJsonObject("measure");
+				JsonArray jsonDiagnostics = jsonMeasure.getAsJsonArray("diagnostics");
+				Measure qmMeasure = new Measure();
+				List<Diagnostic> qmDiagnostics = new ArrayList<>();
+				jsonDiagnostics.forEach(d -> {
+					String dName = d.getAsJsonObject().get("name").getAsString();
+					String dDescription = d.getAsJsonObject().get("description").getAsString();
+					String dToolName = d.getAsJsonObject().get("toolName").getAsString();
+					qmDiagnostics.add(new Diagnostic(dName, dDescription, dToolName));
+				});
+
+				qmMeasure.setName(jsonMeasure.getAsJsonPrimitive("name").getAsString());
+				qmMeasure.setDiagnostics(qmDiagnostics);
+
+				Property qmProperty = new Property(name, description, impact, thresholds, qmMeasure);
+
+				setProperty(qmProperty);
+			});
+
+			// TODO: Assert that weight mappings have correct Property and Characteristics to map to and are pass by reference for characteristics (make new method)
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

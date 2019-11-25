@@ -1,10 +1,12 @@
 package qatch.calibration;
 
+import qatch.utility.FileUtility;
+
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-	
+
 /**
  * This class is responsible for executing R scripts.
  * 
@@ -13,19 +15,36 @@ import java.nio.file.Paths;
  * 	  1. Call R for a certain R script.
  *    2. Wait until R finishes the processing and create or 
  *       modify a file in the desired folder.
- */	
-public class RInvoker {
+ */
+class RInvoker {
 
 	public enum Script { AHP, FAPH, THRESHOLD }
-	
-	//Fixed paths
-	public static final Path R_WORK_DIR = Paths.get(System.getProperty("user.dir"), "r_working_directory");
-	// TODO: Source Rscript bin in workspace-independent way
-	public static Path R_BIN_PATH = findRRunner();
 
 
 	// TODO: assert that expected behavior occurs after running script (e.g. the file was created)
-	public void executeRScript(Path rPath, Path scriptPath, String args){
+	/**
+	 * Run an R script according to its enumeration.
+	 *
+	 * @param script
+	 * 		Enumeration of the descired R script to run
+	 * @param input
+	 * 		Path to the directory containin the relevant parameters needed for the r script execution.
+	 * 		E.g. C:\Users\myname\Repository\msusel-qatch\msusel-qatch\
+	 * 		Can be relative or full path.
+	 * @param output
+	 * 		Path to directory to place the files resulting from R execution.
+	 * 		Can be realive or full path.
+	 */
+	static void executeRScript(Script script, Path input, Path output, Path tempResourcesDirectory){
+
+		input = input.toAbsolutePath();
+		output = output.toAbsolutePath();
+
+		new File(output.toString()).mkdirs();
+
+		// TODO: Source Rscript bin in workspace-independent way
+		String rBinPath = findRRunner().toString();
+		Path scriptPath = getRScriptResource(script, tempResourcesDirectory);
 
 		ProcessBuilder pb;
 		String cli;
@@ -33,13 +52,7 @@ public class RInvoker {
 		if(System.getProperty("os.name").contains("Windows")){ cli = "cmd.exe"; }
 		else { cli = "sh"; }
 
-		pb = new ProcessBuilder(
-				cli,
-				"/c",
-				rPath.toString(),
-				scriptPath.toString(),
-				args
-		);
+		pb = new ProcessBuilder(cli, "/c", rBinPath, scriptPath.toString(), input.toString(), output.toString());
 
 		pb.redirectErrorStream(true);
 		Process p = null;
@@ -56,21 +69,28 @@ public class RInvoker {
 	}
 
 
-	public static URL getRScriptResource(Script choice) {
-		URL resource;
+	static Path getRScriptResource(Script choice, Path outputDirectory) {
+
+		Path tempResourceDirectory = FileUtility.extractResources(outputDirectory, "r_scripts");
+
+		Path resource = null;
 		switch (choice) {
 			case AHP:
-				resource = RInvoker.class.getClassLoader().getResource("r_scripts/ahpWeightElicitation.R");
+				resource = Paths.get(tempResourceDirectory.toString(), "r_scripts", "ahpWeightElicitation.R");
 				break;
 			case FAPH:
-				resource = RInvoker.class.getClassLoader().getResource("r_scripts/fahpWeightElicitator.R");
+				resource = Paths.get(tempResourceDirectory.toString(), "r_scripts", "fahpWeightElicitator.R");
 				break;
 			case THRESHOLD:
-				resource = RInvoker.class.getClassLoader().getResource("r_scripts/thresholdsExtractor.R");
+				resource = Paths.get(tempResourceDirectory.toString(), "r_scripts", "thresholdsExtractor.R");
 				break;
 			default:
 				throw new RuntimeException("Invalid choice enum given: [" + choice.name() + "]");
 		}
+
+		if (!resource.toFile().isFile()) throw new RuntimeException("getRScriptResource does not point to a existing " +
+				"file at path " + resource.toString());
+
 		return resource;
 	}
 
@@ -92,7 +112,8 @@ public class RInvoker {
 			rPath = Paths.get("/Library/Frameworks/R.framework/Versions/3.6/Resources/bin/Rscript");
 		}
 		else {
-			throw new RuntimeException("Path to Rscript executable not yet defined for this operating system.");
+			throw new RuntimeException("Path to Rscript executable not yet defined for this operating system or " +
+					"R is installed in a non-default location.");
 		}
 
 		return rPath;

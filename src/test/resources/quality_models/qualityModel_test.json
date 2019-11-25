@@ -1,0 +1,88 @@
+{
+	"name": "Test QM",
+	"tqi": {
+		"name": "Total Quality",
+		"description": "Sample tqi description",
+		"weights": {
+			"Characteristic 01": 0.8,
+			"Characteristic 02": 0.2
+		}
+	},
+	"characteristics": [
+		{
+			"name": "Characteristic 01",
+			"standard": "ISO/IEC 25010",
+			"description": "Placeholder description",
+			"weights": {
+				"Property 01": 0.6,
+				"Property 02": 0.4
+			}
+		},
+		{
+			"name": "Characteristic 02",
+			"standard": "ISO/IEC 25010",
+			"description": "Placeholder description",
+			"weights": {
+				"Property 01": 0.5,
+				"Property 02": 0.5
+			}
+		}
+	],
+	"properties": [
+		{
+			"name": "Property 01",
+			"description": "Property 01 description",
+			"positive_impact": "false",
+			"thresholds": [
+				0.0,
+				0.004,
+				0.02
+			],
+			"measure": {
+				"name": "Measure 01",
+				"diagnostics": [
+					{
+						"name": "TST0001",
+						"description": "Description for TST0001 diagnostic",
+						"toolName": "Test tool"
+					},
+					{
+						"name": "TST0002",
+						"description": "Description for TST0002 diagnostic",
+						"toolName": "Test tool"
+					}
+				]
+			}
+		},
+		{
+			"name": "Property 02",
+			"description": "Property 02 description",
+			"positive_impact": "false",
+			"thresholds": [
+				0.0,
+				0.01,
+				0.02
+			],
+			"measure": {
+				"name": "Measure 02",
+				"diagnostics": [
+					{
+						"name": "TST0003",
+						"description": "Description for TST0003 diagnostic",
+						"toolName": "Test tool"
+					},
+					{
+						"name": "TST0004",
+						"description": "Description for TST0004 diagnostic",
+						"toolName": "Test tool"
+					},
+					{
+						"name": "TST0005",
+						"description": "Description for TST0005 diagnostic",
+						"toolName": "Test tool"
+					}
+				]
+			}
+		}
+	]
+}

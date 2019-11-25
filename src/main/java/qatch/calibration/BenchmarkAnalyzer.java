@@ -26,6 +26,7 @@ import java.util.Set;
  * @author Miltos
  *
  */
+@Deprecated
 public class BenchmarkAnalyzer {
 	
 	// Useful static fields

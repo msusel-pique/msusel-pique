@@ -9,6 +9,7 @@ package qatch.model;
  * @author Miltos
  *
  */
+@Deprecated
 public class Issue {
 	
 	//One field for each attribute found in the result XML file

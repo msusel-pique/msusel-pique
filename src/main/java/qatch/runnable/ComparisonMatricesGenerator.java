@@ -71,14 +71,15 @@ public class ComparisonMatricesGenerator {
         /*
          * generate faux quality model to hold properties and characteristics representation
          */
+        // TODO: update this
         PropertiesAndCharacteristicsLoader qmLoader = new PropertiesAndCharacteristicsLoader(qmLocation.toString());
-        QualityModel qualityModel = qmLoader.importQualityModel();
-        PropertySet properties = qualityModel.getProperties();
-        CharacteristicSet characteristics = qualityModel.getCharacteristics();
-
-        if (!fuzzy) { generateComparisonMatrix(properties, characteristics, outLocation, "0"); }
-        else if (fuzzy) { generateFuzzyComparisonMatrix(properties, characteristics, outLocation, "-"); }
-        else { throw new RuntimeException("input arg 2 did not match to 'true' or 'false'"); }
+//        QualityModel qualityModel = qmLoader.importQualityModel();
+//        PropertySet properties = qualityModel.getProperties_deprecated();
+//        CharacteristicSet characteristics = qualityModel.getCharacteristics_deprecated();
+//
+//        if (!fuzzy) { generateComparisonMatrix(properties, characteristics, outLocation, "0"); }
+//        else if (fuzzy) { generateFuzzyComparisonMatrix(properties, characteristics, outLocation, "-"); }
+//        else { throw new RuntimeException("input arg 2 did not match to 'true' or 'false'"); }
 
     }
 
@@ -155,6 +156,7 @@ public class ComparisonMatricesGenerator {
      *
      * Typically, we have one comparison matrix for each Quality Model's characteristic.
      */
+    @Deprecated
     static void subroutineCharacteristis(PropertySet properties, CharacteristicSet characteristics, Path outLocation, String defaultChar) {
 
         // set the properties to compare
@@ -184,6 +186,7 @@ public class ComparisonMatricesGenerator {
      *          The rows of the TQI matrix are these characteristics
      * @return the path to the comparison matrix file
      */
+    @Deprecated
     static Path subroutineTQI(CharacteristicSet characteristics, Path outLocation, String defaultChar) {
         String name = "tqi";
         String[] comparitors = new String[characteristics.getCharacteristics().size()];

@@ -1,183 +1,124 @@
 package qatch.model;
 
-import java.util.Iterator;
-import java.util.Vector;
+import com.google.gson.annotations.Expose;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class represents a quality characteristic of the 
  * Quality Model that is used in order to evaluate a 
  * project or a set of projects.
  * 
- * @author Miltos
+ * @author Miltos, Rice
  *
  */
-public class Characteristic {
-	
-	private String name;				//The name of the characteristic
-	private String standard;			//The standard from which this characteristic derives 
-	private String description;			//A brief description of the characteristic
-	private Vector<Double> weights;	    //The vector holding the weights for the evaluation of the characteristic.
+public class Characteristic extends ModelNode {
 
-	private double eval;				//The quality score of this characteristic (derives from the weighted average of the eval fields of the QM's properties)
-	
+	// Instance variables
 
-	/*
-	 * Constructors...
-	 */
-	public Characteristic(){
-		this.name = "";
-		this.description = "";
-		this.standard = "";
-		this.weights = new Vector<>();
+	// TODO: eventually consider new tree object that combines properties and their weight instead of relying on String name matching (not enough time for me to refactor currently)
+	@Expose
+	private Map<String, Property> properties = new HashMap<>();  // mapping of property names and their property objects
+	@Expose
+	private Map<String, Double> weights = new HashMap<>();  // mapping of property names and their weights
+
+
+
+	// Constructors
+
+	public Characteristic(String name, String description){
+		super(name, description);
 	}
-	
-	public Characteristic(String name, String standard, String description){
-		this.name = name;
-		this.description = standard;
-		this.standard = description;
-		this.weights = new Vector<>();
-	}
-	
-	public Characteristic(String name, String standard, String description, Vector<Double> weights){
-		this.name = name;
-		this.description = standard;
-		this.standard = description;
+
+	public Characteristic(String name, String description, Map<String, Double> weights){
+		super(name, description);
 		this.weights = weights;
 	}
-	
-	/*
-	 * Setters and Getters...
-	 */
-	public String getName() {
-		return name;
+
+	public Characteristic(String name, String description, Map<String, Double> weights, Map<String, Property> properties){
+		super(name, description);
+		this.weights = weights;
+		this.properties = properties;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
 
-	public String getStandard() {
-		return standard;
-	}
+	// Getters and setters
 
-	public void setStandard(String standard) {
-		this.standard = standard;
+	public Map<String, Property> getProperties() {
+		return properties;
 	}
-
-	public String getDescription() {
-		return description;
+	public void setProperty(Property property) {
+		getProperties().put(property.getName(), property);
 	}
-
-	public void setDescription(String desription) {
-		this.description = desription;
+	public void setProperties(Map<String, Property> properties) {
+		this.properties = properties;
 	}
-
-	public Vector<Double> getWeights() {
-		return weights;
+	public double getWeight(String propertyName) {
+		return this.weights.get(propertyName);
 	}
-
-	public void setWeights(Vector<Double> weights) {
+	public Map<String, Double> getWeights() { return weights; }
+	public void setWeight(String propertyName, double value) { this.weights.put(propertyName, value); }
+	public void setWeights(Map<String, Double> weights) {
 		this.weights = weights;
 	}
-	
-	public double getEval() {
-		return eval;
+
+
+	// Methods
+	@Override
+	public ModelNode clone() {
+		System.out.println("--- WARNING ---\nCloning Characteristic node without cloned property map.\n" +
+				"This will result in an empty properties field for this Characteristic object.");
+		return new Characteristic(getName(), getDescription(), getWeights(), new HashMap<>());
 	}
 
-	public void setEval(double eval) {
-		this.eval = eval;
+	public ModelNode clone(Map<String, Property> clonedProperties) {
+		return new Characteristic(getName(), getDescription(), getWeights(), clonedProperties);
 	}
 
-	/*
-	 * Overridden Vector's basic methods
-	 */
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof Characteristic)) { return false; }
+		Characteristic otherCharacteristic = (Characteristic) other;
 
-	public void addWeight(Double weight){
-		weights.add(weight);
-	}
-	
-	public void addWeight(int index, Double weight){
-		weights.add(index, weight);
-	}
-	
-	public void clearProperties(){
-		weights.clear();
-	}
-	
-	public boolean containsWeight(Double weight){
-		return weights.contains(weight);	
-	}
-	
-	public Double get(int index){
-		return weights.get(index);
-	}
-	
-	public boolean isEmpty(){
-		return weights.isEmpty();
-	}
-	
-	public Iterator<Double> iterator(){
-		return weights.iterator();
-	}
-	
-	public int indexOfWeight(Double weight){
-		return weights.indexOf(weight);
-	}
-	
-	public void removeWeight(int index){
-		weights.remove(index);
-	}
-	
-	public void removeWeight(Double weight){
-		weights.remove(weight);
-	}
-	
-	public int size(){
-		return weights.size();
-	}
-	
-	public Double[] toArray(){
-		return (Double[]) weights.toArray();
-	}
-	
-	public String toString(){
-		return weights.toString();
+		return getName().equals(otherCharacteristic.getName())
+				&& getProperties().size() == otherCharacteristic.getProperties().size();
 	}
 
 	/**
 	 * This method is used in order to calculate the eval field of this Characteristic
 	 * object, based
 	 *  1. on the eval fields of the properties that have an impact on this
-	 *     characteristic and 
+	 *     characteristic and
 	 *  2. the weights that quantify those impacts.
-	 * 
-	 * Typically, it calculates the weighted average of the values of the eval fields 
+	 *
+	 * Typically, it calculates the weighted average of the values of the eval fields
 	 * of the project properties and stores it to the eval field of this characteristic.
-	 * 
-	 * ATTENTION:
-	 *  - The order in which the weights are placed inside the weight vector corresponds 
-	 *    to the order of the Properties of the Quality Model.
+	 *
+	 * @param args
+	 * 		Empty args. No parameters needed.
 	 */
-	public void evaluate(PropertySet properties){
-		double sum = 0;
-		for(int i = 0; i < weights.size(); i++){
-			sum += properties.get(i).getEval() * weights.get(i).doubleValue();
-		}
-		this.eval = sum;
-	}
-	
-	//TODO: Deep Cloning - Check PropertySet class (and Property, Measure)
 	@Override
-	public Object clone() throws CloneNotSupportedException {
-	    Characteristic cloned = new Characteristic();
-	    cloned.setDescription(this.description);
-	    cloned.setName(this.name);
-	    cloned.setStandard(this.standard);
-	    for(int i = 0; i < this.weights.size(); i++){
-	    	cloned.weights.add((Double) this.getWeights().get(i));
-	    }
-		return cloned;
-	}
+	protected void evaluate(Double... args) {
 
-	
+		if (args.length != 1) throw new RuntimeException("Characteristic.evaluate() expects input args of length 1.");
+
+		Double loc = args[0];
+
+		// assert a weight mapping exists for each provided property
+		getWeights().keySet().forEach(k -> {
+			if (!getProperties().containsKey(k)) {
+				throw new RuntimeException("No weight-measure mapping in Characteristic " + getName() +
+						" exists for Property " + k);
+			}
+		});
+
+		// evaluate: standard weighted sum of property values
+		double sum = 0.0;
+		for (Map.Entry<String, Double> weightMap : getWeights().entrySet()) {
+			sum += getProperties().get(weightMap.getKey()).getValue(loc) * weightMap.getValue();
+		}
+
+		this.setValue(sum);
+	}
 }

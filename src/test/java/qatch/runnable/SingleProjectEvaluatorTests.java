@@ -1,79 +1,29 @@
 package qatch.runnable;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.xml.sax.SAXException;
 import qatch.TestHelper;
-import qatch.analysis.*;
 import qatch.evaluation.Project;
-import qatch.model.*;
+import qatch.model.QualityModel;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Vector;
 
 public class SingleProjectEvaluatorTests {
 
     private SingleProjectEvaluator spe;
     private Path PROJECT_DIR = Paths.get("src/test/resources/FakeProject_01");
-    private Path RESULTS_DIR = Paths.get("src/test/output/SingleProjEval");
-    private Path QM_LOCATION = Paths.get("src/test/resources/quality_models/qualityModel_test.xml");
+    private Path RESULTS_DIR = Paths.get("src/test/out/SingleProjEval");
+    private Path QM_LOCATION = Paths.get("src/test/resources/quality_models/qualityModel_test.json");
     private Path TOOL_RESULTS = Paths.get("src/test/resources/tool_results");
-    private Path TEST_OUT = Paths.get("src/test/output");
+    private Path TEST_OUT = Paths.get("src/test/out");
 
-    private IAnalyzer metricsAnalyzer = new IAnalyzer() {
-        @Override
-        public void analyze(Path src, Path dest, PropertySet properties)  {
-            try {
-                Path p = Files.createTempFile(dest, "metrics", ".txt");
-                p.toFile().deleteOnExit();
-            }
-            catch (IOException e) { e.printStackTrace(); }
-        }
-        @Override
-        public Path getToolsDirectory() {
-            return Paths.get("src/test/resources/fake_tools/FakeTool1.metrics");
-        }
-    };
-    private IAnalyzer findingsAnalyzer = new IAnalyzer() {
-        @Override
-        public void analyze(Path src, Path dest, PropertySet properties)  {
-            try {
-                Path p = Files.createTempFile(dest, "findings", ".txt");
-                p.toFile().deleteOnExit();
-            }
-            catch (IOException e) { e.printStackTrace(); }
-        }
-        @Override
-        public Path getToolsDirectory() {
-            return Paths.get("src/test/resources/fake_tools/FakeTool2.findings");
-        }
-    };
-    private IMetricsResultsImporter mri = path -> new MetricSet();
-    private IFindingsResultsImporter fri = new IFindingsResultsImporter() {
-        @Override
-        public IssueSet parse(Path path) throws ParserConfigurationException, IOException, SAXException {
-            return TestHelper.makeIssueSet("Issue Set", TestHelper.makeIssue("Some Rule 01"));
-        }
-    };
-    private IMetricsAggregator metricsAgg = new IMetricsAggregator() {
-        @Override
-        public void aggregate(Project project) {
-            // do nothing
-        }
-    };
-    private IFindingsAggregator findingsAgg = new IFindingsAggregator() {
-        @Override
-        public void aggregate(Project project) {
-            // do nothing
-        }
-    };
 
     @Before
     public void cleanBefore() throws IOException {
@@ -97,96 +47,74 @@ public class SingleProjectEvaluatorTests {
     }
 
     @Test
-    public void testEvaluate() {
-        Project p = TestHelper.makeProject("Test Project");
-        // temp fix to avoid QM clone problem
-        p.getCharacteristics().removeCharacteristic(0);
-        p.getCharacteristics().removeCharacteristic(0);
-
-        QualityModelLoader qmImporter = new QualityModelLoader(QM_LOCATION.toString());
-        QualityModel qm = qmImporter.importQualityModel();
-
-        // TODO: add more edge cases
-        p.getProperties().get(0).getMeasure().setNormValue(0.90);
-        p.getProperties().get(1).getMeasure().setNormValue(0.10);
-
-        spe.evaluate(p, qm);
-
-        Assert.assertEquals(0.099999, p.getProperties().get(0).getEval(),0.00001);
-        Assert.assertEquals(0.9, p.getProperties().get(1).getEval(),0.00001);
-
-        Assert.assertEquals(0.42, p.getCharacteristics().get(0).getEval(), 0.00001);
-        Assert.assertEquals(0.50, p.getCharacteristics().get(1).getEval(), 0.00001);
-
-        Assert.assertEquals(0.436, p.getTqi().getEval(),0.00001);
-    }
-
-    @Test
-    public void testExport() {
-        Project proj = TestHelper.makeProject("Test Project");
-        Path parentDir = Paths.get("src/test/output");
-        Path p = spe.export(proj, parentDir);
-
-        Assert.assertTrue(p.toFile().exists());
-        Assert.assertTrue(p.toFile().isFile());
-        Assert.assertEquals("Test Project_evalResults.json",p.getFileName().toString());
-        Assert.assertEquals(1692, p.toFile().length(), 300);
-    }
-
-    @Test
-    public void testGetFindingsFromImporter() throws FileNotFoundException {
-        Vector<IssueSet> findings = spe.getFindingsFromImporter(TOOL_RESULTS, fri);
-        Assert.assertEquals("Some Rule 01", findings.firstElement().get(0).getRuleName());
-    }
-
-    @Test
-    public void testGetMetricsFromImporter() throws FileNotFoundException {
-        MetricSet ms = spe.getMetricsFromImporter(TOOL_RESULTS, mri);
-        Assert.assertNotNull(ms);
-    }
-
-    @Test
     public void testInitialize() {
-        try { spe.initialize(PROJECT_DIR, RESULTS_DIR, QM_LOCATION, metricsAnalyzer, findingsAnalyzer ); }
+        try { spe.initialize(PROJECT_DIR, RESULTS_DIR, QM_LOCATION); }
         catch (IllegalArgumentException e) { Assert.fail(e.getMessage()); }
 
         try {
             spe.initialize(
                     Paths.get("src/test/resources/IDONTEXIST"),
-                    Paths.get("src/test/output/SingleProjEval"),
-                    QM_LOCATION,
-                    metricsAnalyzer,
-                    findingsAnalyzer
+                    Paths.get("src/test/out/SingleProjEval"),
+                    QM_LOCATION
             );
         } catch (IllegalArgumentException ignored) {  }
     }
 
     @Test
-    public void testMakeNewQM() {
-        QualityModel qm = spe.makeNewQM(QM_LOCATION);
-        Assert.assertEquals("Test QM", qm.getName());
-        Assert.assertNotNull(qm.getProperties());
-        Assert.assertNotNull(qm.getCharacteristics());
-    }
+    public void testRunEvaluator() throws IOException {
 
-    @Test
-    public void testMakeProject() {
-        Project p = spe.makeProject(PROJECT_DIR);
-        Assert.assertEquals("FakeProject_01", p.getName());
-        Assert.assertTrue(p.getPath().contains(PROJECT_DIR.toString()));
-    }
+        // Run single project evaluator
+        SingleProjectEvaluator spe = new SingleProjectEvaluator();
+        Path result = spe.runEvaluator(PROJECT_DIR, RESULTS_DIR, QM_LOCATION, TestHelper.makeITool(), TestHelper.makeIToolLoc());
 
-    @Test
-    public void testRunFindingsTools() {
-        QualityModel qm = spe.makeNewQM(QM_LOCATION);
-        Path p = spe.runFindingsTools(PROJECT_DIR, RESULTS_DIR, qm, findingsAnalyzer);
-        Assert.assertTrue(p.toFile().exists());
-    }
+        // Read result file
+        FileReader fr = new FileReader(result.toString());
+        JsonObject jsonResults = new JsonParser().parse(fr).getAsJsonObject();
+        fr.close();
 
-    @Test
-    public void testRunMetricsTools() {
-        QualityModel qm = spe.makeNewQM(QM_LOCATION);
-        Path p = spe.runMetricsTools(PROJECT_DIR, RESULTS_DIR, qm, metricsAnalyzer);
-        Assert.assertTrue(p.toFile().exists());
+        // Assign parsed results
+        String projectName = jsonResults.get("name").getAsString();
+        int loc = jsonResults.get("linesOfCode").getAsInt();
+        JsonObject tqi = jsonResults.getAsJsonObject("qualityModel").getAsJsonObject("tqi");
+        JsonObject characteristic01 = tqi.getAsJsonObject("characteristics").getAsJsonObject("Characteristic 01");
+        JsonObject characteristic02 = tqi.getAsJsonObject("characteristics").getAsJsonObject("Characteristic 02");
+        JsonObject property01 = characteristic01.getAsJsonObject("properties").getAsJsonObject("Property 01");
+        JsonObject property02 = characteristic01.getAsJsonObject("properties").getAsJsonObject("Property 02");
+        JsonObject measure01 = property01.getAsJsonObject("measure");
+        JsonObject measure02 = property02.getAsJsonObject("measure");
+
+        // Assert: project basics
+        Assert.assertEquals("FakeProject_01", projectName);
+        Assert.assertEquals(200, loc, 0);
+
+        // Assert: diagnostic findings
+        Assert.assertEquals(2, measure01.getAsJsonArray("diagnostics").size());
+        Assert.assertEquals(1.0, measure01.getAsJsonArray("diagnostics").get(0).getAsJsonObject().get("value").getAsDouble(), 0);
+        Assert.assertEquals(0.0, measure01.getAsJsonArray("diagnostics").get(1).getAsJsonObject().get("value").getAsDouble(), 0);
+        Assert.assertEquals(1.0, measure02.getAsJsonArray("diagnostics").get(0).getAsJsonObject().get("value").getAsDouble(), 0);
+        Assert.assertEquals(0.0, measure02.getAsJsonArray("diagnostics").get(1).getAsJsonObject().get("value").getAsDouble(), 0);
+        Assert.assertEquals(0.0, measure02.getAsJsonArray("diagnostics").get(2).getAsJsonObject().get("value").getAsDouble(), 0);
+
+        // Assert: measure nodes
+        Assert.assertEquals("Measure 01", measure01.get("name").getAsString());
+        Assert.assertEquals("Measure 02", measure02.get("name").getAsString());
+        Assert.assertEquals(0.005, measure01.get("value").getAsDouble(), 0.000001);
+        Assert.assertEquals(0.005, measure02.get("value").getAsDouble(), 0.000001);
+
+        // Assert: property nodes
+        Assert.assertEquals("Property 01", property01.get("name").getAsString());
+        Assert.assertEquals("Property 02", property02.get("name").getAsString());
+        Assert.assertEquals(0.46875, property01.get("value").getAsDouble(), 0.000001);
+        Assert.assertEquals(0.75, property02.get("value").getAsDouble(), 0.000001);
+
+        // Assert: characteristics nodes
+        Assert.assertEquals("Characteristic 01", characteristic01.get("name").getAsString());
+        Assert.assertEquals("Characteristic 02", characteristic02.get("name").getAsString());
+        Assert.assertEquals(0.58125, characteristic01.get("value").getAsDouble(), 0.000001);
+        Assert.assertEquals(0.609375, characteristic02.get("value").getAsDouble(), 0.000001);
+
+        // Assert: TQI node
+        Assert.assertEquals("Total Quality", tqi.get("name").getAsString());
+        Assert.assertEquals(0.586875, tqi.get("value").getAsDouble(), 0.000001);
     }
 }

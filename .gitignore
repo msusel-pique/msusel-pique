@@ -88,9 +88,9 @@ fabric.properties
 ### Intellij Patch ###
 # Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
 
-# *.iml
+*.iml
 # modules.xml
-# .idea/misc.xml
+.idea/misc.xml
 # *.ipr
 
 # Sonarlint plugin
@@ -204,7 +204,8 @@ $RECYCLE.BIN/
 # End of https://www.gitignore.io/api/git,java,maven,macos,linux,windows,intellij
 
 ### Project Specific ###
-src/test/java/qatch/Scratch.java
-src/test/output
+/.idea
 r_working_directory
+src/test/java/qatch/Scratch.java
+src/test/out
 

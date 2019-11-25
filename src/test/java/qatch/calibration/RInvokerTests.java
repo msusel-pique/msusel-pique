@@ -4,23 +4,30 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import qatch.TestHelper;
 
-import java.io.*;
-import java.net.URL;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class RInvokerTests {
 
-    private Path comp_matrix = Paths.get(TestHelper.TEST_RESOURCES.toString(),
-            "comparison_matrices",
-            "TQI.csv");
+    private Path comp_matrix_fractions = Paths.get(TestHelper.TEST_RESOURCES.toString(),
+            "comparison_matrices", "fractions");
+    private Path comp_matrix_simple = Paths.get(TestHelper.TEST_RESOURCES.toString(),
+            "comparison_matrices", "simple");
+    private Path comp_matrix_zeroes = Paths.get(TestHelper.TEST_RESOURCES.toString(),
+            "comparison_matrices", "zeroes");
+    private Path benchmark_results = Paths.get(TestHelper.TEST_RESOURCES.toString(),
+            "benchmark_results");
+    private Path tempResourcesdirectory = Paths.get("src/test/out");
 
     @Before
     public void cleanBefore() throws IOException {
@@ -33,22 +40,14 @@ public class RInvokerTests {
     }
 
     @Test
-    public void textExecuteRScriptForAHPElicitation() throws IOException {
+    public void testExecuteRScriptForAHPElicitation_Simple() throws IOException {
 
         // set up R environment
-        File matrixDir = new File(TestHelper.OUTPUT.toFile(), "comparison_matrices");
-        matrixDir.mkdirs();
-        FileUtils.copyFileToDirectory(comp_matrix.toFile(), matrixDir);
         File weightsOutput = new File(TestHelper.OUTPUT.toFile(), "weights.json");
 
         // run R execution
-        RInvoker ri = new RInvoker();
-        Path script = new File(RInvoker.getRScriptResource(RInvoker.Script.AHP).getFile()).toPath();
-        ri.executeRScript(
-                RInvoker.R_BIN_PATH,
-                script,
-                TestHelper.OUTPUT.toString()
-        );
+        RInvoker.executeRScript(
+                RInvoker.Script.AHP, this.comp_matrix_simple, TestHelper.OUTPUT, this.tempResourcesdirectory);
 
         if (!weightsOutput.isFile()) {
             Assert.fail("R execution did not generate the expected file. "
@@ -68,24 +67,74 @@ public class RInvokerTests {
     }
 
     @Test
+    public void textExecuteRScriptForAHPElicitation_ZeroredCells() throws IOException {
+
+        // set up R environment
+        File weightsOutput = new File(TestHelper.OUTPUT.toFile(), "weights.json");
+
+        // run R execution
+        RInvoker.executeRScript(RInvoker.Script.AHP, this.comp_matrix_zeroes, TestHelper.OUTPUT, this.tempResourcesdirectory);
+
+        if (!weightsOutput.isFile()) {
+            Assert.fail("R execution did not generate the expected file. "
+                    + "Have the necessary libraries been downloaded for R?");
+        }
+
+        try (JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(weightsOutput)))) {
+            JsonParser parser = new JsonParser();
+            JsonObject data = parser.parse(reader).getAsJsonObject();
+
+            float weight1 = data.getAsJsonArray("Security").get(0).getAsFloat();
+            float weight2 = data.getAsJsonArray("Security").get(1).getAsFloat();
+            float weight3 = data.getAsJsonArray("Security").get(2).getAsFloat();
+            float weight4 = data.getAsJsonArray("Security").get(3).getAsFloat();
+
+            Assert.assertEquals(0.0057, weight1, 0.00001);
+            Assert.assertEquals(0.0057, weight2, 0.00001);
+            Assert.assertEquals(0.0057, weight3, 0.00001);
+            Assert.assertEquals(0.983, weight4, 0.00001);
+        }
+    }
+
+    @Test
+    public void textExecuteRScriptForAHPElicitation_Fractions() throws IOException {
+
+        // set up R environment
+        File weightsOutput = new File(TestHelper.OUTPUT.toFile(), "weights.json");
+
+        // run R execution
+        RInvoker.executeRScript(RInvoker.Script.AHP, this.comp_matrix_fractions, TestHelper.OUTPUT, this.tempResourcesdirectory);
+
+        if (!weightsOutput.isFile()) {
+            Assert.fail("R execution did not generate the expected file. "
+                    + "Have the necessary libraries been downloaded for R?");
+        }
+
+        try (JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(weightsOutput)))) {
+            JsonParser parser = new JsonParser();
+            JsonObject data = parser.parse(reader).getAsJsonObject();
+
+            float weight1 = data.getAsJsonArray("Security").get(0).getAsFloat();
+            float weight2 = data.getAsJsonArray("Security").get(1).getAsFloat();
+            float weight3 = data.getAsJsonArray("Security").get(2).getAsFloat();
+            float weight4 = data.getAsJsonArray("Security").get(3).getAsFloat();
+
+            Assert.assertEquals(0.0057, weight1, 0.00001);
+            Assert.assertEquals(0.0057, weight2, 0.00001);
+            Assert.assertEquals(0.0057, weight3, 0.00001);
+            Assert.assertEquals(0.983, weight4, 0.00001);
+        }
+    }
+
+    @Test
     public void testExecuteRScriptForThresholds() throws IOException {
 
         // Mock benchmark analysis results
-        TestHelper.OUTPUT.toFile().mkdirs();
-        FileUtils.copyFileToDirectory(
-                new File(TestHelper.TEST_RESOURCES.toFile(), "benchmark_results/properties.csv"),
-                TestHelper.OUTPUT.toFile()
-        );
         File thresholdOutput = new File(TestHelper.OUTPUT.toFile(), "threshold.json");
 
         // run R Executions
-        RInvoker rInvoker = new RInvoker();
-        Path script = new File(RInvoker.getRScriptResource(RInvoker.Script.THRESHOLD).getFile()).toPath();
-        rInvoker.executeRScript(
-                RInvoker.R_BIN_PATH,
-                script,
-                TestHelper.OUTPUT.toString()
-        );
+        RInvoker.executeRScript(
+                RInvoker.Script.THRESHOLD, benchmark_results, TestHelper.OUTPUT, this.tempResourcesdirectory);
 
         if (!thresholdOutput.isFile()) {
             Assert.fail("R execution did not generate the expected file. "
@@ -124,20 +173,16 @@ public class RInvokerTests {
 
     @Test
     public void testGetRScriptResource() {
-        URL ahp = RInvoker.getRScriptResource(RInvoker.Script.AHP);
-        URL faph = RInvoker.getRScriptResource(RInvoker.Script.FAPH);
-        URL threshold = RInvoker.getRScriptResource(RInvoker.Script.THRESHOLD);
+        Path ahp = RInvoker.getRScriptResource(RInvoker.Script.AHP, this.tempResourcesdirectory);
+        Path faph = RInvoker.getRScriptResource(RInvoker.Script.FAPH, this.tempResourcesdirectory);
+        Path threshold = RInvoker.getRScriptResource(RInvoker.Script.THRESHOLD, this.tempResourcesdirectory);
 
-        File ahpFile = new File(ahp.getFile());
-        File faphFile = new File(faph.getFile());
-        File tFile = new File(threshold.getFile());
-
-        Assert.assertTrue(ahpFile.exists());
-        Assert.assertTrue(ahpFile.isFile());
-        Assert.assertTrue(faphFile.exists());
-        Assert.assertTrue(faphFile.isFile());
-        Assert.assertTrue(tFile.exists());
-        Assert.assertTrue(tFile.isFile());
+        Assert.assertTrue(ahp.toFile().exists());
+        Assert.assertTrue(ahp.toFile().isFile());
+        Assert.assertTrue(faph.toFile().exists());
+        Assert.assertTrue(faph.toFile().isFile());
+        Assert.assertTrue(threshold.toFile().exists());
+        Assert.assertTrue(threshold.toFile().isFile());
     }
 
 }

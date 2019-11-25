@@ -16,6 +16,7 @@ import java.util.Vector;
  * @author Miltos
  *
  */
+@Deprecated
 public class IssueSet {
 	
 	//Basic Fields

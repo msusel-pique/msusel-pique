@@ -1,25 +1,27 @@
 # In:
 #   This script assumes a directory location is passed in as
-#   a command argument. That directory must exist and must contain
-#   a file "properties.csv" that contains the .csv file representing
+#   command argument args[1]. That directory must exist and must contain
+#   a file "benchmark_data.csv" that contains the .csv file representing
 #   property findings per project
 #
 # Out:
-#   Generates a 'threshold.json' file in the same directory passed in
-#   as args[1] representing the calculation of the thresholds of the
+#   Generates a 'threshold.json' file in the a directory passed in
+#   as args[2]. threshold.json represents the calculation of the thresholds of the
 #   Quality Model's properties.
 
 
 # Set the working directory to the appropriate path
 args <- commandArgs(trailingOnly = TRUE)
-Dir <- args[1]
-setwd(Dir)
+input <- args[1]
+output <- args[2]
+
+setwd(input)
 
 # Load the appropriate libraries
 library(jsonlite)
 
 # Read the data frame
-df <- read.csv("properties.csv", fileEncoding="UTF-8-BOM", stringsAsFactors = F, header = T)
+df <- read.csv("benchmark_data.csv", fileEncoding="UTF-8-BOM", stringsAsFactors = F, header = T)
 
 # drop the left column (assumes the left column is the project names)
 df <- df[,-1]
@@ -68,4 +70,5 @@ names(thresholds) <- colnames
 
 # Export the results in json format
 json <- toJSON(thresholds)
+setwd(output)
 write(json, "threshold.json")

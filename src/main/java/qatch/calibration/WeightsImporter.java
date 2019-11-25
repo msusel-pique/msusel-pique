@@ -1,13 +1,8 @@
 package qatch.calibration;
 
-import com.google.gson.*;
-import qatch.model.Characteristic;
 import qatch.model.CharacteristicSet;
 import qatch.model.Tqi;
-
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
 /**
@@ -19,6 +14,7 @@ import java.io.FileReader;
  * inside R working directory.
  * 
  */
+@Deprecated
 public class WeightsImporter {
 	
 	/**
@@ -29,23 +25,24 @@ public class WeightsImporter {
 	 *               of R analysis and supposing that the json file is created.
 	 *              
 	 */
+	@Deprecated
 	public void importWeights(Tqi tqi, CharacteristicSet characteristics){
 		
-		try {
-			//Create a BufferedReader in order to load the json file where the weights are stored
-			BufferedReader br = new BufferedReader(new FileReader(RInvoker.R_WORK_DIR + "/weights.json"));
-			
-			//Create a Gson json Parser
-			Gson gson = new Gson();
-			
-			//Parse the json into an  object of type Object
-			Object obj = gson.fromJson(br,  Object.class);
-			String s = obj.toString();
-			gsonParser(s,tqi, characteristics);
-			
-		} catch (FileNotFoundException e) {
-			System.out.println(e.getMessage());
-		}
+//		try {
+//			//Create a BufferedReader in order to load the json file where the weights are stored
+//			BufferedReader br = new BufferedReader(new FileReader(RInvoker.R_WORK_DIR + "/weights.json"));
+//
+//			//Create a Gson json Parser
+//			Gson gson = new Gson();
+//
+//			//Parse the json into an  object of type Object
+//			Object obj = gson.fromJson(br,  Object.class);
+//			String s = obj.toString();
+//			gsonParser(s,tqi, characteristics);
+//
+//		} catch (FileNotFoundException e) {
+//			System.out.println(e.getMessage());
+//		}
 	}
 
 	/**
@@ -59,39 +56,41 @@ public class WeightsImporter {
 	 * 
 	 * TODO: Check the case where there a certain Characteristic cannot be found inside the predefined json file - Avoid NullPointerException
 	 */
+	@Deprecated
 	public void gsonParser(String jsonLine, Tqi tqi, CharacteristicSet characteristics){
-		
-		//Get a JsonElement by using a jsonParser
-		JsonElement jelement = new JsonParser().parse(jsonLine);
-		
-		//Typically, this json file is an object of arrays
-		JsonObject jobject = jelement.getAsJsonObject();
-		
-		//Get the TQI weights
-		JsonArray tqiArray = jobject.get("tqi").getAsJsonArray();
-		
-		for(int i = 0; i < tqiArray.size(); i++){
-			//Get the weights of the Tqi object
-			tqi.addWeight(tqiArray.get(i).getAsDouble());
-		}
-		
-		//Search for each characteristic in the json file and get its weights
-		Characteristic characteristic = new Characteristic();
-		JsonArray charArray = new JsonArray();
-		for(int i = 0; i < characteristics.size(); i++){
-			
-			//Get the current characteristic
-			characteristic = characteristics.get(i);
-			
-			//Get the equivalent json array element
-			// R output replaces spaces in names with a '.' character.
-			String rCharName = characteristic.getName().replace(" ", ".");
-			charArray = jobject.get(rCharName).getAsJsonArray();
-			
-			//Get the weights of the current characteristic
-			for(int j = 0; j < charArray.size(); j++){
-				characteristic.addWeight(charArray.get(j).getAsDouble());
-			}
-		}
+		throw new NotImplementedException();
+
+//		//Get a JsonElement by using a jsonParser
+//		JsonElement jelement = new JsonParser().parse(jsonLine);
+//
+//		//Typically, this json file is an object of arrays
+//		JsonObject jobject = jelement.getAsJsonObject();
+//
+//		//Get the TQI weights
+//		JsonArray tqiArray = jobject.get("tqi").getAsJsonArray();
+//
+//		for(int i = 0; i < tqiArray.size(); i++){
+//			//Get the weights of the Tqi object
+//			tqi.addWeight(tqiArray.get(i).getAsDouble());
+//		}
+//
+//		//Search for each characteristic in the json file and get its weights
+//		Characteristic characteristic = new Characteristic();
+//		JsonArray charArray = new JsonArray();
+//		for(int i = 0; i < characteristics.size(); i++){
+//
+//			//Get the current characteristic
+//			characteristic = characteristics.get(i);
+//
+//			//Get the equivalent json array element
+//			// R output replaces spaces in names with a '.' character.
+//			String rCharName = characteristic.getName().replace(" ", ".");
+//			charArray = jobject.get(rCharName).getAsJsonArray();
+//
+//			//Get the weights of the current characteristic
+//			for(int j = 0; j < charArray.size(); j++){
+//				characteristic.setWeight(characteristic.getName(), charArray.get(j).getAsDouble());
+//			}
+//		}
 	}
 }
