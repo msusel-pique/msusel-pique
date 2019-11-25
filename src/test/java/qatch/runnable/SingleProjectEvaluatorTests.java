@@ -46,31 +46,6 @@ public class SingleProjectEvaluatorTests {
         Assert.assertTrue(true);
     }
 
-//    @Test
-    public void testEvaluate() {
-        Project p = TestHelper.makeProject("Test Project");
-        // temp fix to avoid QM clone problem
-//        p.getCharacteristics_depreicated().removeCharacteristic(0);
-//        p.getCharacteristics_depreicated().removeCharacteristic(0);
-
-        QualityModel qm = new QualityModel(QM_LOCATION);
-
-        // TODO: add more edge cases
-//        p.getProperties_depreicated().get(0).getMeasure().setNormalizedValue(0.90);
-//        p.getProperties_depreicated().get(1).getMeasure().setNormalizedValue(0.10);
-
-//        spe.evaluate_deprecated(p, qm);
-
-//        Assert.assertEquals(0.099999, p.getProperties_depreicated().get(0).getValue(),0.00001);
-//        Assert.assertEquals(0.9, p.getProperties_depreicated().get(1).getValue(),0.00001);
-
-//        Assert.assertEquals(0.42, p.getCharacteristics_depreicated().get(0).getValue(), 0.00001);
-//        Assert.assertEquals(0.50, p.getCharacteristics_depreicated().get(1).getValue(), 0.00001);
-
-        Assert.assertEquals(0.436, p.getQualityModel().getTqi().getValue(),0.00001);
-    }
-
-
     @Test
     public void testInitialize() {
         try { spe.initialize(PROJECT_DIR, RESULTS_DIR, QM_LOCATION); }

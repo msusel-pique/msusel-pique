@@ -67,7 +67,9 @@ public class Characteristic extends ModelNode {
 	// Methods
 	@Override
 	public ModelNode clone() {
-		return new Characteristic(getName(), getDescription(), getWeights(), new HashMap<String, Property>());
+		System.out.println("--- WARNING ---\nCloning Characteristic node without cloned property map.\n" +
+				"This will result in an empty properties field for this Characteristic object.");
+		return new Characteristic(getName(), getDescription(), getWeights(), new HashMap<>());
 	}
 
 	public ModelNode clone(Map<String, Property> clonedProperties) {

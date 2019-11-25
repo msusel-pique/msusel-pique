@@ -8,6 +8,8 @@ import qatch.analysis.Measure;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 public class QualityModelTests {
 
@@ -20,6 +22,12 @@ public class QualityModelTests {
     public void testCloneStack() {
         QualityModel qmOirginal = TestHelper.makeQualityModel();
 
+        Map<String, Property> clonedProperties = new HashMap<>();
+        qmOirginal.getAnyCharacteristic().getProperties().values().forEach(property -> {
+            Property clonedProperty = (Property)property.clone();
+            clonedProperties.put(clonedProperty.getName(), clonedProperty);
+        });
+
         Diagnostic diagnosticOriginal = qmOirginal.getMeasure("Measure 01").getDiagnostic("TST0001");
         Diagnostic diagnosticNew = (Diagnostic) diagnosticOriginal.clone();
         Measure measureOriginal = qmOirginal.getMeasure("Measure 01");
@@ -27,7 +35,7 @@ public class QualityModelTests {
         Property propertyOriginal = qmOirginal.getProperty("Property 01");
         Property propertyNew = (Property)propertyOriginal.clone();
         Characteristic characteristicOriginal = qmOirginal.getCharacteristic("Characteristic 01");
-        Characteristic characteristicNew = (Characteristic)characteristicOriginal.clone();
+        Characteristic characteristicNew = (Characteristic)characteristicOriginal.clone(clonedProperties);
         Tqi tqiOriginal = qmOirginal.getTqi();
         Tqi tqiNew = (Tqi)tqiOriginal.clone();
         QualityModel qmNew = qmOirginal.clone();
