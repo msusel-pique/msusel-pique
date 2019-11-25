@@ -40,17 +40,6 @@ public class QualityModel {
 	// Constructors
 
 	/**
-	 * Instantiate a QM object with no data or config. Likely only use this constructor for testing
-	 * @param name
-	 * 		Name of the quality model
-	 */
-	public QualityModel(String name) {
-		System.out.println("--- WARNING ---\n" +
-				"You are calling QualityModel with a String input, this should only be used for testing purposes.");
-		this.name = name;
-	}
-
-	/**
 	 * Constructor for deriving QM object from a disk file description (likely .json or .xml)
 	 * @param qmFilePath
 	 * 		File path to the quality model description
@@ -224,7 +213,6 @@ public class QualityModel {
 				JsonObject jsonCharacteristic = c.getAsJsonObject();
 
 				String name = jsonCharacteristic.getAsJsonPrimitive("name").getAsString();
-				String standard = jsonCharacteristic.getAsJsonPrimitive("standard").getAsString();
 				String description = jsonCharacteristic.getAsJsonPrimitive("description").getAsString();
 				Characteristic qmCharacteristic = new Characteristic(name, description);
 				if (jsonCharacteristic.getAsJsonObject("weights") != null) {

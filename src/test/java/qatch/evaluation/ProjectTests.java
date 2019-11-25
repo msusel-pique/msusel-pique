@@ -26,31 +26,31 @@ public class ProjectTests {
     @Before
     public void setUp()  {
         this.p = TestHelper.makeProject("TestProject");
-        loc = this.p.getLinesOfCode();
+        this.loc = this.p.getLinesOfCode();
         this.qm = this.p.getQualityModel();
     }
 
 
     @Test
     public void testEvaluateCharacteristics() {
-        /*
-         * Property 01 measure diagnostic01: 1 finding
-         * Property 01 measure diagnostic02: 1 findings
-         * Property 02 measure diagnostic01: 1 findings
-         * Property 02 measure diagnostic02: 1 findings
-         */
 
+        /*
+         * Measure 01, TST0001: 1 finding
+         * Measure 01, TST0002: 1 findings
+         * Measure 02, TST0003: 1 findings
+         * Measure 02, TST0004: 1 findings
+         */
         Finding f1 = TestHelper.makeFinding("file/path/f1", 111, 1);
 
-        qm.setFinding(qm.getMeasure("Property 01 measure"), "Property 01 measure diagnostic01", f1);
-        qm.setFinding(qm.getMeasure("Property 01 measure"), "Property 01 measure diagnostic02", f1);
-        qm.setFinding(qm.getMeasure("Property 02 measure"), "Property 02 measure diagnostic01", f1);
-        qm.setFinding(qm.getMeasure("Property 02 measure"), "Property 02 measure diagnostic02", f1);
+        qm.setFinding(qm.getMeasure("Measure 01"), "TST0001", f1);
+        qm.setFinding(qm.getMeasure("Measure 01"), "TST0002", f1);
+        qm.setFinding(qm.getMeasure("Measure 02"), "TST0003", f1);
+        qm.setFinding(qm.getMeasure("Measure 02"), "TST0004", f1);
 
         p.evaluateCharacteristics();
 
-        Assert.assertEquals(0.5, p.getQualityModel().getCharacteristic("Characteristic 01").getValue(loc), 0.001);
-        Assert.assertEquals(0.5, p.getQualityModel().getCharacteristic("Characteristic 02").getValue(loc), 0.001);
+        Assert.assertEquals(0.3875, p.getQualityModel().getCharacteristic("Characteristic 01").getValue(loc), 0.001);
+        Assert.assertEquals(0.40625, p.getQualityModel().getCharacteristic("Characteristic 02").getValue(loc), 0.001);
     }
 
     @Test
@@ -58,16 +58,7 @@ public class ProjectTests {
         Property p1 = p.getQualityModel().getProperty("Property 01");
         Property p2 = p.getQualityModel().getProperty("Property 02");
 
-        /*
-         * Property 01 measure diagnostic01: 1 finding
-         * Property 01 measure diagnostic02: 0 findings
-         * Property 02 measure diagnostic01: 0 findings
-         * Property 02 measure diagnostic02: 1 findings
-         */
-        Finding f1 = TestHelper.makeFinding("file/path/f1", 111, 1);
-
-        qm.setFinding(qm.getMeasure("Property 01 measure"), "Property 01 measure diagnostic01", f1);
-        qm.setFinding(qm.getMeasure("Property 02 measure"), "Property 02 measure diagnostic01", f1);
+        // 0 findings
 
         p.evaluateProperties();
 
@@ -78,100 +69,67 @@ public class ProjectTests {
     @Test
     public void testEvaluateProperties_negative_middleGroup() {
         Property p1 = p.getQualityModel().getProperty("Property 01");
-        Property p2 = p.getQualityModel().getProperty("Property 02");
 
         /*
-         * Property 01 measure diagnostic01: 1 finding
-         * Property 01 measure diagnostic02: 1 findings
-         * Property 02 measure diagnostic01: 1 findings
-         * Property 02 measure diagnostic02: 1 findings
+         * Measure 01, TST0001: 1 finding
          */
-
         Finding f1 = TestHelper.makeFinding("file/path/f1", 111, 1);
 
-        qm.setFinding(qm.getMeasure("Property 01 measure"), "Property 01 measure diagnostic01", f1);
-        qm.setFinding(qm.getMeasure("Property 01 measure"), "Property 01 measure diagnostic02", f1);
-        qm.setFinding(qm.getMeasure("Property 02 measure"), "Property 02 measure diagnostic01", f1);
-        qm.setFinding(qm.getMeasure("Property 02 measure"), "Property 02 measure diagnostic02", f1);
+        qm.setFinding(qm.getMeasure("Measure 01"), "TST0001", f1);
 
         p.evaluateProperties();
 
-        Assert.assertEquals(0.5, p1.getValue(loc), .001);
-        Assert.assertEquals(0.5, p2.getValue(loc), .001);
+        Assert.assertEquals(0.46875, p1.getValue(loc), .001);
     }
 
     @Test
     public void testEvaluateProperties_negative_saturation() {
         Property p1 = p.getQualityModel().getProperty("Property 01");
-        Property p2 = p.getQualityModel().getProperty("Property 02");
 
         /*
-         * Property 01 measure diagnostic01: 4 finding
-         * Property 01 measure diagnostic02: 3 findings
-         * Property 02 measure diagnostic01: 3 findings
-         * Property 02 measure diagnostic02: 4 findings
+         * Measure 01, TST0001: 4 findings
+         * Measure 01, TST0002: 4 findings
          */
-
         Finding f1 = TestHelper.makeFinding("file/path/f1", 111, 1);
         Finding f2 = TestHelper.makeFinding("file/path/f2", 222, 1);
         Finding f3 = TestHelper.makeFinding("file/path/f3", 333, 1);
         Finding f4 = TestHelper.makeFinding("file/path/f4", 444, 1);
 
-        qm.setFinding(qm.getMeasure("Property 01 measure"), "Property 01 measure diagnostic01", f1);
-        qm.setFinding(qm.getMeasure("Property 01 measure"), "Property 01 measure diagnostic01", f2);
-        qm.setFinding(qm.getMeasure("Property 01 measure"), "Property 01 measure diagnostic01", f3);
-        qm.setFinding(qm.getMeasure("Property 01 measure"), "Property 01 measure diagnostic01", f4);
+        qm.setFinding(qm.getMeasure("Measure 01"), "TST0001", f1);
+        qm.setFinding(qm.getMeasure("Measure 01"), "TST0001", f2);
+        qm.setFinding(qm.getMeasure("Measure 01"), "TST0001", f3);
+        qm.setFinding(qm.getMeasure("Measure 01"), "TST0001", f4);
 
-        qm.setFinding(qm.getMeasure("Property 01 measure"), "Property 01 measure diagnostic02", f1);
-        qm.setFinding(qm.getMeasure("Property 01 measure"), "Property 01 measure diagnostic02", f2);
-        qm.setFinding(qm.getMeasure("Property 01 measure"), "Property 01 measure diagnostic02", f3);
-
-        qm.setFinding(qm.getMeasure("Property 02 measure"), "Property 02 measure diagnostic01", f1);
-        qm.setFinding(qm.getMeasure("Property 02 measure"), "Property 02 measure diagnostic01", f2);
-        qm.setFinding(qm.getMeasure("Property 02 measure"), "Property 02 measure diagnostic01", f3);
-
-        qm.setFinding(qm.getMeasure("Property 02 measure"), "Property 02 measure diagnostic02", f1);
-        qm.setFinding(qm.getMeasure("Property 02 measure"), "Property 02 measure diagnostic02", f2);
-        qm.setFinding(qm.getMeasure("Property 02 measure"), "Property 02 measure diagnostic02", f3);
-        qm.setFinding(qm.getMeasure("Property 02 measure"), "Property 02 measure diagnostic02", f4);
+        qm.setFinding(qm.getMeasure("Measure 01"), "TST0002", f1);
+        qm.setFinding(qm.getMeasure("Measure 01"), "TST0002", f2);
+        qm.setFinding(qm.getMeasure("Measure 01"), "TST0002", f3);
+        qm.setFinding(qm.getMeasure("Measure 01"), "TST0002", f4);
 
         p.evaluateProperties();
 
         Assert.assertEquals(0.0, p1.getValue(loc), 0);
-        Assert.assertEquals(0.0, p2.getValue(loc), 0);
     }
 
     @Test
     public void testEvaluateProperties_negative_upperGroup() {
+
         Property p1 = p.getQualityModel().getProperty("Property 01");
-        Property p2 = p.getQualityModel().getProperty("Property 02");
 
         /*
-         * Property 01 measure diagnostic01: 2 finding
-         * Property 01 measure diagnostic02: 2 findings
-         * Property 02 measure diagnostic01: 2 findings
-         * Property 02 measure diagnostic02: 2 findings
+         * Measure 01, TST0001: 2 findings
+         * Measure 01, TST0002: 1 findings
          */
-
         Finding f1 = TestHelper.makeFinding("file/path/f1", 111, 1);
         Finding f2 = TestHelper.makeFinding("file/path/f2", 222, 1);
 
-        qm.setFinding(qm.getMeasure("Property 01 measure"), "Property 01 measure diagnostic01", f1);
-        qm.setFinding(qm.getMeasure("Property 01 measure"), "Property 01 measure diagnostic01", f2);
+        qm.setFinding(qm.getMeasure("Measure 01"), "TST0001", f1);
+        qm.setFinding(qm.getMeasure("Measure 01"), "TST0001", f2);
 
-        qm.setFinding(qm.getMeasure("Property 01 measure"), "Property 01 measure diagnostic02", f1);
-        qm.setFinding(qm.getMeasure("Property 01 measure"), "Property 01 measure diagnostic02", f2);
-
-        qm.setFinding(qm.getMeasure("Property 02 measure"), "Property 02 measure diagnostic01", f1);
-        qm.setFinding(qm.getMeasure("Property 02 measure"), "Property 02 measure diagnostic01", f2);
-
-        qm.setFinding(qm.getMeasure("Property 02 measure"), "Property 02 measure diagnostic02", f1);
-        qm.setFinding(qm.getMeasure("Property 02 measure"), "Property 02 measure diagnostic02", f2);
+        qm.setFinding(qm.getMeasure("Measure 01"), "TST0002", f1);
 
         p.evaluateProperties();
 
-        Assert.assertEquals(0.16666, p1.getValue(loc), .001);
-        Assert.assertEquals(0.16666, p2.getValue(loc), .001);
+        Assert.assertEquals(0.15625, p1.getValue(loc), .000001);
     }
 
     @Test

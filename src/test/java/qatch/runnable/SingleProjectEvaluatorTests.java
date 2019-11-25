@@ -110,37 +110,36 @@ public class SingleProjectEvaluatorTests {
 
         // Assert: project basics
         Assert.assertEquals("FakeProject_01", projectName);
-        Assert.assertEquals(1000, loc, 0);
+        Assert.assertEquals(200, loc, 0);
 
-        // Assert: diagnostics
+        // Assert: diagnostic findings
         Assert.assertEquals(2, measure01.getAsJsonArray("diagnostics").size());
-        // TODO PICKUP
-//        Assert.assertEquals(2.0, measure01.getAsJsonArray("diagnostics").get(0).getAsJsonObject().get("value").getAsDouble(), 0);
+        Assert.assertEquals(1.0, measure01.getAsJsonArray("diagnostics").get(0).getAsJsonObject().get("value").getAsDouble(), 0);
+        Assert.assertEquals(1.0, measure01.getAsJsonArray("diagnostics").get(1).getAsJsonObject().get("value").getAsDouble(), 0);
+        Assert.assertEquals(0.0, measure02.getAsJsonArray("diagnostics").get(0).getAsJsonObject().get("value").getAsDouble(), 0);
+        Assert.assertEquals(1.0, measure02.getAsJsonArray("diagnostics").get(1).getAsJsonObject().get("value").getAsDouble(), 0);
+        Assert.assertEquals(1.0, measure02.getAsJsonArray("diagnostics").get(2).getAsJsonObject().get("value").getAsDouble(), 0);
 
         // Assert: measure nodes
         Assert.assertEquals("Measure 01", measure01.get("name").getAsString());
         Assert.assertEquals("Measure 02", measure02.get("name").getAsString());
-        // TODO PICKUP
-//        Assert.assertEquals(0.004, measure01.get("normalizedValue").getAsDouble(), 0.000001);
-//        Assert.assertEquals(0.004, measure02.get("normalizedValue").getAsDouble(), 0.000001);
+        Assert.assertEquals(0.01, measure01.get("value").getAsDouble(), 0.000001);
+        Assert.assertEquals(0.01, measure02.get("value").getAsDouble(), 0.000001);
 
         // Assert: property nodes
         Assert.assertEquals("Property 01", property01.get("name").getAsString());
         Assert.assertEquals("Property 02", property02.get("name").getAsString());
-        // TODO PICKUP
-//        Assert.assertEquals(0.5, property01.get("value").getAsDouble(), 0.000001);
-//        Assert.assertEquals(0.8, property02.get("value").getAsDouble(), 0.000001);
+        Assert.assertEquals(0.3125, property01.get("value").getAsDouble(), 0.000001);
+        Assert.assertEquals(0.5, property02.get("value").getAsDouble(), 0.000001);
 
         // Assert: characteristics nodes
         Assert.assertEquals("Characteristic 01", characteristic01.get("name").getAsString());
         Assert.assertEquals("Characteristic 02", characteristic02.get("name").getAsString());
-        // TODO PICKUP
-//        Assert.assertEquals(0.62, characteristic01.get("value").getAsDouble(), 0.000001);
-//        Assert.assertEquals(0.65, characteristic02.get("value").getAsDouble(), 0.000001);
+        Assert.assertEquals(0.3875, characteristic01.get("value").getAsDouble(), 0.000001);
+        Assert.assertEquals(0.40625, characteristic02.get("value").getAsDouble(), 0.000001);
 
         // Assert: TQI node
         Assert.assertEquals("Total Quality", tqi.get("name").getAsString());
-        // TODO PICKUP
-//        Assert.assertEquals(0.626, tqi.get("value").getAsDouble(), 0.000001);
+        Assert.assertEquals(0.39125, tqi.get("value").getAsDouble(), 0.000001);
     }
 }

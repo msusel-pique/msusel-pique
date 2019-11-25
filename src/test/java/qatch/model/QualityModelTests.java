@@ -20,9 +20,9 @@ public class QualityModelTests {
     public void testCloneStack() {
         QualityModel qmOirginal = TestHelper.makeQualityModel();
 
-        Diagnostic diagnosticOriginal = qmOirginal.getMeasure("Property 01 measure").getDiagnostic("Property 01 measure diagnostic01");
+        Diagnostic diagnosticOriginal = qmOirginal.getMeasure("Measure 01").getDiagnostic("TST0001");
         Diagnostic diagnosticNew = (Diagnostic) diagnosticOriginal.clone();
-        Measure measureOriginal = qmOirginal.getMeasure("Property 01 measure");
+        Measure measureOriginal = qmOirginal.getMeasure("Measure 01");
         Measure measureNew = (Measure) measureOriginal.clone();
         Property propertyOriginal = qmOirginal.getProperty("Property 01");
         Property propertyNew = (Property)propertyOriginal.clone();
@@ -65,13 +65,16 @@ public class QualityModelTests {
         Measure p1Measure = p1.getMeasure();
         Measure p2Measure = p2.getMeasure();
 
+        // Model basics
         Assert.assertEquals("Test QM", qm.getName());
 
+        // TQI data
         Assert.assertEquals("Total Quality", tqi.getName());
         Assert.assertEquals(2, tqi.getWeights().size());
         Assert.assertEquals(0.8, tqi.getWeight("Characteristic 01"), 0);
         Assert.assertEquals(0.2, tqi.getWeight("Characteristic 02"), 0);
 
+        // Characteristics
         Assert.assertEquals("Characteristic 01", ch1.getName());
         Assert.assertEquals("Characteristic 02", ch2.getName());
         Assert.assertEquals(0.6, ch1.getWeight("Property 01"), 0);
@@ -79,6 +82,12 @@ public class QualityModelTests {
         Assert.assertEquals(0.5, ch2.getWeight("Property 01"), 0);
         Assert.assertEquals(0.5, ch2.getWeight("Property 02"), 0);
 
+        // Characteristics properties are pass by reference
+        for (Property property : ch1.getProperties().values()) {
+            Assert.assertEquals(property, ch2.getProperties().get(property.getName()));
+        }
+
+        // Property
         Assert.assertEquals("Property 01", p1.getName());
         Assert.assertEquals("Property 02", p2.getName());
         Assert.assertFalse(p1.isPositive());
@@ -86,26 +95,10 @@ public class QualityModelTests {
         Assert.assertEquals(thresholds01[1], p1.getThresholds()[1], 0);
         Assert.assertEquals(thresholds02[1], p2.getThresholds()[1], 0);
 
+        // Measures
         Assert.assertEquals("Measure 01", p1Measure.getName());
         Assert.assertEquals("Measure 02", p2Measure.getName());
         Assert.assertEquals("TST0001", p1Measure.getDiagnostic("TST0001").getName());
         Assert.assertEquals("TST0004", p2Measure.getDiagnostic("TST0004").getName());
-
-        // Assert tree structure pass-by-reference from TQI root node compared to fields
-        qm.getTqi().getCharacteristics().values().forEach(tqiCharacteristic -> {
-            // Characteristic layer
-            Assert.assertEquals(qm.getCharacteristics().get(tqiCharacteristic.getName()), tqiCharacteristic);
-            tqiCharacteristic.getProperties().values().forEach(tqiProperty -> {
-                // Properties layer
-                Assert.assertEquals(qm.getProperties().get(tqiProperty.getName()), tqiProperty);
-                Measure qmMeasure = qm.getProperties().get(tqiProperty.getName()).getMeasure();
-                // Property's measure
-                Assert.assertEquals(qmMeasure, tqiProperty.getMeasure());
-                tqiProperty.getMeasure().getDiagnostics().forEach(tqiDiagnostic -> {
-                    // Measure's diagnostics
-                    Assert.assertEquals(qmMeasure.getDiagnostic(tqiDiagnostic.getName()), tqiDiagnostic);
-                });
-            });
-        });
     }
 }

@@ -24,6 +24,7 @@ public class TestHelper {
     public static final Path TEST_DIR = new File("src/test").toPath();
     public static final Path TEST_RESOURCES = Paths.get(TEST_DIR.toString(), "resources").toAbsolutePath();
     public static final Path OUTPUT = Paths.get(TEST_DIR.toString(), "out").toAbsolutePath();
+    private static final Path QUALITY_MODEL = Paths.get(TEST_RESOURCES.toString(), "quality_models", "qualityModel_test.json");
 
     /*
      * Analysis objects
@@ -51,9 +52,13 @@ public class TestHelper {
      */
     public static Project makeProject(String name) {
         Project project = new Project(name);
-        project.setLinesOfCode(10);
+        project.setLinesOfCode(200);
         project.setQualityModel(makeQualityModel());
         return project;
+    }
+
+    public static QualityModel makeQualityModel() {
+        return new QualityModel(QUALITY_MODEL);
     }
 
     /*
@@ -80,34 +85,6 @@ public class TestHelper {
         return p;
     }
 
-    /**
-     * Make quality model without reliance on a hard-drive file
-     * @return
-     *      QualityModel with valid instances in all fields
-     */
-    public static QualityModel makeQualityModel() {
-        QualityModel qm = new QualityModel("Test Quality Model");
-        Characteristic c1 = makeCharacteristic("Characteristic 01");
-        Characteristic c2 = makeCharacteristic("Characteristic 02");
-        Property p1 = makeProperty("Property 01");
-        Property p2 = makeProperty("Property 02");
-        Map<String, Characteristic> characteristics = new HashMap<String, Characteristic>() {{
-            put(c1.getName(), c1);
-            put(c2.getName(), c2);
-        }};
-        Map<String, Property> properties = new HashMap<String, Property>() {{
-            put(p1.getName(), p1);
-            put(p2.getName(), p2);
-        }};
-        Tqi tqi = TestHelper.makeTqi("Test TQI");
-
-        qm.setTqi(tqi);
-        qm.setCharacteristics(characteristics);
-        qm.setProperties(properties);
-
-        return qm;
-    }
-
     public static Tqi makeTqi(String name) {
         HashMap<String, Double> weights = new HashMap<String, Double>() {{
             put("Characteristic 01", 0.7);
@@ -129,11 +106,26 @@ public class TestHelper {
             @Override
             public Map<String, Diagnostic> parseAnalysis(Path toolResults) {
                 Map<String, Diagnostic> diagnostics = new HashMap<>();
-                diagnostics.put("TST0001", TestHelper.makeDiagnostic("TST0001"));
-                diagnostics.put("TST0002", TestHelper.makeDiagnostic("TST0002"));
-                diagnostics.put("TST0003", TestHelper.makeDiagnostic("TST0003"));
-                diagnostics.put("TST0004", TestHelper.makeDiagnostic("TST0004"));
-                diagnostics.put("TST0005", TestHelper.makeDiagnostic("TST0005"));
+
+                Finding f1 = TestHelper.makeFinding("file/path/f1", 111, 1);
+
+                Diagnostic tst01 = TestHelper.makeDiagnostic("TST0001");
+                Diagnostic tst02 = TestHelper.makeDiagnostic("TST0002");
+                Diagnostic tst03 = TestHelper.makeDiagnostic("TST0003");
+                Diagnostic tst04 = TestHelper.makeDiagnostic("TST0004");
+                Diagnostic tst05 = TestHelper.makeDiagnostic("TST0005");
+
+                tst01.setFinding(f1);
+                tst02.setFinding(f1);
+                tst04.setFinding(f1);
+                tst05.setFinding(f1);
+
+                diagnostics.put("TST0001", tst01);
+                diagnostics.put("TST0002", tst02);
+                diagnostics.put("TST0003", tst03);
+                diagnostics.put("TST0004", tst04);
+                diagnostics.put("TST0005", tst05);
+
                 return diagnostics;
             }
 
@@ -148,7 +140,7 @@ public class TestHelper {
         return new IToolLOC() {
             @Override
             public Integer analyze(Path projectLocation) {
-                return 1000;
+                return 200;
             }
         };
     }
