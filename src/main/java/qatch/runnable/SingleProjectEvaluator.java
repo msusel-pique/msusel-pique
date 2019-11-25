@@ -137,12 +137,17 @@ public class SingleProjectEvaluator {
         }
 
         projectQM.getCharacteristics().values().forEach(characteristic -> {
+
             if (characteristic.getWeights() == null) {
                 throw new RuntimeException("The project's quality model does not have any weights instantiated to its characteristic node");
             }
+
             characteristic.getProperties().values().forEach(property -> {
                 if (property.getThresholds() == null) {
                     throw new RuntimeException("The project's quality model does not have any thresholds instantiated to its property node.");
+                }
+                if (property.getThresholds()[0] == null || property.getThresholds()[1] == null || property.getThresholds()[2] == null) {
+                    throw new RuntimeException("The project's quality model thresholds have less than 3 entries in its vector.");
                 }
             });
         });
