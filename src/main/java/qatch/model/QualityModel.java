@@ -7,7 +7,6 @@ import com.google.gson.annotations.Expose;
 import qatch.analysis.Diagnostic;
 import qatch.analysis.Finding;
 import qatch.analysis.Measure;
-import qatch.utility.FileUtility;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -174,7 +173,8 @@ public class QualityModel {
 	 */
 	public Path exportToJson(Path outputDirectory) {
 		String fileName = "qualityModel_" + getName().replaceAll("\\s","");
-		return FileUtility.exportObjectToJson(this, outputDirectory, fileName);
+		QualityModelExport qmExport = new QualityModelExport(this);
+		return qmExport.exportToJson(fileName, outputDirectory);
 	}
 
 	/**

@@ -1,10 +1,11 @@
 package qatch.evaluation;
 
 import com.google.gson.annotations.Expose;
+import org.apache.commons.lang3.tuple.Pair;
 import qatch.analysis.Diagnostic;
 import qatch.model.Property;
 import qatch.model.QualityModel;
-import qatch.utility.FileUtility;
+import qatch.model.QualityModelExport;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -121,7 +122,11 @@ public class Project{
 	public Path exportToJson(Path resultsDir) {
 
 		String fileName = this.getName() + "_evalResults";
-		return FileUtility.exportObjectToJson(this, resultsDir, fileName);
+		Pair<String, String> loc = Pair.of("projectLinesOfCode", String.valueOf(getLinesOfCode()));
+		Pair<String, String> name = Pair.of("projectName", getName());
+
+		QualityModelExport qmExport = new QualityModelExport(getQualityModel(), loc, name);
+		return qmExport.exportToJson(fileName, resultsDir);
 	}
 
 	/**

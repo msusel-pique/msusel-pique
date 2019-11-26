@@ -17,12 +17,13 @@ public class QualityModelExportTests {
 
     @Test
     public void testExportToJson() throws IOException {
+        String exportName = "qualityModel_test_export";
         Path exportLocation = Paths.get("src/test/out/TestExportEval");
 
         QualityModel qm = new QualityModel(qmTest);
         QualityModelExport qmExport = new QualityModelExport(qm);
 
-        Path result = qmExport.exportToJson(exportLocation);
+        Path result = qmExport.exportToJson(exportName, exportLocation);
         FileReader fr = new FileReader(result.toString());
         JsonObject jsonResults = new JsonParser().parse(fr).getAsJsonObject();
         fr.close();

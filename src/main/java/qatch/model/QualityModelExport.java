@@ -1,9 +1,11 @@
 package qatch.model;
 
 import com.google.gson.annotations.Expose;
+import org.apache.commons.lang3.tuple.Pair;
 import qatch.utility.FileUtility;
 
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -21,32 +23,44 @@ public class QualityModelExport {
     @Expose
     private String name;
     @Expose
+    private Map<String, String> additionalData = new HashMap<>();
+    @Expose
     private Tqi tqi;
     @Expose
     private Map<String, Characteristic>  characteristics;
     @Expose
     private Map<String, Property> properties;
 
-    public QualityModelExport(QualityModel qualityModel) {
+    @SafeVarargs
+    public QualityModelExport(QualityModel qualityModel, Pair<String, String>... optional) {
         this.name = qualityModel.getName();
         this.tqi = qualityModel.getTqi();
         this.characteristics = qualityModel.getCharacteristics();
         this.properties = qualityModel.getProperties();
+        if (optional.length > 0 ) {
+            for (Pair<String, String> entry : optional) {
+                additionalData.put(entry.getKey(), entry.getValue());
+            }
+        }
     }
 
     // TODO PICKUP: quality model export test, then integrate into QualityModel.exportToJson()
 
-    public String getName() {
-        return name;
-    }
-    public Tqi getTqi() {
-        return tqi;
+
+    public Map<String, String> getAdditionalData() {
+        return additionalData;
     }
     public Map<String, Characteristic> getCharacteristics() {
         return characteristics;
     }
+    public String getName() {
+        return name;
+    }
     public Map<String, Property> getProperties() {
         return properties;
+    }
+    public Tqi getTqi() {
+        return tqi;
     }
 
     /**
@@ -57,8 +71,7 @@ public class QualityModelExport {
      * @return
      * 		The path of the exported model file.
      */
-    public Path exportToJson(Path outputDirectory) {
-        String fileName = "qualityModel_" + getName().replaceAll("\\s","");
+    public Path exportToJson(String fileName, Path outputDirectory) {
         return FileUtility.exportObjectToJson(this, outputDirectory, fileName);
     }
 }
