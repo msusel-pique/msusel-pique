@@ -70,8 +70,6 @@ public class SingleProjectEvaluatorTests {
         JsonObject jsonResults = new JsonParser().parse(fr).getAsJsonObject();
         fr.close();
 
-
-
         JsonObject additionalData = jsonResults.getAsJsonObject("additionalData");
         JsonObject jsonTqi = jsonResults.getAsJsonObject("tqi");
         JsonObject jsonCharacteristics = jsonResults.getAsJsonObject("characteristics");
@@ -83,6 +81,7 @@ public class SingleProjectEvaluatorTests {
         JsonObject jsonMeasure01 = jsonProperty01.getAsJsonObject("measure");
         JsonObject jsonMeasure02 = jsonProperty02.getAsJsonObject("measure");
 
+        // Asserts
         Assert.assertEquals("FakeProject_01", additionalData.getAsJsonPrimitive("projectName").getAsString());
         Assert.assertEquals("200", additionalData.getAsJsonPrimitive("projectLinesOfCode").getAsString());
 

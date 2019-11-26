@@ -44,9 +44,6 @@ public class QualityModelExport {
         }
     }
 
-    // TODO PICKUP: quality model export test, then integrate into QualityModel.exportToJson()
-
-
     public Map<String, String> getAdditionalData() {
         return additionalData;
     }
