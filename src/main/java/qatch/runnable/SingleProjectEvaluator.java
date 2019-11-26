@@ -1,6 +1,7 @@
 package qatch.runnable;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.poi.poifs.property.NPropertyTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import qatch.analysis.Diagnostic;
@@ -49,6 +50,10 @@ public class SingleProjectEvaluator {
         initialize(projectDir, resultsDir, qmLocation);
         QualityModel qualityModel = new QualityModel(qmLocation);
         Project project = new Project(FilenameUtils.getBaseName(projectDir.getFileName().toString()), projectDir, qualityModel);
+
+        // Validate State
+        // TODO: validate more objects such as if the quality model has thresholds and weights, are there expected diagnostics, etc
+        validatePreEvaluationState(project);
 
         // Run the static analysis tools process
         Map<String, Diagnostic> diagnosticResults = runTool(projectDir, tool);
@@ -114,5 +119,39 @@ public class SingleProjectEvaluator {
 
         // (2) prase output: make collection of {Key: diagnostic name, Value: diagnostic objects}
         return tool.parseAnalysis(analysisOutput);
+    }
+
+    /**
+     * Sequence of state checks of the project's quality model before running evaluation.
+     * Throws runtime error if any expected state is not achieved.
+     *
+     * @param project
+     *      The project under evaluation. This project should have a contained qualityModel with
+     *      weight and threshold instances.
+     */
+    private void validatePreEvaluationState(Project project) {
+        QualityModel projectQM = project.getQualityModel();
+
+        if (projectQM.getTqi().getWeights() == null) {
+            throw new RuntimeException("The project's quality model does not have any weights instantiated to its TQI node");
+        }
+
+        projectQM.getCharacteristics().values().forEach(characteristic -> {
+
+            if (characteristic.getWeights() == null) {
+                throw new RuntimeException("The project's quality model does not have any weights instantiated to its characteristic node");
+            }
+
+            characteristic.getProperties().values().forEach(property -> {
+                if (property.getThresholds() == null) {
+                    throw new RuntimeException("The project's quality model does not have any thresholds instantiated to its property node.");
+                }
+                if (property.getThresholds()[0] == null || property.getThresholds()[1] == null || property.getThresholds()[2] == null) {
+                    throw new RuntimeException("The project's quality model thresholds have less than 3 entries in its vector.");
+                }
+            });
+        });
+
+
     }
 }

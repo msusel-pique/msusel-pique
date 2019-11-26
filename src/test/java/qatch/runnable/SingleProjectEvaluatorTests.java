@@ -7,8 +7,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import qatch.TestHelper;
-import qatch.evaluation.Project;
-import qatch.model.QualityModel;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -72,49 +70,47 @@ public class SingleProjectEvaluatorTests {
         JsonObject jsonResults = new JsonParser().parse(fr).getAsJsonObject();
         fr.close();
 
-        // Assign parsed results
-        String projectName = jsonResults.get("name").getAsString();
-        int loc = jsonResults.get("linesOfCode").getAsInt();
-        JsonObject tqi = jsonResults.getAsJsonObject("qualityModel").getAsJsonObject("tqi");
-        JsonObject characteristic01 = tqi.getAsJsonObject("characteristics").getAsJsonObject("Characteristic 01");
-        JsonObject characteristic02 = tqi.getAsJsonObject("characteristics").getAsJsonObject("Characteristic 02");
-        JsonObject property01 = characteristic01.getAsJsonObject("properties").getAsJsonObject("Property 01");
-        JsonObject property02 = characteristic01.getAsJsonObject("properties").getAsJsonObject("Property 02");
-        JsonObject measure01 = property01.getAsJsonObject("measure");
-        JsonObject measure02 = property02.getAsJsonObject("measure");
+        JsonObject additionalData = jsonResults.getAsJsonObject("additionalData");
+        JsonObject jsonTqi = jsonResults.getAsJsonObject("tqi");
+        JsonObject jsonCharacteristics = jsonResults.getAsJsonObject("characteristics");
+        JsonObject jsonChar01 = jsonCharacteristics.getAsJsonObject("Characteristic 01");
+        JsonObject jsonChar02 = jsonCharacteristics.getAsJsonObject("Characteristic 02");
+        JsonObject jsonProperties = jsonResults.getAsJsonObject("properties");
+        JsonObject jsonProperty01 = jsonProperties.getAsJsonObject("Property 01");
+        JsonObject jsonProperty02 = jsonProperties.getAsJsonObject("Property 02");
+        JsonObject jsonMeasure01 = jsonProperty01.getAsJsonObject("measure");
+        JsonObject jsonMeasure02 = jsonProperty02.getAsJsonObject("measure");
 
-        // Assert: project basics
-        Assert.assertEquals("FakeProject_01", projectName);
-        Assert.assertEquals(200, loc, 0);
+        // Asserts
+        Assert.assertEquals("FakeProject_01", additionalData.getAsJsonPrimitive("projectName").getAsString());
+        Assert.assertEquals("200", additionalData.getAsJsonPrimitive("projectLinesOfCode").getAsString());
 
-        // Assert: diagnostic findings
-        Assert.assertEquals(2, measure01.getAsJsonArray("diagnostics").size());
-        Assert.assertEquals(1.0, measure01.getAsJsonArray("diagnostics").get(0).getAsJsonObject().get("value").getAsDouble(), 0);
-        Assert.assertEquals(0.0, measure01.getAsJsonArray("diagnostics").get(1).getAsJsonObject().get("value").getAsDouble(), 0);
-        Assert.assertEquals(1.0, measure02.getAsJsonArray("diagnostics").get(0).getAsJsonObject().get("value").getAsDouble(), 0);
-        Assert.assertEquals(0.0, measure02.getAsJsonArray("diagnostics").get(1).getAsJsonObject().get("value").getAsDouble(), 0);
-        Assert.assertEquals(0.0, measure02.getAsJsonArray("diagnostics").get(2).getAsJsonObject().get("value").getAsDouble(), 0);
+        Assert.assertEquals("Test QM", jsonResults.getAsJsonPrimitive("name").getAsString());
 
-        // Assert: measure nodes
-        Assert.assertEquals("Measure 01", measure01.get("name").getAsString());
-        Assert.assertEquals("Measure 02", measure02.get("name").getAsString());
-        Assert.assertEquals(0.005, measure01.get("value").getAsDouble(), 0.000001);
-        Assert.assertEquals(0.005, measure02.get("value").getAsDouble(), 0.000001);
+        Assert.assertEquals("Total Quality", jsonTqi.getAsJsonPrimitive("name").getAsString());
+        Assert.assertEquals(0.586875, jsonTqi.getAsJsonPrimitive("value").getAsFloat(), 0.0001);
+        Assert.assertEquals(0.8, jsonTqi.getAsJsonObject("weights").getAsJsonPrimitive("Characteristic 01").getAsDouble(), 0.0001);
+        Assert.assertEquals(0.2, jsonTqi.getAsJsonObject("weights").getAsJsonPrimitive("Characteristic 02").getAsDouble(), 0.0001);
 
-        // Assert: property nodes
-        Assert.assertEquals("Property 01", property01.get("name").getAsString());
-        Assert.assertEquals("Property 02", property02.get("name").getAsString());
-        Assert.assertEquals(0.46875, property01.get("value").getAsDouble(), 0.000001);
-        Assert.assertEquals(0.75, property02.get("value").getAsDouble(), 0.000001);
+        Assert.assertEquals(0.58125, jsonChar01.getAsJsonPrimitive("value").getAsFloat(), 0.0001);
+        Assert.assertEquals(0.6, jsonChar01.getAsJsonObject("weights").getAsJsonPrimitive("Property 01").getAsDouble(), 0.0001);
+        Assert.assertEquals(0.4, jsonChar01.getAsJsonObject("weights").getAsJsonPrimitive("Property 02").getAsDouble(), 0.0001);
 
-        // Assert: characteristics nodes
-        Assert.assertEquals("Characteristic 01", characteristic01.get("name").getAsString());
-        Assert.assertEquals("Characteristic 02", characteristic02.get("name").getAsString());
-        Assert.assertEquals(0.58125, characteristic01.get("value").getAsDouble(), 0.000001);
-        Assert.assertEquals(0.609375, characteristic02.get("value").getAsDouble(), 0.000001);
+        Assert.assertEquals(0.609375, jsonChar02.getAsJsonPrimitive("value").getAsFloat(), 0.0001);
+        Assert.assertEquals(0.5, jsonChar02.getAsJsonObject("weights").getAsJsonPrimitive("Property 01").getAsDouble(), 0.0001);
+        Assert.assertEquals(0.5, jsonChar02.getAsJsonObject("weights").getAsJsonPrimitive("Property 02").getAsDouble(), 0.0001);
 
-        // Assert: TQI node
-        Assert.assertEquals("Total Quality", tqi.get("name").getAsString());
-        Assert.assertEquals(0.586875, tqi.get("value").getAsDouble(), 0.000001);
+        Assert.assertEquals(0.46875, jsonProperty01.getAsJsonPrimitive("value").getAsFloat(), 0.0001);
+        Assert.assertEquals(0.0, jsonProperty01.getAsJsonArray("thresholds").get(0).getAsFloat(), 0.0001);
+        Assert.assertEquals(0.004, jsonProperty01.getAsJsonArray("thresholds").get(1).getAsFloat(), 0.0001);
+        Assert.assertEquals(0.02, jsonProperty01.getAsJsonArray("thresholds").get(2).getAsFloat(), 0.0001);
+
+        Assert.assertEquals(0.75, jsonProperty02.getAsJsonPrimitive("value").getAsFloat(), 0.0001);
+        Assert.assertEquals(0.0, jsonProperty02.getAsJsonArray("thresholds").get(0).getAsFloat(), 0.0001);
+        Assert.assertEquals(0.01, jsonProperty02.getAsJsonArray("thresholds").get(1).getAsFloat(), 0.0001);
+        Assert.assertEquals(0.02, jsonProperty02.getAsJsonArray("thresholds").get(2).getAsFloat(), 0.0001);
+
+        Assert.assertEquals(0.005, jsonMeasure01.getAsJsonPrimitive("value").getAsFloat(), 0.0001);
+        Assert.assertEquals(0.005, jsonMeasure02.getAsJsonPrimitive("value").getAsFloat(), 0.0001);
     }
 }

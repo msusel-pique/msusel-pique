@@ -19,7 +19,6 @@ public class Tqi extends ModelNode {
 
 	@Expose
 	private Map<String, Double> weights;  // mapping of characteristic names and their weights
-	@Expose
 	private Map<String, Characteristic> characteristics = new HashMap<>(); // mapping of characteristic names and their object
 
 
