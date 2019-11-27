@@ -39,12 +39,6 @@ public class SingleProjectEvaluatorTests {
     }
 
     @Test
-    public void testAggregateNormalize() {
-        // TODO: test might not be worth writing due to interface call
-        Assert.assertTrue(true);
-    }
-
-    @Test
     public void testInitialize() {
         try { spe.initialize(PROJECT_DIR, RESULTS_DIR, QM_LOCATION); }
         catch (IllegalArgumentException e) { Assert.fail(e.getMessage()); }

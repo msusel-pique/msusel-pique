@@ -1,7 +1,6 @@
 package qatch.runnable;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.poi.poifs.property.NPropertyTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import qatch.analysis.Diagnostic;
@@ -45,6 +44,9 @@ public class SingleProjectEvaluator {
      *      The path to the produced quality analysis file on the hard disk.
      */
     public Path runEvaluator(Path projectDir, Path resultsDir, Path qmLocation, ITool tool, IToolLOC locTool) {
+
+        // Extract resources (necessary for runs against jars, cannot rely on project file system)
+
 
         // Initialize data structures
         initialize(projectDir, resultsDir, qmLocation);
