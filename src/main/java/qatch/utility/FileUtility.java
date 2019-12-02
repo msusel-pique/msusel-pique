@@ -6,7 +6,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -64,14 +63,10 @@ public class FileUtility {
      *      Location to create the temporary directory. Does not need to initially exist.
      * @param targetResource
      *      Location of resource. Can be a specific file or a directory with nested directories.
-     * @param protocol
-     *      String matching if this method is being called from a JAR or file (i.e. IDE) context.
-     *      Matches with "jar" or "file". FileUtility.class.getResource("").getProtocol();
-     *      returns the string protocol.
      * @return
      *      The temporary file-system directory with resources extracted into it.
      */
-    public static Path extractResources(Path destination, Path targetResource, String protocol)  {
+    public static Path extractResourcesAsIde(Path destination, Path targetResource)  {
 
         destination.toFile().mkdirs();
         String resourceName = FilenameUtils.getBaseName(targetResource.toString()).replaceAll("\\s","");
@@ -83,22 +78,8 @@ public class FileUtility {
                 catch (IOException e) { e.printStackTrace(); }
             }));
 
-            if (protocol.equals("jar")) {
-                try {
-                    String fullResourceName = FilenameUtils.getName(targetResource.toString());
-                    extractResourcesToTempFolder(resourcesDirectory, fullResourceName);
-                }
-                catch (IOException | URISyntaxException e) { e.printStackTrace(); }
-            }
-
-            else if (protocol.equals("file")) {
-                try {
-                    FileUtils.copyDirectoryToDirectory(targetResource.toFile(), resourcesDirectory.toFile());
-                }
-                catch (IOException e) {  e.printStackTrace(); }
-            }
-
-            else { throw new RuntimeException("Unable to determine if project protocol is running from IDE or JAR"); }
+            try { FileUtils.copyDirectoryToDirectory(targetResource.toFile(), resourcesDirectory.toFile()); }
+            catch (IOException e) {  e.printStackTrace(); }
 
             return resourcesDirectory;
 
@@ -117,45 +98,56 @@ public class FileUtility {
      * Takes resources in the resources folder within the JAR and copies them to a
      * resources folder in the same directory as the JAR.
      *
+     * @param jarFile
+     *      Location of jar file containing the desired resources
      * @param destination
      *      Location (directory) to extract the resource files to
-     * @param directoryName
+     * @param resourceName
      *      Name of directory containing the files desired to be extracted
      */
-    public static void extractResourcesToTempFolder(Path destination, String directoryName) throws IOException, URISyntaxException {
-        File jarFile = new File(FileUtility
-                .class
-                .getProtectionDomain()
-                .getCodeSource()
-                .getLocation()
-                .toURI());
+    public static Path extractResourcesAsJar(File jarFile, Path destination, String resourceName) {
+        destination.toFile().mkdirs();
 
-        //Recursively build resources folder from JAR sibling to JAR file
-        JarFile jar = new JarFile(jarFile.getPath());
-        Enumeration<JarEntry> enums = jar.entries();
-        while (enums.hasMoreElements()) {
-            JarEntry entry = enums.nextElement();
-            if (entry.getName().startsWith(directoryName)) {
-                File toWrite = new File(destination.toFile(), entry.getName());
-                if (entry.isDirectory()) {
-                    toWrite.mkdirs();
-                    continue;
-                }
-                InputStream in = new BufferedInputStream(jar.getInputStream(entry));
-                OutputStream out = new BufferedOutputStream(new FileOutputStream(toWrite));
-                byte[] buffer = new byte[2048];
-                for (;;) {
-                    int nBytes = in.read(buffer);
-                    if (nBytes <= 0) {
-                        break;
+        try {
+            Path resourcesDirectory = Files.createTempDirectory(destination, resourceName);
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try { FileUtils.deleteDirectory(resourcesDirectory.toFile()); }
+                catch (IOException e) { e.printStackTrace(); }
+            }));
+
+            //Recursively build resources folder from JAR sibling to JAR file
+            JarFile jar = new JarFile(jarFile.getPath());
+            Enumeration<JarEntry> enums = jar.entries();
+            while (enums.hasMoreElements()) {
+                JarEntry entry = enums.nextElement();
+                if (entry.getName().startsWith(resourceName)) {
+                    File toWrite = new File(destination.toFile(), entry.getName());
+                    if (entry.isDirectory()) {
+                        toWrite.mkdirs();
+                        continue;
                     }
-                    out.write(buffer, 0, nBytes);
+                    InputStream in = new BufferedInputStream(jar.getInputStream(entry));
+                    OutputStream out = new BufferedOutputStream(new FileOutputStream(toWrite));
+                    byte[] buffer = new byte[2048];
+                    for (;;) {
+                        int nBytes = in.read(buffer);
+                        if (nBytes <= 0) {
+                            break;
+                        }
+                        out.write(buffer, 0, nBytes);
+                    }
+                    out.flush();
+                    out.close();
+                    in.close();
                 }
-                out.flush();
-                out.close();
-                in.close();
             }
+            return resourcesDirectory;
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+        throw new RuntimeException("retrun statement in try block was never reached.");
     }
 
     /**
