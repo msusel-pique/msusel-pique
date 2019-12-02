@@ -57,7 +57,7 @@ public class FileUtility {
     }
 
     /**
-     * Extract resources to a temporary file-system directory.
+     * Extract target resources to a temporary file-system directory.
      * This method assumes resources follow standard Maven structure.
      * This method handles both JAR or native execution.
      *
@@ -71,10 +71,11 @@ public class FileUtility {
     public static Path extractResources(Path destination, Path targetResource)  {
 
         destination.toFile().mkdirs();
+        String resourceName = FilenameUtils.getBaseName(targetResource.toString()).replaceAll("\\s","");
         String protocol = FileUtility.class.getResource("").getProtocol();
 
         try {
-            Path resourcesDirectory = Files.createTempDirectory(destination, "resources");
+            Path resourcesDirectory = Files.createTempDirectory(destination, resourceName);
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try { FileUtils.deleteDirectory(resourcesDirectory.toFile()); }
                 catch (IOException e) { e.printStackTrace(); }
@@ -82,8 +83,8 @@ public class FileUtility {
 
             if (Objects.equals(protocol, "jar")) {
                 try {
-                    String resourceName = FilenameUtils.getName(targetResource.toString());
-                    extractResourcesToTempFolder(resourcesDirectory, resourceName);
+                    String fullResourceName = FilenameUtils.getName(targetResource.toString());
+                    extractResourcesToTempFolder(resourcesDirectory, fullResourceName);
                 }
                 catch (IOException | URISyntaxException e) { e.printStackTrace(); }
             }

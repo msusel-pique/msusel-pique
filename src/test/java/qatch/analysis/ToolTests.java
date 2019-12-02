@@ -44,4 +44,12 @@ public class ToolTests {
         Assert.assertTrue(testToolFile02.isFile());
 
     }
+
+    @Test
+    public void testGetLocation() {
+        Path tempToolLocation = testTool.getLocation();
+
+        Assert.assertEquals(tempTestOutputDirectory, tempToolLocation.getParent());
+        Assert.assertTrue(tempToolLocation.getFileName().toString().startsWith(testTool.getName().replaceAll("\\s","")));
+    }
 }
