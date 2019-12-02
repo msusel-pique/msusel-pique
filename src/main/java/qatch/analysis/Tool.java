@@ -1,14 +1,13 @@
 package qatch.analysis;
 
-import qatch.utility.FileUtility;
-
 import java.nio.file.Path;
 
 public abstract class Tool implements ITool {
 
     // Instance vars
     private String name;
-    private Path location;
+    private Path executable;
+    private Path toolRoot;
 
 
     // Constructor
@@ -18,40 +17,26 @@ public abstract class Tool implements ITool {
      *
      * @param name
      *      The tool name
-     * @param initialToolLocation
+     * @param toolRoot
      *      The initial location of this tool's root folder
-     * @param tempTargetDirectory
-     *      The location to place the 'tools' directory which this tools runnable contents will be extracted in to.
      */
-    public Tool(String name, Path initialToolLocation, Path tempTargetDirectory) {
+    public Tool(String name, Path toolRoot) {
         this.name = name;
-        this.location = extractTool(initialToolLocation, tempTargetDirectory);
+        this.toolRoot = toolRoot;
+        this.executable = initialize(toolRoot);
     }
 
 
     // Getters and setters
     public String getName() { return name; }
-
-    /**
-     * @return
-     *      Root directory for this tool. For example, if the executable for tool MyTool is located at
-     *      /home/my_project/tools/MyTool/bin/MyTool.exe, this method should return path
-     *      /home/my_project/tools/MyTool.
-     */
-    public Path getLocation() {
-        return location;
+    public Path getToolRoot() {
+        return toolRoot;
     }
-
+    public void setToolRoot(Path toolRoot) {
+        this.toolRoot = toolRoot;
+    }
 
     // Methods
-
-    /**
-     * Create temporary copy of this tool into a directory named after the tool.
-     */
-    private Path extractTool(Path initialToolLocation, Path destination) {
-
-        // Extract tool as temporary resource
-        return FileUtility.extractResources(destination, initialToolLocation);
-
-    }
+    @Override
+    public abstract Path initialize(Path toolRoot);
 }

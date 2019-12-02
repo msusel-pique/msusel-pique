@@ -128,7 +128,12 @@ public class TestHelper {
                 return diagnostics;
             }
 
-            @Override
+           @Override
+           public Path initialize(Path toolRoot) {
+               return null;
+           }
+
+           @Override
             public String getName() {
                 return "Fake Tool";
             }

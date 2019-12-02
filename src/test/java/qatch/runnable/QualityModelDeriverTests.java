@@ -138,6 +138,11 @@ public class QualityModelDeriverTests {
             }
 
             @Override
+            public Path initialize(Path toolRoot) {
+                return null;
+            }
+
+            @Override
             public String getName() {
                 return "Deriver Test Tool";
             }

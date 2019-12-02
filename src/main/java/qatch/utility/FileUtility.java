@@ -57,9 +57,8 @@ public class FileUtility {
     }
 
     /**
-     * Extract target resources to a temporary file-system directory.
-     * This method assumes resources follow standard Maven structure.
-     * This method handles both JAR or native execution.
+     * Extract target resources to a temporary file-system directory. This method assumes resources follow standard
+     * Maven structure. This method handles both JAR or native execution.
      *
      * @param destination
      *      Location to create the temporary directory. Does not need to initially exist.
