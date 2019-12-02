@@ -205,7 +205,6 @@ $RECYCLE.BIN/
 
 ### Project Specific ###
 /.idea
-r_working_directory
 src/test/java/qatch/Scratch.java
 src/test/out
 

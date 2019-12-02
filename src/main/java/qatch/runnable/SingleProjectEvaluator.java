@@ -1,7 +1,6 @@
 package qatch.runnable;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.poi.poifs.property.NPropertyTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import qatch.analysis.Diagnostic;
