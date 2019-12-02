@@ -115,7 +115,7 @@ public class FileUtility {
      * @param directoryName
      *      Name of directory containing the files desired to be extracted
      */
-    private static void extractResourcesToTempFolder(Path destination, String directoryName) throws IOException, URISyntaxException {
+    public static void extractResourcesToTempFolder(Path destination, String directoryName) throws IOException, URISyntaxException {
         File jarFile = new File(FileUtility
                 .class
                 .getProtectionDomain()

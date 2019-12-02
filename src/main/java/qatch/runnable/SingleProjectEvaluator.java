@@ -45,9 +45,6 @@ public class SingleProjectEvaluator {
      */
     public Path runEvaluator(Path projectDir, Path resultsDir, Path qmLocation, ITool tool, IToolLOC locTool) {
 
-        // Extract resources (necessary for runs against jars, cannot rely on project file system)
-
-
         // Initialize data structures
         initialize(projectDir, resultsDir, qmLocation);
         QualityModel qualityModel = new QualityModel(qmLocation);

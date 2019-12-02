@@ -116,6 +116,12 @@ class RInvoker {
 					"R is installed in a non-default location.");
 		}
 
+		// Assert r runner exists on file system at path
+		if (!rPath.toFile().isFile()) {
+			throw new RuntimeException("No R executable was found at path " + rPath.toAbsolutePath() +
+					". Has R been installed on this machine?");
+		}
+
 		return rPath;
 	}
 }
