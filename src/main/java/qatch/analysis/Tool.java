@@ -29,6 +29,9 @@ public abstract class Tool implements ITool {
 
     // Getters and setters
     public String getName() { return name; }
+    public Path getExecutable() {
+        return executable;
+    }
     public Path getToolRoot() {
         return toolRoot;
     }

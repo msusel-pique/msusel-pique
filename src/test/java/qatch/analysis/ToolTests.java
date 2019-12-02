@@ -28,7 +28,7 @@ public class ToolTests {
         }
         @Override
         public Path initialize(Path toolRoot) {
-            Path toolRootTempFolder = FileUtility.extractResources(tempTestOutputDirectory, toolRoot);
+            Path toolRootTempFolder = FileUtility.extractResources(tempTestOutputDirectory, toolRoot, FileUtility.class.getResource("").getProtocol());
             setToolRoot(Paths.get(toolRootTempFolder.toString(), "Test Tool"));
             return Paths.get(getToolRoot().toString(), "test_tool_file_01.txt");
         }

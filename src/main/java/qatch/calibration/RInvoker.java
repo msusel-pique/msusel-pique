@@ -72,7 +72,7 @@ class RInvoker {
 	static Path getRScriptResource(Script choice, Path outputDirectory) {
 
 		Path rScriptsPath = Paths.get("src/main/resources/r_scripts");
-		Path tempResourceDirectory = FileUtility.extractResources(outputDirectory, rScriptsPath);
+		Path tempResourceDirectory = FileUtility.extractResources(outputDirectory, rScriptsPath, FileUtility.class.getResource("").getProtocol());
 
 		Path resource;
 		switch (choice) {

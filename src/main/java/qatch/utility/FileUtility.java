@@ -58,20 +58,23 @@ public class FileUtility {
 
     /**
      * Extract target resources to a temporary file-system directory. This method assumes resources follow standard
-     * Maven structure. This method handles both JAR or native execution.
+     * Maven structure. This method handles both JAR or IDE execution.
      *
      * @param destination
      *      Location to create the temporary directory. Does not need to initially exist.
      * @param targetResource
      *      Location of resource. Can be a specific file or a directory with nested directories.
+     * @param protocol
+     *      String matching if this method is being called from a JAR or file (i.e. IDE) context.
+     *      Matches with "jar" or "file". FileUtility.class.getResource("").getProtocol();
+     *      returns the string protocol.
      * @return
      *      The temporary file-system directory with resources extracted into it.
      */
-    public static Path extractResources(Path destination, Path targetResource)  {
+    public static Path extractResources(Path destination, Path targetResource, String protocol)  {
 
         destination.toFile().mkdirs();
         String resourceName = FilenameUtils.getBaseName(targetResource.toString()).replaceAll("\\s","");
-        String protocol = FileUtility.class.getResource("").getProtocol();
 
         try {
             Path resourcesDirectory = Files.createTempDirectory(destination, resourceName);
@@ -80,7 +83,7 @@ public class FileUtility {
                 catch (IOException e) { e.printStackTrace(); }
             }));
 
-            if (Objects.equals(protocol, "jar")) {
+            if (protocol.equals("jar")) {
                 try {
                     String fullResourceName = FilenameUtils.getName(targetResource.toString());
                     extractResourcesToTempFolder(resourcesDirectory, fullResourceName);
@@ -88,14 +91,14 @@ public class FileUtility {
                 catch (IOException | URISyntaxException e) { e.printStackTrace(); }
             }
 
-            else if (Objects.equals(protocol, "file")) {
+            else if (protocol.equals("file")) {
                 try {
                     FileUtils.copyDirectoryToDirectory(targetResource.toFile(), resourcesDirectory.toFile());
                 }
                 catch (IOException e) {  e.printStackTrace(); }
             }
 
-            else { throw new RuntimeException("Unable to determine if project is running from IDE or JAR"); }
+            else { throw new RuntimeException("Unable to determine if project protocol is running from IDE or JAR"); }
 
             return resourcesDirectory;
 
