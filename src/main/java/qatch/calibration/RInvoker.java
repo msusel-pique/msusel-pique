@@ -71,9 +71,10 @@ class RInvoker {
 
 	static Path getRScriptResource(Script choice, Path outputDirectory) {
 
-		Path tempResourceDirectory = FileUtility.extractResources(outputDirectory, "r_scripts");
+		Path rScriptsPath = Paths.get("src/main/resources/r_scripts");
+		Path tempResourceDirectory = FileUtility.extractResources(outputDirectory, rScriptsPath);
 
-		Path resource = null;
+		Path resource;
 		switch (choice) {
 			case AHP:
 				resource = Paths.get(tempResourceDirectory.toString(), "r_scripts", "ahpWeightElicitation.R");

@@ -57,16 +57,18 @@ public class FileUtility {
     }
 
     /**
-     * Extract all resources found in this project (msusel-qatch) to a temporary file-system directory.
+     * Extract resources to a temporary file-system directory.
+     * This method assumes resources follow standard Maven structure.
+     * This method handles both JAR or native execution.
      *
      * @param destination
      *      Location to create the temporary directory. Does not need to initially exist.
-     * @param directoryNameToExtract
-     *      Name of jar resource directory containing the files desired to be extracted
+     * @param targetResource
+     *      Location of resource. Can be a specific file or a directory with nested directories.
      * @return
      *      The temporary file-system directory with resources extracted into it.
      */
-    public static Path extractResources(Path destination, String directoryNameToExtract)  {
+    public static Path extractResources(Path destination, Path targetResource)  {
 
         destination.toFile().mkdirs();
         String protocol = FileUtility.class.getResource("").getProtocol();
@@ -79,14 +81,16 @@ public class FileUtility {
             }));
 
             if (Objects.equals(protocol, "jar")) {
-                try { extractResourcesToTempFolder(resourcesDirectory, directoryNameToExtract); }
+                try {
+                    String resourceName = FilenameUtils.getName(targetResource.toString());
+                    extractResourcesToTempFolder(resourcesDirectory, resourceName);
+                }
                 catch (IOException | URISyntaxException e) { e.printStackTrace(); }
             }
 
             else if (Objects.equals(protocol, "file")) {
-                File rScripts = new File("src/main/resources", directoryNameToExtract);
                 try {
-                    FileUtils.copyDirectoryToDirectory(rScripts , resourcesDirectory.toFile());
+                    FileUtils.copyDirectoryToDirectory(targetResource.toFile(), resourcesDirectory.toFile());
                 }
                 catch (IOException e) {  e.printStackTrace(); }
             }
