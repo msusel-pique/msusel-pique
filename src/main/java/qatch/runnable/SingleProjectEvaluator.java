@@ -56,7 +56,7 @@ public class SingleProjectEvaluator {
 
         // Run the static analysis tools process
         Map<String, Diagnostic> diagnosticResults = runTool(projectDir, tool);
-        int projectLoc = locTool.analyze(projectDir);
+        int projectLoc = locTool.analyzeLinesOfCode(projectDir);
 
         // Apply tool results to Project object
         project.updateDiagnosticsWithFindings(diagnosticResults);

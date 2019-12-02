@@ -82,7 +82,7 @@ public class Benchmarker {
             Project project = new Project(projectPath.getFileName().toString(), projectPath, qmDescription);
 
             // Run LOC tool to set lines of code
-            project.setLinesOfCode(locTool.analyze(projectPath));
+            project.setLinesOfCode(locTool.analyzeLinesOfCode(projectPath));
 
             // Run tools, collect files of tool run results
             Map<ITool, Path> results = new HashMap<>();  // {key: tool, value: path to that tool's analysis file}

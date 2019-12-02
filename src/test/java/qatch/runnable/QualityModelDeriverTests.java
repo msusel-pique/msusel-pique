@@ -35,7 +35,17 @@ public class QualityModelDeriverTests {
 
         // Initialize objects
         QualityModel qmDescription = new QualityModel(qmDescriptionPath);
-        IToolLOC fakeLocTool = projectLocation -> 50;
+        IToolLOC fakeLocTool = new IToolLOC() {
+            @Override
+            public Integer analyzeLinesOfCode(Path projectLocation) {
+                return 50;
+            }
+            @Override
+            public Path initialize(Path toolRoot) {
+                return null;
+            }
+        };
+
         // (Make ITool to return different values for each project)
         ITool tool = new ITool() {
             @Override
