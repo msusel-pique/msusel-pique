@@ -18,7 +18,7 @@
         </encoder>
     </appender>
 
-    <root level="DEBUG"> <!-- ALL, TRACE, DEBUG, INFO, WARN, ERROR -->
+    <root level="TRACE"> <!-- ALL, TRACE, DEBUG, INFO, WARN, ERROR -->
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE" />
     </root>
