@@ -121,7 +121,7 @@ public class FileUtility {
             while (enums.hasMoreElements()) {
                 JarEntry entry = enums.nextElement();
                 if (entry.getName().startsWith(resourceName)) {
-                    File toWrite = new File(destination.toFile(), entry.getName());
+                    File toWrite = new File(resourcesDirectory.toFile(), entry.getName());
                     if (entry.isDirectory()) {
                         toWrite.mkdirs();
                         continue;
