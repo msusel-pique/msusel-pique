@@ -4,6 +4,7 @@ import qatch.utility.FileUtility;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -71,9 +72,34 @@ class RInvoker {
 
 	static Path getRScriptResource(Script choice, Path outputDirectory) {
 
-		Path tempResourceDirectory = FileUtility.extractResources(outputDirectory, "r_scripts");
+		String protocol = FileUtility.class.getResource("").getProtocol();
+		Path tempResourceDirectory = null;
 
-		Path resource = null;
+		switch (protocol) {
+			case "file":
+				Path rScriptsPath = Paths.get("src/main/resources/r_scripts");
+				tempResourceDirectory = FileUtility.extractResourcesAsIde(outputDirectory, rScriptsPath);
+				break;
+			case "jar":
+				try {
+					File jarFile = new File(RInvoker
+							.class
+							.getProtectionDomain()
+							.getCodeSource()
+							.getLocation()
+							.toURI());
+					String resourceName = "r_scripts";
+					tempResourceDirectory = FileUtility.extractResourcesAsJar(jarFile, outputDirectory, resourceName);
+				}
+				catch (URISyntaxException e) { e.printStackTrace(); }
+				break;
+			default:
+				throw new RuntimeException("Protocol did not match with 'file' or 'jar'");
+		}
+
+		assert tempResourceDirectory != null;
+		Path resource;
+
 		switch (choice) {
 			case AHP:
 				resource = Paths.get(tempResourceDirectory.toString(), "r_scripts", "ahpWeightElicitation.R");

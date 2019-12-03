@@ -128,7 +128,12 @@ public class TestHelper {
                 return diagnostics;
             }
 
-            @Override
+           @Override
+           public Path initialize(Path toolRoot) {
+               return null;
+           }
+
+           @Override
             public String getName() {
                 return "Fake Tool";
             }
@@ -138,8 +143,12 @@ public class TestHelper {
     public static IToolLOC makeIToolLoc() {
         return new IToolLOC() {
             @Override
-            public Integer analyze(Path projectLocation) {
+            public Integer analyzeLinesOfCode(Path projectLocation) {
                 return 200;
+            }
+            @Override
+            public Path initialize(Path toolRoot) {
+                return null;
             }
         };
     }
