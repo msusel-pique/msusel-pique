@@ -1,6 +1,7 @@
 package qatch.evaluation;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import qatch.calibration.BenchmarkProjects;
 
 import java.io.File;
@@ -19,6 +20,7 @@ public class EvaluationResultsExporter {
 	 * This method is used in order to export the results of the projects' evaluation
 	 * to JSON format.
      */
+	@Deprecated
 	public static void exportProjectsToJson(BenchmarkProjects projects, String path){
 		
 		//Instantiate a Json Parser
@@ -47,7 +49,10 @@ public class EvaluationResultsExporter {
 		path.getParent().toFile().mkdirs();
 
 		//Instantiate a Json Parser
-		Gson gson = new Gson();
+		Gson gson = new GsonBuilder()
+				.disableHtmlEscaping()
+				.excludeFieldsWithoutExposeAnnotation()
+				.create();
 		
 		//Create the Json String of the projects
 		String json = gson.toJson(project);

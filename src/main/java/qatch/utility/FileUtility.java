@@ -38,7 +38,10 @@ public class FileUtility {
         File fileOut = new File(outputDirectory.toFile(),fileName.replaceAll("\\s","") + ".json");
 
         //Instantiate a Json Parser
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        Gson gson = new GsonBuilder()
+                .disableHtmlEscaping()
+                .excludeFieldsWithoutExposeAnnotation()
+                .create();
 
         //Create the Json String of the projects
         String json = gson.toJson(object);
