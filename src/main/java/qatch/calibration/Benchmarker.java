@@ -125,7 +125,7 @@ public class Benchmarker {
      * @param output
      *      Path to desired directory to hold the output of running the R Thresholds script.
      *      The disk file may be considered temporary (only needed for the scope of this method)
-     *      and thus deleted after method execution.
+     *      and can be deleted after method execution.
      * @param analysisResults
      *      Input file for R Threshold script: matrix of project name's and their measure values
      * @return
@@ -173,10 +173,6 @@ public class Benchmarker {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        // Delete temporary artifacts
-        try { FileUtils.deleteDirectory(output.toFile()); }
-        catch (IOException e) { e.printStackTrace(); }
 
         return thresholds;
     }

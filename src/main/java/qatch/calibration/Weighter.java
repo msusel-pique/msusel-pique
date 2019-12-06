@@ -101,12 +101,6 @@ public class Weighter {
             e.printStackTrace();
         }
 
-        try {
-            FileUtils.deleteDirectory(tempWeightsDirectory.toFile());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         return weightResults;
     }
 
