@@ -33,6 +33,13 @@ public class QualityModelDeriver {
             Path tempWeightsDirectory,
             String projectRootFlag) {
 
+        // (0) Pre-checks
+        /*
+         * TODO: validate benchmark repository is of good form and won't throw expected errors
+         *      (all config.properties values, .sln or .csproj files needed by static analyzers,
+         *       benchmark repository file names and cell(0,0) names...)
+         */
+
         // (1) Derive thresholds
         Map<String, Double[]> measureNameThresholdMappings = Benchmarker.deriveThresholds(
                 benchmarkRepository, qmDescription, locTool, tools, projectRootFlag, benchmarkData, rThresholdsOutput

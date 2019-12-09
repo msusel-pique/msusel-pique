@@ -1,28 +1,24 @@
 {
 	"name": "Test QM",
+	"additionalData": {},
 	"tqi": {
-		"name": "Total Quality",
-		"description": "Sample tqi description"
+		"name": "Total Quality"
 	},
-	"characteristics": [
-		{
+	"characteristics": {
+		"Characteristic 01": {
 			"name": "Characteristic 01",
-			"standard": "ISO/IEC 25010",
-			"description": "Placeholder description"
+			"description": "Sample description"
 		},
-		{
+		"Characteristic 02": {
 			"name": "Characteristic 02",
-			"standard": "ISO/IEC 25010",
-			"description": "Placeholder description"
+			"description": "Sample description"
 		}
-	],
-	"properties": [
-		{
-			"name": "Property 01",
-			"description": "Property 01 description",
-			"positive_impact": "false",
+	},
+	"properties": {
+		"Property 01": {
 			"measure": {
 				"name": "Measure 01",
+				"description": "Placeholder description",
 				"diagnostics": [
 					{
 						"name": "TST0001",
@@ -35,14 +31,15 @@
 						"toolName": "Test tool"
 					}
 				]
-			}
+			},
+			"positive": false,
+			"name": "Property 01",
+			"description": "Sample description"
 		},
-		{
-			"name": "Property 02",
-			"description": "Property 02 description",
-			"positive_impact": "false",
+		"Property 02": {
 			"measure": {
 				"name": "Measure 02",
+				"description": "Placeholder description",
 				"diagnostics": [
 					{
 						"name": "TST0003",
@@ -60,7 +57,10 @@
 						"toolName": "Test tool"
 					}
 				]
-			}
+			},
+			"positive": false,
+			"name": "Property 02",
+			"description": "Sample description"
 		}
-	]
+	}
 }
