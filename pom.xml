@@ -6,9 +6,9 @@
 
   <groupId>msu.msusel</groupId>
   <artifactId>msusel-qatch</artifactId>
-  <version>0.2.0</version>
+  <version>0.3.0</version>
   <name>msusel-qatch</name>
-<!--  <url>http://83.212.105.167:8080/OnlineProjectEvaluator/</url>-->
+  <url>https://msusel.github.io</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
