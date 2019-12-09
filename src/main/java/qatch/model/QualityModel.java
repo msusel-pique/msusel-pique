@@ -206,16 +206,15 @@ public class QualityModel {
 			}
 
 			// Characteristics nodes
-			JsonArray jsonCharacteristics = jsonQm.getAsJsonArray("characteristics");
-			jsonCharacteristics.forEach(c -> {
-				JsonObject jsonCharacteristic = c.getAsJsonObject();
-
-				String name = jsonCharacteristic.getAsJsonPrimitive("name").getAsString();
-				String description = jsonCharacteristic.getAsJsonPrimitive("description").getAsString();
+			JsonObject jsonCharacteristics = jsonQm.getAsJsonObject("characteristics");
+			jsonCharacteristics.keySet().forEach(key -> {
+				JsonObject currentCharacteristic = jsonCharacteristics.getAsJsonObject(key);
+				String name = currentCharacteristic.getAsJsonPrimitive("name").getAsString();
+				String description = currentCharacteristic.getAsJsonPrimitive("description").getAsString();
 				Characteristic qmCharacteristic = new Characteristic(name, description);
-				if (jsonCharacteristic.getAsJsonObject("weights") != null) {
-					jsonCharacteristic.getAsJsonObject("weights").keySet().forEach(weight -> {
-						qmCharacteristic.setWeight(weight, jsonCharacteristic.getAsJsonObject("weights").getAsJsonPrimitive(weight).getAsDouble());
+				if (currentCharacteristic.getAsJsonObject("weights") != null) {
+					currentCharacteristic.getAsJsonObject("weights").keySet().forEach(weight -> {
+						qmCharacteristic.setWeight(weight, currentCharacteristic.getAsJsonObject("weights").getAsJsonPrimitive(weight).getAsDouble());
 					});
 				}
 
@@ -223,23 +222,23 @@ public class QualityModel {
 			});
 
 			// Properties nodes
-			JsonArray jsonProperties = jsonQm.getAsJsonArray("properties");
-			jsonProperties.forEach(p -> {
-				JsonObject jsonProperty = p.getAsJsonObject();
-				String name = jsonProperty.getAsJsonPrimitive("name").getAsString();
-				String description = jsonProperty.getAsJsonPrimitive("description").getAsString();
-				boolean impact = jsonProperty.getAsJsonPrimitive("positive_impact").getAsBoolean();
+			JsonObject jsonProperties = jsonQm.getAsJsonObject("properties");
+			jsonProperties.keySet().forEach(key -> {
+				JsonObject currentProperty = jsonProperties.getAsJsonObject(key);
+				String name = currentProperty.getAsJsonPrimitive("name").getAsString();
+				String description = currentProperty.getAsJsonPrimitive("description").getAsString();
+				boolean impact = currentProperty.getAsJsonPrimitive("positive").getAsBoolean();
 				Double[] thresholds = new Double[3];
 
-				if (jsonProperty.getAsJsonArray("thresholds") != null) {
-					JsonArray jsonThresholds = jsonProperty.getAsJsonArray("thresholds");
+				if (currentProperty.getAsJsonArray("thresholds") != null) {
+					JsonArray jsonThresholds = currentProperty.getAsJsonArray("thresholds");
 					for (int i = 0; i < jsonThresholds.size(); i++) {
 						thresholds[i] = jsonThresholds.get(i).getAsDouble();
 					}
 				}
 
 				// Property's Measure and Diagnostics nodes
-				JsonObject jsonMeasure = jsonProperty.getAsJsonObject("measure");
+				JsonObject jsonMeasure = currentProperty.getAsJsonObject("measure");
 				JsonArray jsonDiagnostics = jsonMeasure.getAsJsonArray("diagnostics");
 				Measure qmMeasure = new Measure();
 				List<Diagnostic> qmDiagnostics = new ArrayList<>();
