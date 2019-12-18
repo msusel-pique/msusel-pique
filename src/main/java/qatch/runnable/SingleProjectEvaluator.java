@@ -74,6 +74,7 @@ public class SingleProjectEvaluator {
         return project.exportToJson(resultsDir);
     }
 
+
     /**
      * Assert input parameters are valid and create the output folder
      *
@@ -120,6 +121,7 @@ public class SingleProjectEvaluator {
         return tool.parseAnalysis(analysisOutput);
     }
 
+
     /**
      * Sequence of state checks of the project's quality model before running evaluation.
      * Throws runtime error if any expected state is not achieved.
@@ -150,7 +152,5 @@ public class SingleProjectEvaluator {
                 }
             });
         });
-
-
     }
 }

@@ -31,10 +31,12 @@ import java.util.*;
 public class QualityModel {
 
 	// Fields
+
 	@Expose
 	private String name;  //The name of the QM found in the XML file
 	@Expose
 	private Tqi tqi;  // root node, the total quality evaluation, contains characteristic objects as children
+
 
 	// Constructors
 
@@ -65,11 +67,6 @@ public class QualityModel {
 	// Setters and Getters
 	public Characteristic getAnyCharacteristic() {
 		return getTqi().getAnyCharacteristic();
-	}
-	public Property getAnyProperty() {
-		Property anyProperty = getAnyCharacteristic().getProperties().values().stream().findAny().orElse(null);
-		assert anyProperty != null;
-		return anyProperty;
 	}
 	public Characteristic getCharacteristic(String name) {
 		return getTqi().getCharacteristics().get(name);
@@ -154,6 +151,7 @@ public class QualityModel {
 		return new QualityModel(getName(), rootNode);
 	}
 
+
 	@Override
 	public boolean equals(Object other) {
 		if (!(other instanceof QualityModel)) { return false; }
@@ -176,6 +174,7 @@ public class QualityModel {
 		QualityModelExport qmExport = new QualityModelExport(this);
 		return qmExport.exportToJson(fileName, outputDirectory);
 	}
+
 
 	/**
 	 * This method is responsible for importing the desired Quality Model

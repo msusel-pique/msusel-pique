@@ -64,6 +64,7 @@ public class Characteristic extends ModelNode {
 
 
 	// Methods
+
 	@Override
 	public ModelNode clone() {
 		System.out.println("--- WARNING ---\nCloning Characteristic node without cloned property map.\n" +
@@ -71,9 +72,11 @@ public class Characteristic extends ModelNode {
 		return new Characteristic(getName(), getDescription(), getWeights(), new HashMap<>());
 	}
 
+
 	public ModelNode clone(Map<String, Property> clonedProperties) {
 		return new Characteristic(getName(), getDescription(), getWeights(), clonedProperties);
 	}
+
 
 	@Override
 	public boolean equals(Object other) {
@@ -83,6 +86,7 @@ public class Characteristic extends ModelNode {
 		return getName().equals(otherCharacteristic.getName())
 				&& getProperties().size() == otherCharacteristic.getProperties().size();
 	}
+
 
 	/**
 	 * This method is used in order to calculate the eval field of this Characteristic

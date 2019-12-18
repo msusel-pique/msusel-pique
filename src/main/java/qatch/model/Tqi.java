@@ -68,11 +68,11 @@ public class Tqi extends ModelNode {
 
 	// Methods
 
-	@Override
 	/**
 	 * Tqi clone needs to work from a bottom-up parse to allow the fully connected
 	 * Characteristic -> Property layer to pass the cloned property nodes by reference.
 	 */
+	@Override
 	public ModelNode clone() {
 		Map<String, Characteristic> clonedCharacteristics = new HashMap<>();
 		Map<String, Property> clonedProperties = new HashMap<>();
@@ -90,6 +90,7 @@ public class Tqi extends ModelNode {
 		return new Tqi(getName(), getDescription(), getWeights(), clonedCharacteristics);
 	}
 
+
 	@Override
 	public boolean equals(Object other) {
 		if (!(other instanceof Tqi)) { return false; }
@@ -98,6 +99,7 @@ public class Tqi extends ModelNode {
 		return getName().equals(otherTqi.getName())
 				&& getCharacteristics().size() == otherTqi.getCharacteristics().size();
 	}
+
 
 	/**
 	 * @param args

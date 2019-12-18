@@ -5,12 +5,14 @@ import java.nio.file.Path;
 public abstract class Tool implements ITool {
 
     // Instance vars
+
     private String name;
     private Path executable;
     private Path toolRoot;
 
 
     // Constructor
+
     /**
      * On construction of any tool, Qatch will copy the tool files inside of the language-specific Qatch run into
      * a temporary folder named 'tools'.  This handles problems with accessing executables inside of JAR files.
@@ -28,6 +30,7 @@ public abstract class Tool implements ITool {
 
 
     // Getters and setters
+
     public String getName() { return name; }
     public Path getExecutable() {
         return executable;
@@ -39,7 +42,9 @@ public abstract class Tool implements ITool {
         this.toolRoot = toolRoot;
     }
 
+
     // Methods
+
     @Override
     public abstract Path initialize(Path toolRoot);
 }

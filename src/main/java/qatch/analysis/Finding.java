@@ -48,6 +48,7 @@ public class Finding {
 
     // Methods
 
+    @Override
     public Finding clone() {
         return new Finding(getFilePath(), this.lineNumber, this.characterNumber, getSeverity());
     }

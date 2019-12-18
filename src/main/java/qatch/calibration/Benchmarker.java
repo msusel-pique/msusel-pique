@@ -6,7 +6,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.opencsv.CSVWriter;
-import org.apache.commons.io.FileUtils;
 import qatch.analysis.Diagnostic;
 import qatch.analysis.ITool;
 import qatch.analysis.IToolLOC;
@@ -35,6 +34,7 @@ import java.util.*;
 public class Benchmarker {
 
     // Methods
+
     /**
      * Run tools on all benchmark projects to collect normalized values of each Measure across each project.
      * Use the tool run data with the R script to generate thresholds for each known property.
@@ -114,6 +114,7 @@ public class Benchmarker {
         // Run the R script to generate thresholds
         return rThresholdRunnerMapper(rThresholdsOutput, analysisResults);
     }
+
 
     /**
      * Execute the R script for theshold derivation to create thesholds for each property in the

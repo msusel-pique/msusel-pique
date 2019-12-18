@@ -59,6 +59,7 @@ public abstract class ModelNode {
      */
     public abstract ModelNode clone();
 
+
     /**
      * Calculates and update the value field of this object.
      * If evaluating TQI or Characteristic nodes, this will likely be a weight sum function.

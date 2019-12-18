@@ -9,6 +9,7 @@ public class Property extends ModelNode {
 
 	private static final int THRESHOLDS_NUM = 3;
 
+
 	// Fields
 
 	@Expose
@@ -77,6 +78,7 @@ public class Property extends ModelNode {
 		return new Property(getName(), getDescription(), isPositive(), getThresholds(), (Measure)getMeasure().clone());
 	}
 
+
 	@Override
 	public boolean equals(Object other) {
 		if (!(other instanceof Property)) { return false; }
@@ -85,6 +87,7 @@ public class Property extends ModelNode {
 		return getName().equals(otherProperty.getName())
 				&& getMeasure().equals(otherProperty.getMeasure());
 	}
+
 
 	/**
 	 * A method for evaluating a Property object (i.e this property). In other words, this method calculates the eval
@@ -115,6 +118,9 @@ public class Property extends ModelNode {
 		Double middleBound = getThresholds()[1];
 		Double upperBound = getThresholds()[2];
 
+		double middleGroupEval = (0.5 / (middleBound - lowerBound)) * (measureValue - lowerBound);
+		double upperGroupEval = (0.5 / (upperBound - middleBound)) * (upperBound - measureValue);
+
 		if (positive) {
 			//If the metric has a positive impact on quality -> Ascending utility function
 			if (measureValue <= lowerBound) {
@@ -122,43 +128,30 @@ public class Property extends ModelNode {
 				setValue(0);
 			} else if (measureValue <= middleBound) {
 				//Middle Group
-				setValue((0.5 / (middleBound - lowerBound)) * (measureValue - lowerBound));
+				setValue(middleGroupEval);
 			} else if (measureValue <= this.thresholds[2]) {
 				//Upper Group
-				setValue( 1 - (0.5 / (upperBound - middleBound)) * (upperBound - measureValue) );
+				setValue( 1 - upperGroupEval);
 			} else {
 				//Saturation
 				setValue(1);
 			}
 		} else {
 			//If the metric has a negative impact on quality -> Descending utility function
-			if (roundDown4(measureValue) <= lowerBound) {
+			if (measureValue <= lowerBound) {
 				//Lower Group
 				setValue(1);
-			} else if (roundDown4(measureValue) <= middleBound) {
+			} else if (measureValue <= middleBound) {
 				//Middle Group
-				setValue(1 - (0.5 / (middleBound - lowerBound)) * (measureValue - lowerBound));
-			} else if (roundDown4(measureValue) <= this.thresholds[2]) {
+				setValue(1 - middleGroupEval);
+			} else if (measureValue <= this.thresholds[2]) {
 				//Upper Group
-				setValue((0.5 / (upperBound - middleBound)) * (upperBound - roundDown4(measureValue)));
+				setValue(upperGroupEval);
 			} else {
 				//Saturation
 				setValue(0);
 			}
 		}
-	}
-	
-	/**
-	 * A method for keeping only the first four digits
-	 * of a double number.
-	 * 
-	 * Used as a quick fix for precision difference spotted
-	 * between the numbers calculated by Java and those received
-	 * from R Analysis.
-	 */
-	//TODO: Find a better way of fixing this issue (i.e. increase the precision in R)
-	private static double roundDown4(double d) {
-	    return (long) (d * 1e4) / 1e4;
 	}
 
 }

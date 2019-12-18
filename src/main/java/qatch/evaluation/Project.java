@@ -42,6 +42,7 @@ public class Project{
 	
 	
 	// Getters and setters
+
 	public int getLinesOfCode() { return linesOfCode; }
 	public void setLinesOfCode(int linesOfCode) { this.linesOfCode = linesOfCode; }
 	public String getName() {
@@ -91,6 +92,7 @@ public class Project{
 		});
 	}
 
+
 	/**
 	 * Evaluate and set this project's characteristics using the weights
 	 * provided by the quality model and the values contained in the project's Property nodes.
@@ -98,6 +100,7 @@ public class Project{
 	public void evaluateCharacteristics() {
 		getQualityModel().getCharacteristics().values().forEach(characteristic -> characteristic.getValue((double)getLinesOfCode()));
 	}
+
 
 	/**
 	 * Evaluate and set this project's properties using the thresholds
@@ -107,9 +110,11 @@ public class Project{
 		getQualityModel().getProperties().values().forEach(property -> property.getValue((double)getLinesOfCode()));
 	}
 
+
 	public void evaluateTqi() {
 		getQualityModel().getTqi().getValue((double)getLinesOfCode());
 	}
+
 
 	/**
 	 * Create a hard-drive file representation of the project.
@@ -128,6 +133,7 @@ public class Project{
 		QualityModelExport qmExport = new QualityModelExport(getQualityModel(), loc, name);
 		return qmExport.exportToJson(fileName, resultsDir);
 	}
+
 
 	/**
 	 * Find the diagnostic objects in this project and update their findings with findings containing in

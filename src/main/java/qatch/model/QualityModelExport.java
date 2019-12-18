@@ -10,16 +10,18 @@ import java.util.Map;
 
 /**
  * Duplicate information of the QualityModel class, but with fields set for ease of Gson json exporting.
- * This class is a cheap hack for exporting a quality model in the desired format.
- * This class is esentially a container class.
+ * This class is a cheap hack for exporting a quality model in the desired format. This class is esentially
+ * a container class.
+ *
  * There is a much better way to handle this instead of having this class, but that can be a future
  * developer's problem :)
  *
- * @author David Rice
+ * @author Rice
  */
 public class QualityModelExport {
 
     // Fields
+
     @Expose
     private String name;
     @Expose
@@ -59,6 +61,7 @@ public class QualityModelExport {
     public Tqi getTqi() {
         return tqi;
     }
+
 
     /**
      * Create a hard-drive file representation of the model

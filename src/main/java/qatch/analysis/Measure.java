@@ -9,7 +9,8 @@ import java.util.function.Function;
 
 public class Measure extends ModelNode {
 
-	// instance variables
+	// Instance variables
+
 	private Function<List<Diagnostic>, Double> evalFunction;
 	@Expose
 	private List<Diagnostic> diagnostics;
@@ -103,7 +104,8 @@ public class Measure extends ModelNode {
 	}
 
 
-	// helper methods
+	// Helper methods
+
 	/**
 	 * Define the default evaluation function to simply be a count of all diagnostic findings
 	 *

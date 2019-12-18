@@ -58,6 +58,7 @@ public class FileUtility {
         return fileOut.toPath();
     }
 
+
     /**
      * Extract target resources to a temporary file-system directory. This method assumes resources follow standard
      * Maven structure. This method handles both JAR or IDE execution.
@@ -92,6 +93,7 @@ public class FileUtility {
 
         throw new RuntimeException("retrun statement in try block was never reached.");
     }
+
 
     /**
      * Code from https://stackoverflow.com/questions/1529611/how-to-write-a-java-program-which-can-extract-a-jar-file-and-store-its-data-in-s/1529707#1529707
@@ -153,6 +155,7 @@ public class FileUtility {
         throw new RuntimeException("retrun statement in try block was never reached.");
     }
 
+
     /**
      * Recursively find all files under a root directory with specified extension(s) and optionally with name matching
      * a substring pattern
@@ -193,6 +196,7 @@ public class FileUtility {
 
         return assemblyPaths;
     }
+
 
     /**
      * Collects set of file names that match a given extension
@@ -250,6 +254,7 @@ public class FileUtility {
         }
         return projectPaths;
     }
+
 
     /**
      * Create a temporary disk copy of any file a URL can point to.
