@@ -13,7 +13,7 @@ public class Finding {
     @Expose
     private int lineNumber;
     @Expose
-    private int severity;  // TODO: think about enum or better extensible approaches for finding custom information
+    private int severity;  // TODO: consider refactoring into enum
 
 
     // Constructors
@@ -24,6 +24,7 @@ public class Finding {
         this.filePath = filePath;
         this.lineNumber = lineNumber;
         this.characterNumber = characterNumber;
+        this.severity = 1;
     }
 
     public Finding(String filePath, int lineNumber, int characterNumber, int severity) {
@@ -44,6 +45,9 @@ public class Finding {
     public void setLineNumber(int lineNumber) { this.lineNumber = lineNumber; }
     public String getLocation() { return filePath + "," + lineNumber + "," + characterNumber; }
     public int getSeverity() { return severity; }
+    public void setSeverity(int severity) {
+        this.severity = severity;
+    }
 
 
     // Methods
