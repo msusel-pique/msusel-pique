@@ -28,7 +28,6 @@ public class Diagnostic extends ModelNode {
 
     public Diagnostic(String id, String description, String toolName, Function<Set<Finding>, Double> customFunction) {
         super(id, description);
-        this.evalFunction = this::defaultEvalFunction;
         this.toolName = toolName;
         this.evalFunction = customFunction;
     }

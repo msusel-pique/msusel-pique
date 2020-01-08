@@ -107,7 +107,7 @@ public class Measure extends ModelNode {
 	// Helper methods
 
 	/**
-	 * Define the default evaluation function to simply be a count of all diagnostic findings
+	 * Define the default evaluation function to be a sum of all diagnostic values
 	 *
 	 * @param diagnostics
 	 *      The list of diagnostics belonging to the measure
@@ -117,9 +117,7 @@ public class Measure extends ModelNode {
 	private double defaultEvalFunction(List<Diagnostic> diagnostics) {
 		double value = 0;
 		for (Diagnostic d : diagnostics) {
-			for (Finding f : d.getFindings()) {
-				value++;
-			}
+			value += d.getValue();
 		}
 
 		return value;

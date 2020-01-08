@@ -33,7 +33,7 @@ public class MeasureTests {
         Measure m = new Measure();
         m.setDiagnostics(Arrays.asList(diagnostic01, diagnostic02));
 
-        Assert.assertEquals(.03, m.getValue(linesOfCode), 0);
+        Assert.assertEquals(.06, m.getValue(linesOfCode), 0);
 
     }
 
@@ -43,7 +43,7 @@ public class MeasureTests {
             double value = 0.0;
             for (Diagnostic d : diagnostics) {
                 for (Finding f : d.getFindings()) {
-                    value += f.getSeverity();
+                    value += f.getSeverity() * 2;
                 }
             }
             return value;
@@ -52,7 +52,7 @@ public class MeasureTests {
         Measure m = new Measure(null, null, null, customFunct);
         m.setDiagnostics(Arrays.asList(diagnostic01, diagnostic02));
 
-        Assert.assertEquals(.06, m.getValue(linesOfCode), 0);
+        Assert.assertEquals(.12, m.getValue(linesOfCode), 0);
     }
 
 }
