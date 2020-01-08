@@ -65,16 +65,16 @@ public class QualityModelDeriverTests {
             /*
              * Test info for reference and assertions:
              *
-             * Project 01: Measure 01 = 0.005, Measure 02 = 0.005
+             * Project 01:
              *      Measure 01, TST0001: 1 finding
              *      Measure 02, TST0003: 1 finding
-             * Project 02: Measure 01 = 0.01, Measure 02 = 0.015
+             * Project 02:
              *      Measure 01, TST0001: 1 finding
              *      Measure 01, TST0002: 1 finding
              *      Measure 02, TST0003: 1 finding
              *      Measure 02, TST0004: 1 finding
              *      Measure 02, TST0005: 1 finding
-             * Project 03: Measure 01 = 0.02, Measure 02 = 0.03
+             * Project 03:
              *      Measure 01, TST0001: 2 findings
              *      Measure 01, TST0002: 2 findings
              *      Measure 02, TST0003: 2 findings
@@ -181,7 +181,7 @@ public class QualityModelDeriverTests {
         Assert.assertEquals(0.8, c2.getWeight("Property 01"), 0.0001);
         Assert.assertEquals(0.2, c2.getWeight("Property 02"), 0.0001);
 
-        Assert.assertArrayEquals(new Double[]{0.02, 0.04, 0.08}, p1.getThresholds());
-        Assert.assertArrayEquals(new Double[]{0.02, 0.06, 0.12}, p2.getThresholds());
+        Assert.assertArrayEquals(new Double[]{0.02, 0.04, 0.12}, p1.getThresholds());
+        Assert.assertArrayEquals(new Double[]{0.02, 0.06, 0.18}, p2.getThresholds());
     }
 }
