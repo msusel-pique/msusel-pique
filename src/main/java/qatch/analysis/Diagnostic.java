@@ -88,13 +88,13 @@ public class Diagnostic extends ModelNode {
     // Helper methods
 
     /**
-     * Define the default evaluation function to simply be a count of findings
+     * Define the default evaluation function to simply be a sum of (finding * findingSeverity)
      * @param findings
      *      The set of findings found by this diagnostic
      * @return
      *      The count of findings
      */
     private double defaultEvalFunction(Set<Finding> findings) {
-        return findings.size();
+        return findings.stream().mapToDouble(Finding::getSeverity).sum();
     }
 }

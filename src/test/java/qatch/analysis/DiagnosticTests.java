@@ -27,7 +27,7 @@ public class DiagnosticTests {
         d.setFinding(finding03);
 
         double v = d.getValue();
-        Assert.assertEquals(3, v, 0);
+        Assert.assertEquals(6, v, 0);
     }
 
     @Test
@@ -35,7 +35,7 @@ public class DiagnosticTests {
         Function<Set<Finding>, Double> customFunct = (Set<Finding> findings) -> {
             double value = 0.0;
             for (Finding f : findings) {
-                value += f.getSeverity();
+                value += f.getSeverity() * 2;
             }
             return value;
         };
@@ -46,7 +46,7 @@ public class DiagnosticTests {
         d.setFinding(finding03);
 
         double v = d.getValue();
-        Assert.assertEquals(6, v, 0);
+        Assert.assertEquals(12, v, 0);
 
     }
 
