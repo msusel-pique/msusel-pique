@@ -76,7 +76,12 @@ public class Benchmarker {
         System.out.println("* Beginning repository benchmark analysis");
         System.out.println(projectRoots.size() + " projects to analyze.\n");
 
+        int totalProjects = projectRoots.size();
+        int counter = 0;
+
         for (Path projectPath : projectRoots) {
+
+            counter++;
 
             // Instantiate new project object
             Project project = new Project(projectPath.getFileName().toString(), projectPath, qmDescription);
@@ -106,6 +111,10 @@ public class Benchmarker {
 
             // Add new project (with tool findings information included) to the list
             projects.add(project);
+
+            // Print information
+            System.out.println("\n\t Finished analyzing project " + project.getName());
+            System.out.println("\t" + counter + " of " + totalProjects + " analyzed.\n");
         }
 
         // Create [Project_Name:Measure_Values] matrix file
