@@ -113,7 +113,7 @@ public class Benchmarker {
             projects.add(project);
 
             // Print information
-            System.out.println("\n\t Finished analyzing project " + project.getName());
+            System.out.println("\n\tFinished analyzing project " + project.getName());
             System.out.println("\t" + counter + " of " + totalProjects + " analyzed.\n");
         }
 
