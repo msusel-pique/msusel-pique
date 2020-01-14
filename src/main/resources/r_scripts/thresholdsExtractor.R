@@ -69,6 +69,6 @@ thresholds <- data.frame(t, row.names = rownames)
 names(thresholds) <- colnames
 
 # Export the results in json format
-json <- toJSON(thresholds)
+json <- toJSON(thresholds, digits = 8)
 setwd(output)
 write(json, "threshold.json")
