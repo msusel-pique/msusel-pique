@@ -7,6 +7,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * A Measure is a concrete, numerical way to measure a given Property (property of source code).
+ * The components necessary to complete a Measure's evaluation are a Measure's Diagnostics.
+ *
+ * A Measure is therefore a collection of its necessary diagnostics and an evaluation function describing
+ * how to evaluate itself using its diagnostics.
+ *
+ * Metrics example: for a metrics Measure "MIF" (Method Inheritance Factor) that is evaluated by the formula
+ * 							MIF = inherited methods / total methods available
+ *  	and you have a static analysis tool that can find IM (inherited methods) and TMA (total methods available),
+ *  	IM and TMA are Diagnostic objects, and the Measure object MIF's eval function is IM::value / TMA::value.
+ *
+ *  Rule example: for a rule Measure "Encryption Faults" that is evaluated by the sum of all tool findings that relate
+ *  	to encryption, imagine a tool named Security Code Scan that has 3 rules relating to encryption, "SCS001", "SCS002",
+ *  	and "SCS003".  SCS001, SCS002, and SCS003 are Diagnostic objects whose eval function should be to sum the
+ *  	findings with their Diagnostic name.  The Measure "Encryption Faults" may then eval by suming its diagnostic
+ *  	object's evals.
+ */
 public class Measure extends ModelNode {
 
 	// Instance variables
@@ -18,17 +36,42 @@ public class Measure extends ModelNode {
 
 	// Constructors
 
-	public Measure(String name, String description, List<Diagnostic> diagnostics) {
-		super(name, description);
-		this.diagnostics = diagnostics;
-		this.evalFunction = this::defaultEvalFunction;
-	}
+
+	// (todo): change to builder pattern
 
 	public Measure() {
 		super(null, null);
 		this.evalFunction = this::defaultEvalFunction;
 	}
 
+	/**
+	 * Measure constructor with default evaluation function
+	 *
+	 * @param name
+	 * 		The Measure's name as it appears in the quality model
+	 * @param description
+	 * 		The measure's description as it appears in the quality model
+	 * @param diagnostics
+	 * 		The collection of Diagnostic objects needed for this measure's evaluation
+	 */
+	public Measure(String name, String description, List<Diagnostic> diagnostics) {
+		super(name, description);
+		this.diagnostics = diagnostics;
+		this.evalFunction = this::defaultEvalFunction;
+	}
+
+	/**
+	 * Measure constructor with custom evaluation function
+	 *
+	 * @param name
+	 * 		The Measure's name as it appears in the quality model
+	 * @param description
+	 * 		The measure's description as it appears in the quality model
+	 * @param diagnostics
+	 * 		The collection of Diagnostic objects needed for this measure's evaluation
+	 * @param evalFunction
+	 *      A first class function description how to transform its collection of Diagnostics into a numerical value
+	 */
 	public Measure(String name, String description, List<Diagnostic> diagnostics, Function<List<Diagnostic>, Double> evalFunction) {
 		super(name, description);
 		this.diagnostics = diagnostics;

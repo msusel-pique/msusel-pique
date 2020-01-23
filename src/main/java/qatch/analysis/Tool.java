@@ -2,6 +2,9 @@ package qatch.analysis;
 
 import java.nio.file.Path;
 
+/**
+ * Abstract object representation of an external static analysis tool.
+ */
 public abstract class Tool implements ITool {
 
     // Instance vars

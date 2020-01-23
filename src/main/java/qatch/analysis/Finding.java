@@ -2,6 +2,13 @@ package qatch.analysis;
 
 import com.google.gson.annotations.Expose;
 
+/**
+ * A Finding is actual instances of diagnostic IDs found in a project after a static analysis tool run.
+ *
+ * A Finding can be a metric value (e.g. the tool found that the "total methods available in classes" is 401)
+ * or a finding can be a rule discovery (e.g. rule "SCS001: Bad Hashing Function" was found in file X.java
+ * at line 5, character 2).
+ */
 public class Finding {
 
     // Instance variables
@@ -9,16 +16,20 @@ public class Finding {
     @Expose
     private int characterNumber;
     @Expose
-    private String filePath;
-    @Expose
     private int lineNumber;
     @Expose
     private int severity;  // TODO: consider refactoring into enum
+    private double value;  // needed for metrics based findings (e.g. inherited methods = 45)
+    @Expose
+    private String filePath;
 
 
     // Constructors
 
+    // (TODO: change to builder pattern to better accommodate metrics and rule findings)
     public Finding() { }
+
+    public Finding(double value) { this.value = value; }
 
     public Finding(String filePath, int lineNumber, int characterNumber) {
         this.filePath = filePath;
@@ -47,6 +58,9 @@ public class Finding {
     public int getSeverity() { return severity; }
     public void setSeverity(int severity) {
         this.severity = severity;
+    }
+    public double getValue() {
+        return value;
     }
 
 

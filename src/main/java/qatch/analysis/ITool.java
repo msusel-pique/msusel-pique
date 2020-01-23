@@ -12,7 +12,9 @@ import java.util.Map;
 public interface ITool {
 
     /**
-     * Run the external static analysis tool (often a binary or .exe)
+     * Run the external static analysis tool (often a binary or .exe).
+     * Given an abstract Tool object, running this method should result in the tool
+     * running its analysis on a project and generating its result file.
      *
      * @param projectLocation
      *      Root directory location needed by the tool to perform its analysis
