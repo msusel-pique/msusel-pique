@@ -8,7 +8,7 @@ Due to the major changes of intent and design, this fork renames the project to 
 QATCH legacy build, config, rulesets, and default model files are left in an archive folder.
 
 PIQUE is a collection of library functions and runner entry points designed to support experimental software quality analysis from a language-agnostic perspective.
-To remain language-agnostic, this project provides the abstractions, interfaces, and algorithms necessary for quality assessment, but leaves the task of defining language-specific static analysis operations to dependent language-specific projects that will use MSUSEL-PIQUE as a reference.
+To remain language-agnostic, this project provides the abstractions, interfaces, and algorithms necessary for quality assessment, but leaves the task of defining language-specific static analysis operations to dependent language-specific projects that will use MSUSEL-PIQUE as a dependency.
 To facilitate newcomers, this platform provides default classes for each quality assessment component to allow the platform to be used "out of the box", and for those familiar with quality assessment approaches, the platform allows each component to be overridden with experimental approaches.
 
 Confused yet?
