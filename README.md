@@ -1,4 +1,4 @@
-# MSUSEL-PIQUE
+# msusel-pique
 ## Introduction
 This project is a fork of the QATCH project found from QuthEceSoftEng's [GitHub](https://github.com/AuthEceSoftEng/qatch) and [Website](http://83.212.105.167:8080/OnlineProjectEvaluator/).  
 
