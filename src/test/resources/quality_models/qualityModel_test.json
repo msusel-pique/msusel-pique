@@ -2,28 +2,28 @@
 	"name": "Test QM",
 	"tqi": {
 		"weights": {
-			"Characteristic 01": 0.8,
-			"Characteristic 02": 0.2
+			"QualityAspect 01": 0.8,
+			"QualityAspect 02": 0.2
 		},
 		"name": "Total Quality",
 		"value": 0.0
 	},
 	"characteristics": {
-		"Characteristic 01": {
+		"QualityAspect 01": {
 			"weights": {
 				"Property 01": 0.6,
 				"Property 02": 0.4
 			},
-			"name": "Characteristic 01",
+			"name": "QualityAspect 01",
 			"description": "Sample description",
 			"value": 0.0
 		},
-		"Characteristic 02": {
+		"QualityAspect 02": {
 			"weights": {
 				"Property 01": 0.5,
 				"Property 02": 0.5
 			},
-			"name": "Characteristic 02",
+			"name": "QualityAspect 02",
 			"description": "Sample description",
 			"value": 0.0
 		}

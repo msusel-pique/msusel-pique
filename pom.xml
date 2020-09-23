@@ -5,9 +5,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>msu.msusel</groupId>
-  <artifactId>msusel-qatch</artifactId>
+  <artifactId>msusel-pique</artifactId>
   <version>0.3.0</version>
-  <name>msusel-qatch</name>
+  <name>msusel-pique</name>
   <url>https://msusel.github.io</url>
 
   <properties>
@@ -136,4 +136,21 @@
       </plugins>
     </pluginManagement>
   </build>
+
+  <profiles>
+    <profile>
+      <id>thesis</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.22.1</version>
+            <configuration>
+              <groups>pique.thesis_tests.ThesisTest</groups>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
