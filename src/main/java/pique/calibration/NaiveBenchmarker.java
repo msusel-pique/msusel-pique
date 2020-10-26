@@ -59,12 +59,6 @@ public class NaiveBenchmarker implements IBenchmarker {
             System.out.println("\t" + counter + " of " + totalProjects + " analyzed.\n");
         }
 
-        // Create [Project_Name:Measure_Values] matrix file
-//        DefaultBenchmarker.createProjectMeasureMatrix(projects, analysisResults);
-
-        // Generate thresholds
-//        return rMeasureMedians(rThresholdsOutput, analysisResults);
-
 //        Map<String, Measure> measures = qmDescription.getMeasures();
         Map<String, ArrayList<Double>> measureBenchmarkData = new HashMap<>();
         projects.forEach(p -> {
