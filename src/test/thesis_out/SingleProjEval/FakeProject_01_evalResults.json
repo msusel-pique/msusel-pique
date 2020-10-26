@@ -6,7 +6,7 @@
   },
   "global_config": {
     "benchmark_strategy": "pique.calibration.DefaultBenchmarker",
-    "weights_strategy": "pique.calibration.AHPWeighter"
+    "weights_strategy": "NaiveWeighter"
   },
   "factors": {
     "product_factors": {

@@ -274,16 +274,16 @@ public class ThesisTests {
         ProductFactor p1 = qm.getProductFactor("ProductFactor 01");
         ProductFactor p2 = qm.getProductFactor("ProductFactor 02");
 
-        Assert.assertEquals(0.9, tqi.getWeight("QualityAspect 01"), 0.0001);
-        Assert.assertEquals(0.1, tqi.getWeight("QualityAspect 02"), 0.0001);
+        Assert.assertEquals(0.5, tqi.getWeight("QualityAspect 01"), 0.0001);
+        Assert.assertEquals(0.5, tqi.getWeight("QualityAspect 02"), 0.0001);
 
         Assert.assertEquals(0.5, c1.getWeight("ProductFactor 01"), 0.0001);
         Assert.assertEquals(0.5, c1.getWeight("ProductFactor 02"), 0.0001);
-        Assert.assertEquals(0.2, c2.getWeight("ProductFactor 01"), 0.0001);
-        Assert.assertEquals(0.8, c2.getWeight("ProductFactor 02"), 0.0001);
+        Assert.assertEquals(0.5, c2.getWeight("ProductFactor 01"), 0.0001);
+        Assert.assertEquals(0.5, c2.getWeight("ProductFactor 02"), 0.0001);
 
-        Assert.assertArrayEquals(new Double[]{0.02, 0.04, 0.12}, p1.getMeasure().getThresholds());
-        Assert.assertArrayEquals(new Double[]{0.02, 0.06, 0.18}, p2.getMeasure().getThresholds());
+        Assert.assertArrayEquals(new Double[]{0.02, 0.12}, p1.getMeasure().getThresholds());
+        Assert.assertArrayEquals(new Double[]{0.02, 0.18}, p2.getMeasure().getThresholds());
     }
 
     @Test

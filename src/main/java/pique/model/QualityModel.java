@@ -5,10 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.Expose;
-import pique.calibration.AHPWeighter;
-import pique.calibration.DefaultBenchmarker;
-import pique.calibration.IBenchmarker;
-import pique.calibration.IWeighter;
+import pique.calibration.*;
 import pique.evaluation.DefaultDiagnosticEvaluator;
 import pique.evaluation.IEvaluator;
 import pique.evaluation.INormalizer;
@@ -224,7 +221,7 @@ public class QualityModel {
 				benchmarker = (IBenchmarker) Class.forName(fullClassName).getConstructor().newInstance();
 			}
 			else {
-				benchmarker = new DefaultBenchmarker();
+				benchmarker = new NaiveBenchmarker();
 			}
 
 			// Optional weighter strategy
@@ -233,7 +230,7 @@ public class QualityModel {
 				weighter = (IWeighter) Class.forName(fullClassName).getConstructor().newInstance();
 			}
 			else {
-				weighter = new AHPWeighter();
+				weighter = new NaiveWeighter();
 			}
 
 			// Factors and measures collections as json
