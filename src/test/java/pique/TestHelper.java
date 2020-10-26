@@ -2,7 +2,7 @@ package pique;
 
 import org.apache.commons.io.FileUtils;
 import pique.analysis.*;
-import pique.calibration.DefaultBenchmarker;
+import pique.calibration.NaiveBenchmarker;
 import pique.evaluation.DefaultDiagnosticEvaluator;
 import pique.evaluation.LOCDiagnosticEvaluator;
 import pique.evaluation.Project;
@@ -41,7 +41,7 @@ public class TestHelper {
     public static Measure makeMeasure(String name) {
         Diagnostic d1 = makeDiagnostic(name + " diagnostic01");
         Diagnostic d2 = makeDiagnostic(name + " diagnostic02");
-        return new Measure(name, name + " tool name", false, Arrays.asList(d1, d2), new DefaultBenchmarker());
+        return new Measure(name, name + " tool name", false, Arrays.asList(d1, d2), new NaiveBenchmarker());
     }
 
 

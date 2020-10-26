@@ -4,7 +4,6 @@ import pique.analysis.ITool;
 import pique.calibration.IBenchmarker;
 import pique.calibration.IWeighter;
 import pique.calibration.WeightResult;
-import pique.calibration.AHPWeighter;
 import pique.model.QualityAspect;
 import pique.model.QualityModel;
 

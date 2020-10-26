@@ -1,7 +1,6 @@
 package pique.model;
 
 import com.google.gson.annotations.Expose;
-import pique.calibration.DefaultBenchmarker;
 import pique.calibration.IBenchmarker;
 import pique.evaluation.DefaultMeasureEvaluator;
 import pique.evaluation.DefaultNormalizer;

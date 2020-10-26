@@ -2,7 +2,7 @@
 	"name": "Test QM",
 	"additionalData": {},
 	"global_config": {
-		"benchmark_strategy": "pique.calibration.DefaultBenchmarker"
+		"benchmark_strategy": "pique.calibration.NaiveBenchmarker"
 	},
 	"factors": {
 		"tqi": {
@@ -10,8 +10,8 @@
 				"value": 0.0,
 				"description": "Sample description",
 				"weights": {
-					"QualityAspect 01": 0.8,
-					"QualityAspect 02": 0.2
+					"QualityAspect 01": 0.5,
+					"QualityAspect 02": 0.5
 				}
 			}
 		},
@@ -20,8 +20,8 @@
 				"value": 0.0,
 				"description": "Sample description",
 				"weights": {
-					"ProductFactor 01": 0.6,
-					"ProductFactor 02": 0.4
+					"ProductFactor 01": 0.5,
+					"ProductFactor 02": 0.5
 				}
 			},
 			"QualityAspect 02": {
@@ -59,7 +59,6 @@
 			],
 			"thresholds": [
 				0.0,
-				0.004,
 				0.02
 			],
 			"diagnostics": [
@@ -89,7 +88,6 @@
 			],
 			"thresholds": [
 				0.0,
-				0.01,
 				0.02
 			],
 			"diagnostics": [
