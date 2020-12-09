@@ -1,10 +1,11 @@
 package pique.model;
 
 import com.google.gson.annotations.Expose;
-import pique.evaluation.DefaultNormalizer;
-import pique.evaluation.LoCNormalizer;
 import pique.evaluation.IEvaluator;
 import pique.evaluation.INormalizer;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Abstract representation of a node belonging to the Quality Model
@@ -22,14 +23,10 @@ public abstract class ModelNode {
     protected IEvaluator evaluator;
     protected INormalizer normalizer;
 
-    // Constructor
+    protected Map<String, ModelNode> children = new HashMap<>();
+    protected Map<String, Double> weights = new HashMap<>();
 
-    public ModelNode(String name, String description, IEvaluator evaluator) {
-        this.name = name;
-        this.description = description;
-        this.evaluator = evaluator;
-        this.normalizer = new DefaultNormalizer();
-    }
+    // Constructor
 
     public ModelNode(String name, String description, IEvaluator evaluator, INormalizer normalizer) {
         this.name = name;
@@ -81,22 +78,35 @@ public abstract class ModelNode {
         this.normalizer = normalizer;
     }
 
+    public Map<String, ModelNode> getChildren() {
+        return children;
+    }
+
+    public void setChildren(Map<String, ModelNode> children) {
+        this.children = children;
+    }
+
+    public Map<String, Double> getWeights() {
+        return weights;
+    }
+
+    public void setWeights(Map<String, Double> weights) {
+        this.weights = weights;
+    }
+
+
     // Methods
 
     /**
      * A loose way of implementing the Prototype design pattern.
      * Each quality model node must describe how to clone itself.
      *
-     * @return
-     *      A deep clone of the current node object.
+     * @return A deep clone of the current node object.
      */
     public abstract ModelNode clone();
 
     /**
      * TODO (1.0): Documentation
      */
-    protected void evaluate()
-    {
-        this.value = evaluator.evalStrategy();
-    }
+    protected abstract void evaluate();
 }

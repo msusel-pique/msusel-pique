@@ -61,12 +61,12 @@ public class Tqi extends ModelNode {
     // Constructor
 
     public Tqi(String name, String description, Map<String, Double> weights) {
-        super(name, description, new DefaultFactorEvaluator());
+        super(name, description, new DefaultFactorEvaluator(), null);
         this.weights = (weights == null) ? new HashMap<>() : weights;
     }
 
     public Tqi(String name, String description, Map<String, Double> weights, Map<String, QualityAspect> qualityAspects) {
-        super(name, description, new DefaultFactorEvaluator());
+        super(name, description, new DefaultFactorEvaluator(), null);
         this.weights = (weights == null) ? new HashMap<>() : weights;
         this.qualityAspects = qualityAspects;
     }

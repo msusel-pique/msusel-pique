@@ -3,14 +3,15 @@ package pique.evaluation;
 import pique.model.Finding;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-public class DefaultDiagnosticEvaluator implements IEvaluator {
-    @Override
-    public double evalStrategy() {
-        throw new NotImplementedException();
+public class DefaultDiagnosticEvaluator extends Evaluator {
+
+    public DefaultDiagnosticEvaluator() {
+        this.name = "DefaultDiagnosticEvaluator";
     }
 
     @Override
-    public String getName() {
-        return "pique.evaluation.DefaultDiagnosticEvaluator";
+    public double evalStrategy(double inValue, Object... args) {
+        throw new NotImplementedException();
     }
+
 }

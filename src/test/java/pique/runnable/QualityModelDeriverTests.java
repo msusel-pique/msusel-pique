@@ -1,11 +1,10 @@
 package pique.runnable;
 
-import org.junit.Assert;
 import org.junit.Test;
 import pique.TestHelper;
 import pique.analysis.ITool;
 import pique.evaluation.DefaultDiagnosticEvaluator;
-import pique.evaluation.LOCDiagnosticEvaluator;
+import pique.evaluation.LoCEvaluator;
 import pique.model.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -41,7 +40,7 @@ public class QualityModelDeriverTests {
         public Map<String, Diagnostic> parseAnalysis(Path toolResults) {
             Map<String, Diagnostic> diagnostics = new HashMap<>();
             Finding f1 = new Finding(50);
-            Diagnostic locDiagnostic = new Diagnostic("loc", "loc diagnostic description", this.getName(), new LOCDiagnosticEvaluator());
+            Diagnostic locDiagnostic = new Diagnostic("loc", "loc diagnostic description", this.getName(), new LoCEvaluator());
             locDiagnostic.setFinding(f1);
             diagnostics.put(locDiagnostic.getName(), locDiagnostic);
             return diagnostics;

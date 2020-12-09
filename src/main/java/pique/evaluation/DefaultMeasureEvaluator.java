@@ -6,7 +6,7 @@ public class DefaultMeasureEvaluator implements IEvaluator {
 
     // TODO (1.0): fix
     @Override
-    public double evalStrategy() {
+    public double evalStrategy(double inValue, Object... args) {
         throw new NotImplementedException();
     }
 

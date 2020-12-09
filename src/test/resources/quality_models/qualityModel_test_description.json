@@ -35,7 +35,7 @@
 				{
 					"name": "loc",
 					"description": "Normalizer diagnostic for measure 01",
-					"eval_strategy": "pique.evaluation.LOCDiagnosticEvaluator",
+					"eval_strategy": "pique.evaluation.LoCEvaluator",
 					"toolName": "Fake LoC Tool" 
 				},
 				{
@@ -60,7 +60,7 @@
 				{
 					"name": "loc",
 					"description": "Normalizer diagnostic for measure 02",
-					"eval_strategy": "pique.evaluation.LOCDiagnosticEvaluator",
+					"eval_strategy": "pique.evaluation.LoCEvaluator",
 					"toolName": "Fake LoC Tool" 
 				},
 				{

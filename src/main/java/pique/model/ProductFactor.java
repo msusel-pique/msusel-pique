@@ -10,11 +10,11 @@ public class ProductFactor extends ModelNode {
 	// Constructors
 
 	public ProductFactor(String name, String description) {
-		super(name, description, new DefaultFactorEvaluator());
+		super(name, description, new DefaultFactorEvaluator(), null);
 	}
 	
 	public ProductFactor(String name, String description, Measure measure){
-		super(name, description, new DefaultFactorEvaluator());
+		super(name, description, new DefaultFactorEvaluator(), null);
 		this.measure = measure;
 	}
 

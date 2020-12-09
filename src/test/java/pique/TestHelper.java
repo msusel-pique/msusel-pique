@@ -2,9 +2,8 @@ package pique;
 
 import org.apache.commons.io.FileUtils;
 import pique.analysis.*;
-import pique.calibration.NaiveBenchmarker;
 import pique.evaluation.DefaultDiagnosticEvaluator;
-import pique.evaluation.LOCDiagnosticEvaluator;
+import pique.evaluation.LoCEvaluator;
 import pique.evaluation.LoCNormalizer;
 import pique.evaluation.Project;
 import pique.model.*;
@@ -154,7 +153,7 @@ public class TestHelper {
                 Map<String, Diagnostic> diagnostics = new HashMap<>();
 
                 Finding f1 = new Finding(200);
-                Diagnostic locDiagnostic = new Diagnostic("loc", "loc diagnostic description", this.getName(), new LOCDiagnosticEvaluator());
+                Diagnostic locDiagnostic = new Diagnostic("loc", "loc diagnostic description", this.getName(), new LoCEvaluator());
 
                 locDiagnostic.setFinding(f1);
                 diagnostics.put(locDiagnostic.getName(), locDiagnostic);

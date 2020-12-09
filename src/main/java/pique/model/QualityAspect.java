@@ -27,16 +27,16 @@ public class QualityAspect extends ModelNode {
 
     public QualityAspect(String name, String description) {
 
-        super(name, description, new DefaultFactorEvaluator());
+        super(name, description, new DefaultFactorEvaluator(), null);
     }
 
     public QualityAspect(String name, String description, Map<String, Double> weights) {
-        super(name, description, new DefaultFactorEvaluator());
+        super(name, description, new DefaultFactorEvaluator(), null);
         this.weights = weights;
     }
 
     public QualityAspect(String name, String description, Map<String, Double> weights, Map<String, ProductFactor> productFactors) {
-        super(name, description, new DefaultFactorEvaluator());
+        super(name, description, new DefaultFactorEvaluator(), null);
         this.weights = weights;
         this.productFactors = productFactors;
     }

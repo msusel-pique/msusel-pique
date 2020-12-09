@@ -38,7 +38,6 @@ public class Diagnostic extends ModelNode {
     private String toolName;
     @Expose
     private Set<Finding> findings = new HashSet<>();
-    IEvaluator evaluator;
 
 
     // Constructors
@@ -56,7 +55,7 @@ public class Diagnostic extends ModelNode {
     public Diagnostic(String id, String description, String toolName, IEvaluator evaluator) {
         super(id, description, evaluator, new DefaultNormalizer());
         this.toolName = toolName;
-        this.eval_strategy = this.evaluator.getName();
+        this.eval_strategy = evaluator.getName();
     }
 
 
@@ -90,6 +89,12 @@ public class Diagnostic extends ModelNode {
 
 
     // Methods
+
+    // TODO (1.0): documentation
+    @Override
+    protected void evaluate() {
+        value = evaluator.evalStrategy(this.value, findings);
+    }
 
     @Override
     public ModelNode clone() {
