@@ -13,8 +13,24 @@ import java.nio.file.Path;
 import java.util.*;
 
 public class NaiveBenchmarker implements IBenchmarker {
+
+    /**
+     * Derive thesholds for all {@link Measure} nodes using a naive approach:
+     * (1) threshold[0] = the lowest value seen for the {@link Measure}
+     * (2) threshold[1] = the highest value seen for the {@link Measure}
+     *
+     * @param benchmarkRepository The root directory containing the items to be used for benchmarking
+     * @param qmDescription       The quality model description file
+     * @param tools               The collection of static analysis tools needed to audio the benchmark repository
+     * @param projectRootFlag     Option flag to target the static analysis tools
+     * @param analysisResults     Location to place benchmarking analysis results
+     * @return A dictionary of [ Key: {@link pique.model.ModelNode} name, Value: thresholds ] where
+     * thresholds is a size = 2 array of Double[] containing the lowest and highest value
+     * seen for the given measure (after normalization).
+     */
     @Override
-    public Map<String, Double[]> deriveThresholds(Path benchmarkRepository, QualityModel qmDescription, Set<ITool> tools, String projectRootFlag, Path analysisResults, Path rThresholdsOutput) {
+    public Map<String, Double[]> deriveThresholds(Path benchmarkRepository, QualityModel qmDescription, Set<ITool> tools,
+                                                  String projectRootFlag) {
 
         // Collect root paths of each benchmark project
         Set<Path> projectRoots = FileUtility.multiProjectCollector(benchmarkRepository, projectRootFlag);
@@ -59,22 +75,22 @@ public class NaiveBenchmarker implements IBenchmarker {
             System.out.println("\t" + counter + " of " + totalProjects + " analyzed.\n");
         }
 
-//        Map<String, Measure> measures = qmDescription.getMeasures();
+        // Map all values audited for each measure
         Map<String, ArrayList<Double>> measureBenchmarkData = new HashMap<>();
         projects.forEach(p -> {
             p.getQualityModel().getMeasures().values().forEach(m -> {
-                    if (!measureBenchmarkData.containsKey(m.getName())) {
-                        measureBenchmarkData.put(m.getName(), new ArrayList<Double>() {{
-                            add(m.getValue());
-                        }});
+                        if (!measureBenchmarkData.containsKey(m.getName())) {
+                            measureBenchmarkData.put(m.getName(), new ArrayList<Double>() {{
+                                add(m.getValue());
+                            }});
+                        } else {
+                            measureBenchmarkData.get(m.getName()).add(m.getValue());
+                        }
                     }
-                    else {
-                        measureBenchmarkData.get(m.getName()).add(m.getValue());
-                    }
-                }
             );
         });
 
+        // Identify the lowest and highest of each measure value
         Map<String, Double[]> measureThresholds = new HashMap<>();
         measureBenchmarkData.forEach((measureName, measureValues) -> {
             measureThresholds.putIfAbsent(measureName, new Double[2]);
@@ -84,40 +100,6 @@ public class NaiveBenchmarker implements IBenchmarker {
         });
 
         return measureThresholds;
-    }
-
-    @Override
-    public double utilityFunction(double inValue, Double[] thresholds, boolean positive) {
-        if (thresholds.length > 2) throw new RuntimeException("NaiveBenchmarker.utilityFunction expects the measure's thresholds[].size == 2");
-
-        Double lowerBound = thresholds[0];
-        Double upperBound = thresholds[1];
-
-        if (positive) {
-            //If the metric has a positive impact on quality -> Ascending utility function
-            if (inValue <= lowerBound) {
-                //Lower Group
-                return(0.0);
-            } else if (inValue <= upperBound) {
-                //Middle Group
-                return(inValue);
-            } else {
-                //Saturation
-                return(1.0);
-            }
-        } else {
-            //If the metric has a negative impact on quality -> Descending utility function
-            if (inValue <= lowerBound) {
-                //Lower Group
-                return(1.0);
-            } else if (inValue <= upperBound) {
-                //Upper Group
-                return(inValue);
-            } else {
-                //Saturation
-                return(0.0);
-            }
-        }
     }
 
     @Override

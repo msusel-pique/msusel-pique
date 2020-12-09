@@ -21,39 +21,23 @@ import java.util.Set;
  */
 public class QualityModelDeriver {
 
-    public static QualityModel deriveModel(
-            QualityModel qmDesign,
-            Set<ITool> tools,
-            Path benchmarkRepository,
-            Path comparisonMatricesDirectory,
-            Path benchmarkData,
-            Path rThresholdsOutput,
-            Path tempWeightsDirectory,
-            String projectRootFlag) {
-
-        // (0) Pre-checks
-        /*
-         * TODO: validate benchmark repository is of good form and won't throw expected errors
-         *      (all config.properties values, .sln or .csproj files needed by static analyzers,
-         *       benchmark repository file names and cell(0,0) names...)
-         */
+    public static QualityModel deriveModel(QualityModel qmDesign, Set<ITool> tools, Path benchmarkRepository,
+                                           String projectRootFlag) {
 
         // (1) Derive thresholds
         IBenchmarker benchmarker = qmDesign.getBenchmarker();
         Map<String, Double[]> measureNameThresholdMappings = benchmarker.deriveThresholds(
-                benchmarkRepository, qmDesign, tools, projectRootFlag, benchmarkData, rThresholdsOutput
-        );
+                benchmarkRepository, qmDesign, tools, projectRootFlag);
 
         // (2) Elicitate weights
         IWeighter weighter = qmDesign.getWeighter();
-        Set<WeightResult> weights = weighter.elicitateWeights(comparisonMatricesDirectory, tempWeightsDirectory);
+        Set<WeightResult> weights = weighter.elicitateWeights();
         // TODO: assert WeightResult names match expected TQI, QualityAspect, and ProductFactor names from quality model description
 
         // (3) Apply results to nodes in quality model by matching names
         // Thresholds (ProductFactor nodes)
-        measureNameThresholdMappings.forEach((measureName, thresholds) -> {
-            qmDesign.getProductFactorByMeasureName(measureName).getMeasure().setThresholds(thresholds);
-        });
+        measureNameThresholdMappings.forEach((measureName, thresholds) ->
+                qmDesign.getProductFactorByMeasureName(measureName).getMeasure().setThresholds(thresholds));
 
         // Weights (TQI and QualityAspect nodes)
         for (WeightResult weightsIn : weights) {

@@ -1,14 +1,12 @@
 package pique.evaluation;
 
 import pique.model.Finding;
-
-import java.util.Set;
-import java.util.function.Function;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class DefaultDiagnosticEvaluator implements IEvaluator {
     @Override
-    public Function<Set<Finding>, Double> evalStrategy() {
-        return findings -> findings.stream().mapToDouble(Finding::getSeverity).sum();
+    public double evalStrategy() {
+        throw new NotImplementedException();
     }
 
     @Override

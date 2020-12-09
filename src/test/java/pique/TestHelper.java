@@ -5,6 +5,7 @@ import pique.analysis.*;
 import pique.calibration.NaiveBenchmarker;
 import pique.evaluation.DefaultDiagnosticEvaluator;
 import pique.evaluation.LOCDiagnosticEvaluator;
+import pique.evaluation.LoCNormalizer;
 import pique.evaluation.Project;
 import pique.model.*;
 
@@ -41,7 +42,7 @@ public class TestHelper {
     public static Measure makeMeasure(String name) {
         Diagnostic d1 = makeDiagnostic(name + " diagnostic01");
         Diagnostic d2 = makeDiagnostic(name + " diagnostic02");
-        return new Measure(name, name + " tool name", false, Arrays.asList(d1, d2), new NaiveBenchmarker());
+        return new Measure(name, name + " tool name", new LoCNormalizer(), false, Arrays.asList(d1, d2));
     }
 
 

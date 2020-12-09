@@ -7,11 +7,33 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Interface class used by model derivation for benchmarking
+ */
 public interface IBenchmarker {
 
-    Map<String, Double[]> deriveThresholds(Path benchmarkRepository, QualityModel qmDescription, Set<ITool> tools, String projectRootFlag, Path analysisResults, Path rThresholdsOutput);
+    /**
+     * Primary benchmarking function: Derive thresholds for a collection of {@link pique.model.ModelNode} objects
+     *      given a benchmark repository
+     *
+     * @param benchmarkRepository
+     *      The root directory containing the items to be used for benchmarking
+     * @param qmDescription
+     *      The quality model description file
+     * @param tools
+     *      The collection of static analysis tools needed to audio the benchmark repository
+     * @param projectRootFlag
+     *      Option flag to target the static analysis tools
+     * @param analysisResults
+     *      Location to place benchmarking analysis results
+     * @return
+     *      A dictionary of [ Key: {@link pique.model.ModelNode} name, Value: thresholds ]
+     */
+    Map<String, Double[]> deriveThresholds(Path benchmarkRepository, QualityModel qmDescription, Set<ITool> tools,
+                                           String projectRootFlag);
 
-    double utilityFunction(double inValue, Double[] thresholds, boolean positive);
-
+    /**
+     * @return An identifiable name of the benchmarker
+     */
     String getName();
 }

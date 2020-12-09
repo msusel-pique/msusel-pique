@@ -1,6 +1,10 @@
 package pique.model;
 
 import com.google.gson.annotations.Expose;
+import pique.evaluation.DefaultNormalizer;
+import pique.evaluation.LoCNormalizer;
+import pique.evaluation.IEvaluator;
+import pique.evaluation.INormalizer;
 
 /**
  * Abstract representation of a node belonging to the Quality Model
@@ -9,42 +13,73 @@ public abstract class ModelNode {
 
     // Fields
     @Expose
-    private String description;
-    @Expose
-    private double value;  // the value this node evaluates to
-    private String name;
+    protected double value;  // the value this node evaluates to
 
+    @Expose
+    protected String description;
+    protected String name;
+
+    protected IEvaluator evaluator;
+    protected INormalizer normalizer;
 
     // Constructor
 
-    public ModelNode(String name, String description) {
+    public ModelNode(String name, String description, IEvaluator evaluator) {
         this.name = name;
         this.description = description;
+        this.evaluator = evaluator;
+        this.normalizer = new DefaultNormalizer();
     }
 
+    public ModelNode(String name, String description, IEvaluator evaluator, INormalizer normalizer) {
+        this.name = name;
+        this.description = description;
+        this.evaluator = evaluator;
+        this.normalizer = normalizer;
+    }
 
     // Getters and setters
 
     public String getDescription() {
         return description;
     }
+
     public void setDescription(String desription) {
         this.description = desription;
     }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
-    public double getValue(Double... args) {
-        evaluate(args);
+
+    public double getValue() {
+        evaluate();
         return this.value;
     }
+
     public void setValue(double value) {
         this.value = value;
     }
 
+    public IEvaluator getEvaluator() {
+        return evaluator;
+    }
+
+    public void setEvaluator(IEvaluator evaluator) {
+        this.evaluator = evaluator;
+    }
+
+    public INormalizer getNormalizer() {
+        return normalizer;
+    }
+
+    public void setNormalizer(INormalizer normalizer) {
+        this.normalizer = normalizer;
+    }
 
     // Methods
 
@@ -57,16 +92,11 @@ public abstract class ModelNode {
      */
     public abstract ModelNode clone();
 
-
     /**
-     * Calculates and update the value field of this object.
-     * If evaluating TQI or QualityAspect nodes, this will likely be a weight sum function.
-     * If evaluating ProductFactor nodes, this will likely be the linear interpolation utility function.
-     *
-     * Post:
-     *      The value field is updated.
+     * TODO (1.0): Documentation
      */
-    protected abstract void evaluate(Double... args);
-
-
+    protected void evaluate()
+    {
+        this.value = evaluator.evalStrategy();
+    }
 }

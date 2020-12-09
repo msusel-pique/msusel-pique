@@ -94,7 +94,7 @@ public class Project{
 	 * provided by the quality model and the values contained in the project's ProductFactor nodes.
 	 */
 	public void evaluateCharacteristics() {
-		getQualityModel().getQualityAspects().values().forEach(characteristic -> characteristic.getValue((double)getLinesOfCode()));
+		getQualityModel().getQualityAspects().values().forEach(characteristic -> characteristic.getValue());
 	}
 
 
@@ -103,12 +103,12 @@ public class Project{
 	 * provided by the quality model and the findings contained in the Measure nodes.
 	 */
 	public void evaluateProperties() {
-		getQualityModel().getProductFactors().values().forEach(property -> property.getValue((double)getLinesOfCode()));
+		getQualityModel().getProductFactors().values().forEach(property -> property.getValue());
 	}
 
 
 	public void evaluateTqi() {
-		getQualityModel().getTqi().getValue((double)getLinesOfCode());
+		getQualityModel().getTqi().getValue();
 	}
 
 

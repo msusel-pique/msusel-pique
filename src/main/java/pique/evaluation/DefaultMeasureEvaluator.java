@@ -1,15 +1,13 @@
 package pique.evaluation;
 
-import pique.model.Finding;
-
-import java.util.Set;
-import java.util.function.Function;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class DefaultMeasureEvaluator implements IEvaluator {
 
+    // TODO (1.0): fix
     @Override
-    public Function<Set<Finding>, Double> evalStrategy() {
-        return findings -> 1.0;
+    public double evalStrategy() {
+        throw new NotImplementedException();
     }
 
     @Override

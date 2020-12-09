@@ -1,66 +1,89 @@
 {
 	"name": "Test QM",
 	"additionalData": {},
-	"tqi": {
-		"name": "Total Quality"
-	},
-	"characteristics": {
-		"Characteristic 01": {
-			"name": "Characteristic 01",
-			"description": "Sample description"
+	"factors": {
+		"tqi": {
+			"Total Quality": {
+				"description": "Sample description"
+			}
 		},
-		"Characteristic 02": {
-			"name": "Characteristic 02",
-			"description": "Sample description"
+		"quality_aspects": {
+			"QualityAspect 01": {
+				"description": "Sample description"
+			},
+			"QualityAspect 02": {
+				"description": "Sample description"
+			}
+		},
+		"product_factors": {
+			"ProductFactor 01": {
+				"description": "Placeholder description"
+			},
+			"ProductFactor 02": {
+				"description": "Placeholder description"
+			}
 		}
 	},
-	"properties": {
-		"Property 01": {
-			"measure": {
-				"name": "Measure 01",
-				"description": "Placeholder description",
-				"diagnostics": [
-					{
-						"name": "TST0001",
-						"description": "Description for TST0001 diagnostic",
-						"toolName": "Test tool"
-					},
-					{
-						"name": "TST0002",
-						"description": "Description for TST0002 diagnostic",
-						"toolName": "Test tool"
-					}
-				]
-			},
+	"measures": {
+		"Measure 01": {
+			"description": "Sample description",
 			"positive": false,
-			"name": "Property 01",
-			"description": "Sample description"
+			"parents": [
+				"ProductFactor 01"
+			],
+			"diagnostics": [
+				{
+					"name": "loc",
+					"description": "Normalizer diagnostic for measure 01",
+					"eval_strategy": "pique.evaluation.LOCDiagnosticEvaluator",
+					"toolName": "Fake LoC Tool" 
+				},
+				{
+					"name": "TST0001",
+					"description": "Description for TST0001 diagnostic",
+					"toolName": "Test tool"
+				},
+				{
+					"name": "TST0002",
+					"description": "Description for TST0002 diagnostic",
+					"toolName": "Test tool"
+				}
+			]
 		},
-		"Property 02": {
-			"measure": {
-				"name": "Measure 02",
-				"description": "Placeholder description",
-				"diagnostics": [
-					{
-						"name": "TST0003",
-						"description": "Description for TST0003 diagnostic",
-						"toolName": "Test tool"
-					},
-					{
-						"name": "TST0004",
-						"description": "Description for TST0004 diagnostic",
-						"toolName": "Test tool"
-					},
-					{
-						"name": "TST0005",
-						"description": "Description for TST0005 diagnostic",
-						"toolName": "Test tool"
-					}
-				]
-			},
+		"Measure 02": {
+			"description": "Sample description",
 			"positive": false,
-			"name": "Property 02",
-			"description": "Sample description"
+			"parents": [
+				"ProductFactor 02"
+			],
+			"diagnostics": [
+				{
+					"name": "loc",
+					"description": "Normalizer diagnostic for measure 02",
+					"eval_strategy": "pique.evaluation.LOCDiagnosticEvaluator",
+					"toolName": "Fake LoC Tool" 
+				},
+				{
+					"name": "loc",
+					"description": "Normalizer diagnostic for this measure",
+					"toolName": "Fake LoC Tool" 
+				},
+				{
+					"name": "TST0003",
+					"description": "Description for TST0003 diagnostic",
+					"toolName": "Test tool"
+				},
+				{
+					"name": "TST0004",
+					"description": "Description for TST0004 diagnostic",
+					"toolName": "Test tool"
+				},
+				{
+					"name": "TST0005",
+					"description": "Description for TST0005 diagnostic",
+					"toolName": "Test tool"
+				}
+			]
 		}
 	}
 }

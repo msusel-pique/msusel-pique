@@ -1,6 +1,7 @@
 package pique.model;
 
 import com.google.gson.annotations.Expose;
+import pique.evaluation.DefaultNormalizer;
 import pique.evaluation.IEvaluator;
 
 import java.util.HashSet;
@@ -53,9 +54,8 @@ public class Diagnostic extends ModelNode {
      *      its associated ITool::name object
      */
     public Diagnostic(String id, String description, String toolName, IEvaluator evaluator) {
-        super(id, description);
+        super(id, description, evaluator, new DefaultNormalizer());
         this.toolName = toolName;
-        this.evaluator = evaluator;
         this.eval_strategy = this.evaluator.getName();
     }
 
@@ -69,12 +69,15 @@ public class Diagnostic extends ModelNode {
     public String getEval_strategy() {
         return eval_strategy;
     }
+
     private void setEval_strategy(String eval_strategy) {
         this.eval_strategy = eval_strategy;
     }
 
     public Set<Finding> getFindings() { return findings; }
+
     public void setFinding(Finding finding) { findings.add(finding); }
+
     public void setFindings(Set<Finding> findings) { this.findings = findings; }
 
     public int getNumFindings() {
@@ -105,20 +108,5 @@ public class Diagnostic extends ModelNode {
 
         return getName().equals(otherDiagnostic.getName())
                 && getToolName().equals(otherDiagnostic.getToolName());
-    }
-
-    /**
-     * Diagnostics must define in their instantiating, language-specific class
-     * how to evaluate the collection of its findings.  Often this will simply be
-     * a count of findings, but quality evaluation (especially in the context of security)
-     * should allow for other evaluation functions.
-     *
-     * @param args
-     *      Empty args. No parameters needed.
-     */
-    @Override
-    protected void evaluate(Double... args) {
-        assert getEvaluator().evalStrategy() != null;
-        setValue(getEvaluator().evalStrategy().apply(this.findings));
     }
 }
