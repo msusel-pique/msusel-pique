@@ -1,11 +1,17 @@
-//package pique.model;
-//
-//import org.junit.Assert;
-//import org.junit.Test;
-//import pique.TestHelper;
-//
-//public class DiagnosticTests {
-//
+package pique.model;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+public class DiagnosticTests {
+
+    @Test
+    public void placeholder() {
+        Assert.assertTrue(true);
+    }
+}
+
+
 //    @Test
 //    public void testEvaluate() {
 //        Finding f1 = TestHelper.makeFinding("file/path", 11, 1);
@@ -18,5 +24,3 @@
 //        d.setFinding(f3);
 //
 //        Assert.assertEquals(3, d.getValue(), 0);
-//    }
-//}

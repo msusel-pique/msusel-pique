@@ -1,13 +1,14 @@
 package pique.evaluation;
 
+import pique.model.Finding;
 import pique.model.ModelNode;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class DefaultFindingEvaluator extends Evaluator {
 
     @Override
-    public double evalStrategy(ModelNode inNode) {
-        throw new NotImplementedException();
+    public double evaluate(ModelNode inNode) {
+        Finding node = (Finding)inNode;
+        return node.getSeverity();
     }
 
 }

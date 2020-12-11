@@ -59,6 +59,13 @@ public class QualityModel {
         importQualityModel(qmFilePath);
     }
 
+    public QualityModel(String name, Tqi tqi) {
+        this.name = name;
+        this.tqi = tqi;
+        this.benchmarker = new NaiveBenchmarker();
+        this.weighter = new NaiveWeighter();
+    }
+
     /**
      * Constructor for use in deep cloning this quality model
      *

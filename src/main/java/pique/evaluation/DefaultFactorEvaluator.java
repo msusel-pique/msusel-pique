@@ -7,7 +7,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 public class DefaultFactorEvaluator extends Evaluator {
 
     @Override
-    public double evalStrategy(ModelNode inNode) {
+    public double evaluate(ModelNode inNode) {
         throw new NotImplementedException();
     }
 }

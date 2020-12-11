@@ -68,12 +68,6 @@ public class Tqi extends ModelNode {
     }
 
     @Override
-    protected void evaluate() {
-        throw new NotImplementedException();
-    }
-
-
-    @Override
     public boolean equals(Object other) {
         if (!(other instanceof Tqi)) {
             return false;

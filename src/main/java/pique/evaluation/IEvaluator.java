@@ -9,7 +9,7 @@ public interface IEvaluator {
      * @return
      *      The evaluated value of a node after running evalation given that node's state
      */
-    double evalStrategy(ModelNode inNode);
+    double evaluate(ModelNode inNode);
 
     /**
      * @return

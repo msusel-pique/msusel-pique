@@ -1,6 +1,7 @@
 package pique.model;
 
 import com.google.gson.annotations.Expose;
+import pique.evaluation.DefaultDiagnosticEvaluator;
 import pique.evaluation.DefaultNormalizer;
 import pique.evaluation.IEvaluator;
 import pique.evaluation.INormalizer;
@@ -43,6 +44,13 @@ public class Diagnostic extends ModelNode {
 
 
     // Constructors
+
+    public Diagnostic(String id, String description, String toolName) {
+        super(id, description, new DefaultDiagnosticEvaluator(), new DefaultNormalizer());
+        this.toolName = toolName;
+        this.eval_strategy = evaluator.getName();
+    }
+
     /**
      * Constructor with custom evaluation function
      *
@@ -86,12 +94,6 @@ public class Diagnostic extends ModelNode {
 
 
     // Methods
-
-    // TODO (1.0): documentation
-    @Override
-    protected void evaluate() {
-        throw new NotImplementedException();
-    }
 
     @Override
     public ModelNode clone() {

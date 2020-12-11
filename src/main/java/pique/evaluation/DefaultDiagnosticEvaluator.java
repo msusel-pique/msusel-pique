@@ -1,14 +1,18 @@
 package pique.evaluation;
 
-import pique.model.Finding;
+import pique.model.Diagnostic;
 import pique.model.ModelNode;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+// TODO (1.0) Documentation
 public class DefaultDiagnosticEvaluator extends Evaluator {
 
     @Override
-    public double evalStrategy(ModelNode inNode) {
-        throw new NotImplementedException();
+    public double evaluate(ModelNode inNode) {
+        Diagnostic node = (Diagnostic)inNode;
+        return node.getChildren().values().stream()
+                .mapToDouble(ModelNode::getValue)
+                .sum();
     }
 
 }

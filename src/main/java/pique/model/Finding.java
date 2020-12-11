@@ -120,10 +120,5 @@ public class Finding extends ModelNode {
                 getWeights(),  getFilePath(), getLineNumber(), getCharacterNumber(), getSeverity());
     }
 
-    @Override
-    protected void evaluate() {
-        throw new NotImplementedException();
-    }
-
     //endregion
 }

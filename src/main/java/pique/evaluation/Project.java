@@ -31,6 +31,11 @@ public class Project{
 		this.name = name;
 	}
 
+	public Project(String name, QualityModel qm) {
+		this.name = name;
+		this.qualityModel = qm.clone();
+	}
+
 	public Project(String name, Path path, QualityModel qm) {
 		this.name = name;
 		this.path = path;

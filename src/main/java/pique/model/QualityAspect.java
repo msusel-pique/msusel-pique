@@ -13,8 +13,6 @@ import java.util.Map;
  * This class represents a quality characteristic of the
  * Quality Model that is used in order to evaluate a
  * project or a set of projects.
- *
- * @author Miltos, Rice
  */
 public class QualityAspect extends ModelNode {
 
@@ -55,11 +53,6 @@ public class QualityAspect extends ModelNode {
 
         return new QualityAspect(getValue(), getName(), getDescription(), getEvaluator(), getNormalizer(),
                 clonedChildren, getWeights());
-    }
-
-    @Override
-    protected void evaluate() {
-        throw new NotImplementedException();
     }
 
     @Override

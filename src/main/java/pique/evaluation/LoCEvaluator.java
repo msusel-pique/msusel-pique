@@ -12,7 +12,7 @@ public class LoCEvaluator extends Evaluator {
 
     // TODO (1.0): Documentation
     @Override
-    public double evalStrategy(ModelNode inNode) {
+    public double evaluate(ModelNode inNode) {
 
         // TODO (1.0): Add error handling
         throw new NotImplementedException();

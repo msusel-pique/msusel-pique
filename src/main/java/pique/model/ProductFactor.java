@@ -45,11 +45,6 @@ public class ProductFactor extends ModelNode {
 	}
 
 	@Override
-	protected void evaluate() {
-		throw new NotImplementedException();
-	}
-
-	@Override
 	public boolean equals(Object other) {
 		if (!(other instanceof ProductFactor)) { return false; }
 		ProductFactor otherProductFactor = (ProductFactor) other;

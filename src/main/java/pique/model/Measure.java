@@ -197,11 +197,6 @@ public class Measure extends ModelNode {
 	}
 
 	@Override
-	protected void evaluate() {
-		throw new NotImplementedException();
-	}
-
-	@Override
 	public boolean equals(Object other) {
 		if (!(other instanceof Measure)) { return false; }
 		Measure otherMeasure = (Measure) other;

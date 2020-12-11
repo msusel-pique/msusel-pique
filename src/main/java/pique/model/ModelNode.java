@@ -110,11 +110,7 @@ public abstract class ModelNode {
     }
 
     public void setChildren(Collection<ModelNode> children) {
-        children.forEach(element -> {
-            getChildren().putIfAbsent(element.getName(), element);
-        });
-
-
+        children.forEach(element -> getChildren().putIfAbsent(element.getName(), element));
     }
 
     public Map<String, Double> getWeights() {
@@ -172,7 +168,9 @@ public abstract class ModelNode {
     /**
      * TODO (1.0): Documentation
      */
-    protected abstract void evaluate();
+    protected void evaluate() {
+        setValue(getEvaluator().evaluate(this));
+    }
 
     //endregion
 }
