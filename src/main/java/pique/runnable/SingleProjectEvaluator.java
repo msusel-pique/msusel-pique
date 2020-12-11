@@ -132,6 +132,7 @@ public class SingleProjectEvaluator {
      *      The project under evaluation. This project should have a contained qualityModel with
      *      weight and threshold instances.
      */
+    // TODO (1.0) Update once basic tests passing
     private void validatePreEvaluationState(Project project) {
         QualityModel projectQM = project.getQualityModel();
 
@@ -145,11 +146,11 @@ public class SingleProjectEvaluator {
                 throw new RuntimeException("The project's quality model does not have any weights instantiated to its characteristic node");
             }
 
-            characteristic.getProductFactors().values().forEach(productFactor -> {
-                if (productFactor.getMeasure().getThresholds() == null) {
-                    throw new RuntimeException("The project's quality model does not have any thresholds instantiated to its measure node.");
-                }
-            });
+//            characteristic.getChildren().values().forEach(productFactor -> {
+//                if (productFactor.getMeasure().getThresholds() == null) {
+//                    throw new RuntimeException("The project's quality model does not have any thresholds instantiated to its measure node.");
+//                }
+//            });
         });
     }
 }

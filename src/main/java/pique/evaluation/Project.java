@@ -2,17 +2,13 @@ package pique.evaluation;
 
 import com.google.gson.annotations.Expose;
 import org.apache.commons.lang3.tuple.Pair;
-import pique.model.Diagnostic;
-import pique.model.ProductFactor;
-import pique.model.QualityModel;
-import pique.model.QualityModelExport;
+import pique.model.*;
 
 import java.nio.file.Path;
 import java.util.Map;
 
 /**
  * This class represents a project under evaluation.
- * @author Miltos, Rice
  */
 
 public class Project{
@@ -73,28 +69,27 @@ public class Project{
 	 * @param toolResult
 	 * 		A diagnostic object parsed from the tool result file
 	 */
+	// TODO (1.0): Currently makes assumption that all product factors have exactly 1 connected measure
 	public void addFindings(Diagnostic toolResult) {
-		for (ProductFactor productFactor : getQualityModel().getProductFactors().values()) {
-			for (Diagnostic diagnostic : productFactor.getMeasure().getDiagnostics()) {
-				if (diagnostic.getName().equals(toolResult.getName())) { diagnostic.setFindings(toolResult.getFindings()); }
+		for (ModelNode productFactor : getQualityModel().getProductFactors().values()) {
+			for (ModelNode diagnostic : productFactor.getChildren().values()) {
+				if (diagnostic.getName().equals(toolResult.getName())) {
+					diagnostic.setChildren(toolResult.getChildren().values());
+				}
 			}
 		}
 	}
 
 	public void evaluateMeasures() {
-		getQualityModel().getMeasures().values().forEach(m -> {
-			m.getValue();
-			m.setNum_findings(m.getNumFindings());
-		});
+		getQualityModel().getMeasures().values().forEach(ModelNode::getValue);
 	}
-
 
 	/**
 	 * Evaluate and set this project's characteristics using the weights
 	 * provided by the quality model and the values contained in the project's ProductFactor nodes.
 	 */
 	public void evaluateCharacteristics() {
-		getQualityModel().getQualityAspects().values().forEach(characteristic -> characteristic.getValue());
+		getQualityModel().getQualityAspects().values().forEach(ModelNode::getValue);
 	}
 
 
@@ -103,7 +98,7 @@ public class Project{
 	 * provided by the quality model and the findings contained in the Measure nodes.
 	 */
 	public void evaluateProperties() {
-		getQualityModel().getProductFactors().values().forEach(property -> property.getValue());
+		getQualityModel().getProductFactors().values().forEach(ModelNode::getValue);
 	}
 
 
@@ -142,9 +137,9 @@ public class Project{
 	public void updateDiagnosticsWithFindings(Map<String, Diagnostic> diagnosticsWithFindings) {
 		diagnosticsWithFindings.values().forEach(diagnostic -> {
 			getQualityModel().getMeasures().values().forEach(measure -> {
-				measure.getDiagnostics().forEach(oldDiagnostic -> {
+				measure.getChildren().values().forEach(oldDiagnostic -> {
 					if (oldDiagnostic.getName().equals(diagnostic.getName())) {
-						oldDiagnostic.setFindings(diagnostic.getFindings());
+						oldDiagnostic.setChildren(diagnostic.getChildren());
 					}
 				});
 			});

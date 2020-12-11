@@ -3,8 +3,12 @@ package pique.model;
 import com.google.gson.annotations.Expose;
 import pique.evaluation.DefaultNormalizer;
 import pique.evaluation.IEvaluator;
+import pique.evaluation.INormalizer;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -36,8 +40,6 @@ public class Diagnostic extends ModelNode {
     private String eval_strategy;
     @Expose
     private String toolName;
-    @Expose
-    private Set<Finding> findings = new HashSet<>();
 
 
     // Constructors
@@ -58,6 +60,11 @@ public class Diagnostic extends ModelNode {
         this.eval_strategy = evaluator.getName();
     }
 
+    public Diagnostic(double value, String name, String description, IEvaluator evaluator, INormalizer normalizer,
+                   Map<String, ModelNode> children, Map<String, Double> weights) {
+        super(value, name, description, evaluator, normalizer, children, weights);
+    }
+
 
     // Getters and setters
 
@@ -73,16 +80,6 @@ public class Diagnostic extends ModelNode {
         this.eval_strategy = eval_strategy;
     }
 
-    public Set<Finding> getFindings() { return findings; }
-
-    public void setFinding(Finding finding) { findings.add(finding); }
-
-    public void setFindings(Set<Finding> findings) { this.findings = findings; }
-
-    public int getNumFindings() {
-        return getFindings().size();
-    }
-
     public String getToolName() {
         return toolName;
     }
@@ -93,17 +90,17 @@ public class Diagnostic extends ModelNode {
     // TODO (1.0): documentation
     @Override
     protected void evaluate() {
-        value = evaluator.evalStrategy(this.value, findings);
+        throw new NotImplementedException();
     }
 
     @Override
     public ModelNode clone() {
-        Diagnostic clonedDiagnostic = new Diagnostic(getName(), getDescription(), getToolName(), getEvaluator());
-        findings.forEach(finding -> {
-            setFinding(finding.clone());
-        });
 
-        return clonedDiagnostic;
+        Map<String, ModelNode> clonedChildren = new HashMap<>();
+        getChildren().forEach((k, v) -> clonedChildren.put(k, v.clone()));
+
+        return new Diagnostic(getValue(), getName(), getDescription(), getEvaluator(), getNormalizer(),
+                clonedChildren, getWeights());
     }
 
     @Override

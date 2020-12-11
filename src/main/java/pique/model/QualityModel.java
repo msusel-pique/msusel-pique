@@ -5,7 +5,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.Expose;
-import pique.calibration.*;
+import pique.calibration.IBenchmarker;
+import pique.calibration.IWeighter;
+import pique.calibration.NaiveBenchmarker;
+import pique.calibration.NaiveWeighter;
 import pique.evaluation.DefaultDiagnosticEvaluator;
 import pique.evaluation.IEvaluator;
 import pique.evaluation.INormalizer;
@@ -15,19 +18,20 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * This class encapsulates all the appropriate information that describe a
+ * This class contains all the appropriate information that describe a
  * Quality Model that can be used for the evaluation of a single project or
  * a benchmark of projects.
  * <p>
  * Typically, it is used in order to load the PropertySet and the CharacteristicSet
- * of the XML file that describes the quality model and assign their values to the
+ * of the file that describes the quality model and assign their values to the
  * project (or projects) that we want to evaluate.
- *
- * @author Miltos, Rice
  */
 /*
  * TODO:
@@ -39,7 +43,7 @@ public class QualityModel {
     @Expose
     private String name;  //The name of the QM found in the XML file
     @Expose
-    private Tqi tqi;  // root node, the total quality evaluation, contains characteristic objects as children
+    private Tqi tqi;  // root node, the total quality evaluation, contains quality aspect objects as children
     private IBenchmarker benchmarker;
     private IWeighter weighter;
 
@@ -69,52 +73,46 @@ public class QualityModel {
         this.weighter = weighter;
     }
 
-
-    // Getters and Setters
+    //region Getters and Setters
     public IBenchmarker getBenchmarker() {
         return benchmarker;
     }
 
     public QualityAspect getAnyQualityAspect() {
-        return getTqi().getAnyQualityAspect();
+        return (QualityAspect) getTqi().getAnyChild();
     }
 
     public QualityAspect getQualityAspect(String name) {
-        return getTqi().getQualityAspects().get(name);
+        return (QualityAspect) getTqi().getChildByName(name);
     }
 
-    public Map<String, QualityAspect> getQualityAspects() {
-        return getTqi().getQualityAspects();
+    public Map<String, ModelNode> getQualityAspects() {
+        return getTqi().getChildren();
     }
 
-    public void setQualityAspect(String qualityAspectName, QualityAspect qualityAspect) {
-        getTqi().getQualityAspects().put(qualityAspectName, qualityAspect);
+    public void setQualityAspects(Map<String, ModelNode> qualityAspects) {
+        getTqi().setChildren(qualityAspects);
     }
 
-    public void setQualityAspects(Map<String, QualityAspect> qualityAspect) {
-        getTqi().setQualityAspects(qualityAspect);
-    }
-
-    public void setFinding(Measure diagnosticsMeasure, String diagnosticName, Finding finding) {
-        diagnosticsMeasure.getDiagnostic(diagnosticName).setFinding(finding);
-    }
-
-    public Measure getMeasure(String measureName) {
-        for (ProductFactor productFactor : getProductFactors().values()) {
-            if (productFactor.getMeasure().getName().equals(measureName)) {
-                return productFactor.getMeasure();
-            }
-        }
-        throw new RuntimeException("Unable to find measure with name " + measureName + " from QM's property nodes");
+    public void setQualityAspect(QualityAspect qualityAspect) {
+        getTqi().setChild(qualityAspect);
     }
 
     public Map<String, Measure> getMeasures() {
         Map<String, Measure> measures = new HashMap<>();
-        List<ProductFactor> productFactorList = new ArrayList<>(getProductFactors().values());
+        List<ModelNode> productFactorList = new ArrayList<>(getProductFactors().values());
+
         productFactorList.forEach(productFactor -> {
-            measures.put(productFactor.getMeasure().getName(), productFactor.getMeasure());
+            productFactor.getChildren().values().forEach(measure -> {
+                measures.put(measure.getName(), (Measure) measure);
+            });
         });
+
         return measures;
+    }
+
+    public Measure getMeasureByName(String name) {
+        return getMeasures().get(name);
     }
 
     public String getName() {
@@ -126,35 +124,23 @@ public class QualityModel {
     }
 
     public ProductFactor getProductFactor(String name) {
-        return getProductFactors().get(name);
+        return (ProductFactor) getProductFactors().get(name);
     }
 
+    @Deprecated     // Makes assumption only 1 measure per product factor. Phasing out WIP
     public ProductFactor getProductFactorByMeasureName(String measureName) {
-        for (ProductFactor productFactor : getProductFactors().values()) {
-            if (productFactor.getMeasure().getName().equals(measureName)) {
-                return productFactor;
+        for (ModelNode productFactor : getProductFactors().values()) {
+            if (productFactor.getChildByName(measureName) != null) {
+                return (ProductFactor) productFactor;
             }
         }
         throw new RuntimeException("Unable to find property with child measure name " + measureName + " from QM's property nodes");
     }
 
-    public Map<String, ProductFactor> getProductFactors() {
-        return getAnyQualityAspect().getProductFactors();
+    public Map<String, ModelNode> getProductFactors() {
+        return getAnyQualityAspect().getChildren();
     }
 
-    public void setProductFactor(ProductFactor productFactor) {
-        Set<QualityAspect> allQualityAspects = new HashSet<>(getTqi().getQualityAspects().values());
-        allQualityAspects.forEach(qualityAspect -> {
-            qualityAspect.setProductFactor(productFactor);
-        });
-    }
-
-    public void setProductFactors(Map<String, ProductFactor> productFactors) {
-        Set<QualityAspect> allQualityAspects = new HashSet<>(getTqi().getQualityAspects().values());
-        allQualityAspects.forEach(qualityAspect -> {
-            qualityAspect.setProductFactors(productFactors);
-        });
-    }
 
     public Tqi getTqi() {
         return tqi;
@@ -172,7 +158,10 @@ public class QualityModel {
         this.weighter = weighter;
     }
 
-    // Methods
+    //endregion
+
+
+    //region Methods
 
     /**
      * @return Deep clone of this QualityModel object
@@ -182,7 +171,6 @@ public class QualityModel {
         Tqi rootNode = (Tqi) getTqi().clone();
         return new QualityModel(getName(), rootNode, getBenchmarker(), getWeighter());
     }
-
 
     @Override
     public boolean equals(Object other) {
@@ -226,7 +214,7 @@ public class QualityModel {
             // Name
             setName(jsonQm.getAsJsonPrimitive("name").getAsString());
 
-			// TODO (1.0): Update to support any combination of non-default mechanisms
+            // TODO (1.0): Update to support any combination of non-default mechanisms
             // Optional benchmark strategy
             if (jsonQm.getAsJsonObject("global_config") != null && jsonQm.getAsJsonObject("global_config").get("benchmark_strategy") != null) {
                 String fullClassName = jsonQm.getAsJsonObject("global_config").get("benchmark_strategy").getAsString();
@@ -256,19 +244,21 @@ public class QualityModel {
             String tqiDescription = tqiEntry.getValue().getAsJsonObject().get("description").getAsString();
             setTqi(new Tqi(tqiName, tqiDescription, null));
 
-			// TODO (1.0): Update to support any combination of non-default mechanisms
+            // TODO (1.0): Update to support any combination of non-default mechanisms
             // Quality Aspects
             qualityAspects.entrySet().forEach(entry -> {
                 JsonObject valueObj = entry.getValue().getAsJsonObject();
                 String qaName = entry.getKey();
                 String qaDescription = valueObj.get("description").getAsString();
 
+                // TODO (1.0): Re-introduce children array functionality
+                // Connect quality aspects as fully connected to TQI node if "children" arrays do not exist
                 QualityAspect qa = new QualityAspect(qaName, qaDescription);
-                getTqi().setQualityAspect(qa);
+                getTqi().setChild(qa);
                 getTqi().setWeight(qa.getName(), 0.0);
             });
 
-			// TODO (1.0): Update to support any combination of non-default mechanisms
+            // TODO (1.0): Update to support any combination of non-default mechanisms
             // Product Factors
             productFactors.entrySet().forEach(entry -> {
                 JsonObject valueObj = entry.getValue().getAsJsonObject();
@@ -276,8 +266,11 @@ public class QualityModel {
                 String pfDescription = valueObj.get("description").getAsString();
 
                 ProductFactor pf = new ProductFactor(pfName, pfDescription);
-                getTqi().getQualityAspects().values().forEach(qa -> {
-                    qa.setProductFactor(pf);
+
+                // TODO (1.0): Re-introduce children array functionality
+                // Connect product factors as fully connected to quality aspects node if "children" arrays do not exist
+                getTqi().getChildren().values().forEach(qa -> {
+                    qa.setChild(pf);
                     qa.setWeight(pf.getName(), 0.0);
                 });
             });
@@ -290,6 +283,7 @@ public class QualityModel {
                 String measureDescription = jsonMeasure.get("description").getAsString();
                 boolean positive = jsonMeasure.getAsJsonPrimitive("positive").getAsBoolean();
 
+                // TODO (1.0): Support optional normalizer
                 Measure m = new Measure(measureName, measureDescription, new LoCNormalizer(), positive);
 
                 // Optional thresholds
@@ -302,9 +296,9 @@ public class QualityModel {
                     m.setThresholds(thresholds);
                 }
 
-				// TODO (1.0): Update to support any combination of non-default mechanisms
+                // TODO (1.0): Update to support any combination of non-default mechanisms
                 // Diagnostics
-                List<Diagnostic> diagnostics = new ArrayList<>();
+                ArrayList<ModelNode> diagnostics = new ArrayList<>();
                 JsonArray jsonDiagnostics = jsonMeasure.getAsJsonArray("diagnostics");
                 jsonDiagnostics.forEach(d -> {
                     JsonObject diagnostic = d.getAsJsonObject();
@@ -328,8 +322,8 @@ public class QualityModel {
                         diagnostics.add(new Diagnostic(dName, dDescription, dToolName, new DefaultDiagnosticEvaluator()));
                     }
                 });
-                m.setDiagnostics(diagnostics);
 
+                m.setChildren(diagnostics);
 
                 // Optional measure 'normalizer' field
                 if (jsonMeasure.get("normalizer") != null && !(jsonMeasure.get("normalizer").getAsString().equals("pique.evaluation.DefaultNormalizer"))) {
@@ -353,11 +347,25 @@ public class QualityModel {
                     }
                 }
 
-                // Attach measure to stated product factors
-                jsonMeasure.getAsJsonArray("parents").forEach(parentName -> {
-                    getProductFactor(parentName.getAsString()).setMeasure(m);
-                    m.setParent(parentName.getAsString());
+                // Attach measure to product factors that have "measures" entires
+                Map<String, ArrayList<String>> jsonPfMeasures = new HashMap<>();
+                productFactors.entrySet().forEach(pfEntry -> {
+                    String pfName = pfEntry.getKey();
+                    JsonObject jsonPf = (JsonObject) pfEntry.getValue();
+
+                    if (jsonPf.get("measures") != null) {
+                        ArrayList<String> pfMeasureStrings = new ArrayList<>();
+
+                        JsonArray jsonPfMeasuresArray = jsonPf.getAsJsonArray("measures");
+                        jsonPfMeasuresArray.forEach(pfMeasureString -> pfMeasureStrings.add(pfMeasureString.getAsString()));
+
+                        jsonPfMeasures.putIfAbsent(pfName, pfMeasureStrings);
+                    }
                 });
+                jsonPfMeasures.forEach((pfName, pfChildren) -> {
+                    pfChildren.forEach(stringName -> getProductFactor(pfName).setChild(getMeasureByName(stringName)));
+                });
+
             });
 
             // Crawl back up json inputting factor weights
@@ -381,4 +389,6 @@ public class QualityModel {
             e.printStackTrace();
         }
     }
+
+    //endregion
 }

@@ -2,6 +2,9 @@ package pique.model;
 
 import com.google.gson.annotations.Expose;
 import pique.evaluation.DefaultFactorEvaluator;
+import pique.evaluation.IEvaluator;
+import pique.evaluation.INormalizer;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,15 +18,7 @@ import java.util.Map;
  */
 public class QualityAspect extends ModelNode {
 
-    // Instance variables
-
-    // TODO: eventually consider new tree object that combines properties and their weight instead of relying on String name matching (not enough time for me to refactor currently)
-    private Map<String, ProductFactor> productFactors = new HashMap<>();  // mapping of productFactors names and their property objects
-    @Expose
-    private Map<String, Double> weights = new HashMap<>();  // mapping of productFactors names and their weights
-
-
-    // Constructors
+    //region Constructors
 
     public QualityAspect(String name, String description) {
 
@@ -35,58 +30,37 @@ public class QualityAspect extends ModelNode {
         this.weights = weights;
     }
 
-    public QualityAspect(String name, String description, Map<String, Double> weights, Map<String, ProductFactor> productFactors) {
+    public QualityAspect(String name, String description, Map<String, Double> weights,
+                         Map<String, ModelNode> productFactors) {
         super(name, description, new DefaultFactorEvaluator(), null);
         this.weights = weights;
-        this.productFactors = productFactors;
+        this.children = productFactors;
     }
 
-
-    // Getters and setters
-
-    public Map<String, ProductFactor> getProductFactors() {
-        return productFactors;
+    public QualityAspect(double value, String name, String description, IEvaluator evaluator, INormalizer normalizer,
+                         Map<String, ModelNode> children, Map<String, Double> weights) {
+        super(value, name, description, evaluator, normalizer, children, weights);
     }
 
-    public void setProductFactor(ProductFactor productFactor) {
-        getProductFactors().put(productFactor.getName(), productFactor);
-    }
-
-    public void setProductFactors(Map<String, ProductFactor> productFactors) {
-        this.productFactors = productFactors;
-    }
-
-    public double getWeight(String productFactorName) {
-        return this.weights.get(productFactorName);
-    }
-
-    public Map<String, Double> getWeights() {
-        return weights;
-    }
-
-    public void setWeight(String productFactorName, double value) {
-        this.weights.put(productFactorName, value);
-    }
-
-    public void setWeights(Map<String, Double> weights) {
-        this.weights = weights;
-    }
+    //endregion
 
 
-    // Methods
+    //region Methods
 
     @Override
     public ModelNode clone() {
-        System.out.println("--- WARNING ---\nCloning QualityAspect node without cloned property map.\n" +
-                "This will result in an empty properties field for this QualityAspect object.");
-        return new QualityAspect(getName(), getDescription(), getWeights(), new HashMap<>());
+
+        Map<String, ModelNode> clonedChildren = new HashMap<>();
+        getChildren().forEach((k, v) -> clonedChildren.put(k, v.clone()));
+
+        return new QualityAspect(getValue(), getName(), getDescription(), getEvaluator(), getNormalizer(),
+                clonedChildren, getWeights());
     }
 
-
-    public ModelNode clone(Map<String, ProductFactor> clonedProductFactors) {
-        return new QualityAspect(getName(), getDescription(), getWeights(), clonedProductFactors);
+    @Override
+    protected void evaluate() {
+        throw new NotImplementedException();
     }
-
 
     @Override
     public boolean equals(Object other) {
@@ -96,6 +70,8 @@ public class QualityAspect extends ModelNode {
         QualityAspect otherQualityAspect = (QualityAspect) other;
 
         return getName().equals(otherQualityAspect.getName())
-                && getProductFactors().size() == otherQualityAspect.getProductFactors().size();
+                && getChildren().size() == otherQualityAspect.getChildren().size();
     }
+
+    //endregion
 }

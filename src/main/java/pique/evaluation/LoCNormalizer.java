@@ -26,7 +26,7 @@ public class LoCNormalizer implements INormalizer {
 //    }
 
     @Override
-    public String getNormalizerName() {
+    public String getName() {
         return "pique.evaluation.LoCNormalizer";
     }
 }

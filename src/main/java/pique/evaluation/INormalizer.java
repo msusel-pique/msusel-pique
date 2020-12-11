@@ -10,5 +10,5 @@ public interface INormalizer {
 
     double normalize(double inValue, Collection<ModelNode> normalizers);
 
-    String getNormalizerName();
+    String getName();
 }

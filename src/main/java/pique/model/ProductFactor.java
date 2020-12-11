@@ -1,11 +1,19 @@
 package pique.model;
 
 import pique.evaluation.DefaultFactorEvaluator;
+import pique.evaluation.IEvaluator;
+import pique.evaluation.INormalizer;
+import pique.evaluation.IUtilityFunction;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ProductFactor extends ModelNode {
 
 	// Fields
-	private Measure measure;  // TODO (1.0): allow more than one measure
+	// TODO (1.0): Changing single "Measure" field to new "Children" map. This will likely break a lot of things.
+//	private Measure measure;  // TODO (1.0): allow more than one measure
 
 	// Constructors
 
@@ -13,30 +21,33 @@ public class ProductFactor extends ModelNode {
 		super(name, description, new DefaultFactorEvaluator(), null);
 	}
 	
-	public ProductFactor(String name, String description, Measure measure){
+	public ProductFactor(String name, String description, ModelNode measure){
 		super(name, description, new DefaultFactorEvaluator(), null);
-		this.measure = measure;
+		this.children.put(measure.getName(), measure);
+	}
+
+	public ProductFactor(double value, String name, String description, IEvaluator evaluator, INormalizer normalizer,
+				   Map<String, ModelNode> children, Map<String, Double> weights) {
+		super(value, name, description, evaluator, normalizer, children, weights);
 	}
 
 
-
-	// Getters and setters
-
-	public Measure getMeasure(){
-		return measure;
-	}
-
-	public void setMeasure(Measure measure){
-		this.measure = measure;
-	}
-
-	// Methods
+	//region Methods
 
 	@Override
 	public ModelNode clone() {
-		return new ProductFactor(getName(), getDescription(), (Measure)getMeasure().clone());
+
+		Map<String, ModelNode> clonedChildren = new HashMap<>();
+		getChildren().forEach((k, v) -> clonedChildren.put(k, v.clone()));
+
+		return new ProductFactor(getValue(), getName(), getDescription(), getEvaluator(), getNormalizer(),
+				clonedChildren, getWeights());
 	}
 
+	@Override
+	protected void evaluate() {
+		throw new NotImplementedException();
+	}
 
 	@Override
 	public boolean equals(Object other) {
@@ -44,7 +55,9 @@ public class ProductFactor extends ModelNode {
 		ProductFactor otherProductFactor = (ProductFactor) other;
 
 		return getName().equals(otherProductFactor.getName())
-				&& getMeasure().equals(otherProductFactor.getMeasure());
+				&& getAnyChild().equals(otherProductFactor.getAnyChild());
 	}
+
+	//endregion
 
 }

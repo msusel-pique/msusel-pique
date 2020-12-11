@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import pique.evaluation.IEvaluator;
 import pique.evaluation.INormalizer;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,18 +13,23 @@ import java.util.Map;
  */
 public abstract class ModelNode {
 
-    // Fields
+    //region Fields
+
     @Expose
     protected double value;  // the value this node evaluates to
 
     @Expose
-    protected String description;
     protected String name;
+    protected String description;
 
     protected IEvaluator evaluator;
     protected INormalizer normalizer;
 
+    // TODO: eventually consider new tree object that combines properties and their weight instead of relying on
+    //  String name matching (not enough time for me to solve currently)
+    @Expose
     protected Map<String, ModelNode> children = new HashMap<>();
+    @Expose
     protected Map<String, Double> weights = new HashMap<>();
 
     // Constructor
@@ -35,7 +41,24 @@ public abstract class ModelNode {
         this.normalizer = normalizer;
     }
 
-    // Getters and setters
+    /**
+     * Constructor for cloning.
+     */
+    public ModelNode(double value, String name, String description, IEvaluator evaluator, INormalizer normalizer,
+                     Map<String, ModelNode> children, Map<String, Double> weights) {
+        this.value = value;
+        this.name = name;
+        this.description = description;
+        this.evaluator = evaluator;
+        this.normalizer = normalizer;
+        this.children = children;
+        this.weights = weights;
+    }
+
+    //endregion
+
+
+    //region Getters and setters
 
     public String getDescription() {
         return description;
@@ -86,6 +109,14 @@ public abstract class ModelNode {
         this.children = children;
     }
 
+    public void setChildren(Collection<ModelNode> children) {
+        children.forEach(element -> {
+            getChildren().putIfAbsent(element.getName(), element);
+        });
+
+
+    }
+
     public Map<String, Double> getWeights() {
         return weights;
     }
@@ -94,8 +125,41 @@ public abstract class ModelNode {
         this.weights = weights;
     }
 
+    //endregion
 
-    // Methods
+
+    //region Specialized getters and setters
+
+    public ModelNode getAnyChild() {
+        ModelNode anyModelNode = getChildren().values().stream().findAny().orElse(null);
+        assert anyModelNode != null;
+        return anyModelNode;
+    }
+
+    public ModelNode getChildByName(String name) {
+        return getChildren().get(name);
+    }
+
+    public void setChild(ModelNode child) {
+        getChildren().put(child.getName(), child);
+    }
+
+    public int getNumChildren() {
+        return getChildren().size();
+    }
+
+    public double getWeight(String modelNodeName) {
+        return weights.get(modelNodeName);
+    }
+
+    public void setWeight(String modelNodeName, double value) {
+        this.weights.put(modelNodeName, value);
+    }
+
+    //endregion
+
+
+    //region Methods
 
     /**
      * A loose way of implementing the Prototype design pattern.
@@ -109,4 +173,6 @@ public abstract class ModelNode {
      * TODO (1.0): Documentation
      */
     protected abstract void evaluate();
+
+    //endregion
 }

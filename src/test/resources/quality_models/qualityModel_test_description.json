@@ -9,18 +9,24 @@
 		},
 		"quality_aspects": {
 			"QualityAspect 01": {
-				"description": "Sample description"
+				"description": "Sample description",
 			},
 			"QualityAspect 02": {
-				"description": "Sample description"
+				"description": "Sample description",
 			}
 		},
 		"product_factors": {
 			"ProductFactor 01": {
-				"description": "Placeholder description"
+				"description": "Placeholder description",
+				"measures": [
+					"Measure 01"
+				]
 			},
 			"ProductFactor 02": {
-				"description": "Placeholder description"
+				"description": "Placeholder description",
+				"measures": [
+					"Measure 02"
+				]
 			}
 		}
 	},
@@ -28,9 +34,6 @@
 		"Measure 01": {
 			"description": "Sample description",
 			"positive": false,
-			"parents": [
-				"ProductFactor 01"
-			],
 			"diagnostics": [
 				{
 					"name": "loc",
@@ -53,19 +56,11 @@
 		"Measure 02": {
 			"description": "Sample description",
 			"positive": false,
-			"parents": [
-				"ProductFactor 02"
-			],
 			"diagnostics": [
 				{
 					"name": "loc",
 					"description": "Normalizer diagnostic for measure 02",
 					"eval_strategy": "pique.evaluation.LoCEvaluator",
-					"toolName": "Fake LoC Tool" 
-				},
-				{
-					"name": "loc",
-					"description": "Normalizer diagnostic for this measure",
 					"toolName": "Fake LoC Tool" 
 				},
 				{

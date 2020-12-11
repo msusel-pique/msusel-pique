@@ -1,17 +1,13 @@
 package pique.evaluation;
 
+import pique.model.ModelNode;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-public class DefaultMeasureEvaluator implements IEvaluator {
+public class DefaultMeasureEvaluator extends Evaluator {
 
     // TODO (1.0): fix
     @Override
-    public double evalStrategy(double inValue, Object... args) {
+    public double evalStrategy(ModelNode inNode) {
         throw new NotImplementedException();
-    }
-
-    @Override
-    public String getName() {
-        return "pique.evaluation.DefaultMeasureEvaluator";
     }
 }

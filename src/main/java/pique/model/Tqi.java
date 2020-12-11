@@ -1,7 +1,11 @@
 package pique.model;
 
 import com.google.gson.annotations.Expose;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import pique.evaluation.DefaultFactorEvaluator;
+import pique.evaluation.IEvaluator;
+import pique.evaluation.INormalizer;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,49 +19,6 @@ import java.util.Map;
  */
 public class Tqi extends ModelNode {
 
-    // Fields, some inherit from super class
-
-    @Expose
-    private Map<String, Double> weights;  // mapping of quality aspects names and their weights
-    private Map<String, QualityAspect> qualityAspects = new HashMap<>(); // mapping of characteristic names and their object
-
-    // Getters and setters
-
-    public QualityAspect getAnyQualityAspect() {
-        QualityAspect anyQualityAspect = getQualityAspects().values().stream().findAny().orElse(null);
-        assert anyQualityAspect != null;
-        return anyQualityAspect;
-    }
-
-    public Map<String, QualityAspect> getQualityAspects() {
-        return qualityAspects;
-    }
-
-    public void setQualityAspect(QualityAspect qualityAspect) {
-        getQualityAspects().put(qualityAspect.getName(), qualityAspect);
-    }
-
-    public void setQualityAspects(Map<String, QualityAspect> qualityAspects) {
-        this.qualityAspects = qualityAspects;
-    }
-
-    public double getWeight(String qualityAspectName) {
-        return weights.get(qualityAspectName);
-    }
-
-    public Map<String, Double> getWeights() {
-        return weights;
-    }
-
-    public void setWeights(Map<String, Double> weights) {
-        this.weights = weights;
-    }
-
-    public void setWeight(String qualityAspectName, double value) {
-        this.weights.put(qualityAspectName, value);
-    }
-
-
     // Constructor
 
     public Tqi(String name, String description, Map<String, Double> weights) {
@@ -65,10 +26,15 @@ public class Tqi extends ModelNode {
         this.weights = (weights == null) ? new HashMap<>() : weights;
     }
 
-    public Tqi(String name, String description, Map<String, Double> weights, Map<String, QualityAspect> qualityAspects) {
+    public Tqi(String name, String description, Map<String, Double> weights, Map<String, ModelNode> qualityAspects) {
         super(name, description, new DefaultFactorEvaluator(), null);
         this.weights = (weights == null) ? new HashMap<>() : weights;
-        this.qualityAspects = qualityAspects;
+        this.children = qualityAspects;
+    }
+
+    public Tqi(double value, String name, String description, IEvaluator evaluator, INormalizer normalizer,
+                         Map<String, ModelNode> children, Map<String, Double> weights) {
+        super(value, name, description, evaluator, normalizer, children, weights);
     }
 
 
@@ -78,22 +44,32 @@ public class Tqi extends ModelNode {
      * Tqi clone needs to work from a bottom-up parse to allow the fully connected
      * QualityAspect -> ProductFactor layer to pass the cloned property nodes by reference.
      */
+    // TODO (1.0): Possible breaking change?
     @Override
     public ModelNode clone() {
-        Map<String, QualityAspect> clonedQualityAspects = new HashMap<>();
-        Map<String, ProductFactor> clonedProductFactors = new HashMap<>();
+//        Map<String, ModelNode> clonedQualityAspects = new HashMap<>();
+//        Map<String, ModelNode> clonedProductFactors = new HashMap<>();
+//
+//        getAnyChild().getChildren().values().forEach(productFactor -> {
+//            ProductFactor clonedProductFactor = (ProductFactor) productFactor.clone();
+//            clonedProductFactors.put(clonedProductFactor.getName(), clonedProductFactor);
+//        });
+//
+//        getChildren().values().forEach(qualityAspect -> {
+//            QualityAspect clonedQualityAspect =
+//                    (QualityAspect)((QualityAspect)qualityAspect).clone(clonedProductFactors);
+//            clonedQualityAspects.put(clonedQualityAspect.getName(), clonedQualityAspect);
+//        });
+        Map<String, ModelNode> clonedChildren = new HashMap<>();
+        getChildren().forEach((k, v) -> clonedChildren.put(k, v.clone()));
 
-        getAnyQualityAspect().getProductFactors().values().forEach(productFactor -> {
-            ProductFactor clonedProductFactor = (ProductFactor) productFactor.clone();
-            clonedProductFactors.put(clonedProductFactor.getName(), clonedProductFactor);
-        });
+        return new Tqi(getValue(), getName(), getDescription(), getEvaluator(), getNormalizer(),
+                clonedChildren, getWeights());
+    }
 
-        getQualityAspects().values().forEach(characteristic -> {
-            QualityAspect clonedQualityAspect = (QualityAspect) characteristic.clone(clonedProductFactors);
-            clonedQualityAspects.put(clonedQualityAspect.getName(), clonedQualityAspect);
-        });
-
-        return new Tqi(getName(), getDescription(), getWeights(), clonedQualityAspects);
+    @Override
+    protected void evaluate() {
+        throw new NotImplementedException();
     }
 
 
@@ -105,7 +81,7 @@ public class Tqi extends ModelNode {
         Tqi otherTqi = (Tqi) other;
 
         return getName().equals(otherTqi.getName())
-                && getQualityAspects().size() == otherTqi.getQualityAspects().size();
+                && getChildren().size() == otherTqi.getChildren().size();
     }
 
 }

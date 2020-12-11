@@ -2,9 +2,10 @@ package pique.model;
 
 import com.google.gson.annotations.Expose;
 import pique.evaluation.*;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A Measure is a concrete, numerical way to measure a given ProductFactor (property of source code).
@@ -26,112 +27,109 @@ import java.util.List;
  */
 public class Measure extends ModelNode {
 
-	// Instance variables
+	//region Instance variables
+
 	@Expose
 	private boolean positive;
-
 	@Expose
 	private String normalizer_name;
 	@Expose
 	private String eval_strategy;
 	@Expose
-	private int num_findings = getNumFindings();
-	@Expose
-	private ArrayList<String> parents = new ArrayList<>();
-	@Expose
-	private List<Diagnostic> diagnostics = new ArrayList<>();
+	private int num_findings = getNumChildren();
 	@Expose
 	private Double[] thresholds;
 
 	private IUtilityFunction utilityFunction;
 
+	//endregion
 
-	// Constructors
+
+	//region Constructors
 	// (todo): change to builder pattern, or upgrade to java 9+: the better option for optional method parameters :)
 	public Measure(String name, String description, INormalizer normalizer, boolean positive) {
 		super(name, description, new DefaultMeasureEvaluator(), normalizer);
 		this.positive = positive;
-		this.diagnostics = new ArrayList<>();
 		this.utilityFunction = new DefaultUtility();
 
-		this.normalizer_name = this.normalizer.getNormalizerName();
+		this.normalizer_name = this.normalizer.getName();
 		this.eval_strategy = this.evaluator.getName();
 	}
 
 	public Measure(String name, String description, INormalizer normalizer, boolean positive,
-				   List<Diagnostic> diagnostics) {
+				   Map<String, ModelNode> diagnostics) {
 		super(name, description, new DefaultMeasureEvaluator(), normalizer);
 		this.positive = positive;
-		this.diagnostics = diagnostics;
+		this.children = diagnostics;
 
-		this.normalizer_name = this.normalizer.getNormalizerName();
+		this.normalizer_name = this.normalizer.getName();
 		this.eval_strategy = this.evaluator.getName();
 	}
 
 	public Measure(String name, String description, INormalizer normalizer, boolean positive,
-				   List<Diagnostic> diagnostics,
-				   Double[] thresholds) {
+				   Map<String, ModelNode> diagnostics, Double[] thresholds) {
 		super(name, description, new DefaultMeasureEvaluator(), normalizer);
 		this.thresholds = thresholds;
 		this.positive = positive;
-		this.diagnostics = diagnostics;
+		this.children = diagnostics;
 
-		this.normalizer_name = this.normalizer.getNormalizerName();
+		this.normalizer_name = this.normalizer.getName();
 		this.eval_strategy = this.evaluator.getName();
 	}
 
 	public Measure(String name, String description, boolean positive, INormalizer normalizer,
-				   List<Diagnostic> diagnostics, Double[] thresholds) {
+				   Map<String, ModelNode> diagnostics, Double[] thresholds) {
 		super(name, description, new DefaultMeasureEvaluator(), normalizer);
 		this.thresholds = thresholds;
 		this.positive = positive;
-		this.diagnostics = diagnostics;
+		this.children = diagnostics;
 
-		this.normalizer_name = this.normalizer.getNormalizerName();
+		this.normalizer_name = this.normalizer.getName();
 		this.eval_strategy = this.evaluator.getName();
 	}
 
 
-	public Measure(String name, String description, INormalizer normalizer, boolean positive, ArrayList<String> parents,
-				   List<Diagnostic> diagnostics, Double[] thresholds, IEvaluator evaluator) {
+	public Measure(String name, String description, INormalizer normalizer, boolean positive,
+				   Map<String, ModelNode> diagnostics, Double[] thresholds, IEvaluator evaluator) {
 		super(name, description, evaluator, normalizer);
 		this.thresholds = thresholds;
 		this.positive = positive;
-		this.parents = parents;
-		this.diagnostics = diagnostics;
+		this.children = diagnostics;
 
-		this.normalizer_name = this.normalizer.getNormalizerName();
+		this.normalizer_name = this.normalizer.getName();
 		this.eval_strategy = this.evaluator.getName();
 	}
 
-	public Measure(String name, String description, INormalizer normalizer, boolean positive, ArrayList<String> parents,
-				   List<Diagnostic> diagnostics, Double[] thresholds, IEvaluator evaluator,
+	public Measure(String name, String description, INormalizer normalizer, boolean positive,
+				   Map<String, ModelNode> diagnostics, Double[] thresholds, IEvaluator evaluator,
 				   IUtilityFunction utilityFunction)
 	{
 		super(name, description, evaluator, normalizer);
 		this.positive = positive;
-		this.parents = parents;
-		this.diagnostics = diagnostics;
+		this.children = diagnostics;
 		this.thresholds = thresholds;
 		this.utilityFunction = utilityFunction;
 
-		this.normalizer_name = this.normalizer.getNormalizerName();
+		this.normalizer_name = this.normalizer.getName();
 		this.eval_strategy = this.evaluator.getName();
 	}
 
-	// Getters and setters
+	public Measure(double value, String name, String description, IEvaluator evaluator, INormalizer normalizer,
+					  Map<String, ModelNode> children, Map<String, Double> weights, boolean positive,
+				   String normalizer_name,  String eval_strategy, Double[] thresholds, IUtilityFunction utilityFunction) {
+		super(value, name, description, evaluator, normalizer, children, weights);
 
-	public Diagnostic getDiagnostic(String name) {
-		return this.diagnostics
-			.stream()
-		    .filter(d -> d.getName().equals(name))
-		    .findAny()
-		    .orElse(null);
+		this.positive = positive;
+		this.normalizer_name = normalizer_name;
+		this.eval_strategy = eval_strategy;
+		this.thresholds = thresholds;
+		this.utilityFunction = utilityFunction;
 	}
 
-	public List<Diagnostic> getDiagnostics() { return diagnostics; }
+	//endregion
 
-	public void setDiagnostics(List<Diagnostic> diagnostics) { this.diagnostics = diagnostics; }
+
+	//region Getters and setters
 
 	public IEvaluator getEvaluator() {
 		return evaluator;
@@ -141,26 +139,7 @@ public class Measure extends ModelNode {
 		this.evaluator = evaluator;
 	}
 
-	public int getNumFindings() {
-		if (getDiagnostics() == null) return 0;
-		else {
-			return getDiagnostics().stream().mapToInt(Diagnostic::getNumFindings).sum();
-		}
-	}
-
 	public void setNum_findings(int num_findings) { this.num_findings = num_findings; }
-
-	public ArrayList<String> getParents() {
-		return parents;
-	}
-
-	public void setParent(String parentName) {
-		getParents().add(parentName);
-	}
-
-	public void setParents(ArrayList<String> parents) {
-		this.parents = parents;
-	}
 
 	public boolean isPositive() {
 		return positive;
@@ -194,10 +173,6 @@ public class Measure extends ModelNode {
 		this.eval_strategy = eval_strategy;
 	}
 
-	public int getNum_findings() {
-		return num_findings;
-	}
-
 	public IUtilityFunction getUtilityFunction() {
 		return utilityFunction;
 	}
@@ -206,17 +181,24 @@ public class Measure extends ModelNode {
 		this.utilityFunction = utilityFunction;
 	}
 
-	// Methods
+	//endregion
+
+
+	//region Methods
 
 	@Override
 	public ModelNode clone() {
-		List<Diagnostic> clonedDiagnostics = new ArrayList<>();
-		getDiagnostics().forEach(diagnostic -> {
-			Diagnostic clonedDiagnostic = (Diagnostic) diagnostic.clone();
-			clonedDiagnostics.add(clonedDiagnostic);
-		});
-		return new Measure(getName(), getDescription(), getNormalizer(), isPositive(), getParents(),
-				clonedDiagnostics, getThresholds(), getEvaluator(), getUtilityFunction());
+		Map<String, ModelNode> clonedChildren = new HashMap<>();
+		getChildren().forEach((k, v) -> clonedChildren.put(k, v.clone()));
+
+		return new Measure(getValue(), getName(), getDescription(), getEvaluator(), getNormalizer(),
+				clonedChildren, getWeights(), isPositive(), getNormalizer_name(), getEval_strategy(),
+				getThresholds(), getUtilityFunction());
+	}
+
+	@Override
+	protected void evaluate() {
+		throw new NotImplementedException();
 	}
 
 	@Override
@@ -225,6 +207,8 @@ public class Measure extends ModelNode {
 		Measure otherMeasure = (Measure) other;
 
 		return getName().equals(otherMeasure.getName())
-				&& (getDiagnostics().size() == otherMeasure.getDiagnostics().size());
+				&& (getChildren().size() == otherMeasure.getChildren().size());
 	}
+
+	//endregion
 }
