@@ -35,31 +35,17 @@ public class Finding extends ModelNode {
 
     // (TODO: change to builder pattern to better accommodate metrics and rule findings)
 
-    public Finding() {
-        super("", "", new DefaultFindingEvaluator(), new DefaultNormalizer());
-    }
-
-    public Finding(double value) {
-        super("", "", new DefaultFindingEvaluator(), new DefaultNormalizer());
-        this.value = value;
-    }
-
-    public Finding(String filePath, int lineNumber, int characterNumber) {
-        super("", "", new DefaultFindingEvaluator(), new DefaultNormalizer());
-        this.filePath = filePath;
-        this.lineNumber = lineNumber;
-        this.characterNumber = characterNumber;
-        this.severity = 1;
-    }
-
     public Finding(String filePath, int lineNumber, int characterNumber, int severity) {
         super("", "", new DefaultFindingEvaluator(), new DefaultNormalizer());
+        this.name = hashName(filePath, String.valueOf(lineNumber), String.valueOf(characterNumber),
+                String.valueOf(severity));
         this.filePath = filePath;
         this.lineNumber = lineNumber;
         this.characterNumber = characterNumber;
         this.severity = severity;
     }
 
+    // Used for cloning
     public Finding(double value, String name, String description, IEvaluator evaluator, INormalizer normalizer,
                    Map<String, ModelNode> children, Map<String, Double> weights, String filePath, int lineNumber,
                    int characterNumber, int severity) {
@@ -118,6 +104,19 @@ public class Finding extends ModelNode {
     public Finding clone() {
         return new Finding(getValue(), getName(), getDescription(), getEvaluator(), getNormalizer(), getChildren(),
                 getWeights(),  getFilePath(), getLineNumber(), getCharacterNumber(), getSeverity());
+    }
+
+    // Generate a hashed name using the properties of the Finding under construction.
+    private String hashName(String... params) {
+
+        StringBuilder hashBuilder = new StringBuilder();
+
+        for (String param : params) {
+            hashBuilder.append(param);
+        }
+
+        String valueToHash = hashBuilder.toString();
+        return String.valueOf(valueToHash.hashCode());
     }
 
     //endregion

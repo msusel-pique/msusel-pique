@@ -16,10 +16,5 @@ public class LoCEvaluator extends Evaluator {
 
         // TODO (1.0): Add error handling
         throw new NotImplementedException();
-
-//        Finding locFinding = modelNodeFindings.stream()
-//                .findFirst()
-//                .orElseThrow(() -> new RuntimeException("Could not find any findings in set of Findings input during LOCDiagnosticEvaluator evalStrategy"));
-//        return locFinding.getValue();
     }
 }

@@ -10,9 +10,9 @@ import pique.calibration.IWeighter;
 import pique.calibration.NaiveBenchmarker;
 import pique.calibration.NaiveWeighter;
 import pique.evaluation.DefaultDiagnosticEvaluator;
+import pique.evaluation.DefaultNormalizer;
 import pique.evaluation.IEvaluator;
 import pique.evaluation.INormalizer;
-import pique.evaluation.LoCNormalizer;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -291,7 +291,7 @@ public class QualityModel {
                 boolean positive = jsonMeasure.getAsJsonPrimitive("positive").getAsBoolean();
 
                 // TODO (1.0): Support optional normalizer
-                Measure m = new Measure(measureName, measureDescription, new LoCNormalizer(), positive);
+                Measure m = new Measure(measureName, measureDescription, new DefaultNormalizer(), positive);
 
                 // Optional thresholds
                 Double[] thresholds = null;

@@ -1,7 +1,6 @@
 package pique.utility;
 
-import pique.evaluation.DefaultDiagnosticEvaluator;
-import pique.evaluation.LoCNormalizer;
+import pique.evaluation.DefaultNormalizer;
 import pique.evaluation.Project;
 import pique.model.*;
 
@@ -19,26 +18,30 @@ public class Builder {
     public static Diagnostic buildDiagnostic(String id) {
         Diagnostic d = new Diagnostic(id, "Sample Description", "Sample Tool Name");
 
-        Finding f1 = buildFinding(id + "/file/path", 1, 1);
-        Finding f2 = buildFinding(id + "/file/path", 2, 2);
-        Finding f3 = buildFinding(id + "/file/path", 3, 2);
+        Finding f1 = buildFinding(id + "/file/path/f1", 1, 1);
+        Finding f2 = buildFinding(id + "/file/path/f2", 2, 2);
+        Finding f3 = buildFinding(id + "/file/path/f3", 3, 2);
 
         d.setChild(f1);
         d.setChild(f2);
         d.setChild(f3);
 
+
+
         return d;
     }
 
     public static Measure buildMeasure(String name) {
-        Measure measure = new Measure(name, name + " description", new LoCNormalizer(), false);
+        Measure measure = new Measure(name, name + " description", new DefaultNormalizer(), false);
         measure.setThresholds(new Double[] {0.0, 1.0});
 
-        Diagnostic d1 = buildDiagnostic("loc");
+        Diagnostic d1 = buildDiagnostic(name + "_Diagnostic 01");
         Diagnostic d2 = buildDiagnostic(name + "_Diagnostic 02");
 
         measure.setChild(d1);
         measure.setChild(d2);
+
+        measure.setNormalizerValue(100);
 
         return measure;
     }

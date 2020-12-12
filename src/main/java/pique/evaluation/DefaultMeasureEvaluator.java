@@ -16,16 +16,15 @@ public class DefaultMeasureEvaluator extends Evaluator {
     public double evaluate(ModelNode inNode) {
         Measure node = (Measure)inNode;
 
+        // Sum values of child diagnostics
         double value = node.getChildren().values().stream()
                 .mapToDouble(ModelNode::getValue)
                 .sum();
 
         // Normalize
-        value = node.getNormalizer().normalize(value, Collections.singletonList(node.getChildByName("loc")));
+        value = node.getNormalizer().normalize(value);
 
         // Apply utility function
         return node.getUtilityFunction().utilityFunction(value, node.getThresholds(), node.isPositive());
-
-
     }
 }

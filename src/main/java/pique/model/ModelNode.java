@@ -155,6 +155,10 @@ public abstract class ModelNode {
         getChildren().put(child.getName(), child);
     }
 
+    public void setNormalizerValue(double value) {
+        getNormalizer().setNormalizerValue(value);
+    }
+
     public int getNumChildren() {
         return getChildren().size();
     }

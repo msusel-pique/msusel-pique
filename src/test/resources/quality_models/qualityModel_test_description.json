@@ -36,12 +36,6 @@
 			"positive": false,
 			"diagnostics": [
 				{
-					"name": "loc",
-					"description": "Normalizer diagnostic for measure 01",
-					"eval_strategy": "pique.evaluation.LoCEvaluator",
-					"toolName": "Fake LoC Tool" 
-				},
-				{
 					"name": "TST0001",
 					"description": "Description for TST0001 diagnostic",
 					"toolName": "Test tool"
