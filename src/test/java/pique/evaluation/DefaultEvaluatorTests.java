@@ -2,9 +2,7 @@ package pique.evaluation;
 
 import org.junit.Assert;
 import org.junit.Test;
-import pique.model.Diagnostic;
-import pique.model.Finding;
-import pique.model.Measure;
+import pique.model.*;
 import pique.utility.Builder;
 
 /**
@@ -34,6 +32,30 @@ public class DefaultEvaluatorTests {
         Measure node = Builder.buildMeasure("Measure 01");
         double value = node.getValue();
 
-        Assert.assertEquals(5, value, 0.0);
+        Assert.assertEquals(0.9, value, 0.0);
+    }
+
+    @Test
+    public void testDefaultProductFactorEvaluator() {
+        ProductFactor node = Builder.buildProductFactor("Product Factor 01");
+        double value = node.getValue();
+
+        Assert.assertEquals(0.9, value, 0.0);
+    }
+
+    @Test
+    public void testDefaultQualityAspectEvaluator() {
+        QualityAspect node = Builder.buildQualityAspect("Quality Aspect 01");
+        double value = node.getValue();
+
+        Assert.assertEquals(0.9, value, 0.0);
+    }
+
+    @Test
+    public void testDefaultTqiEvaluator() {
+        Tqi node = Builder.buildTqi("TQI 01");
+        double value = node.getValue();
+
+        Assert.assertEquals(0.9, value, 0.0);
     }
 }
