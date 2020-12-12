@@ -79,7 +79,7 @@ public class ModelNodeTests {
      * Verify a simple Project object instances correctly using a Builder
      */
     @Test
-    public void testProejctConstruction() {
+    public void testProjectConstruction() {
         Project node = Builder.buildProject("Project Name");
         Assert.assertSame(node.getClass(), Project.class);
     }

@@ -32,8 +32,9 @@ public class Builder {
 
     public static Measure buildMeasure(String name) {
         Measure measure = new Measure(name, name + " description", new LoCNormalizer(), false);
+        measure.setThresholds(new Double[] {0.0, 1.0});
 
-        Diagnostic d1 = buildDiagnostic(name + "_Diagnostic 01");
+        Diagnostic d1 = buildDiagnostic("loc");
         Diagnostic d2 = buildDiagnostic(name + "_Diagnostic 02");
 
         measure.setChild(d1);
@@ -46,6 +47,7 @@ public class Builder {
         ProductFactor pf = new ProductFactor(name, name + " description");
         Measure m1 = buildMeasure(name + "_Measure 01");
         pf.setChild(m1);
+        pf.setWeight(m1.getName(), 1.0);
 
         return pf;
     }
@@ -57,7 +59,10 @@ public class Builder {
         ProductFactor pf2 = buildProductFactor(name + "_ProductFactor 02");
 
         qa.setChild(pf1);
+        qa.setWeight(pf1.getName(), 0.5);
+
         qa.setChild(pf2);
+        qa.setWeight(pf2.getName(), 0.5);
 
         return qa;
     }
@@ -69,7 +74,10 @@ public class Builder {
         QualityAspect qa2 = buildQualityAspect("QA02");
 
         tqi.setChild(qa1);
+        tqi.setWeight(qa1.getName(), 0.5);
+
         tqi.setChild(qa2);
+        tqi.setWeight(qa2.getName(), 0.5);
 
         return tqi;
     }

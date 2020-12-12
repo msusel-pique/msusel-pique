@@ -3,11 +3,19 @@ package pique.evaluation;
 import pique.model.ModelNode;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-//TODO: write class
+//TODO (1.0): Documentation
 public class DefaultFactorEvaluator extends Evaluator {
 
     @Override
     public double evaluate(ModelNode inNode) {
-        throw new NotImplementedException();
+
+        double outValue = 0.0;
+
+        // Apply weighted sums
+        for (ModelNode child : inNode.getChildren().values()) {
+            outValue += child.getValue() * inNode.getWeight(child.getName());
+        }
+
+        return outValue;
     }
 }

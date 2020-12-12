@@ -2,7 +2,6 @@ package pique.evaluation;
 
 import pique.model.Diagnostic;
 import pique.model.ModelNode;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 // TODO (1.0) Documentation
 public class DefaultDiagnosticEvaluator extends Evaluator {

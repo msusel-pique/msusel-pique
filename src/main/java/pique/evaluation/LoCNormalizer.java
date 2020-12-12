@@ -1,7 +1,6 @@
 package pique.evaluation;
 
 import pique.model.ModelNode;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Collection;
 
@@ -16,11 +15,14 @@ public class LoCNormalizer implements INormalizer {
 
         // TODO: Pickup here. Run testProjectConstruction().  Need to initialize a diagnostic with name "loc" for
         //  defaultnormalizer to work.
-        double linesOfCode = normalizers.stream()
+        ModelNode normalizerNode = normalizers.stream()
                 .findFirst()
-                .get()
-                .getValue();
+                .get();
 
+        if (!normalizerNode.getName().equals("loc"))
+            throw new RuntimeException("LoC normalize did not retrieve a ModelNode with name 'loc'");
+
+        double linesOfCode = normalizerNode.getValue();
         if (linesOfCode < 1) throw new IllegalStateException("Lines of code was not 1 or larger");
 
         return inValue / linesOfCode;

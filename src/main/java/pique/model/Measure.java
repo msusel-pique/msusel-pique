@@ -40,8 +40,6 @@ public class Measure extends ModelNode {
 	@Expose
 	private Double[] thresholds;
 
-	private IUtilityFunction utilityFunction;
-
 	//endregion
 
 

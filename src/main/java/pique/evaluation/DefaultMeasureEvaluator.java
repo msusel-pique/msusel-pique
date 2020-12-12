@@ -20,7 +20,11 @@ public class DefaultMeasureEvaluator extends Evaluator {
                 .mapToDouble(ModelNode::getValue)
                 .sum();
 
-        return node.getNormalizer().normalize(value, Collections.singletonList(node.getChildByName("loc")));
+        // Normalize
+        value = node.getNormalizer().normalize(value, Collections.singletonList(node.getChildByName("loc")));
+
+        // Apply utility function
+        return node.getUtilityFunction().utilityFunction(value, node.getThresholds(), node.isPositive());
 
 
     }

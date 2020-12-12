@@ -3,8 +3,6 @@ package pique.model;
 import pique.evaluation.DefaultFactorEvaluator;
 import pique.evaluation.IEvaluator;
 import pique.evaluation.INormalizer;
-import pique.evaluation.IUtilityFunction;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.HashMap;
 import java.util.Map;

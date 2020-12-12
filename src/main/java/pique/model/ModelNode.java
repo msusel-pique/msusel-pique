@@ -1,8 +1,10 @@
 package pique.model;
 
 import com.google.gson.annotations.Expose;
+import pique.evaluation.DefaultUtility;
 import pique.evaluation.IEvaluator;
 import pique.evaluation.INormalizer;
+import pique.evaluation.IUtilityFunction;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,6 +26,7 @@ public abstract class ModelNode {
 
     protected IEvaluator evaluator;
     protected INormalizer normalizer;
+    protected IUtilityFunction utilityFunction;
 
     // TODO: eventually consider new tree object that combines properties and their weight instead of relying on
     //  String name matching (not enough time for me to solve currently)
@@ -39,7 +42,10 @@ public abstract class ModelNode {
         this.description = description;
         this.evaluator = evaluator;
         this.normalizer = normalizer;
+        this.utilityFunction = new DefaultUtility();        // TODO (1.0): support custom utility functions
     }
+
+
 
     /**
      * Constructor for cloning.
@@ -53,6 +59,7 @@ public abstract class ModelNode {
         this.normalizer = normalizer;
         this.children = children;
         this.weights = weights;
+        this.utilityFunction = new DefaultUtility();
     }
 
     //endregion
@@ -119,6 +126,14 @@ public abstract class ModelNode {
 
     public void setWeights(Map<String, Double> weights) {
         this.weights = weights;
+    }
+
+    public IUtilityFunction getUtilityFunction() {
+        return utilityFunction;
+    }
+
+    public void setUtilityFunction(IUtilityFunction utilityFunction) {
+        this.utilityFunction = utilityFunction;
     }
 
     //endregion
