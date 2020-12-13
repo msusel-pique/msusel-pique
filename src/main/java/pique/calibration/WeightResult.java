@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Struct type class for representing the results of R weight elicitation.
+ * Struct type class for representing the results weight elicitation.
  */
 public class WeightResult {
 
@@ -25,7 +25,7 @@ public class WeightResult {
     }
 
 
-    /// Getters and setters ///
+    // Getters and setters
 
     public String getName() {
         return name;

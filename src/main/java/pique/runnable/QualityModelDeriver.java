@@ -34,7 +34,9 @@ public class QualityModelDeriver {
 
         // (2) Elicitate weights
         IWeighter weighter = qmDesign.getWeighter();
-        Set<WeightResult> weights = weighter.elicitateWeights();
+        // TODO (1.0): Consider, instead of weighting all nodes in one sweep here, dynamically assigning IWeighter
+        //  ojbects to each node to have them weight using JIT evaluation functions.
+        Set<WeightResult> weights = weighter.elicitateWeights(qmDesign);
         // TODO: assert WeightResult names match expected TQI, QualityAspect, and ProductFactor names from quality model description
 
         // (3) Apply results to nodes in quality model by matching names
