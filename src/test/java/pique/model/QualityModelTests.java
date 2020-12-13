@@ -2,11 +2,18 @@ package pique.model;
 
 import org.junit.Assert;
 import org.junit.Test;
+import pique.analysis.ITool;
 import pique.calibration.NaiveBenchmarker;
 import pique.calibration.NaiveWeighter;
+import pique.runnable.QualityModelDeriver;
+import pique.utility.MockedITool;
+import pique.utility.MockedLocTool;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Test high level functions found in the QualityModel class such as model improt from a text file.
@@ -79,5 +86,30 @@ public class QualityModelTests {
         Diagnostic diagnostic22 = (Diagnostic)measure2.getChildByName("TST0022");
         Assert.assertEquals("TST0022", diagnostic22.getName());
         Assert.assertEquals(0, diagnostic22.getNumChildren());
+    }
+
+    /**
+     * Not a real test, yet, but exports a derived quality model for manual verification
+     */
+    @Test
+    public void testExportQualityModel_Derived() {
+
+        // Run model derivation process
+        Path qmFilePath = Paths.get("src/test/resources/quality_models/qualityModel_minimal_description.json");
+
+        String projectRootFlag = ".txt";
+        Path benchmarkRepo = Paths.get("src/test/resources/benchmark_repository");
+        ITool mockedTool = new MockedITool();
+        Set<ITool> tools = Stream.of(mockedTool).collect(Collectors.toSet());
+        ITool locTool = new MockedLocTool();
+
+        QualityModel qmDescription = new QualityModel(qmFilePath);
+        QualityModel qualityModel = QualityModelDeriver.deriveModel(qmDescription, tools, locTool, benchmarkRepo,
+                projectRootFlag);
+
+        // Export as artifact
+        Path outputDirectory = Paths.get("src/test/out");
+        QualityModelExport qmExport = new QualityModelExport(qualityModel);
+        qmExport.exportToJson("qualityModel_minimal_derived", outputDirectory);
     }
 }

@@ -37,9 +37,7 @@ import java.util.Map.Entry;
 public class QualityModel {
 
     // Fields
-    @Expose
     private String name;  //The name of the QM found in the XML file
-    @Expose
     private Tqi tqi;  // root node, the total quality evaluation, contains quality aspect objects as children
     private IBenchmarker benchmarker;
     private IWeighter weighter;
@@ -314,16 +312,17 @@ public class QualityModel {
                 // TODO (1.0): Update to support any combination of non-default mechanisms
                 // Diagnostics
                 ArrayList<ModelNode> diagnostics = new ArrayList<>();
-                JsonArray jsonDiagnostics = jsonMeasure.getAsJsonArray("diagnostics");
-                jsonDiagnostics.forEach(d -> {
-                    JsonObject diagnostic = d.getAsJsonObject();
-                    String dName = diagnostic.get("name").getAsString();
-                    String dDescription = diagnostic.get("description").getAsString();
-                    String dToolName = diagnostic.get("toolName").getAsString();
+                JsonObject jsonDiagnostics = jsonMeasure.getAsJsonObject("children");
+
+                jsonDiagnostics.entrySet().forEach(jsonDiagnostic -> {
+                    String dName = jsonDiagnostic.getKey();
+                    JsonObject dJsonObject = jsonDiagnostic.getValue().getAsJsonObject();
+                    String dDescription = dJsonObject.get("description").getAsString();
+                    String dToolName = dJsonObject.get("toolName").getAsString();
 
                     // Optional diagnostic 'eval_strategy' field
-                    if (diagnostic.get("eval_strategy") != null) {
-                        String fullClassName = diagnostic.get("eval_strategy").getAsString();
+                    if (dJsonObject.get("eval_strategy") != null) {
+                        String fullClassName = dJsonObject.get("eval_strategy").getAsString();
                         try {
                             diagnostics.add(new Diagnostic(
                                     dName,

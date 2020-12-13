@@ -33,34 +33,30 @@
 		"Measure 01": {
 			"description": "Measure 01 description",
 			"positive": false,
-			"diagnostics": [
-				{
-					"name": "TST0011",
+			"children": {
+				"TST0011": {
 					"description": "Description for TST0011 diagnostic",
 					"toolName": "Test tool"
 				},
-				{
-					"name": "TST0012",
+				"TST0012": {
 					"description": "Description for TST0012 diagnostic",
 					"toolName": "Test tool"
 				}
-			]
+			}
 		},
 		"Measure 02": {
 			"description": "Measure 02 description",
 			"positive": false,
-			"diagnostics": [
-				{
-					"name": "TST0021",
+			"children": {
+				"TST0021": {
 					"description": "Description for TST0021 diagnostic",
 					"toolName": "Test tool"
 				},
-				{
-					"name": "TST0022",
+				"TST0022": {
 					"description": "Description for TST0022 diagnostic",
 					"toolName": "Test tool"
 				}
-			]
+			}
 		}
 	}
 }

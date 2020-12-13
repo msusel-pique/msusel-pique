@@ -20,13 +20,9 @@ public class Finding extends ModelNode {
 
     //region Instance variables
 
-    @Expose
     private int characterNumber;
-    @Expose
     private int lineNumber;
-    @Expose
     private int severity;  // TODO: consider refactoring into enum
-    @Expose
     private String filePath;
 
     //endregion

@@ -9,6 +9,7 @@ import pique.evaluation.Project;
 import pique.model.QualityModel;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -20,9 +21,6 @@ import java.util.Set;
  */
 // TODO: turn into static methods (maybe unelss logger problems)
 public class SingleProjectEvaluator {
-
-    private final Logger logger = LoggerFactory.getLogger(SingleProjectEvaluator.class);
-
 
     /**
      * Entry point for running single project evaluation. The library assumes the user has extended Qatch
@@ -40,7 +38,7 @@ public class SingleProjectEvaluator {
      * @return
      *      The path to the produced quality analysis file on the hard disk.
      */
-    public Path runEvaluator(Path projectDir, Path resultsDir, Path qmLocation, Set<ITool> tools) {
+    public Path runEvaluator(Path projectDir, Path resultsDir, Path qmLocation, Set<ITool> tools, ITool locTool) {
 
         // Initialize data structures
         initialize(projectDir, resultsDir, qmLocation);
@@ -58,7 +56,8 @@ public class SingleProjectEvaluator {
         });
 
         // TODO: put this hardcoded string call somewhere else
-        int projectLoc = (int) allDiagnostics.get("loc").getValue();
+        Path locAnalyzeResults = locTool.analyze(projectDir);
+        int projectLoc = (int) locTool.parseAnalysis(locAnalyzeResults).get("loc").getValue();
 
         // Apply tool results to Project object
         project.updateDiagnosticsWithFindings(allDiagnostics);
@@ -87,7 +86,7 @@ public class SingleProjectEvaluator {
      * @param qmLocation
      *      Path to the quality model file. Must exist.
      */
-    void initialize(Path projectDir, Path resultsDir, Path qmLocation) {
+    private void initialize(Path projectDir, Path resultsDir, Path qmLocation) {
         if (!projectDir.toFile().exists()) {
             throw new IllegalArgumentException("Invalid projectDir path given.");
         }

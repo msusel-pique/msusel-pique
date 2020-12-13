@@ -17,6 +17,8 @@ import java.util.Map;
  *
  * @author Rice
  */
+// TODO (1.0): Better GSON supprt.  Expose while limiting depth. Currect state will cause problems for large quality
+//  models
 public class QualityModelExport {
 
     /// Fields ///
@@ -32,7 +34,7 @@ public class QualityModelExport {
     private Map<String, ModelNode> measures = new HashMap<>();
 
 
-    /// Constructor ///
+    /// Constructor
     @SafeVarargs
     public QualityModelExport(QualityModel qualityModel, Pair<String, String>... optional) {
 

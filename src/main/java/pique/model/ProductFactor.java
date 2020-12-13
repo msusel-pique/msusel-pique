@@ -9,10 +9,6 @@ import java.util.Map;
 
 public class ProductFactor extends ModelNode {
 
-	// Fields
-	// TODO (1.0): Changing single "Measure" field to new "Children" map. This will likely break a lot of things.
-//	private Measure measure;  // TODO (1.0): allow more than one measure
-
 	// Constructors
 
 	public ProductFactor(String name, String description) {

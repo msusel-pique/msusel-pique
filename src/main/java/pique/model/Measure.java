@@ -31,11 +31,8 @@ public class Measure extends ModelNode {
 
 	@Expose
 	private boolean positive;
-	@Expose
 	private String normalizer_name;
-	@Expose
 	private String eval_strategy;
-	@Expose
 	private int num_findings = getNumChildren();
 	@Expose
 	private Double[] thresholds;

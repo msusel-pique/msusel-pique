@@ -117,6 +117,6 @@ public class NaiveBenchmarker implements IBenchmarker {
 
     @Override
     public String getName() {
-        return "NaiveBenchmarker";
+        return this.getClass().getCanonicalName();
     }
 }

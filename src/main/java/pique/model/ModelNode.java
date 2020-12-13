@@ -16,12 +16,12 @@ import java.util.Map;
 public abstract class ModelNode {
 
     //region Fields
-
     @Expose
     protected double value;  // the value this node evaluates to
 
     @Expose
     protected String name;
+    @Expose
     protected String description;
 
     protected IEvaluator evaluator;

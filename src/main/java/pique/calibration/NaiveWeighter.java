@@ -57,7 +57,7 @@ public class NaiveWeighter implements IWeighter {
 
     @Override
     public String getName() {
-        return "pique.calibration.NaiveWeighter";
+        return this.getClass().getCanonicalName();
     }
 
     private double averageWeight(ModelNode currentNode) {

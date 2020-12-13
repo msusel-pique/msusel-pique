@@ -16,15 +16,10 @@ public class Project{
 
 	// Fields
 
-	@Expose
 	private String name;
-	@Expose
 	private int linesOfCode;
-	@Expose
 	private Path path;  // the original path where the sources of the project are stored (with or without the name)
-	@Expose
 	private QualityModel qualityModel;  // the QM prototype this project uses for evaluation
-
 
 	// Constructors
 
