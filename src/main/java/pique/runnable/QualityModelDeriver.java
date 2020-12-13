@@ -4,6 +4,7 @@ import pique.analysis.ITool;
 import pique.calibration.IBenchmarker;
 import pique.calibration.IWeighter;
 import pique.calibration.WeightResult;
+import pique.model.Measure;
 import pique.model.ModelNode;
 import pique.model.QualityAspect;
 import pique.model.QualityModel;
@@ -37,8 +38,10 @@ public class QualityModelDeriver {
 
         // (3) Apply results to nodes in quality model by matching names
         // Thresholds (ProductFactor nodes)
-        measureNameThresholdMappings.forEach((measureName, thresholds) ->
-                qmDesign.getMeasureByName(measureName).setThresholds(thresholds));
+        measureNameThresholdMappings.forEach((measureName, thresholds) -> {
+            Measure measure = (Measure)qmDesign.getMeasureByName(measureName);
+            measure.setThresholds(thresholds);
+        });
 
         // Weights (TQI and QualityAspect nodes)
         for (WeightResult weightsIn : weights) {

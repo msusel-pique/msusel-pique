@@ -29,7 +29,7 @@ public class QualityModelExport {
     @Expose
     private Map<String, Map<String, ModelNode>> factors = new HashMap<>();
     @Expose
-    private Map<String, Measure> measures = new HashMap<>();
+    private Map<String, ModelNode> measures = new HashMap<>();
 
 
     /// Constructor ///
@@ -72,7 +72,7 @@ public class QualityModelExport {
         return factors;
     }
 
-    public Map<String, Measure> getMeasures() {
+    public Map<String, ModelNode> getMeasures() {
         return measures;
     }
 

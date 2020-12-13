@@ -18,10 +18,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -46,7 +43,6 @@ public class QualityModel {
     private Tqi tqi;  // root node, the total quality evaluation, contains quality aspect objects as children
     private IBenchmarker benchmarker;
     private IWeighter weighter;
-
 
     // Constructors
 
@@ -105,20 +101,20 @@ public class QualityModel {
         getTqi().setChild(qualityAspect);
     }
 
-    public Map<String, Measure> getMeasures() {
-        Map<String, Measure> measures = new HashMap<>();
+    public Map<String, ModelNode> getMeasures() {
+        Map<String, ModelNode> measures = new HashMap<>();
         List<ModelNode> productFactorList = new ArrayList<>(getProductFactors().values());
 
         productFactorList.forEach(productFactor -> {
             productFactor.getChildren().values().forEach(measure -> {
-                measures.put(measure.getName(), (Measure) measure);
+                measures.put(measure.getName(), measure);
             });
         });
 
         return measures;
     }
 
-    public Measure getMeasureByName(String name) {
+    public ModelNode getMeasureByName(String name) {
         return getMeasures().get(name);
     }
 
@@ -144,10 +140,17 @@ public class QualityModel {
         throw new RuntimeException("Unable to find property with child measure name " + measureName + " from QM's property nodes");
     }
 
+    // TODO (1.0): Makes assumption all QA children are Product Factors
     public Map<String, ModelNode> getProductFactors() {
-        return getAnyQualityAspect().getChildren();
-    }
+        Map<String, ModelNode> productFactors = new HashMap<>();
 
+        getQualityAspects().values().forEach(qa -> {
+            Collection<ModelNode> qaChildren = qa.getChildren().values();
+            qaChildren.forEach(child -> productFactors.putIfAbsent(child.getName(), child));
+        });
+
+        return productFactors;
+    }
 
     public Tqi getTqi() {
         return tqi;
@@ -284,6 +287,10 @@ public class QualityModel {
 
             // TODO (1.0): Update to support any combination of non-default mechanisms
             // Measures
+
+            // Used later to connect to product factors
+            Map<String, Measure> measureMap = new HashMap<>();
+
             measures.entrySet().forEach(entry -> {
                 JsonObject jsonMeasure = entry.getValue().getAsJsonObject();
                 String measureName = entry.getKey();
@@ -292,6 +299,7 @@ public class QualityModel {
 
                 // TODO (1.0): Support optional normalizer
                 Measure m = new Measure(measureName, measureDescription, new DefaultNormalizer(), positive);
+                measureMap.putIfAbsent(m.getName(), m);
 
                 // Optional thresholds
                 Double[] thresholds = null;
@@ -353,26 +361,25 @@ public class QualityModel {
                         e.printStackTrace();
                     }
                 }
+            });
 
-                // Attach measure to product factors that have "measures" entires
-                Map<String, ArrayList<String>> jsonPfMeasures = new HashMap<>();
-                productFactors.entrySet().forEach(pfEntry -> {
-                    String pfName = pfEntry.getKey();
-                    JsonObject jsonPf = (JsonObject) pfEntry.getValue();
+            // Attach measure to product factors that have "measures" entires
+            productFactors.entrySet().forEach(pfJsonEntry -> {
+                String pfName = pfJsonEntry.getKey();
+                JsonObject jsonPf = (JsonObject) pfJsonEntry.getValue();
 
-                    if (jsonPf.get("measures") != null) {
-                        ArrayList<String> pfMeasureStrings = new ArrayList<>();
+                // If the json PF entry has a list of child measures provided...
+                if (jsonPf.get("measures") != null) {
 
-                        JsonArray jsonPfMeasuresArray = jsonPf.getAsJsonArray("measures");
-                        jsonPfMeasuresArray.forEach(pfMeasureString -> pfMeasureStrings.add(pfMeasureString.getAsString()));
+                    // Collect these measure names as an ArrayList
+                    ArrayList<String> pfMeasureStrings = new ArrayList<>();
+                    JsonArray jsonPfMeasuresArray = jsonPf.getAsJsonArray("measures");
 
-                        jsonPfMeasures.putIfAbsent(pfName, pfMeasureStrings);
-                    }
-                });
-                jsonPfMeasures.forEach((pfName, pfChildren) -> {
-                    pfChildren.forEach(stringName -> getProductFactor(pfName).setChild(getMeasureByName(stringName)));
-                });
-
+                    // Use the previous collection to attach these measures to the product factor using name matching
+                    jsonPfMeasuresArray.forEach(measureName -> {
+                        getProductFactor(pfName).setChild(measureMap.get(measureName.getAsString()));
+                    });
+                }
             });
 
             // Crawl back up json inputting factor weights

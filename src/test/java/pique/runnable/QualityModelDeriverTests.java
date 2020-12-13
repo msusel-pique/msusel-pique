@@ -25,7 +25,7 @@
 //    String projectRootFlag = ".txt";
 //
 //    Path benchmarkRepo = Paths.get("src/test/resources/benchmark_repository");
-//    Path qmDescriptionPath = Paths.get("src/test/resources/quality_models/qualityModel_test_description.json");
+//    Path qmDescriptionPath = Paths.get("src/test/resources/quality_models/qualityModel_test_description_old.json");
 //
 //    //region Mocked Static Analysis Tools
 //

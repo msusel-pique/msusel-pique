@@ -36,11 +36,11 @@
 //
 //    Path PROJECT_DIR = Paths.get("src/test/resources/thesis_tests/FakeProject_01");
 //    Path RESULTS_DIR = Paths.get("src/test/thesis_out/SingleProjEval");
-//    Path QM_LOCATION = Paths.get("src/test/resources/thesis_tests/quality_models/qualityModel_test.json");
+//    Path QM_LOCATION = Paths.get("src/test/resources/thesis_tests/quality_models/qualityModel_test_old.json");
 //    Path TOOL_RESULTS = Paths.get("src/test/resources/thesis_tests/tool_results");
 //    Path TEST_OUT = Paths.get("src/test/thesis_out");
 //
-//    Path qmDescriptionPath = Paths.get("src/test/resources/thesis_tests/quality_models/qualityModel_test_description.json");
+//    Path qmDescriptionPath = Paths.get("src/test/resources/thesis_tests/quality_models/qualityModel_test_description_old.json");
 //    Path benchmarkRepo = Paths.get("src/test/resources/thesis_tests/benchmark_repository");
 //    Path comparisonMatricesDirectory = Paths.get("src/test/resources/thesis_tests/comparison_matrices/test_derive_model");
 //    Path benchmarkOutput = Paths.get("src/test/thesis_out/benchmark_results/benchmark_data.csv");
