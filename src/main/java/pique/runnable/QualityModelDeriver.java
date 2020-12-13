@@ -23,13 +23,14 @@ import java.util.Set;
  */
 public class QualityModelDeriver {
 
-    public static QualityModel deriveModel(QualityModel qmDesign, Set<ITool> tools, Path benchmarkRepository,
+    public static QualityModel deriveModel(QualityModel qmDesign, Set<ITool> tools,
+                                           ITool locTool, Path benchmarkRepository,
                                            String projectRootFlag) {
 
         // (1) Derive thresholds
         IBenchmarker benchmarker = qmDesign.getBenchmarker();
         Map<String, Double[]> measureNameThresholdMappings = benchmarker.deriveThresholds(
-                benchmarkRepository, qmDesign, tools, projectRootFlag);
+                benchmarkRepository, qmDesign, tools, locTool, projectRootFlag);
 
         // (2) Elicitate weights
         IWeighter weighter = qmDesign.getWeighter();

@@ -47,19 +47,7 @@ public class Tqi extends ModelNode {
     // TODO (1.0): Possible breaking change?
     @Override
     public ModelNode clone() {
-//        Map<String, ModelNode> clonedQualityAspects = new HashMap<>();
-//        Map<String, ModelNode> clonedProductFactors = new HashMap<>();
-//
-//        getAnyChild().getChildren().values().forEach(productFactor -> {
-//            ProductFactor clonedProductFactor = (ProductFactor) productFactor.clone();
-//            clonedProductFactors.put(clonedProductFactor.getName(), clonedProductFactor);
-//        });
-//
-//        getChildren().values().forEach(qualityAspect -> {
-//            QualityAspect clonedQualityAspect =
-//                    (QualityAspect)((QualityAspect)qualityAspect).clone(clonedProductFactors);
-//            clonedQualityAspects.put(clonedQualityAspect.getName(), clonedQualityAspect);
-//        });
+
         Map<String, ModelNode> clonedChildren = new HashMap<>();
         getChildren().forEach((k, v) -> clonedChildren.put(k, v.clone()));
 

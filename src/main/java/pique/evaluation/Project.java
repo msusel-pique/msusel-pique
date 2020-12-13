@@ -1,6 +1,7 @@
 package pique.evaluation;
 
 import com.google.gson.annotations.Expose;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import org.apache.commons.lang3.tuple.Pair;
 import pique.model.*;
 
@@ -76,8 +77,9 @@ public class Project{
 	 */
 	// TODO (1.0): Currently makes assumption that all product factors have exactly 1 connected measure
 	public void addFindings(Diagnostic toolResult) {
-		for (ModelNode productFactor : getQualityModel().getProductFactors().values()) {
-			for (ModelNode diagnostic : productFactor.getChildren().values()) {
+
+		for (ModelNode measure : getQualityModel().getMeasures().values()) {
+			for (ModelNode diagnostic : measure.getChildren().values()) {
 				if (diagnostic.getName().equals(toolResult.getName())) {
 					diagnostic.setChildren(toolResult.getChildren().values());
 				}

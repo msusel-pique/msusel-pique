@@ -81,26 +81,6 @@ public class QualityModel {
         return benchmarker;
     }
 
-    public QualityAspect getAnyQualityAspect() {
-        return (QualityAspect) getTqi().getAnyChild();
-    }
-
-    public QualityAspect getQualityAspect(String name) {
-        return (QualityAspect) getTqi().getChildByName(name);
-    }
-
-    public Map<String, ModelNode> getQualityAspects() {
-        return getTqi().getChildren();
-    }
-
-    public void setQualityAspects(Map<String, ModelNode> qualityAspects) {
-        getTqi().setChildren(qualityAspects);
-    }
-
-    public void setQualityAspect(QualityAspect qualityAspect) {
-        getTqi().setChild(qualityAspect);
-    }
-
     public Map<String, ModelNode> getMeasures() {
         Map<String, ModelNode> measures = new HashMap<>();
         List<ModelNode> productFactorList = new ArrayList<>(getProductFactors().values());
@@ -116,14 +96,6 @@ public class QualityModel {
 
     public ModelNode getMeasureByName(String name) {
         return getMeasures().get(name);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public ProductFactor getProductFactor(String name) {
@@ -150,6 +122,34 @@ public class QualityModel {
         });
 
         return productFactors;
+    }
+
+    public QualityAspect getQualityAspectAny() {
+        return (QualityAspect) getTqi().getAnyChild();
+    }
+
+    public QualityAspect getQualityAspect(String name) {
+        return (QualityAspect) getTqi().getChildByName(name);
+    }
+
+    public Map<String, ModelNode> getQualityAspects() {
+        return getTqi().getChildren();
+    }
+
+    public void setQualityAspects(Map<String, ModelNode> qualityAspects) {
+        getTqi().setChildren(qualityAspects);
+    }
+
+    public void setQualityAspect(QualityAspect qualityAspect) {
+        getTqi().setChild(qualityAspect);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Tqi getTqi() {
@@ -383,7 +383,7 @@ public class QualityModel {
             });
 
             // Crawl back up json inputting factor weights
-            if (qualityAspects.getAsJsonObject(getAnyQualityAspect().getName()).getAsJsonObject("weights") != null) {
+            if (qualityAspects.getAsJsonObject(getQualityAspectAny().getName()).getAsJsonObject("weights") != null) {
                 qualityAspects.entrySet().forEach(entry -> {
                     String qaName = entry.getKey();
                     JsonObject qaWeights = entry.getValue().getAsJsonObject().getAsJsonObject("weights");

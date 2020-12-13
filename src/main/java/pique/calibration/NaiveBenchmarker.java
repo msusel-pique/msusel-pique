@@ -1,18 +1,20 @@
 package pique.calibration;
 
 import pique.analysis.ITool;
+import pique.evaluation.BenchmarkMeasureEvaluator;
 import pique.evaluation.Project;
 import pique.model.Diagnostic;
 import pique.model.Measure;
 import pique.model.QualityModel;
 import pique.utility.FileUtility;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.lang.reflect.Array;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class NaiveBenchmarker implements IBenchmarker {
+
+    private Path tempToolOutputLocation = Paths.get("artifacts/benchmark_output");
 
     /**
      * Derive thesholds for all {@link Measure} nodes using a naive approach:
@@ -23,14 +25,13 @@ public class NaiveBenchmarker implements IBenchmarker {
      * @param qmDescription       The quality model description file
      * @param tools               The collection of static analysis tools needed to audio the benchmark repository
      * @param projectRootFlag     Option flag to target the static analysis tools
-     * @param analysisResults     Location to place benchmarking analysis results
      * @return A dictionary of [ Key: {@link pique.model.ModelNode} name, Value: thresholds ] where
      * thresholds is a size = 2 array of Double[] containing the lowest and highest value
      * seen for the given measure (after normalization).
      */
     @Override
     public Map<String, Double[]> deriveThresholds(Path benchmarkRepository, QualityModel qmDescription, Set<ITool> tools,
-                                                  String projectRootFlag) {
+                                                  ITool locTool, String projectRootFlag) {
 
         // Collect root paths of each benchmark project
         Set<Path> projectRoots = FileUtility.multiProjectCollector(benchmarkRepository, projectRootFlag);
@@ -49,6 +50,12 @@ public class NaiveBenchmarker implements IBenchmarker {
             // Instantiate new project object
             Project project = new Project(projectPath.getFileName().toString(), projectPath, qmDescription);
 
+            // TODO: temp fix
+            // Set measures to not use a utility function during their node evaluation
+            project.getQualityModel().getMeasures().values().forEach(measure -> {
+                measure.setEvaluator(new BenchmarkMeasureEvaluator());
+            });
+
             // Run the static analysis tools process
             Map<String, Diagnostic> allDiagnostics = new HashMap<>();
             tools.forEach(tool -> {
@@ -57,7 +64,13 @@ public class NaiveBenchmarker implements IBenchmarker {
             });
 
             // Run LOC tool to set lines of code
-            project.setLinesOfCode((int) allDiagnostics.get("loc").getValue());
+            int linesOfCode = (int) locTool.parseAnalysis(tempToolOutputLocation).get("loc").getValue();
+            // TODO (1.0): need to rethink loc, normalizer, evaluator interactions for benchmark repository
+            //  interactions
+            project.setLinesOfCode(linesOfCode);
+            project.getQualityModel().getMeasures().values().forEach(measure -> {
+                measure.getNormalizer().setNormalizerValue(linesOfCode);
+            });
 
             // Apply collected diagnostics (containing findings) to the project
             allDiagnostics.forEach((diagnosticName, diagnostic) -> {

@@ -9,6 +9,9 @@ public class DefaultFactorEvaluator extends Evaluator {
     @Override
     public double evaluate(ModelNode inNode) {
 
+        // TODO (1.0): Some redesign needed to better handle quality model description where there are not yet weights,
+        //  values, etc...
+
         double outValue = 0.0;
 
         // Apply weighted sums

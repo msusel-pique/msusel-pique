@@ -5,13 +5,16 @@ public class DefaultUtility implements IUtilityFunction {
 
     /**
      * Apply linear interpolation to a 2-threshold array represeting the min and max values seen.
+     * TODO: Investigate genericising this formula to n dimensions
      */
     @Override
     public double utilityFunction(double inValue, Double[] thresholds, boolean positive) {
 
-        // TODO: Investigate genericising this formula to n dimensions
-        if (thresholds.length != 2) throw new RuntimeException("Default utility function assume a threshold array of " +
-                "exactly size 2.");
+        // TODO (1.0): Major fix needed as revealed here. Need to think about how to better go about cloning an
+        //  instancing quality models and "Project" objects
+
+        // If no thresholds yet, currently dealing with a non-derived model. Just return 0.
+        if (thresholds == null) return 0.0;
 
         if (!positive) {
             if (inValue <= thresholds[0]) return 1.0;
