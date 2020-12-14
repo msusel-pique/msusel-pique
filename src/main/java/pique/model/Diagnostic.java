@@ -36,6 +36,7 @@ public class Diagnostic extends ModelNode {
     // Instance variables
 
     private String eval_strategy;
+    @Expose
     private String toolName;
 
 

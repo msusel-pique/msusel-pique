@@ -26,6 +26,8 @@ public class MockedITool implements ITool {
                 return Paths.get("src/test/resources/tool_results/benchmark_two_results.xml");
             case "BenchmarkProjectThree":
                 return Paths.get("src/test/resources/tool_results/benchmark_three_results.xml");
+            case "fake_project":
+                return Paths.get("src/test/resources/tool_results/mocked_itool_project_output.txt");
             default:
                 throw new RuntimeException("switch statement default case");
         }
@@ -111,6 +113,25 @@ public class MockedITool implements ITool {
                 diagnostics.put(bench3tst2.getName(), bench3tst2);
                 diagnostics.put(bench3tst3.getName(), bench3tst3);
                 diagnostics.put(bench3tst4.getName(), bench3tst4);
+
+                return diagnostics;
+
+            case "mocked_itool_project_output.txt":
+                Diagnostic diagnostic11 = new Diagnostic("TST0011", "Sample Description", "Sample Tool Name",
+                        new DefaultDiagnosticEvaluator());
+                Diagnostic diagnostic12 = new Diagnostic("TST0012", "Sample Description", "Sample Tool Name",
+                        new DefaultDiagnosticEvaluator());
+                Diagnostic diagnostic21 = new Diagnostic("TST0021", "Sample Description", "Sample Tool Name",
+                        new DefaultDiagnosticEvaluator());
+
+                diagnostic11.setChild(f1);
+                diagnostic12.setChild(f1);
+                diagnostic21.setChild(f1);
+                diagnostic21.setChild(f1);
+
+                diagnostics.put(diagnostic11.getName(), diagnostic11);
+                diagnostics.put(diagnostic12.getName(), diagnostic12);
+                diagnostics.put(diagnostic21.getName(), diagnostic21);
 
                 return diagnostics;
 

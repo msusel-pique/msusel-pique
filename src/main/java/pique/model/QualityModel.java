@@ -268,9 +268,9 @@ public class QualityModel {
 
             // TODO (1.0): Update to support any combination of non-default mechanisms
             // Product Factors
-            productFactors.entrySet().forEach(entry -> {
-                JsonObject valueObj = entry.getValue().getAsJsonObject();
-                String pfName = entry.getKey();
+            productFactors.entrySet().forEach(jsonProductFactor -> {
+                JsonObject valueObj = jsonProductFactor.getValue().getAsJsonObject();
+                String pfName = jsonProductFactor.getKey();
                 String pfDescription = valueObj.get("description").getAsString();
 
                 ProductFactor pf = new ProductFactor(pfName, pfDescription);
@@ -368,15 +368,14 @@ public class QualityModel {
                 JsonObject jsonPf = (JsonObject) pfJsonEntry.getValue();
 
                 // If the json PF entry has a list of child measures provided...
-                if (jsonPf.get("measures") != null) {
+                if (jsonPf.get("children") != null) {
+                    JsonObject jsonPfChildren = jsonPf.getAsJsonObject("children");
 
-                    // Collect these measure names as an ArrayList
-                    ArrayList<String> pfMeasureStrings = new ArrayList<>();
-                    JsonArray jsonPfMeasuresArray = jsonPf.getAsJsonArray("measures");
-
-                    // Use the previous collection to attach these measures to the product factor using name matching
-                    jsonPfMeasuresArray.forEach(measureName -> {
-                        getProductFactor(pfName).setChild(measureMap.get(measureName.getAsString()));
+                    jsonPfChildren.entrySet().forEach(jsonPfChild -> {
+                        // Get the name of the child
+                        String jsonPfChildName = jsonPfChild.getKey();
+                        // Set the ModelNode object as child to the product facctor node
+                        getProductFactor(pfName).setChild(measureMap.get(jsonPfChildName));
                     });
                 }
             });

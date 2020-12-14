@@ -17,15 +17,15 @@
 		"product_factors": {
 			"ProductFactor 01": {
 				"description": "ProductFactor 01 description",
-				"measures": [
-					"Measure 01"
-				]
+				"children": {
+					"Measure 01":{}
+				}
 			},
 			"ProductFactor 02": {
 				"description": "ProductFactor 02 description",
-				"measures": [
-					"Measure 02"
-				]
+				"children": {
+					"Measure 02":{}
+				}
 			}
 		}
 	},

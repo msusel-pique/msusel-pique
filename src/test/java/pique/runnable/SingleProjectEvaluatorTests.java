@@ -47,6 +47,7 @@ public class SingleProjectEvaluatorTests {
         Path evaluationResults = evaluator.runEvaluator(projectPath, evaluationResultsPath, qmDerivedOutputFile, tools,
                 locTool);
 
+        // PICKUP: investigate QM JVM object after assessment
         throw new NotImplementedException();
     }
 }
