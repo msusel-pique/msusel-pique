@@ -14,6 +14,11 @@ public class ProductFactor extends ModelNode {
 	public ProductFactor(String name, String description) {
 		super(name, description, new DefaultFactorEvaluator(), null);
 	}
+
+	public ProductFactor(String name, String description, IEvaluator evaluator) {
+		super(name, description, new DefaultFactorEvaluator(), null);
+		this.evaluator = evaluator;
+	}
 	
 	public ProductFactor(String name, String description, ModelNode measure){
 		super(name, description, new DefaultFactorEvaluator(), null);

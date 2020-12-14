@@ -54,6 +54,7 @@ public class MockedITool implements ITool {
     public Map<String, Diagnostic> parseAnalysis(Path toolResults) {
         Finding f1 = Builder.buildFinding("file/path/one", 11, 1);
         Finding f2 = Builder.buildFinding("file/path/two", 22, 2);
+        Finding f3 = Builder.buildFinding("file/path/three", 33, 3);
 
         Map<String, Diagnostic> diagnostics = new HashMap<>();
         switch (toolResults.getFileName().toString()) {
@@ -126,6 +127,7 @@ public class MockedITool implements ITool {
 
                 diagnostic11.setChild(f1);
                 diagnostic12.setChild(f1);
+                diagnostic12.setChild(f3);
                 diagnostic21.setChild(f1);
                 diagnostic21.setChild(f1);
 

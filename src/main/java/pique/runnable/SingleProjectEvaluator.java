@@ -22,6 +22,13 @@ import java.util.Set;
 // TODO: turn into static methods (maybe unelss logger problems)
 public class SingleProjectEvaluator {
 
+    Project project;
+
+    //region Get / Set
+    public Project getEvaluatedProject() {
+        return project;
+    }
+
     /**
      * Entry point for running single project evaluation. The library assumes the user has extended Qatch
      * by implementing ITool with language-specific functionality.
@@ -43,7 +50,7 @@ public class SingleProjectEvaluator {
         // Initialize data structures
         initialize(projectDir, resultsDir, qmLocation);
         QualityModel qualityModel = new QualityModel(qmLocation);
-        Project project = new Project(FilenameUtils.getBaseName(projectDir.getFileName().toString()), projectDir, qualityModel);
+        project = new Project(FilenameUtils.getBaseName(projectDir.getFileName().toString()), projectDir, qualityModel);
 
         // Validate State
         // TODO: validate more objects such as if the quality model has thresholds and weights, are there expected diagnostics, etc
@@ -58,18 +65,15 @@ public class SingleProjectEvaluator {
         // TODO: put this hardcoded string call somewhere else
         Path locAnalyzeResults = locTool.analyze(projectDir);
         int projectLoc = (int) locTool.parseAnalysis(locAnalyzeResults).get("loc").getValue();
+        project.getQualityModel().getMeasures().values().forEach(measure -> {
+            measure.getNormalizer().setNormalizerValue(projectLoc);
+        });
 
         // Apply tool results to Project object
         project.updateDiagnosticsWithFindings(allDiagnostics);
         project.setLinesOfCode(projectLoc);
 
-        // Evaluate measure nodes (normalize using lines of code)
-        project.evaluateMeasures();
-
-        // Aggregate properties -> characteristics -> tqi values using quality model (thresholds for properties and weights for characteristics and tqi)
-        project.evaluateProperties();
-        project.evaluateCharacteristics();
-        project.evaluateTqi();
+        double tqiValue = project.evaluateTqi();
 
         // Create a file of the results and return its path
         return project.exportToJson(resultsDir);

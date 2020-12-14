@@ -23,20 +23,23 @@ public class Project{
 
 	// Constructors
 
+	// TODO (1.0): Currently need to use .clone() for benchmark repository quality model sharing. This will be
+	//  confusing and problematic to people not using the default benchmarker.
 	public Project(String name){
 		this.name = name;
 	}
 
 	public Project(String name, QualityModel qm) {
 		this.name = name;
-		this.qualityModel = qm.clone();
+		this.qualityModel = qm;
 	}
 
 	public Project(String name, Path path, QualityModel qm) {
 		this.name = name;
 		this.path = path;
-		this.qualityModel = qm.clone();
+		this.qualityModel = qm;
 	}
+
 	
 	
 	// Getters and setters
@@ -104,8 +107,8 @@ public class Project{
 	}
 
 
-	public void evaluateTqi() {
-		getQualityModel().getTqi().getValue();
+	public double evaluateTqi() {
+		return getQualityModel().getTqi().getValue();
 	}
 
 

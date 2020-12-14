@@ -9,10 +9,7 @@ import pique.calibration.IBenchmarker;
 import pique.calibration.IWeighter;
 import pique.calibration.NaiveBenchmarker;
 import pique.calibration.NaiveWeighter;
-import pique.evaluation.DefaultDiagnosticEvaluator;
-import pique.evaluation.DefaultNormalizer;
-import pique.evaluation.IEvaluator;
-import pique.evaluation.INormalizer;
+import pique.evaluation.*;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -273,7 +270,7 @@ public class QualityModel {
                 String pfName = jsonProductFactor.getKey();
                 String pfDescription = valueObj.get("description").getAsString();
 
-                ProductFactor pf = new ProductFactor(pfName, pfDescription);
+                ProductFactor pf = new ProductFactor(pfName, pfDescription, new DefaultProductFactorEvaluator());
 
                 // TODO (1.0): Re-introduce children array functionality
                 // Connect product factors as fully connected to quality aspects node if "children" arrays do not exist

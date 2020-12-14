@@ -47,8 +47,13 @@ public class NaiveBenchmarker implements IBenchmarker {
 
             counter++;
 
+            // Clone the QM
+            // TODO (1.0): Currently need to use .clone() for benchmark repository quality model sharing. This will be
+            //  confusing and problematic to people not using the default benchmarker.
+            QualityModel clonedQM = qmDescription.clone();
+
             // Instantiate new project object
-            Project project = new Project(projectPath.getFileName().toString(), projectPath, qmDescription);
+            Project project = new Project(projectPath.getFileName().toString(), projectPath, clonedQM);
 
             // TODO: temp fix
             // Set measures to not use a utility function during their node evaluation
