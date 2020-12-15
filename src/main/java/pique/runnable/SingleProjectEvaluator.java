@@ -7,6 +7,7 @@ import pique.model.Diagnostic;
 import pique.analysis.ITool;
 import pique.evaluation.Project;
 import pique.model.QualityModel;
+import pique.model.QualityModelImport;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -49,7 +50,8 @@ public class SingleProjectEvaluator {
 
         // Initialize data structures
         initialize(projectDir, resultsDir, qmLocation);
-        QualityModel qualityModel = new QualityModel(qmLocation);
+        QualityModelImport qmImport = new QualityModelImport(qmLocation);
+        QualityModel qualityModel = qmImport.importQualityModel();
         project = new Project(FilenameUtils.getBaseName(projectDir.getFileName().toString()), projectDir, qualityModel);
 
         // Validate State

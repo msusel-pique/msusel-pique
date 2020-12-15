@@ -29,7 +29,9 @@ public class SingleProjectEvaluatorTests {
         ITool mockedTool = new MockedITool();
         Set<ITool> tools = Stream.of(mockedTool).collect(Collectors.toSet());
         ITool locTool = new MockedLocTool();
-        QualityModel qmDescription = new QualityModel(qmFilePath);
+
+        QualityModelImport qmImport = new QualityModelImport(qmFilePath);
+        QualityModel qmDescription = qmImport.importQualityModel();
         QualityModel qualityModel = QualityModelDeriver.deriveModel(qmDescription, tools, locTool, benchmarkRepo,
                 projectRootFlag);
 
