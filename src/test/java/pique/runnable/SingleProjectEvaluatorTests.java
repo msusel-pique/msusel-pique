@@ -7,7 +7,6 @@ import pique.evaluation.Project;
 import pique.model.*;
 import pique.utility.MockedITool;
 import pique.utility.MockedLocTool;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,7 +29,9 @@ public class SingleProjectEvaluatorTests {
         ITool mockedTool = new MockedITool();
         Set<ITool> tools = Stream.of(mockedTool).collect(Collectors.toSet());
         ITool locTool = new MockedLocTool();
-        QualityModel qmDescription = new QualityModel(qmFilePath);
+
+        QualityModelImport qmImport = new QualityModelImport(qmFilePath);
+        QualityModel qmDescription = qmImport.importQualityModel();
         QualityModel qualityModel = QualityModelDeriver.deriveModel(qmDescription, tools, locTool, benchmarkRepo,
                 projectRootFlag);
 

@@ -3,6 +3,7 @@ package pique.model;
 import pique.evaluation.DefaultFactorEvaluator;
 import pique.evaluation.IEvaluator;
 import pique.evaluation.INormalizer;
+import pique.evaluation.IUtilityFunction;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,11 @@ public class ProductFactor extends ModelNode {
 
 	public ProductFactor(String name, String description) {
 		super(name, description, new DefaultFactorEvaluator(), null);
+	}
+
+	public ProductFactor(String name, String description, IEvaluator evaluator, INormalizer normalizer,
+						 IUtilityFunction utilityFunction) {
+		super(name, description, evaluator, normalizer, utilityFunction);
 	}
 
 	public ProductFactor(String name, String description, IEvaluator evaluator) {

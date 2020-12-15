@@ -42,10 +42,17 @@ public abstract class ModelNode {
         this.description = description;
         this.evaluator = evaluator;
         this.normalizer = normalizer;
-        this.utilityFunction = new DefaultUtility();        // TODO (1.0): support custom utility functions
+        this.utilityFunction = new DefaultUtility();
     }
 
-
+    public ModelNode(String name, String description, IEvaluator evaluator, INormalizer normalizer,
+                     IUtilityFunction utilityFunction) {
+        this.name = name;
+        this.description = description;
+        this.evaluator = evaluator;
+        this.normalizer = normalizer;
+        this.utilityFunction = utilityFunction;
+    }
 
     /**
      * Constructor for cloning.

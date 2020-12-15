@@ -51,6 +51,16 @@ public class Measure extends ModelNode {
 		this.eval_strategy = this.evaluator.getName();
 	}
 
+	public Measure(String name, String description, IEvaluator evaluator, INormalizer normalizer,
+				   IUtilityFunction utilityFunction,
+				   boolean positive) {
+		super(name, description, evaluator, normalizer, utilityFunction);
+		this.positive = positive;
+
+		this.normalizer_name = this.normalizer.getName();
+		this.eval_strategy = this.evaluator.getName();
+	}
+
 	public Measure(String name, String description, INormalizer normalizer, boolean positive,
 				   Map<String, ModelNode> diagnostics) {
 		super(name, description, new DefaultMeasureEvaluator(), normalizer);

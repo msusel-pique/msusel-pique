@@ -1,10 +1,7 @@
 package pique.model;
 
 import com.google.gson.annotations.Expose;
-import pique.evaluation.DefaultDiagnosticEvaluator;
-import pique.evaluation.DefaultNormalizer;
-import pique.evaluation.IEvaluator;
-import pique.evaluation.INormalizer;
+import pique.evaluation.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.HashMap;
@@ -61,6 +58,13 @@ public class Diagnostic extends ModelNode {
      */
     public Diagnostic(String id, String description, String toolName, IEvaluator evaluator) {
         super(id, description, evaluator, new DefaultNormalizer());
+        this.toolName = toolName;
+        this.eval_strategy = evaluator.getName();
+    }
+
+    public Diagnostic(String id, String description, String toolName, IEvaluator evaluator, INormalizer normalizer,
+                      IUtilityFunction utilityFunction) {
+        super(id, description, evaluator, normalizer, utilityFunction);
         this.toolName = toolName;
         this.eval_strategy = evaluator.getName();
     }
