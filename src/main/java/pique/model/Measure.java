@@ -33,15 +33,12 @@ public class Measure extends ModelNode {
 	private boolean positive;
 	private String normalizer_name;
 	private String eval_strategy;
-	private int num_findings = getNumChildren();
-	@Expose
-	private Double[] thresholds;
 
 	//endregion
 
 
 	//region Constructors
-	// (todo): change to builder pattern, or upgrade to java 9+: the better option for optional method parameters :)
+	// TODO (1.0) A lot of these constructors can be (and should be) removed with the 1.0 redesign
 	public Measure(String name, String description, INormalizer normalizer, boolean positive) {
 		super(name, description, new DefaultMeasureEvaluator(), normalizer);
 		this.positive = positive;
@@ -52,11 +49,9 @@ public class Measure extends ModelNode {
 	}
 
 	public Measure(String name, String description, IEvaluator evaluator, INormalizer normalizer,
-				   IUtilityFunction utilityFunction,
-				   boolean positive) {
-		super(name, description, evaluator, normalizer, utilityFunction);
+				   IUtilityFunction utilityFunction, boolean positive) {
+		super(name, description, evaluator, normalizer, utilityFunction, null);
 		this.positive = positive;
-
 		this.normalizer_name = this.normalizer.getName();
 		this.eval_strategy = this.evaluator.getName();
 	}
@@ -74,7 +69,6 @@ public class Measure extends ModelNode {
 	public Measure(String name, String description, INormalizer normalizer, boolean positive,
 				   Map<String, ModelNode> diagnostics, Double[] thresholds) {
 		super(name, description, new DefaultMeasureEvaluator(), normalizer);
-		this.thresholds = thresholds;
 		this.positive = positive;
 		this.children = diagnostics;
 
@@ -85,7 +79,6 @@ public class Measure extends ModelNode {
 	public Measure(String name, String description, boolean positive, INormalizer normalizer,
 				   Map<String, ModelNode> diagnostics, Double[] thresholds) {
 		super(name, description, new DefaultMeasureEvaluator(), normalizer);
-		this.thresholds = thresholds;
 		this.positive = positive;
 		this.children = diagnostics;
 
@@ -97,7 +90,6 @@ public class Measure extends ModelNode {
 	public Measure(String name, String description, INormalizer normalizer, boolean positive,
 				   Map<String, ModelNode> diagnostics, Double[] thresholds, IEvaluator evaluator) {
 		super(name, description, evaluator, normalizer);
-		this.thresholds = thresholds;
 		this.positive = positive;
 		this.children = diagnostics;
 
@@ -112,7 +104,6 @@ public class Measure extends ModelNode {
 		super(name, description, evaluator, normalizer);
 		this.positive = positive;
 		this.children = diagnostics;
-		this.thresholds = thresholds;
 		this.utilityFunction = utilityFunction;
 
 		this.normalizer_name = this.normalizer.getName();
@@ -127,7 +118,6 @@ public class Measure extends ModelNode {
 		this.positive = positive;
 		this.normalizer_name = normalizer_name;
 		this.eval_strategy = eval_strategy;
-		this.thresholds = thresholds;
 		this.utilityFunction = utilityFunction;
 	}
 
@@ -144,8 +134,6 @@ public class Measure extends ModelNode {
 		this.evaluator = evaluator;
 	}
 
-	public void setNum_findings(int num_findings) { this.num_findings = num_findings; }
-
 	public boolean isPositive() {
 		return positive;
 	}
@@ -154,28 +142,12 @@ public class Measure extends ModelNode {
 		this.positive = positive;
 	}
 
-	public Double[] getThresholds() {
-		return thresholds;
-	}
-
-	public void setThresholds(Double[] thresholds) {
-		this.thresholds = thresholds;
-	}
-
 	public String getNormalizer_name() {
 		return normalizer_name;
 	}
 
-	public void setNormalizer_name(String normalizer_name) {
-		this.normalizer_name = normalizer_name;
-	}
-
 	public String getEval_strategy() {
 		return eval_strategy;
-	}
-
-	public void setEval_strategy(String eval_strategy) {
-		this.eval_strategy = eval_strategy;
 	}
 
 	public IUtilityFunction getUtilityFunction() {

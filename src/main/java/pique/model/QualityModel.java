@@ -93,7 +93,7 @@ public class QualityModel {
     @Deprecated     // Makes assumption only 1 measure per product factor. Phasing out WIP
     public ProductFactor getProductFactorByMeasureName(String measureName) {
         for (ModelNode productFactor : getProductFactors().values()) {
-            if (productFactor.getChildByName(measureName) != null) {
+            if (productFactor.getChild(measureName) != null) {
                 return (ProductFactor) productFactor;
             }
         }
@@ -117,7 +117,7 @@ public class QualityModel {
     }
 
     public QualityAspect getQualityAspect(String name) {
-        return (QualityAspect) getTqi().getChildByName(name);
+        return (QualityAspect) getTqi().getChild(name);
     }
 
     public Map<String, ModelNode> getQualityAspects() {

@@ -24,8 +24,8 @@ public class QualityAspect extends ModelNode {
     }
 
     public QualityAspect(String name, String description, IEvaluator evaluator, INormalizer normalizer,
-                         IUtilityFunction utilityFunction) {
-        super(name, description, evaluator, normalizer, utilityFunction);
+                         IUtilityFunction utilityFunction, Double[] thresholds) {
+        super(name, description, evaluator, normalizer, utilityFunction, thresholds);
     }
 
     public QualityAspect(String name, String description, Map<String, Double> weights) {

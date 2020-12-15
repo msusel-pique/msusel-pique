@@ -31,8 +31,6 @@ import java.util.Set;
 public class Diagnostic extends ModelNode {
 
     // Instance variables
-
-    private String eval_strategy;
     @Expose
     private String toolName;
 
@@ -42,7 +40,6 @@ public class Diagnostic extends ModelNode {
     public Diagnostic(String id, String description, String toolName) {
         super(id, description, new DefaultDiagnosticEvaluator(), new DefaultNormalizer());
         this.toolName = toolName;
-        this.eval_strategy = evaluator.getName();
     }
 
     /**
@@ -59,14 +56,12 @@ public class Diagnostic extends ModelNode {
     public Diagnostic(String id, String description, String toolName, IEvaluator evaluator) {
         super(id, description, evaluator, new DefaultNormalizer());
         this.toolName = toolName;
-        this.eval_strategy = evaluator.getName();
     }
 
     public Diagnostic(String id, String description, String toolName, IEvaluator evaluator, INormalizer normalizer,
-                      IUtilityFunction utilityFunction) {
-        super(id, description, evaluator, normalizer, utilityFunction);
+                      IUtilityFunction utilityFunction, Double[] thresholds) {
+        super(id, description, evaluator, normalizer, utilityFunction, thresholds);
         this.toolName = toolName;
-        this.eval_strategy = evaluator.getName();
     }
 
     public Diagnostic(double value, String name, String description, IEvaluator evaluator, INormalizer normalizer,
@@ -76,18 +71,6 @@ public class Diagnostic extends ModelNode {
 
 
     // Getters and setters
-
-    public IEvaluator getEvaluator() {
-        return evaluator;
-    }
-
-    public String getEval_strategy() {
-        return eval_strategy;
-    }
-
-    private void setEval_strategy(String eval_strategy) {
-        this.eval_strategy = eval_strategy;
-    }
 
     public String getToolName() {
         return toolName;

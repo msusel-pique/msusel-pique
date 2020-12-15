@@ -58,16 +58,16 @@ public class SingleProjectEvaluatorTests {
 
         // QM Handles
         Tqi tqi = evaluatedProject.getQualityModel().getTqi();
-        ModelNode qa01 = tqi.getChildByName("QualityAspect 01");
-        ModelNode qa02 = tqi.getChildByName("QualityAspect 02");
-        ModelNode pf01 = qa01.getChildByName("ProductFactor 01");
-        ModelNode pf02 = qa02.getChildByName("ProductFactor 02");
-        ModelNode measure01 = pf01.getChildByName("Measure 01");
-        ModelNode measure02 = pf02.getChildByName("Measure 02");
-        ModelNode diagnostic11 = measure01.getChildByName("TST0011");
-        ModelNode diagnostic12 = measure01.getChildByName("TST0012");
-        ModelNode diagnostic21 = measure02.getChildByName("TST0021");
-        ModelNode diagnostic22 = measure02.getChildByName("TST0022");
+        ModelNode qa01 = tqi.getChild("QualityAspect 01");
+        ModelNode qa02 = tqi.getChild("QualityAspect 02");
+        ModelNode pf01 = qa01.getChild("ProductFactor 01");
+        ModelNode pf02 = qa02.getChild("ProductFactor 02");
+        ModelNode measure01 = pf01.getChild("Measure 01");
+        ModelNode measure02 = pf02.getChild("Measure 02");
+        ModelNode diagnostic11 = measure01.getChild("TST0011");
+        ModelNode diagnostic12 = measure01.getChild("TST0012");
+        ModelNode diagnostic21 = measure02.getChild("TST0021");
+        ModelNode diagnostic22 = measure02.getChild("TST0022");
 
         // Diagnostics
         Assert.assertEquals(1, diagnostic11.getValue(), 0.0001);

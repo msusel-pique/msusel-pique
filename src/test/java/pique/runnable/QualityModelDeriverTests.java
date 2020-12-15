@@ -6,7 +6,6 @@ import pique.analysis.ITool;
 import pique.model.*;
 import pique.utility.MockedITool;
 import pique.utility.MockedLocTool;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -87,18 +86,18 @@ public class QualityModelDeriverTests {
         Assert.assertEquals(0.5, qa02.getWeight("ProductFactor 02"), 0.0);
 
         // Product Factors
-        ModelNode pf01 = qa01.getChildByName("ProductFactor 01");
-        Assert.assertSame(pf01, qa02.getChildByName("ProductFactor 01"));
+        ModelNode pf01 = qa01.getChild("ProductFactor 01");
+        Assert.assertSame(pf01, qa02.getChild("ProductFactor 01"));
         Assert.assertEquals("ProductFactor 01", pf01.getName());
         Assert.assertEquals(1, pf01.getChildren().size());
 
-        ModelNode pf02 = qa01.getChildByName("ProductFactor 02");
-        Assert.assertSame(pf02, qa02.getChildByName("ProductFactor 02"));
+        ModelNode pf02 = qa01.getChild("ProductFactor 02");
+        Assert.assertSame(pf02, qa02.getChild("ProductFactor 02"));
         Assert.assertEquals("ProductFactor 02", pf02.getName());
         Assert.assertEquals(1, pf02.getChildren().size());
 
         // Measures
-        Measure measure01 = (Measure)pf01.getChildByName("Measure 01");
+        Measure measure01 = (Measure)pf01.getChild("Measure 01");
         Assert.assertEquals("Measure 01", measure01.getName());
 
         Assert.assertFalse(measure01.isPositive());
@@ -111,7 +110,7 @@ public class QualityModelDeriverTests {
         Assert.assertTrue(measure01.getChildren().containsKey("TST0011"));
         Assert.assertTrue(measure01.getChildren().containsKey("TST0012"));
 
-        Measure measure02 = (Measure)pf02.getChildByName("Measure 02");
+        Measure measure02 = (Measure)pf02.getChild("Measure 02");
         Assert.assertEquals("Measure 02", measure02.getName());
 
         Assert.assertFalse(measure02.isPositive());
@@ -125,19 +124,19 @@ public class QualityModelDeriverTests {
         Assert.assertTrue(measure02.getChildren().containsKey("TST0022"));
 
         // Diagnostics
-        Diagnostic diagnostic11 = (Diagnostic)measure01.getChildByName("TST0011");
+        Diagnostic diagnostic11 = (Diagnostic)measure01.getChild("TST0011");
         Assert.assertEquals("TST0011", diagnostic11.getName());
         Assert.assertEquals("Test tool", diagnostic11.getToolName());
 
-        Diagnostic diagnostic12 = (Diagnostic)measure01.getChildByName("TST0012");
+        Diagnostic diagnostic12 = (Diagnostic)measure01.getChild("TST0012");
         Assert.assertEquals("TST0012", diagnostic12.getName());
         Assert.assertEquals("Test tool", diagnostic12.getToolName());
 
-        Diagnostic diagnostic21 = (Diagnostic)measure02.getChildByName("TST0021");
+        Diagnostic diagnostic21 = (Diagnostic)measure02.getChild("TST0021");
         Assert.assertEquals("TST0021", diagnostic21.getName());
         Assert.assertEquals("Test tool", diagnostic21.getToolName());
 
-        Diagnostic diagnostic22 = (Diagnostic)measure02.getChildByName("TST0022");
+        Diagnostic diagnostic22 = (Diagnostic)measure02.getChild("TST0022");
         Assert.assertEquals("TST0022", diagnostic22.getName());
         Assert.assertEquals("Test tool", diagnostic22.getToolName());
     }

@@ -33,23 +33,6 @@ public class MockedITool implements ITool {
         }
     }
 
-    /*
-     * Test info for reference and assertions:
-     *
-     * Project 01:
-     *      Measure 01, TST0011: 1 finding
-     *      Measure 02, TST0012: 1 finding
-     * Project 02:
-     *      Measure 01, TST0011: 1 finding
-     *      Measure 01, TST0012: 1 finding
-     *      Measure 02, TST0021: 1 finding
-     *      Measure 02, TST0022: 1 finding
-     * Project 03:
-     *      Measure 01, TST0011: 2 finding
-     *      Measure 01, TST0012: 2 finding
-     *      Measure 02, TST0021: 2 finding
-     *      Measure 02, TST0022: 2 finding
-     */
     @Override
     public Map<String, Diagnostic> parseAnalysis(Path toolResults) {
         Finding f1 = Builder.buildFinding("file/path/one", 11, 1);

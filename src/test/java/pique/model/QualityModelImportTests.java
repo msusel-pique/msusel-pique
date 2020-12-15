@@ -39,7 +39,7 @@ public class QualityModelImportTests {
         Assert.assertEquals(0, tqi.getWeights().size(), 0.0);
 
         // Quality Aspects
-        QualityAspect qa01 = (QualityAspect)qm.getTqi().getChildByName("QualityAspect 01");
+        QualityAspect qa01 = (QualityAspect)qm.getTqi().getChild("QualityAspect 01");
         Assert.assertEquals(0.0, qa01.getValue(), 0.0);
         Assert.assertEquals("QualityAspect 01", qa01.getName());
         Assert.assertEquals(DefaultFactorEvaluator.class, qa01.getEvaluator().getClass());
@@ -108,7 +108,7 @@ public class QualityModelImportTests {
         Assert.assertEquals(0, m02.getWeights().size(), 0.0);
 
         // Diagnostics
-        Diagnostic tst0011 = (Diagnostic)m01.getChildByName("TST0011");
+        Diagnostic tst0011 = (Diagnostic)m01.getChild("TST0011");
         Assert.assertEquals(0.0, tst0011.getValue(), 0.0);
         Assert.assertEquals("TST0011", tst0011.getName());
         Assert.assertEquals(DefaultDiagnosticEvaluator.class, tst0011.getEvaluator().getClass());
@@ -117,7 +117,7 @@ public class QualityModelImportTests {
         Assert.assertEquals(0, tst0011.getNumChildren());
         Assert.assertEquals(0, tst0011.getWeights().size(), 0.0);
 
-        Diagnostic tst0012 = (Diagnostic)m01.getChildByName("TST0012");
+        Diagnostic tst0012 = (Diagnostic)m01.getChild("TST0012");
         Assert.assertEquals(0.0, tst0012.getValue(), 0.0);
         Assert.assertEquals("TST0012", tst0012.getName());
         Assert.assertEquals(DefaultDiagnosticEvaluator.class, tst0012.getEvaluator().getClass());
@@ -126,7 +126,7 @@ public class QualityModelImportTests {
         Assert.assertEquals(0, tst0012.getNumChildren());
         Assert.assertEquals(0, tst0012.getWeights().size(), 0.0);
 
-        Diagnostic tst0021 = (Diagnostic)m02.getChildByName("TST0021");
+        Diagnostic tst0021 = (Diagnostic)m02.getChild("TST0021");
         Assert.assertEquals(0.0, tst0021.getValue(), 0.0);
         Assert.assertEquals("TST0021", tst0021.getName());
         Assert.assertEquals(DefaultDiagnosticEvaluator.class, tst0021.getEvaluator().getClass());
@@ -135,7 +135,7 @@ public class QualityModelImportTests {
         Assert.assertEquals(0, tst0021.getNumChildren());
         Assert.assertEquals(0, tst0021.getWeights().size(), 0.0);
 
-        Diagnostic tst0022 = (Diagnostic)m02.getChildByName("TST0022");
+        Diagnostic tst0022 = (Diagnostic)m02.getChild("TST0022");
         Assert.assertEquals(0.0, tst0022.getValue(), 0.0);
         Assert.assertEquals("TST0022", tst0022.getName());
         Assert.assertEquals(DefaultDiagnosticEvaluator.class, tst0022.getEvaluator().getClass());

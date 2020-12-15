@@ -18,22 +18,24 @@ public abstract class ModelNode {
     //region Fields
     @Expose
     protected double value;  // the value this node evaluates to
-
     @Expose
     protected String name;
     @Expose
     protected String description;
-
+    @Expose
     protected IEvaluator evaluator;
+    @Expose
     protected INormalizer normalizer;
+    @Expose
     protected IUtilityFunction utilityFunction;
-
     // TODO: eventually consider new tree object that combines properties and their weight instead of relying on
     //  String name matching (not enough time for me to solve currently)
     @Expose
     protected Map<String, ModelNode> children = new HashMap<>();
     @Expose
     protected Map<String, Double> weights = new HashMap<>();
+    @Expose
+    protected Double[] thresholds;
 
     // Constructor
 
@@ -46,12 +48,13 @@ public abstract class ModelNode {
     }
 
     public ModelNode(String name, String description, IEvaluator evaluator, INormalizer normalizer,
-                     IUtilityFunction utilityFunction) {
+                     IUtilityFunction utilityFunction, Double[] thresholds) {
         this.name = name;
         this.description = description;
         this.evaluator = evaluator;
         this.normalizer = normalizer;
         this.utilityFunction = utilityFunction;
+        if (thresholds != null) this.thresholds = thresholds;
     }
 
     /**
@@ -74,6 +77,30 @@ public abstract class ModelNode {
 
     //region Getters and setters
 
+    public ModelNode getAnyChild() {
+        ModelNode anyModelNode = getChildren().values().stream().findAny().orElse(null);
+        assert anyModelNode != null;
+        return anyModelNode;
+    }
+
+    public ModelNode getChild(String name) {
+        return getChildren().get(name);
+    }
+
+    public void setChild(ModelNode child) {
+        getChildren().put(child.getName(), child);
+    }
+
+    public Map<String, ModelNode> getChildren() { return children; }
+
+    public void setChildren(Map<String, ModelNode> children) {
+        this.children = children;
+    }
+
+    public void setChildren(Collection<ModelNode> children) {
+        children.forEach(element -> getChildren().putIfAbsent(element.getName(), element));
+    }
+
     public String getDescription() {
         return description;
     }
@@ -82,12 +109,42 @@ public abstract class ModelNode {
         this.description = desription;
     }
 
+    public IEvaluator getEvaluator() {
+        return evaluator;
+    }
+
+    public void setEvaluator(IEvaluator evaluator) {
+        this.evaluator = evaluator;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public INormalizer getNormalizer() {
+        return normalizer;
+    }
+
+    public void setNormalizer(INormalizer normalizer) {
+        this.normalizer = normalizer;
+    }
+
+    public void setNormalizerValue(double value) {
+        getNormalizer().setNormalizerValue(value);
+    }
+
+    public int getNumChildren() { return getChildren().size(); }
+
+    public IUtilityFunction getUtilityFunction() {
+        return utilityFunction;
+    }
+
+    public void setUtilityFunction(IUtilityFunction utilityFunction) {
+        this.utilityFunction = utilityFunction;
     }
 
     public double getValue() {
@@ -99,75 +156,12 @@ public abstract class ModelNode {
         this.value = value;
     }
 
-    public IEvaluator getEvaluator() {
-        return evaluator;
+    public Double[] getThresholds() {
+        return thresholds;
     }
 
-    public void setEvaluator(IEvaluator evaluator) {
-        this.evaluator = evaluator;
-    }
-
-    public INormalizer getNormalizer() {
-        return normalizer;
-    }
-
-    public void setNormalizer(INormalizer normalizer) {
-        this.normalizer = normalizer;
-    }
-
-    public Map<String, ModelNode> getChildren() {
-        return children;
-    }
-
-    public void setChildren(Map<String, ModelNode> children) {
-        this.children = children;
-    }
-
-    public void setChildren(Collection<ModelNode> children) {
-        children.forEach(element -> getChildren().putIfAbsent(element.getName(), element));
-    }
-
-    public Map<String, Double> getWeights() {
-        return weights;
-    }
-
-    public void setWeights(Map<String, Double> weights) {
-        this.weights = weights;
-    }
-
-    public IUtilityFunction getUtilityFunction() {
-        return utilityFunction;
-    }
-
-    public void setUtilityFunction(IUtilityFunction utilityFunction) {
-        this.utilityFunction = utilityFunction;
-    }
-
-    //endregion
-
-
-    //region Specialized getters and setters
-
-    public ModelNode getAnyChild() {
-        ModelNode anyModelNode = getChildren().values().stream().findAny().orElse(null);
-        assert anyModelNode != null;
-        return anyModelNode;
-    }
-
-    public ModelNode getChildByName(String name) {
-        return getChildren().get(name);
-    }
-
-    public void setChild(ModelNode child) {
-        getChildren().put(child.getName(), child);
-    }
-
-    public void setNormalizerValue(double value) {
-        getNormalizer().setNormalizerValue(value);
-    }
-
-    public int getNumChildren() {
-        return getChildren().size();
+    public void setThresholds(Double[] thresholds) {
+        this.thresholds = thresholds;
     }
 
     public double getWeight(String modelNodeName) {
@@ -179,8 +173,16 @@ public abstract class ModelNode {
         catch (NullPointerException e) { return 0.0; }
     }
 
+    public Map<String, Double> getWeights() {
+        return weights;
+    }
+
     public void setWeight(String modelNodeName, double value) {
         this.weights.put(modelNodeName, value);
+    }
+
+    public void setWeights(Map<String, Double> weights) {
+        this.weights = weights;
     }
 
     //endregion

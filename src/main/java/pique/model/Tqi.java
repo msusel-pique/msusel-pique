@@ -28,8 +28,8 @@ public class Tqi extends ModelNode {
     }
 
     public Tqi(String name, String description, Map<String, Double> weights, IEvaluator evaluator, INormalizer normalizer,
-               IUtilityFunction utilityFunction) {
-        super(name, description, evaluator, normalizer, utilityFunction);
+               IUtilityFunction utilityFunction, Double[] thresholds) {
+        super(name, description, evaluator, normalizer, utilityFunction, thresholds);
         this.weights = (weights == null) ? new HashMap<>() : weights;
     }
 

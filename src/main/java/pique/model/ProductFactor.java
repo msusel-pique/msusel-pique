@@ -17,8 +17,8 @@ public class ProductFactor extends ModelNode {
 	}
 
 	public ProductFactor(String name, String description, IEvaluator evaluator, INormalizer normalizer,
-						 IUtilityFunction utilityFunction) {
-		super(name, description, evaluator, normalizer, utilityFunction);
+						 IUtilityFunction utilityFunction, Double[] thresholds) {
+		super(name, description, evaluator, normalizer, utilityFunction, thresholds);
 	}
 
 	public ProductFactor(String name, String description, IEvaluator evaluator) {

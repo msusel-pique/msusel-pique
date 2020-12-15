@@ -1,5 +1,6 @@
 package pique.model;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -8,7 +9,6 @@ import pique.calibration.IWeighter;
 import pique.calibration.NaiveBenchmarker;
 import pique.calibration.NaiveWeighter;
 import pique.evaluation.*;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -112,8 +112,6 @@ public class QualityModelImport {
         // object.
         return qualityModel;
     }
-
-    // TODO: Don't forget edge weights and utility functions for the derived model case
 
     /**
      * Parse the quality model file for "children" entries and connect the child node instances using name matching.
@@ -221,6 +219,22 @@ public class QualityModelImport {
         }
     }
 
+    private Double[] getThresholdsFromConfiguration(JsonObject jsonQmNode) {
+        if (jsonQmNode.get("thresholds") != null) {
+
+            JsonArray jsonThresholds = jsonQmNode.getAsJsonArray("thresholds");
+            Double[] thresholds = new Double[jsonThresholds.size()];
+            for (int i = 0; i < thresholds.length; i++) {
+                thresholds[i] = jsonThresholds.get(i).getAsDouble();
+            }
+
+            return thresholds;
+        }
+        else {
+            return null;
+        }
+    }
+
     private IUtilityFunction getUtilityFunctionFromConfiguration(JsonObject jsonQmNode) {
         if (jsonQmNode.get("utility_function") != null) {
             String fullClassName = jsonQmNode.get("utility_function").getAsString();
@@ -280,10 +294,11 @@ public class QualityModelImport {
             IEvaluator evaluator = getEvluatorFromConfiguration(jsonDiagnostic, "diagnostic");
             INormalizer normalizer = getNormalizerFromConfiguration(jsonDiagnostic);
             IUtilityFunction utilityFunction = getUtilityFunctionFromConfiguration(jsonDiagnostic);
+            Double[] thresholds = getThresholdsFromConfiguration(jsonDiagnostic);
 
             // Instance the diagnostic
             Diagnostic d = new Diagnostic(diagnosticName, diagnosticDescription, diagnosticToolName,
-                    evaluator, normalizer, utilityFunction);
+                    evaluator, normalizer, utilityFunction, thresholds);
 
             // Add to the collection
             if (tempDiagnostics.containsKey(d.getName())) {
@@ -387,9 +402,10 @@ public class QualityModelImport {
             IEvaluator evaluator = getEvluatorFromConfiguration(valueObj, "productfactor");
             INormalizer normalizer = getNormalizerFromConfiguration(valueObj);
             IUtilityFunction utilityFunction = getUtilityFunctionFromConfiguration(valueObj);
+            Double[] thresholds = getThresholdsFromConfiguration(valueObj);
 
             // Instance the product factor
-            ProductFactor pf = new ProductFactor(pfName, pfDescription, evaluator, normalizer, utilityFunction);
+            ProductFactor pf = new ProductFactor(pfName, pfDescription, evaluator, normalizer, utilityFunction, thresholds);
 
             // Add to the collection
             if (tempProductFactors.containsKey(pf.getName())) {
@@ -427,9 +443,10 @@ public class QualityModelImport {
             IEvaluator evaluator = getEvluatorFromConfiguration(valueObj, "qualityaspect");
             INormalizer normalizer = getNormalizerFromConfiguration(valueObj);
             IUtilityFunction utilityFunction = getUtilityFunctionFromConfiguration(valueObj);
+            Double[] thresholds = getThresholdsFromConfiguration(valueObj);
 
             // Instance the quality aspect
-            QualityAspect qa = new QualityAspect(qaName, qaDescription, evaluator, normalizer, utilityFunction);
+            QualityAspect qa = new QualityAspect(qaName, qaDescription, evaluator, normalizer, utilityFunction, thresholds);
 
             // Add to the collection
             if (tempQualityAspects.containsKey(qa.getName())) {
@@ -462,8 +479,9 @@ public class QualityModelImport {
         IEvaluator evaluator = getEvluatorFromConfiguration(tqiValues, "factor");
         INormalizer normzlier = getNormalizerFromConfiguration(tqiValues);
         IUtilityFunction utilityFunction = getUtilityFunctionFromConfiguration(tqiValues);
+        Double[] thresholds = getThresholdsFromConfiguration(tqiValues);
 
-        return new Tqi(tqiName, tqiDescription, null, evaluator, normzlier, utilityFunction);
+        return new Tqi(tqiName, tqiDescription, null, evaluator, normzlier, utilityFunction, thresholds);
     }
 
     /**
