@@ -14,7 +14,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,29 +25,35 @@ import java.util.Map;
  * Note, this class is entirely dependent on the assumption that the quality model file is written in a specific,
  * intenional syntax.
  * Pre and post checks, and more robost design is left as future work.
+ * </p>
  * <p>
  * This class is capable of importing a quality model description (no edge weights or threshold arrays) as well as a
  * derived  quality model (includes edge weights and threshold arrays). The user does not need to distingust between
  * the two.
+ * </p>
+ * <p>
+ * This class heavily utilizes class-global state variables. Not the greatest design, but does the job given this
+ * class is simply for parsing an input text file.
+ *</p>
  */
 public class QualityModelImport {
 
     // Private Fields
-    QualityModel qualityModel = new QualityModel();
+    private QualityModel qualityModel = new QualityModel();
 
-    ModelNode tqi;
-    Map<String, ModelNode> qualityAspects = new HashMap<>();
-    Map<String, ModelNode> productFactors = new HashMap<>();
-    Map<String, ModelNode> measures = new HashMap<>();
-    Map<String, ModelNode> diagnostics = new HashMap<>();
+    private ModelNode tqi;
+    private Map<String, ModelNode> qualityAspects = new HashMap<>();
+    private Map<String, ModelNode> productFactors = new HashMap<>();
+    private Map<String, ModelNode> measures = new HashMap<>();
+    private Map<String, ModelNode> diagnostics = new HashMap<>();
 
-    JsonObject jsonQm;
-    JsonObject jsonTqi;
-    JsonObject jsonFactors;
-    JsonObject jsonQualityAspects;
-    JsonObject jsonProductFactors;
-    JsonObject jsonMeasures;
-    JsonObject jsonDiagnostics;
+    private JsonObject jsonQm;
+    private JsonObject jsonTqi;
+    private JsonObject jsonFactors;
+    private JsonObject jsonQualityAspects;
+    private JsonObject jsonProductFactors;
+    private JsonObject jsonMeasures;
+    private JsonObject jsonDiagnostics;
 
 
     // Constructor
@@ -92,20 +100,77 @@ public class QualityModelImport {
         diagnostics = instanceDiagnosticsFromJson(jsonDiagnostics);
 
         // Use ModelNode instances to connect edges using name matching, bottom to top
+        jsonMeasures.entrySet().forEach(jsonEntry -> connectNodeEdges(jsonEntry, NodeType.MEASURE));
+        jsonProductFactors.entrySet().forEach(jsonEntry -> connectNodeEdges(jsonEntry, NodeType.PRODUCT_FACTOR));
+        jsonQualityAspects.entrySet().forEach(jsonEntry -> connectNodeEdges(jsonEntry, NodeType.QUALITY_ASPECT));
+        jsonTqi.entrySet().forEach(jsonEntry -> connectNodeEdges(jsonEntry, NodeType.TQI));
 
-        // Measures
-        jsonMeasures.entrySet().forEach(this::connectNodeEdges);
+        // Connect the TQI node to the quality model
+        qualityModel.setTqi((Tqi)tqi);
 
-        throw new NotImplementedException();
+        // With nodes instances, children connected, and configurations assigned to properties, finally return the
+        // object.
+        return qualityModel;
     }
 
     // TODO: Don't forget edge weights and utility functions for the derived model case
-    private void connectNodeEdges(Map.Entry<String, JsonElement> rootNode) {
-        String measureName = rootNode.getKey();
-        JsonObject measureValues = rootNode.getValue().getAsJsonObject();
 
-        // TODO PICKUP: Connect node edges: Parse string names of each "children" key for each measure values. Attach
-        //  as ModelNode child using name and getNode value.
+    /**
+     * Parse the quality model file for "children" entries and connect the child node instances using name matching.
+     * This method assumes {@link ModelNode} instances already exist for each node described in the quality model file.
+     *
+     * @param targetNodeJson
+     *      The JsonElement representation of the connect node to connect children to.
+     * @param nodeType
+     *      The family of nodes rootNodeJson belongs to.
+     */
+    private void connectNodeEdges(Map.Entry<String, JsonElement> targetNodeJson, NodeType nodeType) {
+        String targetNodeName = targetNodeJson.getKey();
+        JsonObject targetNodeValues = targetNodeJson.getValue().getAsJsonObject();
+
+        // Make a single map collection of all model nodes (useful later)
+        Map<String, ModelNode> allModelNodes = new HashMap<>();
+        allModelNodes.put(tqi.getName(), tqi);
+        allModelNodes.putAll(qualityAspects);
+        allModelNodes.putAll(productFactors);
+        allModelNodes.putAll(measures);
+        allModelNodes.putAll(diagnostics);
+
+        // If child nodes are explicitly listed in the qm file, directly make the connections
+        if (targetNodeValues.get("children") != null) {
+
+            // Put string values of all listed children name in a list
+            List<String> childrenNames = new ArrayList<>();
+            JsonObject children = targetNodeValues.get("children").getAsJsonObject();
+            children.entrySet().forEach(childJsonElement -> childrenNames.add(childJsonElement.getKey()));
+
+            // Add the specified children to the ModelNode
+            ModelNode rootNode = allModelNodes.get(targetNodeName);
+            childrenNames.forEach(name -> rootNode.setChild(allModelNodes.get(name)));
+        }
+
+        // Otherwise, assume fully connected using the node type below it (e.g. if targetNodeJson is of type
+        //      QUALITY_ASPECT, connect all product factor nodes as children).
+        else {
+            ModelNode targetNode = allModelNodes.get(targetNodeName);
+            switch (nodeType) {
+                case TQI:               // TQI fully connects to qualtiy aspects
+                    targetNode.setChildren(qualityAspects.values());
+                    break;
+                case QUALITY_ASPECT:   // Quality aspect node fully connects to product factors
+                    targetNode.setChildren(productFactors.values());
+                    break;
+                case PRODUCT_FACTOR:   // Product factor node connects to all measures (this likely should
+                                       // never configure to happen)
+                    targetNode.setChildren(measures.values());
+                    break;
+                case MEASURE:         // Measure node connects to all diagnostics (also suggested to not do)
+                    targetNode.setChildren(diagnostics.values());
+                    break;
+                default:
+                    throw new RuntimeException("nodeType did not match a support enum.");
+            }
+        }
     }
 
     private IEvaluator getEvluatorFromConfiguration(JsonObject jsonQmNode, String nodeTypeQm) {
