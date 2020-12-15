@@ -34,10 +34,15 @@ public class QualityModel {
     // Fields
     private String name;  //The name of the QM found in the XML file
     private Tqi tqi;  // root node, the total quality evaluation, contains quality aspect objects as children
+
+
+
     private IBenchmarker benchmarker;
     private IWeighter weighter;
 
     // Constructors
+
+    public QualityModel() { }
 
     /**
      * Constructor for deriving QM object from a disk file description (likely .json or .xml)
@@ -72,6 +77,10 @@ public class QualityModel {
     //region Getters and Setters
     public IBenchmarker getBenchmarker() {
         return benchmarker;
+    }
+
+    public void setBenchmarker(IBenchmarker benchmarker) {
+        this.benchmarker = benchmarker;
     }
 
     public Map<String, ModelNode> getMeasures() {
@@ -157,7 +166,7 @@ public class QualityModel {
         return weighter;
     }
 
-    private void setWeighter(IWeighter weighter) {
+    public void setWeighter(IWeighter weighter) {
         this.weighter = weighter;
     }
 
@@ -184,18 +193,6 @@ public class QualityModel {
 
         return getName().equals(otherQm.getName())
                 && getTqi().equals(otherQm.getTqi());
-    }
-
-    /**
-     * Create a hard-drive file representation of the model
-     *
-     * @param outputDirectory The directory to place the QM file into.  Does not need to exist beforehand.
-     * @return The path of the exported model file.
-     */
-    public Path exportToJson(Path outputDirectory) {
-        String fileName = "qualityModel_" + getName().replaceAll("\\s", "");
-        QualityModelExport qmExport = new QualityModelExport(this);
-        return qmExport.exportToJson(fileName, outputDirectory);
     }
 
 
