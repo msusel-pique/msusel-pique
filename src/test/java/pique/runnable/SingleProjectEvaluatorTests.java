@@ -5,8 +5,10 @@ import org.junit.Test;
 import pique.analysis.ITool;
 import pique.evaluation.Project;
 import pique.model.*;
+import pique.utility.MockedIToolQmFull;
 import pique.utility.MockedIToolQmSimple;
 import pique.utility.MockedLocTool;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,7 +22,7 @@ import java.util.stream.Stream;
 public class SingleProjectEvaluatorTests {
 
     @Test
-    public void testSingleProjectEvaluator() {
+    public void testSingleProjectEvaluator_Simple() {
 
         // First, derive a quality model using the deriver
         Path qmFilePath = Paths.get("src/test/resources/quality_models/qualityModel_minimal_description.json");
@@ -44,7 +46,7 @@ public class SingleProjectEvaluatorTests {
 
         // Now, run project evaluation using the derived model
         Path projectPath = Paths.get("src/test/resources/fake_project");
-        Path evaluationResultsPath = Paths.get("src/test/out/single_project_evaluation_results");
+        Path evaluationResultsPath = Paths.get("src/test/out/evaluation_results_simple");
         SingleProjectEvaluator evaluator = new SingleProjectEvaluator();
         Path evaluationResults = evaluator.runEvaluator(projectPath, evaluationResultsPath, qmDerivedOutputFile, tools,
                 locTool);
@@ -90,5 +92,84 @@ public class SingleProjectEvaluatorTests {
         // TQI
         Assert.assertEquals(0.5416, tqi.getValue(), 0.0001);
 
+    }
+
+    @Test
+    public void testSingleProjectEvaluator_Full() {
+
+        // First, derive a quality model using the deriver
+        Path qmFilePath = Paths.get("src/test/resources/quality_models/qualityModel_full_description.json");
+        String projectRootFlag = ".txt";
+        Path benchmarkRepo = Paths.get("src/test/resources/benchmark_repository");
+        ITool mockedTool = new MockedIToolQmFull();
+        Set<ITool> tools = Stream.of(mockedTool).collect(Collectors.toSet());
+        ITool locTool = new MockedLocTool();
+
+        QualityModelImport qmImport = new QualityModelImport(qmFilePath);
+        QualityModel qmDescription = qmImport.importQualityModel();
+        QualityModel qualityModel = QualityModelDeriver.deriveModel(qmDescription, tools, locTool, benchmarkRepo,
+                projectRootFlag);
+
+        // Manually set measure threshold for this test
+        qualityModel.getMeasure("Measure 01").setThresholds(new Double[]{0.0, 0.1});
+
+        // Export as artifact
+        Path outputDirectory = Paths.get("src/test/out");
+        String qmDerivedName = "qualityModel_full_derived";
+        QualityModelExport qmExport = new QualityModelExport(qualityModel);
+        qmExport.exportToJson(qmDerivedName, outputDirectory);
+        Path qmDerivedOutputFile = Paths.get(outputDirectory.toString(), qmDerivedName + ".json");
+
+        // Now, run project evaluation using the derived model
+        Path projectPath = Paths.get("src/test/resources/fake_project");
+        Path evaluationResultsPath = Paths.get("src/test/out/evaluation_results_full");
+        SingleProjectEvaluator evaluator = new SingleProjectEvaluator();
+        Path evaluationResults = evaluator.runEvaluator(projectPath, evaluationResultsPath, qmDerivedOutputFile, tools,
+                locTool);
+
+        // Get JVM representation of the evaluated project and make assertions
+        Project evaluatedProject = evaluator.getEvaluatedProject();
+
+        // Project
+        Assert.assertEquals("fake_project", evaluatedProject.getName());
+        Assert.assertEquals(100, evaluatedProject.getLinesOfCode());
+
+        // QM Handles
+        QualityModel qm = evaluatedProject.getQualityModel();
+
+        Tqi tqi = qm.getTqi();
+
+        ModelNode qa11 = qm.getQualityAspect("QA11");
+        ModelNode qa12 = qm.getQualityAspect("QA12");
+        ModelNode qa21 = qm.getQualityAspect("QA21");
+        ModelNode qa22 = qm.getQualityAspect("QA22");
+
+        ModelNode pf11 = qm.getProductFactor("PF11");
+        ModelNode pf21 = qm.getProductFactor("PF21");
+
+        ModelNode measure01 = qm.getMeasure("Measure 01");
+
+        ModelNode diagnostic11 = qm.getDiagnostic("TST0011");
+        ModelNode diagnostic12 = qm.getDiagnostic("TST0012");
+
+        // Diagnostics
+        Assert.assertEquals(1, diagnostic11.getValue(), 0.0001);
+        Assert.assertEquals(4, diagnostic12.getValue(), 0.0001);
+
+        // Measures
+        Assert.assertEquals(0.5, measure01.getValue(), 0.0001);
+
+        // Product Factors
+        Assert.assertEquals(0.25, pf21.getValue(), 0.0001);
+        Assert.assertEquals(0.25, pf11.getValue(), 0.0001);
+
+        // Quality Aspects
+        Assert.assertEquals(0.25, qa21.getValue(), 0.0001);
+        Assert.assertEquals(0.25, qa22.getValue(), 0.0001);
+        Assert.assertEquals(0.25, qa11.getValue(), 0.0001);
+        Assert.assertEquals(0.25, qa12.getValue(), 0.0001);
+
+        // TQI
+        Assert.assertEquals(0.25, tqi.getValue(), 0.0001);
     }
 }

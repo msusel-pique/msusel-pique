@@ -98,6 +98,10 @@ public class QualityModel {
         this.benchmarker = benchmarker;
     }
 
+    public ModelNode getDiagnostic(String name) {
+        return getDiagnostics().get(name);
+    }
+
     public Map<String, ModelNode> getDiagnostics() {
 
         Map<String, ModelNode> diagnosticNodes = new HashMap<>();
@@ -131,6 +135,10 @@ public class QualityModel {
         return diagnosticNodes;
     }
 
+    public ModelNode getMeasure(String name) {
+        return getMeasures().get(name);
+    }
+
     public Map<String, ModelNode> getMeasures() {
         Map<String, ModelNode> measureNodes = new HashMap<>();
         Map<String, ModelNode> allModelNodes = new HashMap<>();
@@ -161,10 +169,6 @@ public class QualityModel {
         allModelNodes.values().forEach(node -> node.setVisited(false));
 
         return measureNodes;
-    }
-
-    public ModelNode getMeasure(String name) {
-        return getMeasures().get(name);
     }
 
     public ProductFactor getProductFactor(String name) {

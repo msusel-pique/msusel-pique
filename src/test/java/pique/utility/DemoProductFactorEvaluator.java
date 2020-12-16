@@ -2,7 +2,6 @@ package pique.utility;
 
 import pique.evaluation.Evaluator;
 import pique.model.ModelNode;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class DemoProductFactorEvaluator extends Evaluator {
 
@@ -15,6 +14,6 @@ public class DemoProductFactorEvaluator extends Evaluator {
         }
         weightedSum = weightedSum / (double)inNode.getChildren().size();
 
-        return  1 - weightedSum;
+        return  weightedSum / 2.0;
     }
 }
