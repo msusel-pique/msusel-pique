@@ -3,8 +3,6 @@ package pique.evaluation;
 import pique.model.Measure;
 import pique.model.ModelNode;
 
-import java.util.Collections;
-
 // TODO (1.0) Documentation
 public class DefaultMeasureEvaluator extends Evaluator {
 
@@ -22,9 +20,9 @@ public class DefaultMeasureEvaluator extends Evaluator {
                 .sum();
 
         // Normalize
-        value = node.getNormalizer().normalize(value);
+        value = node.getNormalizerObject().normalize(value);
 
         // Apply utility function
-        return node.getUtilityFunction().utilityFunction(value, node.getThresholds(), node.isPositive());
+        return node.getUtilityFunctionObject().utilityFunction(value, node.getThresholds(), node.isPositive());
     }
 }

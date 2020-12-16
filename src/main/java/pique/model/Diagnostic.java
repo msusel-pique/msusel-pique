@@ -2,12 +2,9 @@ package pique.model;
 
 import com.google.gson.annotations.Expose;
 import pique.evaluation.*;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * A diagnostic object contains a collection of Findings that matches this object's ID and
@@ -87,8 +84,8 @@ public class Diagnostic extends ModelNode {
         Map<String, ModelNode> clonedChildren = new HashMap<>();
         getChildren().forEach((k, v) -> clonedChildren.put(k, v.clone()));
 
-        return new Diagnostic(getValue(), getName(), getDescription(), getEvaluator(), getNormalizer(),
-                getUtilityFunction(), getWeights(), getThresholds(), clonedChildren);
+        return new Diagnostic(getValue(), getName(), getDescription(), getEvaluatorObject(), getNormalizerObject(),
+                getUtilityFunctionObject(), getWeights(), getThresholds(), clonedChildren);
     }
 
     @Override

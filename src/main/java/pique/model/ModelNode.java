@@ -17,17 +17,11 @@ public abstract class ModelNode {
 
     //region Fields
     @Expose
-    protected double value;  // the value this node evaluates to
-    @Expose
     protected String name;
     @Expose
+    protected double value;  // the value this node evaluates to
+    @Expose
     protected String description;
-    @Expose
-    protected IEvaluator evaluator;
-    @Expose
-    protected INormalizer normalizer;
-    @Expose
-    protected IUtilityFunction utilityFunction;
     // TODO: eventually consider new tree object that combines properties and their weight instead of relying on
     //  String name matching (not enough time for me to solve currently)
     @Expose
@@ -36,43 +30,65 @@ public abstract class ModelNode {
     protected Map<String, Double> weights = new HashMap<>();
     @Expose
     protected Double[] thresholds;
+    @Expose
+    protected String eval_strategy;
+    @Expose
+    protected String normalizer;
+    @Expose
+    protected String utility_function;
+
+    protected IEvaluator evaluatorObject;
+    protected INormalizer normalizerObject;
+    protected IUtilityFunction utilityFunctionObject;
 
     // Constructor
 
-    public ModelNode(String name, String description, IEvaluator evaluator, INormalizer normalizer) {
+    public ModelNode(String name, String description, IEvaluator evaluatorObject, INormalizer normalizerObject) {
         this.name = name;
         this.description = description;
-        this.evaluator = evaluator;
-        this.normalizer = normalizer;
-        this.utilityFunction = new DefaultUtility();
+        this.evaluatorObject = evaluatorObject;
+        this.normalizerObject = normalizerObject;
+        this.utilityFunctionObject = new DefaultUtility();
+
+        this.eval_strategy    = evaluatorObject.getClass().getCanonicalName();
+        this.normalizer       = normalizerObject.getClass().getCanonicalName();
+        this.utility_function = utilityFunctionObject.getClass().getCanonicalName();
     }
 
-    public ModelNode(String name, String description, IEvaluator evaluator, INormalizer normalizer,
-                     IUtilityFunction utilityFunction, Map<String, Double> weights, Double[] thresholds) {
+    public ModelNode(String name, String description, IEvaluator evaluatorObject, INormalizer normalizerObject,
+                     IUtilityFunction utilityFunctionObject, Map<String, Double> weights, Double[] thresholds) {
         this.name = name;
         this.description = description;
-        this.evaluator = evaluator;
-        this.normalizer = normalizer;
-        this.utilityFunction = utilityFunction;
+        this.evaluatorObject = evaluatorObject;
+        this.normalizerObject = normalizerObject;
+        this.utilityFunctionObject = utilityFunctionObject;
         if (weights != null) this.weights = weights;
         if (thresholds != null) this.thresholds = thresholds;
+
+        this.eval_strategy    = evaluatorObject.getClass().getCanonicalName();
+        this.normalizer       = normalizerObject.getClass().getCanonicalName();
+        this.utility_function = utilityFunctionObject.getClass().getCanonicalName();
     }
 
     /**
      * Constructor for cloning.
      */
-    public ModelNode(double value, String name, String description, IEvaluator evaluator, INormalizer normalizer,
-                     IUtilityFunction utilityFunction, Map<String, Double> weights, Double[] thresholds, Map<String,
+    public ModelNode(double value, String name, String description, IEvaluator evaluatorObject, INormalizer normalizerObject,
+                     IUtilityFunction utilityFunctionObject, Map<String, Double> weights, Double[] thresholds, Map<String,
             ModelNode> children) {
         this.value = value;
         this.name = name;
         this.description = description;
-        this.evaluator = evaluator;
-        this.normalizer = normalizer;
-        this.utilityFunction = utilityFunction;
+        this.evaluatorObject = evaluatorObject;
+        this.normalizerObject = normalizerObject;
+        this.utilityFunctionObject = utilityFunctionObject;
         this.weights = weights;
         this.thresholds = thresholds;
         this.children = children;
+
+        this.eval_strategy    = evaluatorObject.getClass().getCanonicalName();
+        this.normalizer       = normalizerObject.getClass().getCanonicalName();
+        this.utility_function = utilityFunctionObject.getClass().getCanonicalName();
     }
 
     //endregion
@@ -112,12 +128,12 @@ public abstract class ModelNode {
         this.description = desription;
     }
 
-    public IEvaluator getEvaluator() {
-        return evaluator;
+    public IEvaluator getEvaluatorObject() {
+        return evaluatorObject;
     }
 
-    public void setEvaluator(IEvaluator evaluator) {
-        this.evaluator = evaluator;
+    public void setEvaluatorObject(IEvaluator evaluatorObject) {
+        this.evaluatorObject = evaluatorObject;
     }
 
     public String getName() {
@@ -128,26 +144,26 @@ public abstract class ModelNode {
         this.name = name;
     }
 
-    public INormalizer getNormalizer() {
-        return normalizer;
+    public INormalizer getNormalizerObject() {
+        return normalizerObject;
     }
 
-    public void setNormalizer(INormalizer normalizer) {
-        this.normalizer = normalizer;
+    public void setNormalizerObject(INormalizer normalizerObject) {
+        this.normalizerObject = normalizerObject;
     }
 
     public void setNormalizerValue(double value) {
-        getNormalizer().setNormalizerValue(value);
+        getNormalizerObject().setNormalizerValue(value);
     }
 
     public int getNumChildren() { return getChildren().size(); }
 
-    public IUtilityFunction getUtilityFunction() {
-        return utilityFunction;
+    public IUtilityFunction getUtilityFunctionObject() {
+        return utilityFunctionObject;
     }
 
-    public void setUtilityFunction(IUtilityFunction utilityFunction) {
-        this.utilityFunction = utilityFunction;
+    public void setUtilityFunctionObject(IUtilityFunction utilityFunctionObject) {
+        this.utilityFunctionObject = utilityFunctionObject;
     }
 
     public double getValue() {
@@ -205,7 +221,7 @@ public abstract class ModelNode {
      * TODO (1.0): Documentation
      */
     protected void evaluate() {
-        setValue(getEvaluator().evaluate(this));
+        setValue(getEvaluatorObject().evaluate(this));
     }
 
     //endregion

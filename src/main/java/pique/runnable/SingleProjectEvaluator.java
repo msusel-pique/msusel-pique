@@ -1,8 +1,6 @@
 package pique.runnable;
 
 import org.apache.commons.io.FilenameUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pique.model.Diagnostic;
 import pique.analysis.ITool;
 import pique.evaluation.Project;
@@ -10,7 +8,6 @@ import pique.model.QualityModel;
 import pique.model.QualityModelImport;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -68,7 +65,7 @@ public class SingleProjectEvaluator {
         Path locAnalyzeResults = locTool.analyze(projectDir);
         int projectLoc = (int) locTool.parseAnalysis(locAnalyzeResults).get("loc").getValue();
         project.getQualityModel().getMeasures().values().forEach(measure -> {
-            measure.getNormalizer().setNormalizerValue(projectLoc);
+            measure.getNormalizerObject().setNormalizerValue(projectLoc);
         });
 
         // Apply tool results to Project object

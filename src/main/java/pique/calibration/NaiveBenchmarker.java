@@ -58,7 +58,7 @@ public class NaiveBenchmarker implements IBenchmarker {
             // TODO: temp fix
             // Set measures to not use a utility function during their node evaluation
             project.getQualityModel().getMeasures().values().forEach(measure -> {
-                measure.setEvaluator(new BenchmarkMeasureEvaluator());
+                measure.setEvaluatorObject(new BenchmarkMeasureEvaluator());
             });
 
             // Run the static analysis tools process
@@ -74,7 +74,7 @@ public class NaiveBenchmarker implements IBenchmarker {
             //  interactions
             project.setLinesOfCode(linesOfCode);
             project.getQualityModel().getMeasures().values().forEach(measure -> {
-                measure.getNormalizer().setNormalizerValue(linesOfCode);
+                measure.getNormalizerObject().setNormalizerValue(linesOfCode);
             });
 
             // Apply collected diagnostics (containing findings) to the project

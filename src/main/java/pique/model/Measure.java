@@ -2,7 +2,6 @@ package pique.model;
 
 import com.google.gson.annotations.Expose;
 import pique.evaluation.*;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +39,7 @@ public class Measure extends ModelNode {
 	public Measure(String name, String description, INormalizer normalizer, boolean positive) {
 		super(name, description, new DefaultMeasureEvaluator(), normalizer);
 		this.positive = positive;
-		this.utilityFunction = new DefaultUtility();
+		this.utilityFunctionObject = new DefaultUtility();
 	}
 
 	public Measure(String name, String description, IEvaluator evaluator, INormalizer normalizer,
@@ -89,7 +88,7 @@ public class Measure extends ModelNode {
 		super(name, description, evaluator, normalizer);
 		this.positive = positive;
 		this.children = diagnostics;
-		this.utilityFunction = utilityFunction;
+		this.utilityFunctionObject = utilityFunction;
 		this.thresholds = thresholds;
 	}
 
@@ -105,12 +104,12 @@ public class Measure extends ModelNode {
 
 	//region Getters and setters
 
-	public IEvaluator getEvaluator() {
-		return evaluator;
+	public IEvaluator getEvaluatorObject() {
+		return evaluatorObject;
 	}
 
-	public void setEvaluator(IEvaluator evaluator) {
-		this.evaluator = evaluator;
+	public void setEvaluatorObject(IEvaluator evaluatorObject) {
+		this.evaluatorObject = evaluatorObject;
 	}
 
 	public boolean isPositive() {
@@ -121,12 +120,12 @@ public class Measure extends ModelNode {
 		this.positive = positive;
 	}
 
-	public IUtilityFunction getUtilityFunction() {
-		return utilityFunction;
+	public IUtilityFunction getUtilityFunctionObject() {
+		return utilityFunctionObject;
 	}
 
-	public void setUtilityFunction(IUtilityFunction utilityFunction) {
-		this.utilityFunction = utilityFunction;
+	public void setUtilityFunctionObject(IUtilityFunction utilityFunctionObject) {
+		this.utilityFunctionObject = utilityFunctionObject;
 	}
 
 	//endregion
@@ -139,8 +138,8 @@ public class Measure extends ModelNode {
 		Map<String, ModelNode> clonedChildren = new HashMap<>();
 		getChildren().forEach((k, v) -> clonedChildren.put(k, v.clone()));
 
-		return new Measure(getValue(), getName(), getDescription(), getEvaluator(), getNormalizer(),
-				getUtilityFunction(), getWeights(), getThresholds(), clonedChildren);
+		return new Measure(getValue(), getName(), getDescription(), getEvaluatorObject(), getNormalizerObject(),
+				getUtilityFunctionObject(), getWeights(), getThresholds(), clonedChildren);
 	}
 
 	@Override

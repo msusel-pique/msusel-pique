@@ -169,7 +169,7 @@ public class QualityModelImport {
     }
 
     private IEvaluator getEvluatorFromConfiguration(JsonObject jsonQmNode, String nodeTypeQm) {
-        if (jsonQmNode.get("eval_strategy") != null && jsonQmNode.get("eval_strategy").getAsJsonObject().keySet().size() > 0) {
+        if (jsonQmNode.get("eval_strategy") != null) {
             String fullClassName = jsonQmNode.get("eval_strategy").getAsString();
             try {
                 return (IEvaluator) Class.forName(fullClassName).getConstructor().newInstance();
@@ -202,7 +202,7 @@ public class QualityModelImport {
     }
 
     private INormalizer getNormalizerFromConfiguration(JsonObject jsonQmNode) {
-        if (jsonQmNode.get("normalizer") != null && jsonQmNode.get("normalizer").getAsJsonObject().keySet().size() > 0) {
+        if (jsonQmNode.get("normalizer") != null) {
             String fullClassName = jsonQmNode.get("normalizer").getAsString();
             try {
                 return (INormalizer) Class.forName(fullClassName).getConstructor().newInstance();
@@ -233,7 +233,7 @@ public class QualityModelImport {
     }
 
     private IUtilityFunction getUtilityFunctionFromConfiguration(JsonObject jsonQmNode) {
-        if (jsonQmNode.get("utility_function") != null && jsonQmNode.get("utility_function").getAsJsonObject().keySet().size() > 0) {
+        if (jsonQmNode.get("utility_function") != null) {
             String fullClassName = jsonQmNode.get("utility_function").getAsString();
             try {
                 return (IUtilityFunction) Class.forName(fullClassName).getConstructor().newInstance();
@@ -248,7 +248,7 @@ public class QualityModelImport {
     }
 
     private Map<String, Double> getWeightsFromConfiguration(JsonObject jsonQmNode) {
-        if (jsonQmNode.get("weights") != null && jsonQmNode.get("weights").getAsJsonObject().keySet().size() > 0) {
+        if (jsonQmNode.get("weights") != null) {
 
             Map<String, Double> weightNames = new HashMap<>();
             JsonObject jsonWeights = jsonQmNode.getAsJsonObject("weights");

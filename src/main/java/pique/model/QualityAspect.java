@@ -1,6 +1,5 @@
 package pique.model;
 
-import com.google.gson.annotations.Expose;
 import pique.evaluation.DefaultFactorEvaluator;
 import pique.evaluation.IEvaluator;
 import pique.evaluation.INormalizer;
@@ -58,8 +57,8 @@ public class QualityAspect extends ModelNode {
         Map<String, ModelNode> clonedChildren = new HashMap<>();
         getChildren().forEach((k, v) -> clonedChildren.put(k, v.clone()));
 
-        return new QualityAspect(getValue(), getName(), getDescription(), getEvaluator(), getNormalizer(),
-                getUtilityFunction(), getWeights(), getThresholds(), clonedChildren);
+        return new QualityAspect(getValue(), getName(), getDescription(), getEvaluatorObject(), getNormalizerObject(),
+                getUtilityFunctionObject(), getWeights(), getThresholds(), clonedChildren);
     }
 
     @Override

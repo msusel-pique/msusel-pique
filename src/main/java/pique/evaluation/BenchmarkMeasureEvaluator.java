@@ -16,6 +16,6 @@ public class BenchmarkMeasureEvaluator extends Evaluator {
                 .mapToDouble(ModelNode::getValue)
                 .sum();
 
-        return inNode.getNormalizer().normalize(rawSum);
+        return inNode.getNormalizerObject().normalize(rawSum);
     }
 }

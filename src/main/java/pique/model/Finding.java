@@ -1,8 +1,6 @@
 package pique.model;
 
-import com.google.gson.annotations.Expose;
 import pique.evaluation.*;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Map;
 
@@ -94,8 +92,8 @@ public class Finding extends ModelNode {
 
     @Override
     public Finding clone() {
-        return new Finding(getValue(), getName(), getDescription(), getEvaluator(), getNormalizer(),
-                getUtilityFunction(), getWeights(), getThresholds(), getChildren(), getFilePath(), getLineNumber(),
+        return new Finding(getValue(), getName(), getDescription(), getEvaluatorObject(), getNormalizerObject(),
+                getUtilityFunctionObject(), getWeights(), getThresholds(), getChildren(), getFilePath(), getLineNumber(),
                 getCharacterNumber(), getSeverity());
     }
 
