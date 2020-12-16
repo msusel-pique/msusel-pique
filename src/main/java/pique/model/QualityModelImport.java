@@ -14,10 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class responsible for parsing quality model file data and transforming it into a {@link ModelNode} object tree.
@@ -172,7 +169,7 @@ public class QualityModelImport {
     }
 
     private IEvaluator getEvluatorFromConfiguration(JsonObject jsonQmNode, String nodeTypeQm) {
-        if (jsonQmNode.get("eval_strategy") != null) {
+        if (jsonQmNode.get("eval_strategy") != null && jsonQmNode.get("eval_strategy").getAsJsonObject().keySet().size() > 0) {
             String fullClassName = jsonQmNode.get("eval_strategy").getAsString();
             try {
                 return (IEvaluator) Class.forName(fullClassName).getConstructor().newInstance();
@@ -205,7 +202,7 @@ public class QualityModelImport {
     }
 
     private INormalizer getNormalizerFromConfiguration(JsonObject jsonQmNode) {
-        if (jsonQmNode.get("normalizer") != null) {
+        if (jsonQmNode.get("normalizer") != null && jsonQmNode.get("normalizer").getAsJsonObject().keySet().size() > 0) {
             String fullClassName = jsonQmNode.get("normalizer").getAsString();
             try {
                 return (INormalizer) Class.forName(fullClassName).getConstructor().newInstance();
@@ -220,7 +217,7 @@ public class QualityModelImport {
     }
 
     private Double[] getThresholdsFromConfiguration(JsonObject jsonQmNode) {
-        if (jsonQmNode.get("thresholds") != null) {
+        if (jsonQmNode.get("thresholds") != null && jsonQmNode.get("thresholds").getAsJsonArray().size() > 0) {
 
             JsonArray jsonThresholds = jsonQmNode.getAsJsonArray("thresholds");
             Double[] thresholds = new Double[jsonThresholds.size()];
@@ -236,7 +233,7 @@ public class QualityModelImport {
     }
 
     private IUtilityFunction getUtilityFunctionFromConfiguration(JsonObject jsonQmNode) {
-        if (jsonQmNode.get("utility_function") != null) {
+        if (jsonQmNode.get("utility_function") != null && jsonQmNode.get("utility_function").getAsJsonObject().keySet().size() > 0) {
             String fullClassName = jsonQmNode.get("utility_function").getAsString();
             try {
                 return (IUtilityFunction) Class.forName(fullClassName).getConstructor().newInstance();
@@ -247,6 +244,23 @@ public class QualityModelImport {
         }
         else {
             return new DefaultUtility();
+        }
+    }
+
+    private Map<String, Double> getWeightsFromConfiguration(JsonObject jsonQmNode) {
+        if (jsonQmNode.get("weights") != null && jsonQmNode.get("weights").getAsJsonObject().keySet().size() > 0) {
+
+            Map<String, Double> weightNames = new HashMap<>();
+            JsonObject jsonWeights = jsonQmNode.getAsJsonObject("weights");
+            jsonWeights.entrySet().forEach(jsonWeight -> {
+                weightNames.put(jsonWeight.getKey(), jsonWeight.getValue().getAsDouble());
+            });
+
+            return weightNames;
+
+        }
+        else {
+            return null;
         }
     }
 
@@ -294,11 +308,12 @@ public class QualityModelImport {
             IEvaluator evaluator = getEvluatorFromConfiguration(jsonDiagnostic, "diagnostic");
             INormalizer normalizer = getNormalizerFromConfiguration(jsonDiagnostic);
             IUtilityFunction utilityFunction = getUtilityFunctionFromConfiguration(jsonDiagnostic);
+            Map<String, Double> weights = getWeightsFromConfiguration(jsonDiagnostic);
             Double[] thresholds = getThresholdsFromConfiguration(jsonDiagnostic);
 
             // Instance the diagnostic
             Diagnostic d = new Diagnostic(diagnosticName, diagnosticDescription, diagnosticToolName,
-                    evaluator, normalizer, utilityFunction, thresholds);
+                    evaluator, normalizer, utilityFunction, weights, thresholds);
 
             // Add to the collection
             if (tempDiagnostics.containsKey(d.getName())) {
@@ -343,20 +358,14 @@ public class QualityModelImport {
             IEvaluator evaluator = getEvluatorFromConfiguration(jsonMeasure, "measure");
             INormalizer normalizer = getNormalizerFromConfiguration(jsonMeasure);
             IUtilityFunction utilityFunction = getUtilityFunctionFromConfiguration(jsonMeasure);
+            Map<String, Double> weights = getWeightsFromConfiguration(jsonMeasure);
+            Double[] thresholds = getThresholdsFromConfiguration(jsonMeasure);
 
             // TODO (1.0): Support optional normalizer
             // Instance the measure
-            Measure m = new Measure(measureName, measureDescription, evaluator, normalizer, utilityFunction, positive);
+            Measure m = new Measure(measureName, measureDescription, evaluator, normalizer, utilityFunction, weights,
+                    thresholds, positive);
 
-            // Optional thresholds
-            Double[] thresholds = null;
-            if (jsonMeasure.getAsJsonArray("thresholds") != null) {
-                thresholds = new Double[jsonMeasure.getAsJsonArray("thresholds").size()];
-                for (int i = 0; i < jsonMeasure.getAsJsonArray("thresholds").size(); i++) {
-                    thresholds[i] = jsonMeasure.getAsJsonArray("thresholds").get(i).getAsDouble();
-                }
-                m.setThresholds(thresholds);
-            }
 
             // Add to the collection
             if (tempMeasures.containsKey(m.getName())) {
@@ -402,10 +411,12 @@ public class QualityModelImport {
             IEvaluator evaluator = getEvluatorFromConfiguration(valueObj, "productfactor");
             INormalizer normalizer = getNormalizerFromConfiguration(valueObj);
             IUtilityFunction utilityFunction = getUtilityFunctionFromConfiguration(valueObj);
+            Map<String, Double> weights = getWeightsFromConfiguration(valueObj);
             Double[] thresholds = getThresholdsFromConfiguration(valueObj);
 
             // Instance the product factor
-            ProductFactor pf = new ProductFactor(pfName, pfDescription, evaluator, normalizer, utilityFunction, thresholds);
+            ProductFactor pf = new ProductFactor(pfName, pfDescription, evaluator, normalizer, utilityFunction,
+                    weights,thresholds);
 
             // Add to the collection
             if (tempProductFactors.containsKey(pf.getName())) {
@@ -443,10 +454,12 @@ public class QualityModelImport {
             IEvaluator evaluator = getEvluatorFromConfiguration(valueObj, "qualityaspect");
             INormalizer normalizer = getNormalizerFromConfiguration(valueObj);
             IUtilityFunction utilityFunction = getUtilityFunctionFromConfiguration(valueObj);
+            Map<String, Double> weights = getWeightsFromConfiguration(valueObj);
             Double[] thresholds = getThresholdsFromConfiguration(valueObj);
 
             // Instance the quality aspect
-            QualityAspect qa = new QualityAspect(qaName, qaDescription, evaluator, normalizer, utilityFunction, thresholds);
+            QualityAspect qa = new QualityAspect(qaName, qaDescription, evaluator, normalizer, utilityFunction,
+             weights, thresholds);
 
             // Add to the collection
             if (tempQualityAspects.containsKey(qa.getName())) {
@@ -479,9 +492,10 @@ public class QualityModelImport {
         IEvaluator evaluator = getEvluatorFromConfiguration(tqiValues, "factor");
         INormalizer normzlier = getNormalizerFromConfiguration(tqiValues);
         IUtilityFunction utilityFunction = getUtilityFunctionFromConfiguration(tqiValues);
+        Map<String, Double> weights = getWeightsFromConfiguration(tqiValues);
         Double[] thresholds = getThresholdsFromConfiguration(tqiValues);
 
-        return new Tqi(tqiName, tqiDescription, null, evaluator, normzlier, utilityFunction, thresholds);
+        return new Tqi(tqiName, tqiDescription, evaluator, normzlier, utilityFunction, weights, thresholds);
     }
 
     /**

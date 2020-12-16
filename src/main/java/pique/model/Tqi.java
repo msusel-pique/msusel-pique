@@ -27,21 +27,16 @@ public class Tqi extends ModelNode {
         this.weights = (weights == null) ? new HashMap<>() : weights;
     }
 
-    public Tqi(String name, String description, Map<String, Double> weights, IEvaluator evaluator, INormalizer normalizer,
-               IUtilityFunction utilityFunction, Double[] thresholds) {
-        super(name, description, evaluator, normalizer, utilityFunction, thresholds);
-        this.weights = (weights == null) ? new HashMap<>() : weights;
+    public Tqi(String name, String description, IEvaluator evaluator, INormalizer normalizer,
+               IUtilityFunction utilityFunction, Map<String, Double> weights, Double[] thresholds) {
+        super(name, description, evaluator, normalizer, utilityFunction, weights, thresholds);
     }
 
-    public Tqi(String name, String description, Map<String, Double> weights, Map<String, ModelNode> qualityAspects) {
-        super(name, description, new DefaultFactorEvaluator(), null);
-        this.weights = (weights == null) ? new HashMap<>() : weights;
-        this.children = qualityAspects;
-    }
-
+    // Used for cloning
     public Tqi(double value, String name, String description, IEvaluator evaluator, INormalizer normalizer,
-                         Map<String, ModelNode> children, Map<String, Double> weights) {
-        super(value, name, description, evaluator, normalizer, children, weights);
+               IUtilityFunction utilityFunction, Map<String, Double> weights, Double[] thresholds, Map<String,
+            ModelNode> children) {
+        super(value, name, description, evaluator, normalizer, utilityFunction, weights, thresholds, children);
     }
 
 
@@ -58,8 +53,8 @@ public class Tqi extends ModelNode {
         Map<String, ModelNode> clonedChildren = new HashMap<>();
         getChildren().forEach((k, v) -> clonedChildren.put(k, v.clone()));
 
-        return new Tqi(getValue(), getName(), getDescription(), getEvaluator(), getNormalizer(),
-                clonedChildren, getWeights());
+        return new Tqi(getValue(), getName(), getDescription(), getEvaluator(), getNormalizer(), getUtilityFunction()
+                , getWeights(), getThresholds(), clonedChildren);
     }
 
     @Override

@@ -24,8 +24,8 @@ public class QualityAspect extends ModelNode {
     }
 
     public QualityAspect(String name, String description, IEvaluator evaluator, INormalizer normalizer,
-                         IUtilityFunction utilityFunction, Double[] thresholds) {
-        super(name, description, evaluator, normalizer, utilityFunction, thresholds);
+                         IUtilityFunction utilityFunction, Map<String, Double> weights, Double[] thresholds) {
+        super(name, description, evaluator, normalizer, utilityFunction, weights, thresholds);
     }
 
     public QualityAspect(String name, String description, Map<String, Double> weights) {
@@ -40,9 +40,11 @@ public class QualityAspect extends ModelNode {
         this.children = productFactors;
     }
 
+    // Used for cloning
     public QualityAspect(double value, String name, String description, IEvaluator evaluator, INormalizer normalizer,
-                         Map<String, ModelNode> children, Map<String, Double> weights) {
-        super(value, name, description, evaluator, normalizer, children, weights);
+               IUtilityFunction utilityFunction, Map<String, Double> weights, Double[] thresholds, Map<String,
+            ModelNode> children) {
+        super(value, name, description, evaluator, normalizer, utilityFunction, weights, thresholds, children);
     }
 
     //endregion
@@ -57,7 +59,7 @@ public class QualityAspect extends ModelNode {
         getChildren().forEach((k, v) -> clonedChildren.put(k, v.clone()));
 
         return new QualityAspect(getValue(), getName(), getDescription(), getEvaluator(), getNormalizer(),
-                clonedChildren, getWeights());
+                getUtilityFunction(), getWeights(), getThresholds(), clonedChildren);
     }
 
     @Override

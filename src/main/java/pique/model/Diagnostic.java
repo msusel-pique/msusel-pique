@@ -59,14 +59,16 @@ public class Diagnostic extends ModelNode {
     }
 
     public Diagnostic(String id, String description, String toolName, IEvaluator evaluator, INormalizer normalizer,
-                      IUtilityFunction utilityFunction, Double[] thresholds) {
-        super(id, description, evaluator, normalizer, utilityFunction, thresholds);
+                      IUtilityFunction utilityFunction, Map<String, Double> weights, Double[] thresholds) {
+        super(id, description, evaluator, normalizer, utilityFunction, weights, thresholds);
         this.toolName = toolName;
     }
 
+    // Used for cloning
     public Diagnostic(double value, String name, String description, IEvaluator evaluator, INormalizer normalizer,
-                   Map<String, ModelNode> children, Map<String, Double> weights) {
-        super(value, name, description, evaluator, normalizer, children, weights);
+                   IUtilityFunction utilityFunction, Map<String, Double> weights, Double[] thresholds, Map<String,
+            ModelNode> children) {
+        super(value, name, description, evaluator, normalizer, utilityFunction, weights, thresholds, children);
     }
 
 
@@ -86,7 +88,7 @@ public class Diagnostic extends ModelNode {
         getChildren().forEach((k, v) -> clonedChildren.put(k, v.clone()));
 
         return new Diagnostic(getValue(), getName(), getDescription(), getEvaluator(), getNormalizer(),
-                clonedChildren, getWeights());
+                getUtilityFunction(), getWeights(), getThresholds(), clonedChildren);
     }
 
     @Override

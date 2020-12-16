@@ -48,12 +48,13 @@ public abstract class ModelNode {
     }
 
     public ModelNode(String name, String description, IEvaluator evaluator, INormalizer normalizer,
-                     IUtilityFunction utilityFunction, Double[] thresholds) {
+                     IUtilityFunction utilityFunction, Map<String, Double> weights, Double[] thresholds) {
         this.name = name;
         this.description = description;
         this.evaluator = evaluator;
         this.normalizer = normalizer;
         this.utilityFunction = utilityFunction;
+        if (weights != null) this.weights = weights;
         if (thresholds != null) this.thresholds = thresholds;
     }
 
@@ -61,15 +62,17 @@ public abstract class ModelNode {
      * Constructor for cloning.
      */
     public ModelNode(double value, String name, String description, IEvaluator evaluator, INormalizer normalizer,
-                     Map<String, ModelNode> children, Map<String, Double> weights) {
+                     IUtilityFunction utilityFunction, Map<String, Double> weights, Double[] thresholds, Map<String,
+            ModelNode> children) {
         this.value = value;
         this.name = name;
         this.description = description;
         this.evaluator = evaluator;
         this.normalizer = normalizer;
-        this.children = children;
+        this.utilityFunction = utilityFunction;
         this.weights = weights;
-        this.utilityFunction = new DefaultUtility();
+        this.thresholds = thresholds;
+        this.children = children;
     }
 
     //endregion

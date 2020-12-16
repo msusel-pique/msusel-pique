@@ -1,10 +1,7 @@
 package pique.model;
 
 import com.google.gson.annotations.Expose;
-import pique.evaluation.DefaultFindingEvaluator;
-import pique.evaluation.DefaultNormalizer;
-import pique.evaluation.IEvaluator;
-import pique.evaluation.INormalizer;
+import pique.evaluation.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Map;
@@ -43,15 +40,14 @@ public class Finding extends ModelNode {
 
     // Used for cloning
     public Finding(double value, String name, String description, IEvaluator evaluator, INormalizer normalizer,
-                   Map<String, ModelNode> children, Map<String, Double> weights, String filePath, int lineNumber,
-                   int characterNumber, int severity) {
-        super(value, name, description, evaluator, normalizer, children, weights);
+                   IUtilityFunction utilityFunction, Map<String, Double> weights, Double[] thresholds, Map<String,
+            ModelNode> children, String filePath, int lineNumber, int characterNumber, int severity) {
+        super(value, name, description, evaluator, normalizer, utilityFunction, weights, thresholds, children);
         this.filePath = filePath;
         this.lineNumber = lineNumber;
         this.characterNumber = characterNumber;
         this.severity = severity;
     }
-
 
     //region Getters and setters
 
@@ -98,8 +94,9 @@ public class Finding extends ModelNode {
 
     @Override
     public Finding clone() {
-        return new Finding(getValue(), getName(), getDescription(), getEvaluator(), getNormalizer(), getChildren(),
-                getWeights(),  getFilePath(), getLineNumber(), getCharacterNumber(), getSeverity());
+        return new Finding(getValue(), getName(), getDescription(), getEvaluator(), getNormalizer(),
+                getUtilityFunction(), getWeights(), getThresholds(), getChildren(), getFilePath(), getLineNumber(),
+                getCharacterNumber(), getSeverity());
     }
 
     // Generate a hashed name using the properties of the Finding under construction.

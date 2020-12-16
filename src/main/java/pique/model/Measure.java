@@ -31,8 +31,6 @@ public class Measure extends ModelNode {
 
 	@Expose
 	private boolean positive;
-	private String normalizer_name;
-	private String eval_strategy;
 
 	//endregion
 
@@ -43,17 +41,13 @@ public class Measure extends ModelNode {
 		super(name, description, new DefaultMeasureEvaluator(), normalizer);
 		this.positive = positive;
 		this.utilityFunction = new DefaultUtility();
-
-		this.normalizer_name = this.normalizer.getName();
-		this.eval_strategy = this.evaluator.getName();
 	}
 
 	public Measure(String name, String description, IEvaluator evaluator, INormalizer normalizer,
-				   IUtilityFunction utilityFunction, boolean positive) {
-		super(name, description, evaluator, normalizer, utilityFunction, null);
+				   IUtilityFunction utilityFunction, Map<String, Double> weights, Double[] thresholds,
+				   boolean positive) {
+		super(name, description, evaluator, normalizer, utilityFunction, weights, thresholds);
 		this.positive = positive;
-		this.normalizer_name = this.normalizer.getName();
-		this.eval_strategy = this.evaluator.getName();
 	}
 
 	public Measure(String name, String description, INormalizer normalizer, boolean positive,
@@ -61,9 +55,6 @@ public class Measure extends ModelNode {
 		super(name, description, new DefaultMeasureEvaluator(), normalizer);
 		this.positive = positive;
 		this.children = diagnostics;
-
-		this.normalizer_name = this.normalizer.getName();
-		this.eval_strategy = this.evaluator.getName();
 	}
 
 	public Measure(String name, String description, INormalizer normalizer, boolean positive,
@@ -71,9 +62,7 @@ public class Measure extends ModelNode {
 		super(name, description, new DefaultMeasureEvaluator(), normalizer);
 		this.positive = positive;
 		this.children = diagnostics;
-
-		this.normalizer_name = this.normalizer.getName();
-		this.eval_strategy = this.evaluator.getName();
+		this.thresholds = thresholds;
 	}
 
 	public Measure(String name, String description, boolean positive, INormalizer normalizer,
@@ -81,9 +70,7 @@ public class Measure extends ModelNode {
 		super(name, description, new DefaultMeasureEvaluator(), normalizer);
 		this.positive = positive;
 		this.children = diagnostics;
-
-		this.normalizer_name = this.normalizer.getName();
-		this.eval_strategy = this.evaluator.getName();
+		this.thresholds = thresholds;
 	}
 
 
@@ -92,9 +79,7 @@ public class Measure extends ModelNode {
 		super(name, description, evaluator, normalizer);
 		this.positive = positive;
 		this.children = diagnostics;
-
-		this.normalizer_name = this.normalizer.getName();
-		this.eval_strategy = this.evaluator.getName();
+		this.thresholds = thresholds;
 	}
 
 	public Measure(String name, String description, INormalizer normalizer, boolean positive,
@@ -105,20 +90,14 @@ public class Measure extends ModelNode {
 		this.positive = positive;
 		this.children = diagnostics;
 		this.utilityFunction = utilityFunction;
-
-		this.normalizer_name = this.normalizer.getName();
-		this.eval_strategy = this.evaluator.getName();
+		this.thresholds = thresholds;
 	}
 
+	// Used for cloning
 	public Measure(double value, String name, String description, IEvaluator evaluator, INormalizer normalizer,
-					  Map<String, ModelNode> children, Map<String, Double> weights, boolean positive,
-				   String normalizer_name,  String eval_strategy, Double[] thresholds, IUtilityFunction utilityFunction) {
-		super(value, name, description, evaluator, normalizer, children, weights);
-
-		this.positive = positive;
-		this.normalizer_name = normalizer_name;
-		this.eval_strategy = eval_strategy;
-		this.utilityFunction = utilityFunction;
+						 IUtilityFunction utilityFunction, Map<String, Double> weights, Double[] thresholds, Map<String,
+			ModelNode> children) {
+		super(value, name, description, evaluator, normalizer, utilityFunction, weights, thresholds, children);
 	}
 
 	//endregion
@@ -142,14 +121,6 @@ public class Measure extends ModelNode {
 		this.positive = positive;
 	}
 
-	public String getNormalizer_name() {
-		return normalizer_name;
-	}
-
-	public String getEval_strategy() {
-		return eval_strategy;
-	}
-
 	public IUtilityFunction getUtilityFunction() {
 		return utilityFunction;
 	}
@@ -169,8 +140,7 @@ public class Measure extends ModelNode {
 		getChildren().forEach((k, v) -> clonedChildren.put(k, v.clone()));
 
 		return new Measure(getValue(), getName(), getDescription(), getEvaluator(), getNormalizer(),
-				clonedChildren, getWeights(), isPositive(), getNormalizer_name(), getEval_strategy(),
-				getThresholds(), getUtilityFunction());
+				getUtilityFunction(), getWeights(), getThresholds(), clonedChildren);
 	}
 
 	@Override
