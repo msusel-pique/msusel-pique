@@ -1,39 +1,49 @@
-# msusel-qatch
+# msusel-pique
 ## Introduction
 This project is a fork of the QATCH project found from QuthEceSoftEng's [GitHub](https://github.com/AuthEceSoftEng/qatch) and [Website](http://83.212.105.167:8080/OnlineProjectEvaluator/).  
 
 This fork intends to modify QATCH to behave more like a library by modularizing code, introducing maven project structure, removing GUI elements, removing main methods, and having all methods be language and tool agnostic.
 
-Legacy build, config, rulesets, and default model files are left in an archive folder.
+Due to the major changes of intent and design, this fork renames the project to PIQUE: a *Platform for Investigative software Quality Understanding and Evaluation*.
+QATCH legacy build, config, rulesets, and default model files are left in an archive folder.
+
+PIQUE is a collection of library functions and runner entry points designed to support experimental software quality analysis from a language-agnostic perspective.
+To remain language-agnostic, this project provides the abstractions, interfaces, and algorithms necessary for quality assessment, but leaves the task of defining language-specific static analysis operations to dependent language-specific projects that will use MSUSEL-PIQUE as a dependency.
+To facilitate newcomers, this platform provides default classes for each quality assessment component to allow the platform to be used "out of the box", and for those familiar with quality assessment approaches, the platform allows each component to be overridden with experimental approaches.
+
+Confused yet?
+Apart from reading through a thesis, the best way to get started is to reference an existing, simple C# PIQUE system at [msusel-pique-csharp](https://github.com/msusel-pique/msusel-pique-csharp) which contains full examples of quality assessment using PIQUE's default mechanisms and overriding said mechanisms.
+
+PIQUE is not yet added to the Maven central repository, so this project will need to be [built](#building) and installed (via Maven) before it can be used as a library. 
 ___
 
-## Qatch Overview
-[Qatch Research Paper](https://www.sciencedirect.com/science/article/pii/S0957417417303883)
-
-(todo)
+## Components
+PIQUE provides five components that work together to achieve quality assessment: *Runner, Analysis, Calibration, Model*, and *Evaluation*.
+Language specific extensions of PIQUE fulfill the interface contracts required by these components to achieve language-specific assessment without needing to invest major time into constructing a quality assessment engine.
+- **Runner**: The *Runner* component utilizes the constructs of PIQUE to automate the two components necessary for quality assessment: (1) Deriving a quality model, and (2) Using that model to assess quality of a system.
+- **Analysis**: The *Analysis* component provides the abstractions necessary for a language-specific PIQUE extension to instance its static analysis tools as PIQUE domain objects.
+- **Calibration**: The *Calibration* component provides the abstractions necessary for two of the three components of quality model experimental design: (1) Edge weighting, and (2) Benchmarking.  Additionally, a default edge weighting concrete class and a default benchmarking concrete class are provided.
+- **Model**: PIQUE assumes quality assessment will use a tree structure as its evaluation model.  The *Model* component provides the abstract objects necessary for such an assessment.  The model is instantiated via a *.json* quality model configuration file. A generic example of a model can be found in `src/test/resources/quality_models` and numerous concrete quality models can be found in the [msusel-pique-csharp](https://github.com/msusel-pique/msusel-pique-csharp) project example.
+- **Evaluation**: The *Evaluation* component provides the third component necessary for quality model experimental design: (3) the algorithms and strategies used for model evaluation aggregation; specifically, normalization, aggregation, and utility functions. Additionally, this component provides default concrete evaluators for each model node type, a default normalizer, and a default utility function. 
 ___
 
-## Features
-MSUSEL-Qatch functions as a framework and library and currently supports generation of comparison matrices, quality model derivation, single project evaluation, and multi-project evaluation all in a language agnostic approach.  
-
-While MSUSEL-Qatch provides the library calls necessary for quality analysis tasks, it does not provide a driver. Extend the framework by providing the langugage-specific objects (static-analysis tools). 
-___
-
-## Dependencies (pre-requisites)
-- Maven
-- R (only needed for model derivation)
-  - with library 'jsonlite'
+## Build Environment
 - Java 8+
+- Maven
+- R 3.6.1 (only needed for model derivation)
+  - with library 'jsonlite'
+  - The version is necessary to work with jsonlite.  This R dependency current exists for legacy sake, but should be depreciated as soon as possible.
 
-## Compiling
-- (TODO: add msusel-qatch to the Maven central repository)
+___
+## Building
+1. Ensure the [Build Environment](#build-environment) requirements are met.
 1. Clone repository into `<project_root>` folder
-2. Run `mvn test` from `<project_root>`. Fix test errors if needed.
-3. Run `mvn install` from `<project_root>`. 
-msusel-qatch is now available as a dependency to extend in a personal project. 
+1. Run `mvn test` from `<project_root>`. Fix test errors if needed. Errors, if they occur, will likely be from misconfiguration of R and the jsonlite library.
+1. Run `mvn install` from `<project_root>`. 
+msusel-pique is now available as a dependency to extend in a personal project. 
 *(Eventually `mvn deploy` will be used instead.)*
-4. qatch currently has one runnable class, `qatch.runnable.ComparisonMatricesGenerator`. 
-Run the main method to generate comparison matrices primed for hand-entry based off of a quality model description.
 
+___
 ## Running
-1. For project evaluation, extend the framework in your own language-specific project and call `qatch.runnable.SingleProjectEvaluator.runEvaluator()`. At a minimum, the language-specific project will need to implement `IAnalyzer`, `IFindingsAggregator`, `IMetricsAggregator`, and `IFindingsResultsImporter`.
+- For project evaluation, extend the framework in your own language-specific project and call `pique.runnable.SingleProjectEvaluator.runEvaluator()`. At a minimum, the language-specific project will need to implement `IAnalyzer`, `IFindingsAggregator`, `IMetricsAggregator`, and `IFindingsResultsImporter`. Reference [msusel-pique-csharp](https://github.com/msusel-pique/msusel-pique-csharp) for numerous, simple examples.
+- For an example of model derivation and quality evaluation using mocked static analysis tool results, reference `testDeriveModel()` and `testRunEvaluator()` in `src/test/java/pique/thesis_tests/ThesisTests.java`.

@@ -5,10 +5,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>msu.msusel</groupId>
-  <artifactId>msusel-qatch</artifactId>
-  <version>0.2.0</version>
-  <name>msusel-qatch</name>
-<!--  <url>http://83.212.105.167:8080/OnlineProjectEvaluator/</url>-->
+  <artifactId>msusel-pique</artifactId>
+  <version>0.3.0</version>
+  <name>msusel-pique</name>
+  <url>https://msusel.github.io</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -51,7 +51,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>4.13.1</version>
       <scope>test</scope>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->

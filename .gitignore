@@ -205,6 +205,6 @@ $RECYCLE.BIN/
 
 ### Project Specific ###
 /.idea
-src/test/java/qatch/Scratch.java
+src/test/java/pique/Scratch.java
 src/test/out
 
