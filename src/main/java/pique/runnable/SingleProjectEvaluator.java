@@ -1,12 +1,11 @@
 package pique.runnable;
 
 import org.apache.commons.io.FilenameUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pique.model.Diagnostic;
 import pique.analysis.ITool;
 import pique.evaluation.Project;
 import pique.model.QualityModel;
+import pique.model.QualityModelImport;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -18,11 +17,15 @@ import java.util.Set;
  * in a language agnostic way.  It is the responsibility of extending projects
  * (e.g. qatch-csharp) to provide the language specific tools.
  */
-// TODO: turn into static methods (maybe unelss logger problems)
+// TODO (1.0): turn into static methods (maybe unless logger problems)
 public class SingleProjectEvaluator {
 
-    private final Logger logger = LoggerFactory.getLogger(SingleProjectEvaluator.class);
+    Project project;
 
+    //region Get / Set
+    public Project getEvaluatedProject() {
+        return project;
+    }
 
     /**
      * Entry point for running single project evaluation. The library assumes the user has extended Qatch
@@ -44,8 +47,9 @@ public class SingleProjectEvaluator {
 
         // Initialize data structures
         initialize(projectDir, resultsDir, qmLocation);
-        QualityModel qualityModel = new QualityModel(qmLocation);
-        Project project = new Project(FilenameUtils.getBaseName(projectDir.getFileName().toString()), projectDir, qualityModel);
+        QualityModelImport qmImport = new QualityModelImport(qmLocation);
+        QualityModel qualityModel = qmImport.importQualityModel();
+        project = new Project(FilenameUtils.getBaseName(projectDir.getFileName().toString()), projectDir, qualityModel);
 
         // Validate State
         // TODO: validate more objects such as if the quality model has thresholds and weights, are there expected diagnostics, etc
@@ -57,20 +61,19 @@ public class SingleProjectEvaluator {
             allDiagnostics.putAll(runTool(projectDir, tool));
         });
 
-        // TODO: put this hardcoded string call somewhere else
-        int projectLoc = (int) allDiagnostics.get("loc").getValue();
+        // Run LOC tool to set lines of code
+        int linesOfCode = (int)allDiagnostics.get("loc").getValue();
+        // TODO (1.0): need to rethink loc, normalizer, evaluator interactions for benchmark repository
+        //  interactions
+        project.setLinesOfCode(linesOfCode);
+        project.getQualityModel().getMeasures().values().forEach(measure -> {
+            measure.getNormalizerObject().setNormalizerValue(linesOfCode);
+        });
 
         // Apply tool results to Project object
         project.updateDiagnosticsWithFindings(allDiagnostics);
-        project.setLinesOfCode(projectLoc);
 
-        // Evaluate measure nodes (normalize using lines of code)
-        project.evaluateMeasures();
-
-        // Aggregate properties -> characteristics -> tqi values using quality model (thresholds for properties and weights for characteristics and tqi)
-        project.evaluateProperties();
-        project.evaluateCharacteristics();
-        project.evaluateTqi();
+        double tqiValue = project.evaluateTqi();
 
         // Create a file of the results and return its path
         return project.exportToJson(resultsDir);
@@ -87,7 +90,7 @@ public class SingleProjectEvaluator {
      * @param qmLocation
      *      Path to the quality model file. Must exist.
      */
-    void initialize(Path projectDir, Path resultsDir, Path qmLocation) {
+    private void initialize(Path projectDir, Path resultsDir, Path qmLocation) {
         if (!projectDir.toFile().exists()) {
             throw new IllegalArgumentException("Invalid projectDir path given.");
         }
@@ -132,6 +135,7 @@ public class SingleProjectEvaluator {
      *      The project under evaluation. This project should have a contained qualityModel with
      *      weight and threshold instances.
      */
+    // TODO (1.0) Update once basic tests passing
     private void validatePreEvaluationState(Project project) {
         QualityModel projectQM = project.getQualityModel();
 
@@ -145,11 +149,11 @@ public class SingleProjectEvaluator {
                 throw new RuntimeException("The project's quality model does not have any weights instantiated to its characteristic node");
             }
 
-            characteristic.getProductFactors().values().forEach(productFactor -> {
-                if (productFactor.getMeasure().getThresholds() == null) {
-                    throw new RuntimeException("The project's quality model does not have any thresholds instantiated to its measure node.");
-                }
-            });
+//            characteristic.getChildren().values().forEach(productFactor -> {
+//                if (productFactor.getMeasure().getThresholds() == null) {
+//                    throw new RuntimeException("The project's quality model does not have any thresholds instantiated to its measure node.");
+//                }
+//            });
         });
     }
 }

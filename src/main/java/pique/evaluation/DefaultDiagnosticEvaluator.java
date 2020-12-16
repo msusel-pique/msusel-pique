@@ -1,18 +1,17 @@
 package pique.evaluation;
 
-import pique.model.Finding;
+import pique.model.Diagnostic;
+import pique.model.ModelNode;
 
-import java.util.Set;
-import java.util.function.Function;
-
-public class DefaultDiagnosticEvaluator implements IEvaluator {
-    @Override
-    public Function<Set<Finding>, Double> evalStrategy() {
-        return findings -> findings.stream().mapToDouble(Finding::getSeverity).sum();
-    }
+// TODO (1.0) Documentation
+public class DefaultDiagnosticEvaluator extends Evaluator {
 
     @Override
-    public String getName() {
-        return "pique.evaluation.DefaultDiagnosticEvaluator";
+    public double evaluate(ModelNode inNode) {
+        Diagnostic node = (Diagnostic)inNode;
+        return node.getChildren().values().stream()
+                .mapToDouble(ModelNode::getValue)
+                .sum();
     }
+
 }

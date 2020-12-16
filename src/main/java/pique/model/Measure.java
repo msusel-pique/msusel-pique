@@ -1,17 +1,10 @@
 package pique.model;
 
 import com.google.gson.annotations.Expose;
-import pique.calibration.DefaultBenchmarker;
-import pique.calibration.IBenchmarker;
-import pique.evaluation.DefaultMeasureEvaluator;
-import pique.evaluation.DefaultNormalizer;
-import pique.evaluation.IEvaluator;
-import pique.evaluation.INormalizer;
+import pique.evaluation.*;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A Measure is a concrete, numerical way to measure a given ProductFactor (property of source code).
@@ -33,218 +26,120 @@ import java.util.function.Function;
  */
 public class Measure extends ModelNode {
 
-	// Instance variables
+	//region Instance variables
+
 	@Expose
 	private boolean positive;
-	@Expose
-	private String normalizer;
-	@Expose
-	private String eval_strategy;
-	@Expose
-	private int num_findings = getNumFindings();
-	@Expose
-	private ArrayList<String> parents = new ArrayList<>();
-	@Expose
-	private List<Diagnostic> diagnostics;
-	@Expose
-	private Double[] thresholds;
-	private Function<List<Diagnostic>, Double> evalFunction;
-	private INormalizer iNormalizer;
-	private IBenchmarker benchmarker;
-	private IEvaluator evaluator;
+
+	//endregion
 
 
-	// Constructors
-	// (todo): change to builder pattern
-	public Measure(String name, String description, boolean positive, IBenchmarker benchmarker) {
-		super(name, description);
+	//region Constructors
+	// TODO (1.0) A lot of these constructors can be (and should be) removed with the 1.0 redesign
+	public Measure(String name, String description, INormalizer normalizer, boolean positive) {
+		super(name, description, new DefaultMeasureEvaluator(), normalizer);
 		this.positive = positive;
-		this.diagnostics = new ArrayList<>();
-		this.evalFunction = this::defaultEvalFunction;
-		this.iNormalizer = new DefaultNormalizer();
-		this.benchmarker = benchmarker;
-		this.evaluator = new DefaultMeasureEvaluator();
-
-		this.normalizer = this.iNormalizer.getNormalizerName();
-		this.eval_strategy = this.evaluator.getName();
+		this.utilityFunctionObject = new DefaultUtility();
 	}
 
-	public Measure(String name, String description, boolean positive, List<Diagnostic> diagnostics, IBenchmarker benchmarker) {
-		super(name, description);
+	public Measure(String name, String description, IEvaluator evaluator, INormalizer normalizer,
+				   IUtilityFunction utilityFunction, Map<String, Double> weights, Double[] thresholds,
+				   boolean positive) {
+		super(name, description, evaluator, normalizer, utilityFunction, weights, thresholds);
 		this.positive = positive;
-		this.diagnostics = diagnostics;
-		this.iNormalizer = new DefaultNormalizer();
-		this.evalFunction = this::defaultEvalFunction;
-		this.benchmarker = benchmarker;
-		this.evaluator = new DefaultMeasureEvaluator();
-
-		this.normalizer = this.iNormalizer.getNormalizerName();
-		this.eval_strategy = this.evaluator.getName();
 	}
 
-	public Measure(String name, String description, boolean positive, List<Diagnostic> diagnostics, IBenchmarker benchmarker, Double[] thresholds) {
-		super(name, description);
+	public Measure(String name, String description, INormalizer normalizer, boolean positive,
+				   Map<String, ModelNode> diagnostics) {
+		super(name, description, new DefaultMeasureEvaluator(), normalizer);
+		this.positive = positive;
+		this.children = diagnostics;
+	}
+
+	public Measure(String name, String description, INormalizer normalizer, boolean positive,
+				   Map<String, ModelNode> diagnostics, Double[] thresholds) {
+		super(name, description, new DefaultMeasureEvaluator(), normalizer);
+		this.positive = positive;
+		this.children = diagnostics;
 		this.thresholds = thresholds;
-		this.positive = positive;
-		this.diagnostics = diagnostics;
-		this.iNormalizer = new DefaultNormalizer();
-		this.evalFunction = this::defaultEvalFunction;
-		this.benchmarker = benchmarker;
-		this.evaluator = new DefaultMeasureEvaluator();
-
-		this.normalizer = this.iNormalizer.getNormalizerName();
-		this.eval_strategy = this.evaluator.getName();
 	}
 
-	public Measure(String name, String description, boolean positive, List<Diagnostic> diagnostics, IBenchmarker benchmarker, Double[] thresholds, INormalizer iNormalizer) {
-		super(name, description);
+	public Measure(String name, String description, boolean positive, INormalizer normalizer,
+				   Map<String, ModelNode> diagnostics, Double[] thresholds) {
+		super(name, description, new DefaultMeasureEvaluator(), normalizer);
+		this.positive = positive;
+		this.children = diagnostics;
 		this.thresholds = thresholds;
-		this.positive = positive;
-		this.diagnostics = diagnostics;
-		this.iNormalizer = iNormalizer;
-		this.evalFunction = this::defaultEvalFunction;
-		this.benchmarker = benchmarker;
-		this.evaluator = new DefaultMeasureEvaluator();
-
-		this.normalizer = this.iNormalizer.getNormalizerName();
-		this.eval_strategy = this.evaluator.getName();
 	}
 
-	public Measure(String name, String description, boolean positive, ArrayList<String> parents, List<Diagnostic> diagnostics, IBenchmarker benchmarker, Double[] thresholds, INormalizer iNormalizer, Function<List<Diagnostic>, Double> evalFunction, IEvaluator evaluator) {
-		super(name, description);
+
+	public Measure(String name, String description, INormalizer normalizer, boolean positive,
+				   Map<String, ModelNode> diagnostics, Double[] thresholds, IEvaluator evaluator) {
+		super(name, description, evaluator, normalizer);
+		this.positive = positive;
+		this.children = diagnostics;
 		this.thresholds = thresholds;
+	}
+
+	public Measure(String name, String description, INormalizer normalizer, boolean positive,
+				   Map<String, ModelNode> diagnostics, Double[] thresholds, IEvaluator evaluator,
+				   IUtilityFunction utilityFunction)
+	{
+		super(name, description, evaluator, normalizer);
 		this.positive = positive;
-		this.parents = parents;
-		this.diagnostics = diagnostics;
-		this.iNormalizer = iNormalizer;
-		this.evalFunction = evalFunction;
-		this.benchmarker = benchmarker;
-		this.evaluator = evaluator;
-
-		this.normalizer = this.iNormalizer.getNormalizerName();
-		this.eval_strategy = this.evaluator.getName();
+		this.children = diagnostics;
+		this.utilityFunctionObject = utilityFunction;
+		this.thresholds = thresholds;
 	}
 
-
-	// Getters and setters
-	public IBenchmarker getBenchmarker() {
-		return benchmarker;
+	// Used for cloning
+	public Measure(double value, String name, String description, IEvaluator evaluator, INormalizer normalizer,
+						 IUtilityFunction utilityFunction, Map<String, Double> weights, Double[] thresholds, Map<String,
+			ModelNode> children) {
+		super(value, name, description, evaluator, normalizer, utilityFunction, weights, thresholds, children);
 	}
 
-	public Diagnostic getDiagnostic(String name) {
-		return this.diagnostics
-			.stream()
-		    .filter(d -> d.getName().equals(name))
-		    .findAny()
-		    .orElse(null);
-	}
-	public List<Diagnostic> getDiagnostics() { return diagnostics; }
-	public void setDiagnostics(List<Diagnostic> diagnostics) { this.diagnostics = diagnostics; }
+	//endregion
 
-	public Function<List<Diagnostic>, Double> getEvalFunction() {
-		return evalFunction;
+
+	//region Getters and setters
+
+	public IEvaluator getEvaluatorObject() {
+		return evaluatorObject;
 	}
 
-	public IEvaluator getEvaluator() {
-		return evaluator;
-	}
-	public void setEvaluator(IEvaluator evaluator) {
-		this.evaluator = evaluator;
-	}
-
-	public INormalizer getiNormalizer() {
-		return iNormalizer;
-	}
-	public void setiNormalizer(INormalizer iNormalizer) {
-		this.iNormalizer = iNormalizer;
-	}
-
-	public int getNumFindings() {
-		if (getDiagnostics() == null) return 0;
-		else {
-			return getDiagnostics().stream().mapToInt(Diagnostic::getNumFindings).sum();
-		}
-	}
-	public void setNum_findings(int num_findings) { this.num_findings = num_findings; }
-
-	public ArrayList<String> getParents() {
-		return parents;
-	}
-	public void setParent(String parentName) {
-		getParents().add(parentName);
-	}
-	public void setParents(ArrayList<String> parents) {
-		this.parents = parents;
+	public void setEvaluatorObject(IEvaluator evaluatorObject) {
+		this.evaluatorObject = evaluatorObject;
 	}
 
 	public boolean isPositive() {
 		return positive;
 	}
+
 	public void setPositive(boolean positive) {
 		this.positive = positive;
 	}
 
-	public Double[] getThresholds() {
-		return thresholds;
-	}
-	public void setThresholds(Double[] thresholds) {
-		this.thresholds = thresholds;
+	public IUtilityFunction getUtilityFunctionObject() {
+		return utilityFunctionObject;
 	}
 
+	public void setUtilityFunctionObject(IUtilityFunction utilityFunctionObject) {
+		this.utilityFunctionObject = utilityFunctionObject;
+	}
 
-	// Methods
+	//endregion
+
+
+	//region Methods
 
 	@Override
 	public ModelNode clone() {
-		List<Diagnostic> clonedDiagnostics = new ArrayList<>();
-		getDiagnostics().forEach(diagnostic -> {
-			Diagnostic clonedDiagnostic = (Diagnostic) diagnostic.clone();
-			clonedDiagnostics.add(clonedDiagnostic);
-		});
-		return new Measure(getName(), getDescription(), isPositive(), getParents(), clonedDiagnostics, getBenchmarker(), getThresholds(), getiNormalizer(), getEvalFunction(), getEvaluator());
-	}
+		Map<String, ModelNode> clonedChildren = new HashMap<>();
+		getChildren().forEach((k, v) -> clonedChildren.put(k, v.clone()));
 
-	/**
-	 * Measures must define in their instantiating, language-specific class
-	 * how to evaluate its collection of diagnostics.  Often this will simply be
-	 * a count of findings, but quality evaluation (especially in the context of security)
-	 * should allow for other evaluation functions.
-	 *
-	 * The measure value must also be normalzed according to the input argument (Likly LLoC).
-	 *
-	 * Measure evaluation formula: value = utilityFunction(normalize(evalFunction(diagnostics)))
-	 *
-	 * @param args
-	 * 		A single entry representing the lines of code. This is needed for normalization.
-	 */
-	@Override
-	protected void evaluate(Double... args) {
-
-//		assert getEvaluator().evalStrategy() != null;
-//		setValue(getEvaluator().evalStrategy().apply(this.findings));
-
-		// evalFunction(diagnostics)
-		assert this.evalFunction != null;
-		getDiagnostics().forEach(Diagnostic::evaluate);
-		Double notNormalizedValue = this.evalFunction.apply(getDiagnostics());
-
-		// normalize
-		double output = getiNormalizer().normalize(notNormalizedValue, getDiagnostic(getiNormalizer().getNormalizerDiagnosticName()));
-
-		// utilityFunction
-		if (getThresholds() != null) {
-			output = getBenchmarker().utilityFunction(output, getThresholds(), isPositive());
-		}
-
-		// (todo) temp fix
-		if (getDiagnostic("RCS1206") != null) {
-			output = output * getEvaluator().evalStrategy().apply(getDiagnostic("RCS1206").getFindings());
-		}
-		else {
-			output = output * getEvaluator().evalStrategy().apply(null);
-		}
-		// set value
-		setValue(output);
+		return new Measure(getValue(), getName(), getDescription(), getEvaluatorObject(), getNormalizerObject(),
+				getUtilityFunctionObject(), getWeights(), getThresholds(), clonedChildren);
 	}
 
 	@Override
@@ -253,26 +148,8 @@ public class Measure extends ModelNode {
 		Measure otherMeasure = (Measure) other;
 
 		return getName().equals(otherMeasure.getName())
-				&& (getDiagnostics().size() == otherMeasure.getDiagnostics().size());
+				&& (getChildren().size() == otherMeasure.getChildren().size());
 	}
 
-
-	// Helper methods
-
-	/**
-	 * Define the default evaluation function to be a sum of all diagnostic values
-	 *
-	 * @param diagnostics
-	 *      The list of diagnostics belonging to the measure
-	 * @return
-	 *      The count of findings within all diagnostics
-	 */
-	private double defaultEvalFunction(List<Diagnostic> diagnostics) {
-		double value = 0;
-		for (Diagnostic d : diagnostics) {
-			if (!d.getName().equals("loc")) value += d.getValue();
-		}
-
-		return value;
-	}
+	//endregion
 }

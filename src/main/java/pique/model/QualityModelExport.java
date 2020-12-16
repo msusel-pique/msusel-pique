@@ -14,9 +14,9 @@ import java.util.Map;
  * a container class.
  *
  * There is a much better way to handle this instead of having this class, but that can be a future problem to deal with :)
- *
- * @author Rice
  */
+// TODO (1.0): Better GSON supprt.  Expose while limiting depth. Currect state will cause problems for large quality
+//  models.  Likely not a difficult fix.
 public class QualityModelExport {
 
     /// Fields ///
@@ -29,10 +29,12 @@ public class QualityModelExport {
     @Expose
     private Map<String, Map<String, ModelNode>> factors = new HashMap<>();
     @Expose
-    private Map<String, Measure> measures = new HashMap<>();
+    private Map<String, ModelNode> measures = new HashMap<>();
+    @Expose
+    private Map<String, ModelNode> diagnostics = new HashMap<>();
 
 
-    /// Constructor ///
+    /// Constructor
     @SafeVarargs
     public QualityModelExport(QualityModel qualityModel, Pair<String, String>... optional) {
 
@@ -47,32 +49,48 @@ public class QualityModelExport {
         this.global_config.put("weights_strategy", qualityModel.getWeighter().getName());
         if (optional.length > 0 ) { for (Pair<String, String> entry : optional) { additionalData.put(entry.getKey(), entry.getValue()); }}
 
-        // factors -> tqi
-        Tqi tqi = qualityModel.getTqi();
+        // factors::tqi
+        ModelNode tqi = qualityModel.getTqi();
         getFactors().get("tqi").put(tqi.getName(), tqi);
 
-        // factors -> quality_aspects
-        qualityModel.getQualityAspects().values().forEach(qualityAspect -> getFactors().get("quality_aspects").put(qualityAspect.getName(), qualityAspect));
+        // factors::quality_aspects
+        Map<String, ModelNode> qualityAspects = qualityModel.getQualityAspects();
+        getFactors().get("quality_aspects").putAll(qualityAspects);
 
-        // factors -> product_factors
-        qualityModel.getProductFactors().values().forEach(productFactor -> getFactors().get("product_factors").put(productFactor.getName(), productFactor));
+        // factors::product_factors
+        Map<String, ModelNode> productFactors = qualityModel.getProductFactors();
+        getFactors().get("product_factors").putAll(productFactors);
 
         // measures
-        qualityModel.getMeasures().values().forEach(measure -> getMeasures().put(measure.getName(), measure));
+        Map<String, ModelNode> measures = qualityModel.getMeasures();
+        getMeasures().putAll(measures);
+
+        // diagnostics
+        Map<String, ModelNode> diagnostics = qualityModel.getDiagnostics();
+        getDiagnostics().putAll(diagnostics);
     }
 
 
 
-    /// Getters and setters ///
+    // Getters and setters /
+
     public Map<String, String> getAdditionalData() {
         return additionalData;
+    }
+
+    public Map<String, ModelNode> getDiagnostics() {
+        return diagnostics;
+    }
+
+    public void setDiagnostics(Map<String, ModelNode> diagnostics) {
+        this.diagnostics = diagnostics;
     }
 
     public Map<String, Map<String, ModelNode>> getFactors() {
         return factors;
     }
 
-    public Map<String, Measure> getMeasures() {
+    public Map<String, ModelNode> getMeasures() {
         return measures;
     }
 

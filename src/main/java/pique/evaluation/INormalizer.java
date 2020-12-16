@@ -1,12 +1,17 @@
 package pique.evaluation;
 
-import pique.model.Diagnostic;
-
+// TODO (1.0): Documentation
 public interface INormalizer {
 
-    double normalize(double inValue, Diagnostic diagnosticNormalizer);
+    // TODO: Think about supporting more than one value for normlaizer value
+    double normalize(double inValue);
 
-    String getNormalizerDiagnosticName();
+    String getName();
 
-    String getNormalizerName();
+    /**
+     * Set after static analysis tool run.
+     */
+    void setNormalizerValue(double value);
+
+
 }

@@ -1,20 +1,24 @@
 package pique.evaluation;
 
-import pique.model.Finding;
+import pique.model.ModelNode;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.Set;
-import java.util.function.Function;
-
-//TODO: write class
-public class DefaultFactorEvaluator implements IEvaluator {
-    @Override
-    public Function<Set<Finding>, Double> evalStrategy() {
-        throw new NotImplementedException();
-    }
+//TODO (1.0): Documentation
+public class DefaultFactorEvaluator extends Evaluator {
 
     @Override
-    public String getName() {
-        throw new NotImplementedException();
+    public double evaluate(ModelNode inNode) {
+
+        // TODO (1.0): Some redesign needed to better handle quality model description where there are not yet weights,
+        //  values, etc...
+
+        double outValue = 0.0;
+
+        // Apply weighted sums
+        for (ModelNode child : inNode.getChildren().values()) {
+            outValue += child.getValue() * inNode.getWeight(child.getName());
+        }
+
+        return outValue;
     }
 }

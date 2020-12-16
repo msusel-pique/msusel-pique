@@ -1,35 +1,22 @@
 package pique.model;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.annotations.Expose;
-import pique.calibration.AHPWeighter;
-import pique.calibration.DefaultBenchmarker;
 import pique.calibration.IBenchmarker;
 import pique.calibration.IWeighter;
-import pique.evaluation.DefaultDiagnosticEvaluator;
-import pique.evaluation.IEvaluator;
-import pique.evaluation.INormalizer;
+import pique.calibration.NaiveBenchmarker;
+import pique.calibration.NaiveWeighter;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Path;
+import java.lang.reflect.Type;
 import java.util.*;
-import java.util.Map.Entry;
 
 /**
- * This class encapsulates all the appropriate information that describe a 
- * Quality Model that can be used for the evaluation of a single project or 
+ * This class contains all the appropriate information that describe a
+ * Quality Model that can be used for the evaluation of a single project or
  * a benchmark of projects.
- * 
+ * <p>
  * Typically, it is used in order to load the PropertySet and the CharacteristicSet
- * of the XML file that describes the quality model and assign their values to the 
+ * of the file that describes the quality model and assign their values to the
  * project (or projects) that we want to evaluate.
- * 
- * @author Miltos, Rice
  */
 /*
  * TODO:
@@ -37,337 +24,274 @@ import java.util.Map.Entry;
  */
 public class QualityModel {
 
-	// Fields
-	@Expose
-	private String name;  //The name of the QM found in the XML file
-	@Expose
-	private Tqi tqi;  // root node, the total quality evaluation, contains characteristic objects as children
-	private IBenchmarker benchmarker;
-	private IWeighter weighter;
+    // Fields
+
+    private String name;
+    private Tqi tqi;
+    private IBenchmarker benchmarker;
+    private IWeighter weighter;
 
 
-	// Constructors
+    // Constructors
 
-	/**
-	 * Constructor for deriving QM object from a disk file description (likely .json or .xml)
-	 * @param qmFilePath
-	 * 		File path to the quality model description
-	 */
-	public QualityModel(Path qmFilePath) {
-		importQualityModel(qmFilePath);
-	}
+    public QualityModel() { }
 
-	/**
-	 * Constructor for use in deep cloning this quality model
-	 *
-	 * @param name
-	 * 		Quality model name
-	 * @param tqi
-	 * 		Root node of quality model tree. Careful passing this by reference.
-	 * 		Will likely want to use this.tqi.clone().
-	 */
-	public QualityModel(String name, Tqi tqi, IBenchmarker benchmarker, IWeighter weighter) {
-		this.name = name;
-		this.tqi = tqi;
-		this.benchmarker = benchmarker;
-		this.weighter = weighter;
-	}
+    public QualityModel(String name, Tqi tqi) {
+        this.name = name;
+        this.tqi = tqi;
+        this.benchmarker = new NaiveBenchmarker();
+        this.weighter = new NaiveWeighter();
+    }
 
+    /**
+     * Constructor for use in deep cloning this quality model
+     *
+     * @param name Quality model name
+     * @param tqi  Root node of quality model tree. Careful passing this by reference.
+     *             Will likely want to use this.tqi.clone().
+     */
+    public QualityModel(String name, Tqi tqi, IBenchmarker benchmarker, IWeighter weighter) {
+        this.name = name;
+        this.tqi = tqi;
+        this.benchmarker = benchmarker;
+        this.weighter = weighter;
+    }
 
-	// Getters and Setters
-	public IBenchmarker getBenchmarker() {
-		return benchmarker;
-	}
+    //region Getters and Setters
 
-	public QualityAspect getAnyQualityAspect() {
-		return getTqi().getAnyQualityAspect();
-	}
-	public QualityAspect getQualityAspect(String name) {
-		return getTqi().getQualityAspects().get(name);
-	}
-	public Map<String, QualityAspect> getQualityAspects() {
-		return getTqi().getQualityAspects();
-	}
-	public void setQualityAspect(String qualityAspectName, QualityAspect qualityAspect) {
-		getTqi().getQualityAspects().put(qualityAspectName, qualityAspect);
-	}
-	public void setQualityAspects(Map<String, QualityAspect> qualityAspect) {
-		getTqi().setQualityAspects(qualityAspect);
-	}
+    /**
+     * BFS through QM tree while adding nodes to a mapping (if a node with the same name does not already exist)
+     */
+    public Map<String, ModelNode> getAllQualityModelNodes() {
 
-	public void setFinding(Measure diagnosticsMeasure, String diagnosticName, Finding finding) {
-		diagnosticsMeasure.getDiagnostic(diagnosticName).setFinding(finding);
-	}
+        Map<String, ModelNode> allModelNodes = new HashMap<>();
 
-	public Measure getMeasure(String measureName) {
-		for (ProductFactor productFactor : getProductFactors().values()) {
-			if (productFactor.getMeasure().getName().equals(measureName)) {
-				return productFactor.getMeasure();
-			}
-		}
-		throw new RuntimeException("Unable to find measure with name " + measureName + " from QM's property nodes");
-	}
-	public Map<String, Measure> getMeasures() {
-		Map<String, Measure> measures = new HashMap<>();
-		List<ProductFactor> productFactorList = new ArrayList<>(getProductFactors().values());
-		productFactorList.forEach(productFactor -> {
-			measures.put(productFactor.getMeasure().getName(), productFactor.getMeasure());
-		});
-		return measures;
-	}
+        Queue<ModelNode> queue = new LinkedList<>();
+        queue.add(getTqi());
+        allModelNodes.put(getTqi().getName(), getTqi());
+        getTqi().setVisited(true);
 
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
+        while (!queue.isEmpty()) {
+            ModelNode node = queue.remove();
+            while (node.getChildren().size() > 0 && node.getChildren().values().stream().anyMatch(modelNode -> !modelNode.isVisited())) {
+                ModelNode child = node.getChildren().values().stream()
+                            .filter(modelNode -> !modelNode.isVisited())
+                            .findFirst()
+                            .orElseThrow(RuntimeException::new);
+                allModelNodes.put(child.getName(), child);
+                child.setVisited(true);
+                queue.add(child);
+            }
+        }
 
-	public ProductFactor getProductFactor(String name) {
-		return getProductFactors().get(name);
-	}
-	public ProductFactor getProductFactorByMeasureName(String measureName) {
-		for (ProductFactor productFactor : getProductFactors().values()) {
-			if (productFactor.getMeasure().getName().equals(measureName)) {
-				return productFactor;
-			}
-		}
-		throw new RuntimeException("Unable to find property with child measure name " + measureName + " from QM's property nodes");
-	}
-	public Map<String, ProductFactor> getProductFactors() {
-		return getAnyQualityAspect().getProductFactors();
-	}
-	public void setProductFactor(ProductFactor productFactor) {
-		Set<QualityAspect> allQualityAspects = new HashSet<>(getTqi().getQualityAspects().values());
-		allQualityAspects.forEach(qualityAspect -> {
-			qualityAspect.setProductFactor(productFactor);
-		});
-	}
-	public void setProductFactors(Map<String, ProductFactor> productFactors) {
-		Set<QualityAspect> allQualityAspects = new HashSet<>(getTqi().getQualityAspects().values());
-		allQualityAspects.forEach(qualityAspect -> {
-			qualityAspect.setProductFactors(productFactors);
-		});
-	}
+        // TODO (1.1): Much better way to clear 'visited' state. Lots of BFS options.
+        allModelNodes.values().forEach(node -> node.setVisited(false));
 
-	public Tqi getTqi() {
-		return tqi;
-	}
-	public void setTqi(Tqi tqi) {
-		this.tqi = tqi;
-	}
+        return allModelNodes;
+    }
 
-	public IWeighter getWeighter() {
-		return weighter;
-	}
-	private void setWeighter(IWeighter weighter) {
-		this.weighter = weighter;
-	}
+    public IBenchmarker getBenchmarker() {
+        return benchmarker;
+    }
 
-	// Methods
-	/**
-	 * @return
-	 * 		Deep clone of this QualityModel object
-	 */
-	@Override
-	public QualityModel clone() {
-		Tqi rootNode = (Tqi)getTqi().clone();
-		return new QualityModel(getName(), rootNode, getBenchmarker(), getWeighter());
-	}
+    public void setBenchmarker(IBenchmarker benchmarker) {
+        this.benchmarker = benchmarker;
+    }
 
+    public ModelNode getDiagnostic(String name) {
+        return getDiagnostics().get(name);
+    }
 
-	@Override
-	public boolean equals(Object other) {
-		if (!(other instanceof QualityModel)) { return false; }
-		QualityModel otherQm = (QualityModel) other;
+    public Map<String, ModelNode> getDiagnostics() {
 
-		return getName().equals(otherQm.getName())
-				&& getTqi().equals(otherQm.getTqi());
-	}
+        Map<String, ModelNode> diagnosticNodes = new HashMap<>();
+        Map<String, ModelNode> allModelNodes = new HashMap<>();
 
-	/**
-	 * Create a hard-drive file representation of the model
-	 *
-	 * @param outputDirectory
-	 * 		The directory to place the QM file into.  Does not need to exist beforehand.
-	 * @return
-	 * 		The path of the exported model file.
-	 */
-	public Path exportToJson(Path outputDirectory) {
-		String fileName = "qualityModel_" + getName().replaceAll("\\s","");
-		QualityModelExport qmExport = new QualityModelExport(this);
-		return qmExport.exportToJson(fileName, outputDirectory);
-	}
+        Queue<ModelNode> queue = new LinkedList<>();
+        queue.add(getTqi());
 
+        allModelNodes.put(getTqi().getName(), getTqi());
+        getTqi().setVisited(true);
 
-	/**
-	 * This method is responsible for importing the desired Quality Model
-	 * by parsing the file that contains the text data of the Quality Model.
-	 */
-	private void importQualityModel(Path qmFilePath) {
+        while (!queue.isEmpty()) {
 
-		// TODO: assert well-formed quality model json file
+            ModelNode node = queue.remove();
+            while (node.getChildren().size() > 0 && node.getChildren().values().stream().anyMatch(modelNode -> !modelNode.isVisited())) {
+                ModelNode child = node.getChildren().values().stream()
+                        .filter(modelNode -> !modelNode.isVisited())
+                        .findFirst()
+                        .orElseThrow(RuntimeException::new);
 
-		// Parse json data and update quality model object
-		try {
-			// TODO: break this large method into smaller method calls
-			FileReader fr = new FileReader(qmFilePath.toString());
-			JsonObject jsonQm = new JsonParser().parse(fr).getAsJsonObject();
-			fr.close();
+                allModelNodes.put(child.getName(), child);
+                if (child instanceof Diagnostic) diagnosticNodes.put(child.getName(), child);
+                child.setVisited(true);
+                queue.add(child);
+            }
+        }
 
-			// Name
-			setName(jsonQm.getAsJsonPrimitive("name").getAsString());
+        // TODO (1.1): Much better ways to clear 'visited' state. Lots of BFS options.
+        allModelNodes.values().forEach(node -> node.setVisited(false));
 
-			// Optional benchmark strategy
-			if (jsonQm.getAsJsonObject("global_config") != null && jsonQm.getAsJsonObject("global_config").get("benchmark_strategy") != null) {
-				String fullClassName = jsonQm.getAsJsonObject("global_config").get("benchmark_strategy").getAsString();
-				benchmarker = (IBenchmarker) Class.forName(fullClassName).getConstructor().newInstance();
-			}
-			else {
-				benchmarker = new DefaultBenchmarker();
-			}
+        return diagnosticNodes;
+    }
 
-			// Optional weighter strategy
-			if (jsonQm.getAsJsonObject("global_config") != null && jsonQm.getAsJsonObject("global_config").get("weights_strategy") != null) {
-				String fullClassName = jsonQm.getAsJsonObject("global_config").get("weights_strategy").getAsString();
-				weighter = (IWeighter) Class.forName(fullClassName).getConstructor().newInstance();
-			}
-			else {
-				weighter = new AHPWeighter();
-			}
+    public ModelNode getMeasure(String name) {
+        return getMeasures().get(name);
+    }
 
-			// Factors and measures collections as json
-			JsonObject factors = jsonQm.getAsJsonObject("factors");
-			JsonObject tqi = factors.getAsJsonObject("tqi");
-			JsonObject qualityAspects = factors.getAsJsonObject("quality_aspects");
-			JsonObject productFactors = factors.getAsJsonObject("product_factors");
-			JsonObject measures = jsonQm.getAsJsonObject("measures");
+    public Map<String, ModelNode> getMeasures() {
+        Map<String, ModelNode> measureNodes = new HashMap<>();
+        Map<String, ModelNode> allModelNodes = new HashMap<>();
 
-			// TQI (instance objects first, then add factor weights passing back up the DOM)
-			Entry<String, JsonElement> tqiEntry = tqi.entrySet().iterator().next();
-			String tqiName = tqiEntry.getKey();
-			String tqiDescription = tqiEntry.getValue().getAsJsonObject().get("description").getAsString();
-			setTqi(new Tqi(tqiName, tqiDescription, null));
+        Queue<ModelNode> queue = new LinkedList<>();
+        queue.add(getTqi());
 
-			// Quality Aspects
-			qualityAspects.entrySet().forEach(entry -> {
-				JsonObject valueObj = entry.getValue().getAsJsonObject();
-				String qaName = entry.getKey();
-				String qaDescription = valueObj.get("description").getAsString();
+        allModelNodes.put(getTqi().getName(), getTqi());
+        getTqi().setVisited(true);
 
-				QualityAspect qa = new QualityAspect(qaName, qaDescription);
-				getTqi().setQualityAspect(qa);
-				getTqi().setWeight(qa.getName(), 0.0);
-			});
+        while (!queue.isEmpty()) {
 
-			// Product Factors
-			productFactors.entrySet().forEach(entry -> {
-				JsonObject valueObj = entry.getValue().getAsJsonObject();
-				String pfName = entry.getKey();
-				String pfDescription = valueObj.get("description").getAsString();
+            ModelNode node = queue.remove();
+            while (node.getChildren().size() > 0 && node.getChildren().values().stream().anyMatch(modelNode -> !modelNode.isVisited())) {
+                ModelNode child = node.getChildren().values().stream()
+                        .filter(modelNode -> !modelNode.isVisited())
+                        .findFirst()
+                        .orElseThrow(RuntimeException::new);
 
-				ProductFactor pf = new ProductFactor(pfName, pfDescription);
-				getTqi().getQualityAspects().values().forEach(qa -> {
-					qa.setProductFactor(pf);
-					qa.setWeight(pf.getName(), 0.0);
-				});
-			});
+                allModelNodes.put(child.getName(), child);
+                if (child instanceof Measure) measureNodes.put(child.getName(), child);
+                child.setVisited(true);
+                queue.add(child);
+            }
+        }
 
-			// Measures
-			measures.entrySet().forEach(entry -> {
-				JsonObject jsonMeasure = entry.getValue().getAsJsonObject();
-				String measureName = entry.getKey();
-				String measureDescription = jsonMeasure.get("description").getAsString();
-				boolean positive = jsonMeasure.getAsJsonPrimitive("positive").getAsBoolean();
-				Measure m = new Measure(measureName, measureDescription, positive, benchmarker);
+        // TODO (1.1): Much better way to clear 'visited' state. Lots of BFS options.
+        allModelNodes.values().forEach(node -> node.setVisited(false));
 
-				// Optional thresholds
-				Double[] thresholds = null;
-				if (jsonMeasure.getAsJsonArray("thresholds") != null) {
-					thresholds = new Double[jsonMeasure.getAsJsonArray("thresholds").size()];
-					for (int i = 0; i < jsonMeasure.getAsJsonArray("thresholds").size(); i++) {
-						thresholds[i] = jsonMeasure.getAsJsonArray("thresholds").get(i).getAsDouble();
-					}
-					m.setThresholds(thresholds);
-				}
+        return measureNodes;
+    }
+
+    public ProductFactor getProductFactor(String name) {
+        return (ProductFactor) getProductFactors().get(name);
+    }
+
+    public Map<String, ModelNode> getProductFactors() {
+        Map<String, ModelNode> pfNodes = new HashMap<>();
+        Map<String, ModelNode> allModelNodes = new HashMap<>();
+
+        Queue<ModelNode> queue = new LinkedList<>();
+        queue.add(getTqi());
+
+        allModelNodes.put(getTqi().getName(), getTqi());
+        getTqi().setVisited(true);
+
+        while (!queue.isEmpty()) {
+
+            ModelNode node = queue.remove();
+            while (node.getChildren().size() > 0 && node.getChildren().values().stream().anyMatch(modelNode -> !modelNode.isVisited())) {
+                ModelNode child = node.getChildren().values().stream()
+                        .filter(modelNode -> !modelNode.isVisited())
+                        .findFirst()
+                        .orElseThrow(RuntimeException::new);
+
+                allModelNodes.put(child.getName(), child);
+                if (child instanceof ProductFactor) pfNodes.put(child.getName(), child);
+                child.setVisited(true);
+                queue.add(child);
+            }
+        }
+
+        // TODO (1.1): Much better way to clear 'visited' state. Lots of BFS options.
+        allModelNodes.values().forEach(node -> node.setVisited(false));
+
+        return pfNodes;
+    }
+
+    public QualityAspect getQualityAspect(String name) {
+        return (QualityAspect)getQualityAspects().get(name);
+    }
+
+    public Map<String, ModelNode> getQualityAspects() {
+        Map<String, ModelNode> qaNodes = new HashMap<>();
+        Map<String, ModelNode> allModelNodes = new HashMap<>();
+
+        Queue<ModelNode> queue = new LinkedList<>();
+        queue.add(getTqi());
+
+        allModelNodes.put(getTqi().getName(), getTqi());
+        getTqi().setVisited(true);
+
+        while (!queue.isEmpty()) {
+
+            ModelNode node = queue.remove();
+            while (node.getChildren().size() > 0 && node.getChildren().values().stream().anyMatch(modelNode -> !modelNode.isVisited())) {
+                ModelNode child = node.getChildren().values().stream()
+                        .filter(modelNode -> !modelNode.isVisited())
+                        .findFirst()
+                        .orElseThrow(RuntimeException::new);
+
+                allModelNodes.put(child.getName(), child);
+                if (child instanceof QualityAspect) qaNodes.put(child.getName(), child);
+                child.setVisited(true);
+                queue.add(child);
+            }
+        }
+
+        // TODO (1.1): Much better way to clear 'visited' state. Lots of BFS options using better data structures or
+        //  recursive approach. No time for now :).
+        allModelNodes.values().forEach(node -> node.setVisited(false));
+
+        return qaNodes;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Tqi getTqi() {
+        return tqi;
+    }
+
+    public void setTqi(Tqi tqi) {
+        this.tqi = tqi;
+    }
+
+    public IWeighter getWeighter() {
+        return weighter;
+    }
+
+    public void setWeighter(IWeighter weighter) {
+        this.weighter = weighter;
+    }
+
+    //endregion
 
 
-				// Diagnostics
-				List<Diagnostic> diagnostics = new ArrayList<>();
-				JsonArray jsonDiagnostics = jsonMeasure.getAsJsonArray("diagnostics");
-				jsonDiagnostics.forEach(d -> {
-					JsonObject diagnostic = d.getAsJsonObject();
-					String dName = diagnostic.get("name").getAsString();
-					String dDescription = diagnostic.get("description").getAsString();
-					String dToolName = diagnostic.get("toolName").getAsString();
+    //region Methods
 
-					// Optional diagnostic 'eval_strategy' field
-					if (diagnostic.get("eval_strategy") != null) {
-						String fullClassName = diagnostic.get("eval_strategy").getAsString();
-						try {
-							diagnostics.add(new Diagnostic(
-									dName,
-									dDescription,
-									dToolName,
-									(IEvaluator) Class.forName(fullClassName).getConstructor().newInstance()));
-						} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
-							e.printStackTrace();
-						}
-					} else {
-						diagnostics.add(new Diagnostic(dName, dDescription, dToolName, new DefaultDiagnosticEvaluator()));
-					}
-				});
-				m.setDiagnostics(diagnostics);
+    /**
+     * @return Deep clone of this QualityModel object
+     */
+    @Override
+    public QualityModel clone() {
+        Tqi rootNode = (Tqi) getTqi().clone();
+        return new QualityModel(getName(), rootNode, getBenchmarker(), getWeighter());
+    }
 
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof QualityModel)) {
+            return false;
+        }
+        QualityModel otherQm = (QualityModel) other;
 
-				// Optional measure 'normalizer' field
-				if (jsonMeasure.get("normalizer") != null && !(jsonMeasure.get("normalizer").getAsString().equals("pique.evaluation.DefaultNormalizer"))) {
-					String fullClassName = jsonMeasure.get("normalizer").getAsString();
-					try {
-						INormalizer normalizer = (INormalizer) Class.forName(fullClassName).getConstructor().newInstance();
-						m.setiNormalizer(normalizer);
-					} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
-						e.printStackTrace();
-					}
-				}
+        return getName().equals(otherQm.getName())
+                && getTqi().equals(otherQm.getTqi());
+    }
 
-				// Optional measure 'eval_strategy' field
-				if (jsonMeasure.get("eval_strategy") != null && !(jsonMeasure.get("eval_strategy").getAsString().equals("pique.evaluation.DefaultMeasureEvaluator"))) {
-					String fullClassName = jsonMeasure.get("eval_strategy").getAsString();
-					try {
-						IEvaluator evaluator = (IEvaluator) Class.forName(fullClassName).getConstructor().newInstance();
-						m.setEvaluator(evaluator);
-					} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
-						e.printStackTrace();
-					}
-				}
-
-				// Attach measure to stated product factors
-				jsonMeasure.getAsJsonArray("parents").forEach(parentName -> {
-					getProductFactor(parentName.getAsString()).setMeasure(m);
-					m.setParent(parentName.getAsString());
-				});
-			});
-
-			// Crawl back up json inputting factor weights
-			if (qualityAspects.getAsJsonObject(getAnyQualityAspect().getName()).getAsJsonObject("weights") != null) {
-				qualityAspects.entrySet().forEach(entry -> {
-					String qaName = entry.getKey();
-					JsonObject qaWeights = entry.getValue().getAsJsonObject().getAsJsonObject("weights");
-					qaWeights.entrySet().forEach(weightEntry -> {
-						getQualityAspect(qaName).setWeight(weightEntry.getKey(), weightEntry.getValue().getAsDouble());
-					});
-				});
-
-				tqi.getAsJsonObject(getTqi().getName()).getAsJsonObject("weights").entrySet().forEach(tqiWeightEntry -> {
-					getTqi().setWeight(tqiWeightEntry.getKey(), tqiWeightEntry.getValue().getAsDouble());
-				});
-
-				// TODO: Assert that weight mappings have correct ProductFactor and Characteristics to map to and are pass by reference for characteristics (make new method)
-			}
-
-		} catch (IOException | InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException | ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
+    //endregion
 }

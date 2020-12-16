@@ -1,10 +1,10 @@
 package pique.model;
 
 import com.google.gson.annotations.Expose;
-import pique.evaluation.IEvaluator;
+import pique.evaluation.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A diagnostic object contains a collection of Findings that matches this object's ID and
@@ -28,19 +28,17 @@ import java.util.Set;
 public class Diagnostic extends ModelNode {
 
     // Instance variables
-
-    @Expose
-    private String name = getName();
-    @Expose
-    private String eval_strategy;
     @Expose
     private String toolName;
-    @Expose
-    private Set<Finding> findings = new HashSet<>();
-    IEvaluator evaluator;
 
 
     // Constructors
+
+    public Diagnostic(String id, String description, String toolName) {
+        super(id, description, new DefaultDiagnosticEvaluator(), new DefaultNormalizer());
+        this.toolName = toolName;
+    }
+
     /**
      * Constructor with custom evaluation function
      *
@@ -53,33 +51,25 @@ public class Diagnostic extends ModelNode {
      *      its associated ITool::name object
      */
     public Diagnostic(String id, String description, String toolName, IEvaluator evaluator) {
-        super(id, description);
+        super(id, description, evaluator, new DefaultNormalizer());
         this.toolName = toolName;
-        this.evaluator = evaluator;
-        this.eval_strategy = this.evaluator.getName();
+    }
+
+    public Diagnostic(String id, String description, String toolName, IEvaluator evaluator, INormalizer normalizer,
+                      IUtilityFunction utilityFunction, Map<String, Double> weights, Double[] thresholds) {
+        super(id, description, evaluator, normalizer, utilityFunction, weights, thresholds);
+        this.toolName = toolName;
+    }
+
+    // Used for cloning
+    public Diagnostic(double value, String name, String description, IEvaluator evaluator, INormalizer normalizer,
+                   IUtilityFunction utilityFunction, Map<String, Double> weights, Double[] thresholds, Map<String,
+            ModelNode> children) {
+        super(value, name, description, evaluator, normalizer, utilityFunction, weights, thresholds, children);
     }
 
 
     // Getters and setters
-
-    public IEvaluator getEvaluator() {
-        return evaluator;
-    }
-
-    public String getEval_strategy() {
-        return eval_strategy;
-    }
-    private void setEval_strategy(String eval_strategy) {
-        this.eval_strategy = eval_strategy;
-    }
-
-    public Set<Finding> getFindings() { return findings; }
-    public void setFinding(Finding finding) { findings.add(finding); }
-    public void setFindings(Set<Finding> findings) { this.findings = findings; }
-
-    public int getNumFindings() {
-        return getFindings().size();
-    }
 
     public String getToolName() {
         return toolName;
@@ -90,12 +80,12 @@ public class Diagnostic extends ModelNode {
 
     @Override
     public ModelNode clone() {
-        Diagnostic clonedDiagnostic = new Diagnostic(getName(), getDescription(), getToolName(), getEvaluator());
-        findings.forEach(finding -> {
-            setFinding(finding.clone());
-        });
 
-        return clonedDiagnostic;
+        Map<String, ModelNode> clonedChildren = new HashMap<>();
+        getChildren().forEach((k, v) -> clonedChildren.put(k, v.clone()));
+
+        return new Diagnostic(getValue(), getName(), getDescription(), getEvaluatorObject(), getNormalizerObject(),
+                getUtilityFunctionObject(), getWeights(), getThresholds(), clonedChildren);
     }
 
     @Override
@@ -105,20 +95,5 @@ public class Diagnostic extends ModelNode {
 
         return getName().equals(otherDiagnostic.getName())
                 && getToolName().equals(otherDiagnostic.getToolName());
-    }
-
-    /**
-     * Diagnostics must define in their instantiating, language-specific class
-     * how to evaluate the collection of its findings.  Often this will simply be
-     * a count of findings, but quality evaluation (especially in the context of security)
-     * should allow for other evaluation functions.
-     *
-     * @param args
-     *      Empty args. No parameters needed.
-     */
-    @Override
-    protected void evaluate(Double... args) {
-        assert getEvaluator().evalStrategy() != null;
-        setValue(getEvaluator().evalStrategy().apply(this.findings));
     }
 }

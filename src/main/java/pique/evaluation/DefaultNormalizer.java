@@ -1,23 +1,14 @@
 package pique.evaluation;
 
-import pique.model.Diagnostic;
-
-public class DefaultNormalizer implements INormalizer {
-
+// TODO (1.0): Documentation
+public class DefaultNormalizer extends Normalizer {
 
     @Override
-    public double normalize(double inValue, Diagnostic diagnosticNormalizer) {
-        if (diagnosticNormalizer.getValue() == 0.0) throw new RuntimeException("Diagnostic normalize value is 0.0. Throwing exception to avoid divide by 0 normalization");
-        return inValue / diagnosticNormalizer.getValue();
-    }
-
-    @Override
-    public String getNormalizerDiagnosticName() {
-        return "loc";
-    }
-
-    @Override
-    public String getNormalizerName() {
-        return "pique.evaluation.DefaultNormalizer";
+    public double normalize(double inValue) {
+        if (this.normalizerValue == 0.0) {
+            throw new RuntimeException("Normalizer value was not set to a non-zero value before attempting " +
+                    "normalization");
+        }
+        return inValue / this.normalizerValue;
     }
 }

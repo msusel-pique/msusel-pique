@@ -1,45 +1,45 @@
 package pique.evaluation;
 
 import com.google.gson.annotations.Expose;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import org.apache.commons.lang3.tuple.Pair;
-import pique.model.Diagnostic;
-import pique.model.ProductFactor;
-import pique.model.QualityModel;
-import pique.model.QualityModelExport;
+import pique.model.*;
 
 import java.nio.file.Path;
 import java.util.Map;
 
 /**
  * This class represents a project under evaluation.
- * @author Miltos, Rice
  */
 
 public class Project{
 
 	// Fields
 
-	@Expose
 	private String name;
-	@Expose
 	private int linesOfCode;
-	@Expose
 	private Path path;  // the original path where the sources of the project are stored (with or without the name)
-	@Expose
 	private QualityModel qualityModel;  // the QM prototype this project uses for evaluation
-
 
 	// Constructors
 
+	// TODO (1.0): Currently need to use .clone() for benchmark repository quality model sharing. This will be
+	//  confusing and problematic to people not using the default benchmarker.
 	public Project(String name){
 		this.name = name;
+	}
+
+	public Project(String name, QualityModel qm) {
+		this.name = name;
+		this.qualityModel = qm;
 	}
 
 	public Project(String name, Path path, QualityModel qm) {
 		this.name = name;
 		this.path = path;
-		this.qualityModel = qm.clone();
+		this.qualityModel = qm;
 	}
+
 	
 	
 	// Getters and setters
@@ -73,28 +73,28 @@ public class Project{
 	 * @param toolResult
 	 * 		A diagnostic object parsed from the tool result file
 	 */
+	// TODO (1.0): Currently makes assumption that all product factors have exactly 1 connected measure
 	public void addFindings(Diagnostic toolResult) {
-		for (ProductFactor productFactor : getQualityModel().getProductFactors().values()) {
-			for (Diagnostic diagnostic : productFactor.getMeasure().getDiagnostics()) {
-				if (diagnostic.getName().equals(toolResult.getName())) { diagnostic.setFindings(toolResult.getFindings()); }
+
+		for (ModelNode measure : getQualityModel().getMeasures().values()) {
+			for (ModelNode diagnostic : measure.getChildren().values()) {
+				if (diagnostic.getName().equals(toolResult.getName())) {
+					diagnostic.setChildren(toolResult.getChildren().values());
+				}
 			}
 		}
 	}
 
 	public void evaluateMeasures() {
-		getQualityModel().getMeasures().values().forEach(m -> {
-			m.getValue();
-			m.setNum_findings(m.getNumFindings());
-		});
+		getQualityModel().getMeasures().values().forEach(ModelNode::getValue);
 	}
-
 
 	/**
 	 * Evaluate and set this project's characteristics using the weights
 	 * provided by the quality model and the values contained in the project's ProductFactor nodes.
 	 */
 	public void evaluateCharacteristics() {
-		getQualityModel().getQualityAspects().values().forEach(characteristic -> characteristic.getValue((double)getLinesOfCode()));
+		getQualityModel().getQualityAspects().values().forEach(ModelNode::getValue);
 	}
 
 
@@ -103,12 +103,12 @@ public class Project{
 	 * provided by the quality model and the findings contained in the Measure nodes.
 	 */
 	public void evaluateProperties() {
-		getQualityModel().getProductFactors().values().forEach(property -> property.getValue((double)getLinesOfCode()));
+		getQualityModel().getProductFactors().values().forEach(ModelNode::getValue);
 	}
 
 
-	public void evaluateTqi() {
-		getQualityModel().getTqi().getValue((double)getLinesOfCode());
+	public double evaluateTqi() {
+		return getQualityModel().getTqi().getValue();
 	}
 
 
@@ -142,9 +142,9 @@ public class Project{
 	public void updateDiagnosticsWithFindings(Map<String, Diagnostic> diagnosticsWithFindings) {
 		diagnosticsWithFindings.values().forEach(diagnostic -> {
 			getQualityModel().getMeasures().values().forEach(measure -> {
-				measure.getDiagnostics().forEach(oldDiagnostic -> {
+				measure.getChildren().values().forEach(oldDiagnostic -> {
 					if (oldDiagnostic.getName().equals(diagnostic.getName())) {
-						oldDiagnostic.setFindings(diagnostic.getFindings());
+						oldDiagnostic.setChildren(diagnostic.getChildren());
 					}
 				});
 			});

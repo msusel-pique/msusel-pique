@@ -5,28 +5,28 @@
     "projectLinesOfCode": "200"
   },
   "global_config": {
-    "benchmark_strategy": "pique.calibration.DefaultBenchmarker",
-    "weights_strategy": "pique.calibration.AHPWeighter"
+    "benchmark_strategy": "NaiveBenchmarker",
+    "weights_strategy": "NaiveWeighter"
   },
   "factors": {
     "product_factors": {
       "ProductFactor 01": {
         "description": "Sample description",
-        "value": 0.46875
+        "value": 0.005
       },
       "ProductFactor 02": {
         "description": "Sample description",
-        "value": 0.75
+        "value": 0.005
       }
     },
     "quality_aspects": {
       "QualityAspect 01": {
         "weights": {
-          "ProductFactor 01": 0.6,
-          "ProductFactor 02": 0.4
+          "ProductFactor 01": 0.5,
+          "ProductFactor 02": 0.5
         },
         "description": "Sample description",
-        "value": 0.58125
+        "value": 0.005
       },
       "QualityAspect 02": {
         "weights": {
@@ -34,17 +34,17 @@
           "ProductFactor 02": 0.5
         },
         "description": "Sample description",
-        "value": 0.609375
+        "value": 0.005
       }
     },
     "tqi": {
       "Total Quality": {
         "weights": {
-          "QualityAspect 01": 0.8,
-          "QualityAspect 02": 0.2
+          "QualityAspect 01": 0.5,
+          "QualityAspect 02": 0.5
         },
         "description": "Sample description",
-        "value": 0.586875
+        "value": 0.005
       }
     }
   },
@@ -100,11 +100,10 @@
       ],
       "thresholds": [
         0.0,
-        0.004,
         0.02
       ],
       "description": "Sample description",
-      "value": 0.46875
+      "value": 0.005
     },
     "Measure 02": {
       "positive": false,
@@ -165,11 +164,10 @@
       ],
       "thresholds": [
         0.0,
-        0.01,
         0.02
       ],
       "description": "Sample description",
-      "value": 0.75
+      "value": 0.005
     }
   }
 }

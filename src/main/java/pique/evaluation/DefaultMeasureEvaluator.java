@@ -1,19 +1,28 @@
 package pique.evaluation;
 
-import pique.model.Finding;
+import pique.model.Measure;
+import pique.model.ModelNode;
 
-import java.util.Set;
-import java.util.function.Function;
+// TODO (1.0) Documentation
+public class DefaultMeasureEvaluator extends Evaluator {
 
-public class DefaultMeasureEvaluator implements IEvaluator {
-
+    /**
+     * By default, a measure should evaluate as the sum of its diagnostics normalized by its normalizer.
+     * Note: for measure metrics, this will likely be different functionality and should be overridden as so.
+     */
     @Override
-    public Function<Set<Finding>, Double> evalStrategy() {
-        return findings -> 1.0;
-    }
+    public double evaluate(ModelNode inNode) {
+        Measure node = (Measure)inNode;
 
-    @Override
-    public String getName() {
-        return "pique.evaluation.DefaultMeasureEvaluator";
+        // Sum values of child diagnostics
+        double value = node.getChildren().values().stream()
+                .mapToDouble(ModelNode::getValue)
+                .sum();
+
+        // Normalize
+        value = node.getNormalizerObject().normalize(value);
+
+        // Apply utility function
+        return node.getUtilityFunctionObject().utilityFunction(value, node.getThresholds(), node.isPositive());
     }
 }

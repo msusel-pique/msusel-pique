@@ -4,8 +4,8 @@ import pique.analysis.ITool;
 import pique.calibration.IBenchmarker;
 import pique.calibration.IWeighter;
 import pique.calibration.WeightResult;
-import pique.calibration.AHPWeighter;
-import pique.model.QualityAspect;
+import pique.model.Measure;
+import pique.model.ModelNode;
 import pique.model.QualityModel;
 
 import java.nio.file.Path;
@@ -22,84 +22,36 @@ import java.util.Set;
  */
 public class QualityModelDeriver {
 
-    public static QualityModel deriveModel(
-            QualityModel qmDesign,
-            Set<ITool> tools,
-            Path benchmarkRepository,
-            Path comparisonMatricesDirectory,
-            Path benchmarkData,
-            Path rThresholdsOutput,
-            Path tempWeightsDirectory,
-            String projectRootFlag) {
-
-        // (0) Pre-checks
-        /*
-         * TODO: validate benchmark repository is of good form and won't throw expected errors
-         *      (all config.properties values, .sln or .csproj files needed by static analyzers,
-         *       benchmark repository file names and cell(0,0) names...)
-         */
+    public static QualityModel deriveModel(QualityModel qmDesign, Set<ITool> tools,
+                                           Path benchmarkRepository, String projectRootFlag) {
 
         // (1) Derive thresholds
         IBenchmarker benchmarker = qmDesign.getBenchmarker();
         Map<String, Double[]> measureNameThresholdMappings = benchmarker.deriveThresholds(
-                benchmarkRepository, qmDesign, tools, projectRootFlag, benchmarkData, rThresholdsOutput
-        );
+                benchmarkRepository, qmDesign, tools, projectRootFlag);
 
         // (2) Elicitate weights
         IWeighter weighter = qmDesign.getWeighter();
-        Set<WeightResult> weights = weighter.elicitateWeights(comparisonMatricesDirectory, tempWeightsDirectory);
+        // TODO (1.0): Consider, instead of weighting all nodes in one sweep here, dynamically assigning IWeighter
+        //  ojbects to each node to have them weight using JIT evaluation functions.
+        Set<WeightResult> weights = weighter.elicitateWeights(qmDesign);
         // TODO: assert WeightResult names match expected TQI, QualityAspect, and ProductFactor names from quality model description
 
         // (3) Apply results to nodes in quality model by matching names
         // Thresholds (ProductFactor nodes)
+        // TODO (1.0): Support now in place to apply thresholds to all nodes (if they exist), not just measures. Just
+        //  need to implement.
         measureNameThresholdMappings.forEach((measureName, thresholds) -> {
-            qmDesign.getProductFactorByMeasureName(measureName).getMeasure().setThresholds(thresholds);
+            Measure measure = (Measure)qmDesign.getMeasure(measureName);
+            measure.setThresholds(thresholds);
         });
 
         // Weights (TQI and QualityAspect nodes)
-        for (WeightResult weightsIn : weights) {
-            // Check root node case
-            if (qmDesign.getTqi().getName().equals(weightsIn.name)) { qmDesign.getTqi().setWeights(weightsIn.weights); }
-            // Otherwise search though QualityAspect nodes
-            else {
-                for (QualityAspect qualityAspect : qmDesign.getQualityAspects().values()) {
-                    if (qualityAspect.getName().equals(weightsIn.name)) {
-                        qualityAspect.setWeights(weightsIn.weights);
-                        break;
-                    }
-                }
-            }
-        }
-
-        // Assert postcondition that weights and thresholds now exist for all appropriate model nodes
-        // TQI weights check
-        for (String characteristicWeightName : qmDesign.getQualityAspects().keySet()) {
-            if (!qmDesign.getTqi().getWeights().containsKey(characteristicWeightName)) {
-                throw new RuntimeException("After running weight elicitation, no weight mapping found for TQI node and " +
-                        "QualityAspect node, " + characteristicWeightName);
-            }
-        }
-
-        // Characteristics weights check
-        qmDesign.getQualityAspects().values().forEach(characteristic -> {
-            for (String propertyWeightName : qmDesign.getProductFactors().keySet()) {
-                if (!characteristic.getWeights().containsKey(propertyWeightName)) {
-                    throw new RuntimeException("After running weight elicitation, no weight mapping found for QualityAspect" +
-                            " node, " + characteristic.getName() + ", and " +
-                            "ProductFactor node, " + propertyWeightName);
-                }
-            }
-        });
-
-        // Properties thresholds check
-        qmDesign.getProductFactors().values().forEach(property -> {
-            if (!(property.getMeasure().getThresholds().length >= 1)) {
-                throw new RuntimeException("After running threshold derivation, the threshold size of " +
-                    "property, " + property.getName() + ", does not equal at least 1");
-            }
+        weights.forEach(weightResult -> {
+            Map<String, ModelNode> allNodes = qmDesign.getAllQualityModelNodes();
+            allNodes.get(weightResult.name).setWeights(weightResult.weights);
         });
 
         return qmDesign;
-
     }
 }

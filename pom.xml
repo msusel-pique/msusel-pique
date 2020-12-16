@@ -6,7 +6,7 @@
 
   <groupId>msu.msusel</groupId>
   <artifactId>msusel-pique</artifactId>
-  <version>0.3.0</version>
+  <version>0.9.1</version>
   <name>msusel-pique</name>
   <url>https://msusel.github.io</url>
 
@@ -51,7 +51,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>4.13.1</version>
       <scope>test</scope>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
@@ -136,21 +136,4 @@
       </plugins>
     </pluginManagement>
   </build>
-
-  <profiles>
-    <profile>
-      <id>thesis</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.22.1</version>
-            <configuration>
-              <groups>pique.thesis_tests.ThesisTest</groups>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>
