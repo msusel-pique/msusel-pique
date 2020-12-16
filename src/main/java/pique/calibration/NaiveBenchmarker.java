@@ -13,9 +13,6 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class NaiveBenchmarker implements IBenchmarker {
-
-    private Path tempToolOutputLocation = Paths.get("artifacts/benchmark_output");
-
     /**
      * Derive thesholds for all {@link Measure} nodes using a naive approach:
      * (1) threshold[0] = the lowest value seen for the {@link Measure}

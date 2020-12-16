@@ -17,7 +17,7 @@ import java.util.Set;
  * in a language agnostic way.  It is the responsibility of extending projects
  * (e.g. qatch-csharp) to provide the language specific tools.
  */
-// TODO: turn into static methods (maybe unelss logger problems)
+// TODO (1.0): turn into static methods (maybe unless logger problems)
 public class SingleProjectEvaluator {
 
     Project project;
@@ -43,7 +43,7 @@ public class SingleProjectEvaluator {
      * @return
      *      The path to the produced quality analysis file on the hard disk.
      */
-    public Path runEvaluator(Path projectDir, Path resultsDir, Path qmLocation, Set<ITool> tools, ITool locTool) {
+    public Path runEvaluator(Path projectDir, Path resultsDir, Path qmLocation, Set<ITool> tools) {
 
         // Initialize data structures
         initialize(projectDir, resultsDir, qmLocation);
@@ -61,16 +61,17 @@ public class SingleProjectEvaluator {
             allDiagnostics.putAll(runTool(projectDir, tool));
         });
 
-        // TODO: put this hardcoded string call somewhere else
-        Path locAnalyzeResults = locTool.analyze(projectDir);
-        int projectLoc = (int) locTool.parseAnalysis(locAnalyzeResults).get("loc").getValue();
+        // Run LOC tool to set lines of code
+        int linesOfCode = (int)allDiagnostics.get("loc").getValue();
+        // TODO (1.0): need to rethink loc, normalizer, evaluator interactions for benchmark repository
+        //  interactions
+        project.setLinesOfCode(linesOfCode);
         project.getQualityModel().getMeasures().values().forEach(measure -> {
-            measure.getNormalizerObject().setNormalizerValue(projectLoc);
+            measure.getNormalizerObject().setNormalizerValue(linesOfCode);
         });
 
         // Apply tool results to Project object
         project.updateDiagnosticsWithFindings(allDiagnostics);
-        project.setLinesOfCode(projectLoc);
 
         double tqiValue = project.evaluateTqi();
 

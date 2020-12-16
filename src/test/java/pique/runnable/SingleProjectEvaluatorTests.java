@@ -48,8 +48,7 @@ public class SingleProjectEvaluatorTests {
         Path projectPath = Paths.get("src/test/resources/fake_project");
         Path evaluationResultsPath = Paths.get("src/test/out/evaluation_results_simple");
         SingleProjectEvaluator evaluator = new SingleProjectEvaluator();
-        Path evaluationResults = evaluator.runEvaluator(projectPath, evaluationResultsPath, qmDerivedOutputFile, tools,
-                locTool);
+        Path evaluationResults = evaluator.runEvaluator(projectPath, evaluationResultsPath, qmDerivedOutputFile, tools);
 
         // Get JVM representation of the evaluated project and make assertions
         Project evaluatedProject = evaluator.getEvaluatedProject();
@@ -124,8 +123,7 @@ public class SingleProjectEvaluatorTests {
         Path projectPath = Paths.get("src/test/resources/fake_project");
         Path evaluationResultsPath = Paths.get("src/test/out/evaluation_results_full");
         SingleProjectEvaluator evaluator = new SingleProjectEvaluator();
-        Path evaluationResults = evaluator.runEvaluator(projectPath, evaluationResultsPath, qmDerivedOutputFile, tools,
-                locTool);
+        Path evaluationResults = evaluator.runEvaluator(projectPath, evaluationResultsPath, qmDerivedOutputFile, tools);
 
         // Get JVM representation of the evaluated project and make assertions
         Project evaluatedProject = evaluator.getEvaluatedProject();
