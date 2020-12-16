@@ -31,7 +31,7 @@ public class NaiveBenchmarker implements IBenchmarker {
      */
     @Override
     public Map<String, Double[]> deriveThresholds(Path benchmarkRepository, QualityModel qmDescription, Set<ITool> tools,
-                                                  ITool locTool, String projectRootFlag) {
+                                                  String projectRootFlag) {
 
         // Collect root paths of each benchmark project
         Set<Path> projectRoots = FileUtility.multiProjectCollector(benchmarkRepository, projectRootFlag);
@@ -69,7 +69,7 @@ public class NaiveBenchmarker implements IBenchmarker {
             });
 
             // Run LOC tool to set lines of code
-            int linesOfCode = (int) locTool.parseAnalysis(tempToolOutputLocation).get("loc").getValue();
+            int linesOfCode = (int)allDiagnostics.get("loc").getValue();
             // TODO (1.0): need to rethink loc, normalizer, evaluator interactions for benchmark repository
             //  interactions
             project.setLinesOfCode(linesOfCode);

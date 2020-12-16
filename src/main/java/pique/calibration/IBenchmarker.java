@@ -29,7 +29,7 @@ public interface IBenchmarker {
      *      A dictionary of [ Key: {@link pique.model.ModelNode} name, Value: thresholds ]
      */
     Map<String, Double[]> deriveThresholds(Path benchmarkRepository, QualityModel qmDescription, Set<ITool> tools,
-                                           ITool locTool, String projectRootFlag);
+                                           String projectRootFlag);
 
     /**
      * @return An identifiable name of the benchmarker

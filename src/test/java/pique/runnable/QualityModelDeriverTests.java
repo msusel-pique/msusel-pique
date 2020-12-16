@@ -32,14 +32,14 @@ public class QualityModelDeriverTests {
         String projectRootFlag = ".txt";
         Path benchmarkRepo = Paths.get("src/test/resources/benchmark_repository");
         ITool mockedTool = new MockedIToolQmSimple();
-        Set<ITool> tools = Stream.of(mockedTool).collect(Collectors.toSet());
         ITool locTool = new MockedLocTool();
+        Set<ITool> tools = Stream.of(mockedTool, locTool).collect(Collectors.toSet());
 
         QualityModelImport qmImport = new QualityModelImport(qmFilePath);
         QualityModel qmDescription = qmImport.importQualityModel();
 
         // The runner method under test: derive a quality model
-        QualityModel qualityModel = QualityModelDeriver.deriveModel(qmDescription, tools, locTool, benchmarkRepo,
+        QualityModel qualityModel = QualityModelDeriver.deriveModel(qmDescription, tools, benchmarkRepo,
                 projectRootFlag);
 
         //region Assert the derived model, now with weights and thresholds, has the expected form
@@ -157,14 +157,14 @@ public class QualityModelDeriverTests {
         String projectRootFlag = ".txt";
         Path benchmarkRepo = Paths.get("src/test/resources/benchmark_repository");
         ITool mockedTool = new MockedIToolQmFull();
-        Set<ITool> tools = Stream.of(mockedTool).collect(Collectors.toSet());
         ITool locTool = new MockedLocTool();
+        Set<ITool> tools = Stream.of(mockedTool, locTool).collect(Collectors.toSet());
 
         QualityModelImport qmImport = new QualityModelImport(qmFilePath);
         QualityModel qmDescription = qmImport.importQualityModel();
 
         // The runner method under test: derive a quality model
-        QualityModel qualityModel = QualityModelDeriver.deriveModel(qmDescription, tools, locTool, benchmarkRepo,
+        QualityModel qualityModel = QualityModelDeriver.deriveModel(qmDescription, tools, benchmarkRepo,
                 projectRootFlag);
 
         // Manually set measure threshold for this test
