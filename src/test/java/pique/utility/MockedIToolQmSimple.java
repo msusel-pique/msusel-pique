@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 /**
  * Concrete class implementing ITool that mocks static analysis.
  */
-public class MockedITool implements ITool {
+public class MockedIToolQmSimple implements ITool {
 
     @Override
     public Path analyze(Path projectLocation) {

@@ -1,9 +1,6 @@
 package pique.model;
 
-import pique.evaluation.DefaultFactorEvaluator;
-import pique.evaluation.IEvaluator;
-import pique.evaluation.INormalizer;
-import pique.evaluation.IUtilityFunction;
+import pique.evaluation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +10,7 @@ public class ProductFactor extends ModelNode {
 	// Constructors
 
 	public ProductFactor(String name, String description) {
-		super(name, description, new DefaultFactorEvaluator(), null);
+		super(name, description, new DefaultFactorEvaluator(), new DefaultNormalizer());
 	}
 
 	public ProductFactor(String name, String description, IEvaluator evaluator, INormalizer normalizer,
@@ -22,12 +19,12 @@ public class ProductFactor extends ModelNode {
 	}
 
 	public ProductFactor(String name, String description, IEvaluator evaluator) {
-		super(name, description, new DefaultFactorEvaluator(), null);
+		super(name, description, new DefaultFactorEvaluator(), new DefaultNormalizer());
 		this.evaluatorObject = evaluator;
 	}
 	
 	public ProductFactor(String name, String description, ModelNode measure){
-		super(name, description, new DefaultFactorEvaluator(), null);
+		super(name, description, new DefaultFactorEvaluator(), new DefaultNormalizer());
 		this.children.put(measure.getName(), measure);
 	}
 

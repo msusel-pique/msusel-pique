@@ -41,6 +41,8 @@ public abstract class ModelNode {
     protected INormalizer normalizerObject;
     protected IUtilityFunction utilityFunctionObject;
 
+    protected boolean visited = false;      // Use for BFS traversal
+
     // Constructor
 
     public ModelNode(String name, String description, IEvaluator evaluatorObject, INormalizer normalizerObject) {
@@ -173,6 +175,14 @@ public abstract class ModelNode {
 
     public void setValue(double value) {
         this.value = value;
+    }
+
+    public boolean isVisited() {
+        return visited;
+    }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
     }
 
     public Double[] getThresholds() {

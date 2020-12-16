@@ -4,6 +4,9 @@ import pique.calibration.IBenchmarker;
 import pique.calibration.IWeighter;
 import pique.calibration.NaiveBenchmarker;
 import pique.calibration.NaiveWeighter;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -22,10 +25,12 @@ import java.util.*;
 public class QualityModel {
 
     // Fields
-    private String name;  //The name of the QM found in the XML file
-    private Tqi tqi;  // root node, the total quality evaluation, contains quality aspect objects as children
+
+    private String name;
+    private Tqi tqi;
     private IBenchmarker benchmarker;
     private IWeighter weighter;
+
 
     // Constructors
 
@@ -53,8 +58,38 @@ public class QualityModel {
     }
 
     //region Getters and Setters
-    // TODO (1.0): Change getter and setter functions to use tree traversal and reflection. Current form will cause
-    //  issues when having multiple layers of the same node type (e.g. a product factor connected to a product factor)
+
+    /**
+     * BFS through QM tree while adding nodes to a mapping (if a node with the same name does not already exist)
+     */
+    public Map<String, ModelNode> getAllQualityModelNodes() {
+
+        Map<String, ModelNode> allModelNodes = new HashMap<>();
+
+        Queue<ModelNode> queue = new LinkedList<>();
+        queue.add(getTqi());
+        allModelNodes.put(getTqi().getName(), getTqi());
+        getTqi().setVisited(true);
+
+        while (!queue.isEmpty()) {
+            ModelNode node = queue.remove();
+            while (node.getChildren().size() > 0 && node.getChildren().values().stream().anyMatch(modelNode -> !modelNode.isVisited())) {
+                ModelNode child = node.getChildren().values().stream()
+                            .filter(modelNode -> !modelNode.isVisited())
+                            .findFirst()
+                            .orElseThrow(RuntimeException::new);
+                allModelNodes.put(child.getName(), child);
+                child.setVisited(true);
+                queue.add(child);
+            }
+        }
+
+        // TODO (1.1): Much better way to clear 'visited' state. Lots of BFS options.
+        allModelNodes.values().forEach(node -> node.setVisited(false));
+
+        return allModelNodes;
+    }
+
     public IBenchmarker getBenchmarker() {
         return benchmarker;
     }
@@ -64,25 +99,71 @@ public class QualityModel {
     }
 
     public Map<String, ModelNode> getDiagnostics() {
-        Map<String, ModelNode> diagnostics = new HashMap<>();
-        getMeasures().values().forEach(measure -> diagnostics.putAll(measure.getChildren()));
-        return diagnostics;
+
+        Map<String, ModelNode> diagnosticNodes = new HashMap<>();
+        Map<String, ModelNode> allModelNodes = new HashMap<>();
+
+        Queue<ModelNode> queue = new LinkedList<>();
+        queue.add(getTqi());
+
+        allModelNodes.put(getTqi().getName(), getTqi());
+        getTqi().setVisited(true);
+
+        while (!queue.isEmpty()) {
+
+            ModelNode node = queue.remove();
+            while (node.getChildren().size() > 0 && node.getChildren().values().stream().anyMatch(modelNode -> !modelNode.isVisited())) {
+                ModelNode child = node.getChildren().values().stream()
+                        .filter(modelNode -> !modelNode.isVisited())
+                        .findFirst()
+                        .orElseThrow(RuntimeException::new);
+
+                allModelNodes.put(child.getName(), child);
+                if (child instanceof Diagnostic) diagnosticNodes.put(child.getName(), child);
+                child.setVisited(true);
+                queue.add(child);
+            }
+        }
+
+        // TODO (1.1): Much better ways to clear 'visited' state. Lots of BFS options.
+        allModelNodes.values().forEach(node -> node.setVisited(false));
+
+        return diagnosticNodes;
     }
 
     public Map<String, ModelNode> getMeasures() {
-        Map<String, ModelNode> measures = new HashMap<>();
-        List<ModelNode> productFactorList = new ArrayList<>(getProductFactors().values());
+        Map<String, ModelNode> measureNodes = new HashMap<>();
+        Map<String, ModelNode> allModelNodes = new HashMap<>();
 
-        productFactorList.forEach(productFactor -> {
-            productFactor.getChildren().values().forEach(measure -> {
-                measures.put(measure.getName(), measure);
-            });
-        });
+        Queue<ModelNode> queue = new LinkedList<>();
+        queue.add(getTqi());
 
-        return measures;
+        allModelNodes.put(getTqi().getName(), getTqi());
+        getTqi().setVisited(true);
+
+        while (!queue.isEmpty()) {
+
+            ModelNode node = queue.remove();
+            while (node.getChildren().size() > 0 && node.getChildren().values().stream().anyMatch(modelNode -> !modelNode.isVisited())) {
+                ModelNode child = node.getChildren().values().stream()
+                        .filter(modelNode -> !modelNode.isVisited())
+                        .findFirst()
+                        .orElseThrow(RuntimeException::new);
+
+                allModelNodes.put(child.getName(), child);
+                if (child instanceof Measure) measureNodes.put(child.getName(), child);
+                child.setVisited(true);
+                queue.add(child);
+            }
+        }
+
+        // TODO (1.1): Much better way to clear 'visited' state. Lots of BFS options.
+        allModelNodes.values().forEach(node -> node.setVisited(false));
+
+        return measureNodes;
     }
 
-    public ModelNode getMeasureByName(String name) {
+    public ModelNode getMeasure(String name) {
         return getMeasures().get(name);
     }
 
@@ -90,46 +171,73 @@ public class QualityModel {
         return (ProductFactor) getProductFactors().get(name);
     }
 
-    @Deprecated     // Makes assumption only 1 measure per product factor. Phasing out WIP
-    public ProductFactor getProductFactorByMeasureName(String measureName) {
-        for (ModelNode productFactor : getProductFactors().values()) {
-            if (productFactor.getChild(measureName) != null) {
-                return (ProductFactor) productFactor;
+    public Map<String, ModelNode> getProductFactors() {
+        Map<String, ModelNode> pfNodes = new HashMap<>();
+        Map<String, ModelNode> allModelNodes = new HashMap<>();
+
+        Queue<ModelNode> queue = new LinkedList<>();
+        queue.add(getTqi());
+
+        allModelNodes.put(getTqi().getName(), getTqi());
+        getTqi().setVisited(true);
+
+        while (!queue.isEmpty()) {
+
+            ModelNode node = queue.remove();
+            while (node.getChildren().size() > 0 && node.getChildren().values().stream().anyMatch(modelNode -> !modelNode.isVisited())) {
+                ModelNode child = node.getChildren().values().stream()
+                        .filter(modelNode -> !modelNode.isVisited())
+                        .findFirst()
+                        .orElseThrow(RuntimeException::new);
+
+                allModelNodes.put(child.getName(), child);
+                if (child instanceof ProductFactor) pfNodes.put(child.getName(), child);
+                child.setVisited(true);
+                queue.add(child);
             }
         }
-        throw new RuntimeException("Unable to find property with child measure name " + measureName + " from QM's property nodes");
-    }
 
-    // TODO (1.0): Makes assumption all QA children are Product Factors
-    public Map<String, ModelNode> getProductFactors() {
-        Map<String, ModelNode> productFactors = new HashMap<>();
+        // TODO (1.1): Much better way to clear 'visited' state. Lots of BFS options.
+        allModelNodes.values().forEach(node -> node.setVisited(false));
 
-        getQualityAspects().values().forEach(qa -> {
-            Collection<ModelNode> qaChildren = qa.getChildren().values();
-            qaChildren.forEach(child -> productFactors.putIfAbsent(child.getName(), child));
-        });
-
-        return productFactors;
-    }
-
-    public QualityAspect getQualityAspectAny() {
-        return (QualityAspect) getTqi().getAnyChild();
+        return pfNodes;
     }
 
     public QualityAspect getQualityAspect(String name) {
-        return (QualityAspect) getTqi().getChild(name);
+        return (QualityAspect)getQualityAspects().get(name);
     }
 
     public Map<String, ModelNode> getQualityAspects() {
-        return getTqi().getChildren();
-    }
+        Map<String, ModelNode> qaNodes = new HashMap<>();
+        Map<String, ModelNode> allModelNodes = new HashMap<>();
 
-    public void setQualityAspects(Map<String, ModelNode> qualityAspects) {
-        getTqi().setChildren(qualityAspects);
-    }
+        Queue<ModelNode> queue = new LinkedList<>();
+        queue.add(getTqi());
 
-    public void setQualityAspect(QualityAspect qualityAspect) {
-        getTqi().setChild(qualityAspect);
+        allModelNodes.put(getTqi().getName(), getTqi());
+        getTqi().setVisited(true);
+
+        while (!queue.isEmpty()) {
+
+            ModelNode node = queue.remove();
+            while (node.getChildren().size() > 0 && node.getChildren().values().stream().anyMatch(modelNode -> !modelNode.isVisited())) {
+                ModelNode child = node.getChildren().values().stream()
+                        .filter(modelNode -> !modelNode.isVisited())
+                        .findFirst()
+                        .orElseThrow(RuntimeException::new);
+
+                allModelNodes.put(child.getName(), child);
+                if (child instanceof QualityAspect) qaNodes.put(child.getName(), child);
+                child.setVisited(true);
+                queue.add(child);
+            }
+        }
+
+        // TODO (1.1): Much better way to clear 'visited' state. Lots of BFS options using better data structures or
+        //  recursive approach. No time for now :).
+        allModelNodes.values().forEach(node -> node.setVisited(false));
+
+        return qaNodes;
     }
 
     public String getName() {

@@ -4,8 +4,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import pique.analysis.ITool;
 import pique.model.*;
-import pique.utility.MockedITool;
+import pique.utility.MockedIToolQmFull;
+import pique.utility.MockedIToolQmSimple;
 import pique.utility.MockedLocTool;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,17 +21,17 @@ import java.util.stream.Stream;
 public class QualityModelDeriverTests {
 
     /**
-     * Run the main model derivation method using mocked tool results
+     * Run the main model derivation method using mocked tool results using an "as simple as possible" quality model
      */
     @Test
-    public void testDeriveModel() {
+    public void testDeriveModel_minimal() {
 
         Path qmFilePath = Paths.get("src/test/resources/quality_models/qualityModel_minimal_description.json");
 
         // Initialize objects
         String projectRootFlag = ".txt";
         Path benchmarkRepo = Paths.get("src/test/resources/benchmark_repository");
-        ITool mockedTool = new MockedITool();
+        ITool mockedTool = new MockedIToolQmSimple();
         Set<ITool> tools = Stream.of(mockedTool).collect(Collectors.toSet());
         ITool locTool = new MockedLocTool();
 
@@ -40,7 +42,7 @@ public class QualityModelDeriverTests {
         QualityModel qualityModel = QualityModelDeriver.deriveModel(qmDescription, tools, locTool, benchmarkRepo,
                 projectRootFlag);
 
-        // Assert the derived model, now with weights and thresholds, has the expected form
+        //region Assert the derived model, now with weights and thresholds, has the expected form
         // TQI
         Tqi tqi = qualityModel.getTqi();
         Assert.assertEquals("Total Quality", tqi.getName());
@@ -139,6 +141,133 @@ public class QualityModelDeriverTests {
         Diagnostic diagnostic22 = (Diagnostic)measure02.getChild("TST0022");
         Assert.assertEquals("TST0022", diagnostic22.getName());
         Assert.assertEquals("Test tool", diagnostic22.getToolName());
+
+        //endregion
     }
 
+    /**
+     * Run the main model derivation method using mocked tool results using a "fully designed" quality model meant to
+     * test many edge cases of model usage.
+     */
+    @Test
+    public void testDeriveModel_full() {
+        Path qmFilePath = Paths.get("src/test/resources/quality_models/qualityModel_full_description.json");
+
+        // Initialize objects
+        String projectRootFlag = ".txt";
+        Path benchmarkRepo = Paths.get("src/test/resources/benchmark_repository");
+        ITool mockedTool = new MockedIToolQmFull();
+        Set<ITool> tools = Stream.of(mockedTool).collect(Collectors.toSet());
+        ITool locTool = new MockedLocTool();
+
+        QualityModelImport qmImport = new QualityModelImport(qmFilePath);
+        QualityModel qmDescription = qmImport.importQualityModel();
+
+        // The runner method under test: derive a quality model
+        QualityModel qualityModel = QualityModelDeriver.deriveModel(qmDescription, tools, locTool, benchmarkRepo,
+                projectRootFlag);
+
+        // Manually set measure threshold for this test
+        qualityModel.getMeasure("Measure 01").setThresholds(new Double[]{0.0, 0.1});
+
+        //region Assert the derived model, now with weights and thresholds, has the expected form
+        // TQI
+        Tqi tqi = qualityModel.getTqi();
+        Assert.assertEquals("Total Quality", tqi.getName());
+
+        Assert.assertEquals(2, tqi.getChildren().size());
+        Assert.assertEquals(2, tqi.getWeights().size());
+
+        Assert.assertTrue(tqi.getChildren().containsKey("QA11"));
+        Assert.assertTrue(tqi.getChildren().containsKey("QA12"));
+        Assert.assertTrue(tqi.getWeights().containsKey("QA11"));
+        Assert.assertTrue(tqi.getWeights().containsKey("QA12"));
+
+        Assert.assertEquals(0.5, tqi.getWeight("QA11"), 0.0);
+        Assert.assertEquals(0.5, tqi.getWeight("QA12"), 0.0);
+
+        // Quality Aspects
+        ModelNode qa11 = qualityModel.getQualityAspect("QA11");
+        Assert.assertEquals("QA11", qa11.getName());
+
+        Assert.assertEquals(2, qa11.getChildren().size());
+        Assert.assertEquals(2, qa11.getWeights().size());
+
+        Assert.assertTrue(qa11.getChildren().containsKey("QA21"));
+        Assert.assertTrue(qa11.getChildren().containsKey("QA22"));
+        Assert.assertTrue(qa11.getWeights().containsKey("QA21"));
+        Assert.assertTrue(qa11.getWeights().containsKey("QA22"));
+
+        Assert.assertEquals(0.5, qa11.getWeight("QA21"), 0.0);
+        Assert.assertEquals(0.5, qa11.getWeight("QA22"), 0.0);
+
+        ModelNode qa12 = qualityModel.getQualityAspect("QA12");
+        Assert.assertEquals("QA12", qa12.getName());
+
+        Assert.assertEquals(1, qa12.getChildren().size());
+        Assert.assertEquals(1, qa12.getWeights().size());
+
+        Assert.assertTrue(qa12.getChildren().containsKey("QA22"));
+        Assert.assertTrue(qa12.getWeights().containsKey("QA22"));
+
+        Assert.assertEquals(1.0, qa12.getWeight("QA22"), 0.0);
+
+        ModelNode qa21 = qualityModel.getQualityAspect("QA21");
+        Assert.assertEquals("QA21", qa21.getName());
+
+        Assert.assertEquals(1, qa21.getChildren().size());
+        Assert.assertEquals(1, qa21.getWeights().size());
+
+        Assert.assertTrue(qa21.getChildren().containsKey("PF11"));
+        Assert.assertTrue(qa21.getWeights().containsKey("PF11"));
+
+        Assert.assertEquals(1.0, qa21.getWeight("PF11"), 0.0);
+
+        ModelNode qa22 = qualityModel.getQualityAspect("QA22");
+        Assert.assertEquals("QA22", qa22.getName());
+
+        Assert.assertEquals(1, qa22.getChildren().size());
+        Assert.assertEquals(1, qa22.getWeights().size());
+
+        Assert.assertTrue(qa22.getChildren().containsKey("PF11"));
+        Assert.assertTrue(qa22.getWeights().containsKey("PF11"));
+
+        Assert.assertEquals(1.0, qa22.getWeight("PF11"), 0.0);
+
+        // Product Factors
+        ModelNode pf11 = qualityModel.getProductFactor("PF11");
+        Assert.assertEquals("PF11", pf11.getName());
+        Assert.assertEquals(1, pf11.getChildren().size());
+        Assert.assertTrue(pf11.getChildren().containsKey("PF21"));
+
+        ModelNode pf21 = qualityModel.getProductFactor("PF21");
+        Assert.assertEquals("PF21", pf21.getName());
+        Assert.assertEquals(1, pf21.getChildren().size());
+        Assert.assertTrue(pf21.getChildren().containsKey("Measure 01"));
+
+
+        // Measures
+        Measure measure01 = (Measure)qualityModel.getMeasure("Measure 01");
+        Assert.assertEquals("Measure 01", measure01.getName());
+
+        Assert.assertFalse(measure01.isPositive());
+
+        Assert.assertEquals(2, measure01.getThresholds().length);
+        Assert.assertEquals(0.00, measure01.getThresholds()[0], 0.0);
+        Assert.assertEquals(0.10, measure01.getThresholds()[1], 0.0);
+
+        Assert.assertEquals(2, measure01.getChildren().size());
+        Assert.assertTrue(measure01.getChildren().containsKey("TST0011"));
+        Assert.assertTrue(measure01.getChildren().containsKey("TST0012"));
+
+
+        // Diagnostics
+        Diagnostic diagnostic11 = (Diagnostic)measure01.getChild("TST0011");
+        Assert.assertEquals("TST0011", diagnostic11.getName());
+        Assert.assertEquals("Test tool", diagnostic11.getToolName());
+
+        Diagnostic diagnostic12 = (Diagnostic)measure01.getChild("TST0012");
+        Assert.assertEquals("TST0012", diagnostic12.getName());
+        Assert.assertEquals("Test tool", diagnostic12.getToolName());
+    }
 }

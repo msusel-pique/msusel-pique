@@ -5,7 +5,7 @@ import org.junit.Test;
 import pique.analysis.ITool;
 import pique.evaluation.Project;
 import pique.model.*;
-import pique.utility.MockedITool;
+import pique.utility.MockedIToolQmSimple;
 import pique.utility.MockedLocTool;
 
 import java.nio.file.Path;
@@ -26,7 +26,7 @@ public class SingleProjectEvaluatorTests {
         Path qmFilePath = Paths.get("src/test/resources/quality_models/qualityModel_minimal_description.json");
         String projectRootFlag = ".txt";
         Path benchmarkRepo = Paths.get("src/test/resources/benchmark_repository");
-        ITool mockedTool = new MockedITool();
+        ITool mockedTool = new MockedIToolQmSimple();
         Set<ITool> tools = Stream.of(mockedTool).collect(Collectors.toSet());
         ITool locTool = new MockedLocTool();
 

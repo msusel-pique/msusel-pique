@@ -83,7 +83,7 @@ public class QualityModelImportTests {
         Assert.assertEquals(0, pf02.getWeights().size(), 0.0);
 
         // Measures
-        Measure m01 = (Measure)qm.getMeasureByName("Measure 01");
+        Measure m01 = (Measure)qm.getMeasure("Measure 01");
         Assert.assertEquals(0.0, m01.getValue(), 0.0);
         Assert.assertEquals("Measure 01", m01.getName());
         Assert.assertFalse(m01.isPositive());
@@ -95,7 +95,7 @@ public class QualityModelImportTests {
         Assert.assertTrue(m01.getChildren().containsKey("TST0012"));
         Assert.assertEquals(0, m01.getWeights().size(), 0.0);
 
-        Measure m02 = (Measure)qm.getMeasureByName("Measure 02");
+        Measure m02 = (Measure)qm.getMeasure("Measure 02");
         Assert.assertEquals(0.0, m02.getValue(), 0.0);
         Assert.assertEquals("Measure 02", m02.getName());
         Assert.assertFalse(m02.isPositive());

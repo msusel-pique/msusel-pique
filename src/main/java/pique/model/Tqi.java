@@ -1,9 +1,6 @@
 package pique.model;
 
-import pique.evaluation.DefaultFactorEvaluator;
-import pique.evaluation.IEvaluator;
-import pique.evaluation.INormalizer;
-import pique.evaluation.IUtilityFunction;
+import pique.evaluation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +17,7 @@ public class Tqi extends ModelNode {
     // Constructor
 
     public Tqi(String name, String description, Map<String, Double> weights) {
-        super(name, description, new DefaultFactorEvaluator(), null);
+        super(name, description, new DefaultFactorEvaluator(), new DefaultNormalizer());
         this.weights = (weights == null) ? new HashMap<>() : weights;
     }
 
