@@ -23,6 +23,8 @@
 package pique.evaluation;
 
 import com.google.gson.annotations.Expose;
+import lombok.Getter;
+import lombok.Setter;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import org.apache.commons.lang3.tuple.Pair;
 import pique.model.*;
@@ -38,9 +40,13 @@ public class Project{
 
 	// Fields
 
+	@Getter @Setter
 	private String name;
+	@Getter @Setter
 	private int linesOfCode;
+	@Getter @Setter
 	private Path path;  // the original path where the sources of the project are stored (with or without the name)
+	@Getter @Setter
 	private QualityModel qualityModel;  // the QM prototype this project uses for evaluation
 
 	// Constructors
@@ -61,28 +67,6 @@ public class Project{
 		this.path = path;
 		this.qualityModel = qm;
 	}
-
-	
-	
-	// Getters and setters
-
-	public int getLinesOfCode() { return linesOfCode; }
-	public void setLinesOfCode(int linesOfCode) { this.linesOfCode = linesOfCode; }
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public Path getPath() { return path; }
-	public void setPath(Path path) { this.path = path; }
-	public QualityModel getQualityModel() {
-		return qualityModel;
-	}
-	public void setQualityModel(QualityModel qualityModel) {
-		this.qualityModel = qualityModel;
-	}
-
 
 	// Methods
 

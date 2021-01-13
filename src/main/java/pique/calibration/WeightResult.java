@@ -22,6 +22,9 @@
  */
 package pique.calibration;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,8 +39,11 @@ public class WeightResult {
      * See https://www.oracle.com/technetwork/java/javase/documentation/codeconventions-137265.html#177
      * for more information.
      */
-    public String name;  // the name of the ModelNode object these weights apply to
-    public Map<String, Double> weights;  // weight mapping of {Key: incoming weight ModelNode name, Value: weight value}
+    @Getter @Setter
+    private String name;  // the name of the ModelNode object these weights apply to
+
+    @Getter @Setter
+    private Map<String, Double> weights;  // weight mapping of {Key: incoming weight ModelNode name, Value: weight value}
 
 
     // Constructor
@@ -46,23 +52,7 @@ public class WeightResult {
         this.weights = new HashMap<>();
     }
 
-
-    // Getters and setters
-
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Map<String, Double> getWeights() {
-        return weights;
-    }
     public void setWeight(String weightName, Double value) {
         getWeights().put(weightName, value);
-    }
-    public void setWeights(Map<String, Double> weights) {
-        this.weights = weights;
     }
 }

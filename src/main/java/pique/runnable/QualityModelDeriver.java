@@ -71,7 +71,7 @@ public class QualityModelDeriver {
         // Weights (TQI and QualityAspect nodes)
         weights.forEach(weightResult -> {
             Map<String, ModelNode> allNodes = qmDesign.getAllQualityModelNodes();
-            allNodes.get(weightResult.name).setWeights(weightResult.weights);
+            allNodes.get(weightResult.getName()).setWeights(weightResult.getWeights());
         });
 
         return qmDesign;

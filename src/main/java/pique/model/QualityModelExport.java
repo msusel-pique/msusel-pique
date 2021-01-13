@@ -23,6 +23,8 @@
 package pique.model;
 
 import com.google.gson.annotations.Expose;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.tuple.Pair;
 import pique.utility.FileUtility;
 
@@ -42,17 +44,17 @@ import java.util.Map;
 public class QualityModelExport {
 
     /// Fields ///
-    @Expose
+    @Getter @Expose
     private String name;
-    @Expose
+    @Getter @Expose
     private Map<String, String> additionalData = new HashMap<>();
     @Expose
     private Map<String, String> global_config = new HashMap<>();
-    @Expose
+    @Getter @Expose
     private Map<String, Map<String, ModelNode>> factors = new HashMap<>();
-    @Expose
+    @Getter @Expose
     private Map<String, ModelNode> measures = new HashMap<>();
-    @Expose
+    @Getter @Setter @Expose
     private Map<String, ModelNode> diagnostics = new HashMap<>();
 
 
@@ -91,35 +93,6 @@ public class QualityModelExport {
         Map<String, ModelNode> diagnostics = qualityModel.getDiagnostics();
         getDiagnostics().putAll(diagnostics);
     }
-
-
-
-    // Getters and setters /
-
-    public Map<String, String> getAdditionalData() {
-        return additionalData;
-    }
-
-    public Map<String, ModelNode> getDiagnostics() {
-        return diagnostics;
-    }
-
-    public void setDiagnostics(Map<String, ModelNode> diagnostics) {
-        this.diagnostics = diagnostics;
-    }
-
-    public Map<String, Map<String, ModelNode>> getFactors() {
-        return factors;
-    }
-
-    public Map<String, ModelNode> getMeasures() {
-        return measures;
-    }
-
-    public String getName() {
-        return name;
-    }
-
 
     /// Methods ///
     /**

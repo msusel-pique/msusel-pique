@@ -22,6 +22,8 @@
  */
 package pique.model;
 
+import lombok.Getter;
+import lombok.Setter;
 import pique.calibration.IBenchmarker;
 import pique.calibration.IWeighter;
 import pique.calibration.NaiveBenchmarker;
@@ -48,9 +50,13 @@ public class QualityModel {
 
     // Fields
 
+    @Getter @Setter
     private String name;
+    @Getter @Setter
     private Tqi tqi;
+    @Getter @Setter
     private IBenchmarker benchmarker;
+    @Getter @Setter
     private IWeighter weighter;
 
 
@@ -110,14 +116,6 @@ public class QualityModel {
         allModelNodes.values().forEach(node -> node.setVisited(false));
 
         return allModelNodes;
-    }
-
-    public IBenchmarker getBenchmarker() {
-        return benchmarker;
-    }
-
-    public void setBenchmarker(IBenchmarker benchmarker) {
-        this.benchmarker = benchmarker;
     }
 
     public ModelNode getDiagnostic(String name) {
@@ -264,30 +262,6 @@ public class QualityModel {
         allModelNodes.values().forEach(node -> node.setVisited(false));
 
         return qaNodes;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Tqi getTqi() {
-        return tqi;
-    }
-
-    public void setTqi(Tqi tqi) {
-        this.tqi = tqi;
-    }
-
-    public IWeighter getWeighter() {
-        return weighter;
-    }
-
-    public void setWeighter(IWeighter weighter) {
-        this.weighter = weighter;
     }
 
     //endregion

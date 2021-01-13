@@ -22,6 +22,8 @@
  */
 package pique.model;
 
+import lombok.Getter;
+import lombok.Setter;
 import pique.evaluation.*;
 
 import java.util.Map;
@@ -37,9 +39,13 @@ public class Finding extends ModelNode {
 
     //region Instance variables
 
+    @Getter @Setter
     private int characterNumber;
+    @Getter @Setter
     private int lineNumber;
+    @Getter @Setter
     private int severity;  // TODO: consider refactoring into enum
+    @Getter @Setter
     private String filePath;
 
     //endregion
@@ -69,45 +75,10 @@ public class Finding extends ModelNode {
         this.severity = severity;
     }
 
-    //region Getters and setters
-
-    public int getCharacterNumber() {
-        return characterNumber;
-    }
-
-    public void setCharacterNumber(int characterNumber) {
-        this.characterNumber = characterNumber;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
-    public int getLineNumber() {
-        return lineNumber;
-    }
-
-    public void setLineNumber(int lineNumber) {
-        this.lineNumber = lineNumber;
-    }
 
     public String getLocation() {
         return filePath + "," + lineNumber + "," + characterNumber;
     }
-
-    public int getSeverity() {
-        return severity;
-    }
-
-    public void setSeverity(int severity) {
-        this.severity = severity;
-    }
-
-    //endregion
 
 
     //region Methods

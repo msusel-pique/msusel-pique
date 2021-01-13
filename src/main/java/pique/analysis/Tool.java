@@ -22,6 +22,9 @@
  */
 package pique.analysis;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.nio.file.Path;
 
 /**
@@ -31,8 +34,11 @@ public abstract class Tool implements ITool {
 
     // Instance vars
 
+    @Getter
     private String name;
+    @Getter
     private Path executable;
+    @Getter @Setter
     private Path toolRoot;
 
 
@@ -51,20 +57,6 @@ public abstract class Tool implements ITool {
         this.name = name;
         this.toolRoot = toolRoot;
         this.executable = initialize(toolRoot);
-    }
-
-
-    // Getters and setters
-
-    public String getName() { return name; }
-    public Path getExecutable() {
-        return executable;
-    }
-    public Path getToolRoot() {
-        return toolRoot;
-    }
-    public void setToolRoot(Path toolRoot) {
-        this.toolRoot = toolRoot;
     }
 
 

@@ -42,7 +42,7 @@ import java.util.Set;
 // TODO (1.0): turn into static methods (maybe unless logger problems)
 public class SingleProjectEvaluator {
 
-    Project project;
+    private Project project;
 
     //region Get / Set
     public Project getEvaluatedProject() {

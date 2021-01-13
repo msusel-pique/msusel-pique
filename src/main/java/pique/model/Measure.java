@@ -23,6 +23,8 @@
 package pique.model;
 
 import com.google.gson.annotations.Expose;
+import lombok.Getter;
+import lombok.Setter;
 import pique.evaluation.*;
 
 import java.util.HashMap;
@@ -50,6 +52,7 @@ public class Measure extends ModelNode {
 
 	//region Instance variables
 
+	@Getter @Setter
 	@Expose
 	private boolean positive;
 
@@ -132,14 +135,6 @@ public class Measure extends ModelNode {
 
 	public void setEvaluatorObject(IEvaluator evaluatorObject) {
 		this.evaluatorObject = evaluatorObject;
-	}
-
-	public boolean isPositive() {
-		return positive;
-	}
-
-	public void setPositive(boolean positive) {
-		this.positive = positive;
 	}
 
 	public IUtilityFunction getUtilityFunctionObject() {

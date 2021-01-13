@@ -23,6 +23,8 @@
 package pique.model;
 
 import com.google.gson.annotations.Expose;
+import lombok.Getter;
+import lombok.Setter;
 import pique.evaluation.DefaultUtility;
 import pique.evaluation.IEvaluator;
 import pique.evaluation.INormalizer;
@@ -38,19 +40,19 @@ import java.util.Map;
 public abstract class ModelNode {
 
     //region Fields
-    @Expose
+    @Getter @Setter @Expose
     protected String name;
-    @Expose
+    @Setter @Expose
     protected double value;  // the value this node evaluates to
-    @Expose
+    @Getter @Setter @Expose
     protected String description;
     // TODO: eventually consider new tree object that combines properties and their weight instead of relying on
     //  String name matching (not enough time for me to solve currently)
-    @Expose
+    @Getter @Expose
     protected Map<String, ModelNode> children = new HashMap<>();
-    @Expose
+    @Getter @Setter @Expose
     protected Map<String, Double> weights = new HashMap<>();
-    @Expose
+    @Getter @Setter @Expose
     protected Double[] thresholds;
     @Expose
     protected String eval_strategy;
@@ -59,10 +61,14 @@ public abstract class ModelNode {
     @Expose
     protected String utility_function;
 
+    @Getter @Setter
     protected IEvaluator evaluatorObject;
+    @Getter @Setter
     protected INormalizer normalizerObject;
+    @Getter @Setter
     protected IUtilityFunction utilityFunctionObject;
 
+    @Getter @Setter
     protected boolean visited = false;      // Use for BFS traversal
 
     // Constructor
@@ -134,8 +140,6 @@ public abstract class ModelNode {
         getChildren().put(child.getName(), child);
     }
 
-    public Map<String, ModelNode> getChildren() { return children; }
-
     public void setChildren(Map<String, ModelNode> children) {
         this.children = children;
     }
@@ -144,75 +148,15 @@ public abstract class ModelNode {
         children.forEach(element -> getChildren().putIfAbsent(element.getName(), element));
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String desription) {
-        this.description = desription;
-    }
-
-    public IEvaluator getEvaluatorObject() {
-        return evaluatorObject;
-    }
-
-    public void setEvaluatorObject(IEvaluator evaluatorObject) {
-        this.evaluatorObject = evaluatorObject;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public INormalizer getNormalizerObject() {
-        return normalizerObject;
-    }
-
-    public void setNormalizerObject(INormalizer normalizerObject) {
-        this.normalizerObject = normalizerObject;
-    }
-
     public void setNormalizerValue(double value) {
         getNormalizerObject().setNormalizerValue(value);
     }
 
     public int getNumChildren() { return getChildren().size(); }
 
-    public IUtilityFunction getUtilityFunctionObject() {
-        return utilityFunctionObject;
-    }
-
-    public void setUtilityFunctionObject(IUtilityFunction utilityFunctionObject) {
-        this.utilityFunctionObject = utilityFunctionObject;
-    }
-
     public double getValue() {
         evaluate();
         return this.value;
-    }
-
-    public void setValue(double value) {
-        this.value = value;
-    }
-
-    public boolean isVisited() {
-        return visited;
-    }
-
-    public void setVisited(boolean visited) {
-        this.visited = visited;
-    }
-
-    public Double[] getThresholds() {
-        return thresholds;
-    }
-
-    public void setThresholds(Double[] thresholds) {
-        this.thresholds = thresholds;
     }
 
     public double getWeight(String modelNodeName) {
@@ -224,16 +168,8 @@ public abstract class ModelNode {
         catch (NullPointerException e) { return 0.0; }
     }
 
-    public Map<String, Double> getWeights() {
-        return weights;
-    }
-
     public void setWeight(String modelNodeName, double value) {
         this.weights.put(modelNodeName, value);
-    }
-
-    public void setWeights(Map<String, Double> weights) {
-        this.weights = weights;
     }
 
     //endregion

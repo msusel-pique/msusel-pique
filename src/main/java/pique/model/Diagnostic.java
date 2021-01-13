@@ -23,6 +23,7 @@
 package pique.model;
 
 import com.google.gson.annotations.Expose;
+import lombok.Getter;
 import pique.evaluation.*;
 
 import java.util.HashMap;
@@ -50,6 +51,7 @@ import java.util.Map;
 public class Diagnostic extends ModelNode {
 
     // Instance variables
+    @Getter
     @Expose
     private String toolName;
 
@@ -88,13 +90,6 @@ public class Diagnostic extends ModelNode {
                    IUtilityFunction utilityFunction, Map<String, Double> weights, Double[] thresholds, Map<String,
             ModelNode> children) {
         super(value, name, description, evaluator, normalizer, utilityFunction, weights, thresholds, children);
-    }
-
-
-    // Getters and setters
-
-    public String getToolName() {
-        return toolName;
     }
 
 
