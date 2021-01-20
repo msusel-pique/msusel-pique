@@ -3,6 +3,7 @@ package pique.model;
 import pique.evaluation.*;
 
 import java.util.Map;
+import java.util.Random;
 
 /**
  * A Finding is actual instances of diagnostic IDs found in a project after a static analysis tool run.
@@ -25,6 +26,13 @@ public class Finding extends ModelNode {
     // Constructors
 
     // (TODO: change to builder pattern to better accommodate metrics and rule findings)
+
+    public Finding() {
+        super("", "", new DefaultFindingEvaluator(), new DefaultNormalizer());
+        Random random = new Random();
+        this.name = hashName(String.valueOf(random.nextDouble()), String.valueOf(random.nextDouble()),
+                String.valueOf(random.nextDouble()), String.valueOf(random.nextDouble()));
+    }
 
     public Finding(String filePath, int lineNumber, int characterNumber, int severity) {
         super("", "", new DefaultFindingEvaluator(), new DefaultNormalizer());

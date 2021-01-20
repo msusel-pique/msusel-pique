@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Utility driver class responible for running the calibration module's procedure.
+ * Utility driver class responsible for running the calibration module's procedure.
  * This uses a benchmark repository, quality model description, directory of comparison matrices,
  * instances of language-specific analysis tools, and the RInvoker as input to perform a 3 step process of
  *     (1) Derive thresholds
@@ -33,7 +33,7 @@ public class QualityModelDeriver {
         // (2) Elicitate weights
         IWeighter weighter = qmDesign.getWeighter();
         // TODO (1.0): Consider, instead of weighting all nodes in one sweep here, dynamically assigning IWeighter
-        //  ojbects to each node to have them weight using JIT evaluation functions.
+        //  objects to each node to have them weight using JIT evaluation functions.
         Set<WeightResult> weights = weighter.elicitateWeights(qmDesign);
         // TODO: assert WeightResult names match expected TQI, QualityAspect, and ProductFactor names from quality model description
 

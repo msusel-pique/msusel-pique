@@ -10,12 +10,12 @@ import java.util.Map;
 
 /**
  * Duplicate information of the QualityModel class, but with fields set for ease of Gson json exporting.
- * This class is a cheap hack for exporting a quality model in the desired format. This class is esentially
+ * This class is a cheap hack for exporting a quality model in the desired format. This class is essentially
  * a container class.
  *
  * There is a much better way to handle this instead of having this class, but that can be a future problem to deal with :)
  */
-// TODO (1.0): Better GSON supprt.  Expose while limiting depth. Currect state will cause problems for large quality
+// TODO (1.0): Better GSON support.  Expose while limiting depth. Current state will cause problems for large quality
 //  models.  Likely not a difficult fix.
 public class QualityModelExport {
 
